@@ -4,6 +4,8 @@ La siguiente lista tiene el formato "NombreDeFichero: FunciónQueRealiza".
 
 Algunos de ellos requieren tener acceso a las bases de datos replicadas de los proyectos (más información en http://meta.wikimedia.org/wiki/Toolserver). Otros necesitan bajarse algún dump (disponibles en http://download.wikimedia.org).
 
+Aconsejo el uso de Notepad++ como editor de textos y activar la función "Mostrar espacios y tabulaciones".
+
 tarea001.py: Actualizar de {{ProgresoEncarta}}.
 tarea002.py: Actualizar de {{ProgresoLemario}}.
 tarea002wikt.py: Versión para Wikcionario en español.
