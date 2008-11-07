@@ -4,7 +4,7 @@ import wikipedia, pagegenerators,catlib, config,time, thread
 import urllib
 
 
-pre=u"Usuario:Emijrp/MiPortal/Lemario/"
+pre=u"Wikcionario:Ap%C3%A9ndice:Lemario/"
 
 salida=u"{{subst:ProgresoLemario/subst"
 
@@ -16,7 +16,7 @@ for p in [u"a-absolver", u"absorbencia-achicadura", u"achicamiento-acullicar", u
         
         #page=wikipedia.Page(wikipedia.Site("es", "wikipedia"), u"%s" % p)
         
-        s=wikipedia.Site("es", "wikipedia")
+        s=wikipedia.Site("es", "wiktionary")
         url=u"/w/index.php?title=%s%s" % (pre, p)
         d=s.getUrl(url)
         
@@ -46,5 +46,5 @@ for p in [u"a-absolver", u"absorbencia-achicadura", u"achicamiento-acullicar", u
 por=ta*1.0/(tr+ta)*100
 salida+=u"|%.2f" % (por)
 salida+=u"}}"
-wi=wikipedia.Page(wikipedia.Site("es", "wikipedia"), u"Plantilla:ProgresoLemario")
+wi=wikipedia.Page(wikipedia.Site("es", "wiktionary"), u"Plantilla:ProgresoLemario")
 wi.put(salida, u"BOT - Actualizando plantilla %.2f%s" % (por, "%"))
