@@ -54,16 +54,17 @@ for page in preloadingGen:
 				#for param in [u'alt moy', u'alt mini', u'alt maxi']:
 				for param in [u'longitude', u'latitude']:
 					#m=re.findall(ur'(?im)^\|? *%s *\= *(\d+)( *m)? *\|?$' % param, iwtext)
-					m=re.findall(ur'(?im)^\|? *%s *\= *(\-?\d\.?\d+) *\|?$' % param, iwtext)
+					m=re.findall(ur'(?im)^\|? *%s *\= *(\-?\d+\.?\d+) *\|?$' % param, iwtext)
 					
 					if m:
 						print m
-						params[param]=m[0][0]
+						params[param]=float(m[0])
 				
-				if params[u'latitude']<51.09 and params[u'latitude']>41.32:
-					if params[u'longitude']>-5.0 and params[u'longitude']<9.56:
-						for param, value in params.items():
-							newtext=re.sub(ur'(?im)^ *(\|? *%s *\= *)(\|? *\r)' % param, ur'\1 %s\2' % value, newtext)
+				if params.has_key(u'latitude') and params.has_key(u'longitude'):
+					if params[u'latitude']<51.09 and params[u'latitude']>41.32:
+						if params[u'longitude']>-5.0 and params[u'longitude']<9.56:
+							for param, value in params.items():
+								newtext=re.sub(ur'(?im)^ *(\|? *%s *\= *)(\|? *\r)' % param, ur'\1 %s\2' % value, newtext)
 	
 	resumen=u'BOT -'
 	if wtext!=newtext:
@@ -83,5 +84,5 @@ for page in preloadingGen:
 		
 		
 		wikipedia.showDiff(wtext, newtext)
-		#page.put(newtext, u'%s Justificando parámetros;' % resumen)
+		page.put(newtext, u'%s Justificando parámetros;' % resumen)
 		
