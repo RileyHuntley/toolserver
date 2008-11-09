@@ -29,6 +29,7 @@ tarea019.py: .
 tarea020.py: Actualizar [[Wikipedia:Ranking de creaciones]] y [[Wikipedia:Ranking de creaciones (sin redirecciones)]].
 tarea021.py: Actualizar [[Wikipedia:Contenido por wikiproyecto]].
 tarea022.py: Actualizar [[Wikipedia:Usuarios activos]] y [[Wikipedia:Usuarios muy activos]].
+tarea023.py: Actualizar [[Wikipedia:Protección de plantillas]].
 
 infobox-share-comunas-alt.py: Intención de bot para compartir parámetros de infoboxes entre wikipedias. En este caso cogía las altitudes de las comunas de Francia de fr: y los ponía en es:. También añadía espacios para que todos los parámetros quedaran alineados. Ver ejemplo: http://es.wikipedia.org/w/index.php?title=Hiersac&action=edit&oldid=21577839
 infobox-share-comunas-coord.py: Lo mismo que el anterior pero para coordenadas. Ver ejemplo: http://es.wikipedia.org/w/index.php?title=Abaucourt&diff=prev&oldid=21593297
