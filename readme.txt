@@ -14,7 +14,7 @@ tarea004.py: .
 tarea005.py: .
 tarea006.py: .
 tarea007.py: Actualizar {{ImportadorNoticias}} y sus hijas a partir de las noticias disponibles en Wikinoticias (http://es.wikinews.org/wiki/Plantilla:ExportadorNoticias).
-tarea008.py: .
+tarea008.py: Actualizar [[Wikipedia:Ranking de ediciones]], [[Wikipedia:Ranking de ediciones (incluye bots)]], {{RankingEdiciones}} y {{Ediciones}}.
 tarea009.py: .
 tarea010.py: .
 tarea011.py: .
