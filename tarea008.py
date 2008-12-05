@@ -20,6 +20,7 @@ u"eo": u"Listo de uzantoj laŭ redaktonombro (inkluzivante robotojn)",
 u"es": u"Ranking de ediciones (incluye bots)", 
 u"fr": u"Utilisateurs par nombre d'éditions (bots inclus)", 
 u"pl": u"Użytkownicy według liczby edycji (w tym boty)",
+u"sv": u"Lista över Wikipedia-användare sorterad efter antalet redigeringar (inklusive robotar)",
 }
 
 lll=['es', 'eo', 'hu', 'ca', 'tr', 'ro', 'vo', 'fi', 'it', 'nl', 'ru', 'sv', 'no', 'da', 'ar', 'ko', 'sr', 'sl', 'vi', 'bg', 'et', 'ht', 'fa', 'hr', 'new', 'nn', 'te', 'gl', 'th', 'simple']
@@ -128,11 +129,12 @@ for lang in lll:
 	if not page.exists():
 		page.put(end2, resume)
 	
-	#page=wikipedia.Page(site, u"Template:RankingEdiciones")
-	#page.put(planti, resume)
-	
-	#page=wikipedia.Page(site, u"Template:Ediciones")
-	#page.put(planti2, resume)
+	if lang=='es':
+		page=wikipedia.Page(site, u"Template:RankingEdiciones")
+		page.put(planti, resume)
+		
+		page=wikipedia.Page(site, u"Template:Ediciones")
+		page.put(planti2, resume)
 
 	toolserver=u"This user is a bot. It won't understand you. Comments to [[:es:User talk:Emijrp]]. Thanks.\n\nThis bot is executed from [[meta:Toolserver]], so, if it is necessary, block it by nick. Other users can use the same IP address."
 	page=wikipedia.Page(site, u"User:Toolserver")
