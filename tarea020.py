@@ -119,11 +119,11 @@ for user, number in l:
 				salida2+=u'*%d) [[%s]]\n' % (cc, art)
 				if cc % limite2 == 0:
 					wiii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Ranking de creaciones (sin redirecciones)/%s/%s' % (user, cc/limite2))
-					#wiii.put(salida2, u'BOT - Actualizando ranking de creaciones de [[Usuario:%s|%s]]' % (user, user))
+					wiii.put(salida2, u'BOT - Actualizando ranking de creaciones de [[Usuario:%s|%s]]' % (user, user))
 					salida2=u'{{Special:PrefixIndex/Wikipedia:Ranking de creaciones (sin redirecciones)/%s/}}\n' % user
 				cc+=1
 			wiii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Ranking de creaciones (sin redirecciones)/%s/%s' % (user, cc/limite2+1))
-			#wiii.put(salida2, u'BOT - Actualizando ranking de creaciones de [[Usuario:%s|%s]]' % (user, user))
+			wiii.put(salida2, u'BOT - Actualizando ranking de creaciones de [[Usuario:%s|%s]]' % (user, user))
 		c+=1
 	else:
 		break
