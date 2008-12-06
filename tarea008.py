@@ -11,15 +11,25 @@ end2=end
 tras1={
 u"eo": u"Listo de uzantoj laŭ redaktonombro",
 u"es": u"Ranking de ediciones", 
+u"fi": u"Luettelo wikipedian käyttäjistä muokkausmäärän mukaan",
 u"fr": u"Utilisateurs par nombre d'éditions", 
+u"gl": u"Estatísticas/Lista de usuarios por número de edicións",
+u"hu": u"Wikipédisták listája szerkesztésszám szerint",
 u"pl": u"Użytkownicy według liczby edycji",
+u"ro": u"Lista wikipediştilor după numărul de editări",
+u"sl": u"Wikipedija:Seznam Wikipedistov po številu urejanj",
 u"sv": u"Lista över Wikipedia-användare sorterad efter antalet redigeringar",
+u"vi": u"Danh sách thành viên Wikipedia theo số lần sửa trang",
 }
 tras2={
 u"eo": u"Listo de uzantoj laŭ redaktonombro (inkluzivante robotojn)",
 u"es": u"Ranking de ediciones (incluye bots)", 
 u"fr": u"Utilisateurs par nombre d'éditions (bots inclus)", 
+u"gl": u"Estatísticas/Lista de usuarios por número de edicións (bots incluídos)",
+u"hu": u"Wikipédisták listája szerkesztésszám szerint (botokkal)",
 u"pl": u"Użytkownicy według liczby edycji (w tym boty)",
+u"ro": u"Lista wikipediştilor după numărul de editări (inclusiv boţi)",
+u"sl": u"Wikipedija:Seznam Wikipedistov po številu urejanj (z boti)",
 u"sv": u"Lista över Wikipedia-användare sorterad efter antalet redigeringar (inklusive robotar)",
 }
 
@@ -27,7 +37,7 @@ lll=['es', 'eo', 'hu', 'ca', 'tr', 'ro', 'vo', 'fi', 'it', 'nl', 'ru', 'sv', 'no
 for lang in lll:
 	site=wikipedia.Site(lang, 'wikipedia')
 	
-	bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot']
+	bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot', u'YurikBot', u'H-Bot', u'Paulatz bot', u'TekBot', u'Alfiobot', u'RoboRex', u'Agtbot']
 	data=site.getUrl("/w/index.php?title=Special:Listusers&limit=5000&group=bot")
 	data=data.split('<!-- start content -->')
 	data=data[1].split('<!-- end content -->')[0]
@@ -104,7 +114,8 @@ for lang in lll:
 	else:
 		title=u"%s:List of Wikipedians by number of edits" % wikipedianm
 	page=wikipedia.Page(site, title)
-	page.put(s, resume)
+	if not page.isRedirectPage() and not page.isDisambig():
+		page.put(s, resume)
 	#begin & end
 	page=wikipedia.Page(site, u"%s/begin" % title)
 	if not page.exists():
@@ -120,7 +131,8 @@ for lang in lll:
 	else:
 		title=u"%s:List of Wikipedians by number of edits (bots included)" % wikipedianm
 	page=wikipedia.Page(site, title)
-	page.put(sbots, resume)
+	if not page.isRedirectPage() and not page.isDisambig():
+		page.put(sbots, resume)
 	#begin & end
 	page=wikipedia.Page(site, u"%s/begin" % title)
 	if not page.exists():
@@ -136,9 +148,10 @@ for lang in lll:
 		page=wikipedia.Page(site, u"Template:Ediciones")
 		page.put(planti2, resume)
 
-	toolserver=u"This user is a bot. It won't understand you. Comments to [[:es:User talk:Emijrp]]. Thanks.\n\nThis bot is executed from [[meta:Toolserver]], so, if it is necessary, block it by nick. Other users can use the same IP address."
-	page=wikipedia.Page(site, u"User:Toolserver")
-	page.put(toolserver, u"BOT")
-	page=wikipedia.Page(site, u"User talk:Toolserver")
-	page.put(toolserver, u"BOT")
+	if lang!='es':
+		toolserver=u"This user is a bot. It won't understand you. Comments to [[:es:User talk:Emijrp]]. Thanks.\n\nThis bot is executed from [[meta:Toolserver]], so, if it is necessary, block it by nick. Other users can use the same IP address."
+		page=wikipedia.Page(site, u"User:Toolserver")
+		page.put(toolserver, u"BOT")
+		page=wikipedia.Page(site, u"User talk:Toolserver")
+		page.put(toolserver, u"BOT")
 
