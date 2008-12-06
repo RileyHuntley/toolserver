@@ -31,6 +31,7 @@ u"pl": u"Użytkownicy według liczby edycji (w tym boty)",
 u"ro": u"Lista wikipediştilor după numărul de editări (inclusiv boţi)",
 u"sl": u"Wikipedija:Seznam Wikipedistov po številu urejanj (z boti)",
 u"sv": u"Lista över Wikipedia-användare sorterad efter antalet redigeringar (inklusive robotar)",
+u"vi": u"Danh sách thành viên Wikipedia theo số lần sửa trang (tính cả bot)",
 }
 
 lll=['es', 'eo', 'hu', 'ca', 'tr', 'ro', 'vo', 'fi', 'it', 'nl', 'ru', 'sv', 'no', 'da', 'ar', 'ko', 'sr', 'sl', 'vi', 'bg', 'et', 'ht', 'fa', 'hr', 'new', 'nn', 'te', 'gl', 'th', 'simple']
