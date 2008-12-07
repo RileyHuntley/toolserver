@@ -15,9 +15,10 @@ u"fi": u"Luettelo wikipedian käyttäjistä muokkausmäärän mukaan",
 u"fr": u"Utilisateurs par nombre d'éditions", 
 u"gl": u"Estatísticas/Lista de usuarios por número de edicións",
 u"hu": u"Wikipédisták listája szerkesztésszám szerint",
+u"ko": u"편집횟수 순 사용자 목록",
 u"pl": u"Użytkownicy według liczby edycji",
 u"ro": u"Lista wikipediştilor după numărul de editări",
-u"sl": u"Wikipedija:Seznam Wikipedistov po številu urejanj",
+u"sl": u"Seznam Wikipedistov po številu urejanj",
 u"sv": u"Lista över Wikipedia-användare sorterad efter antalet redigeringar",
 u"vi": u"Danh sách thành viên Wikipedia theo số lần sửa trang",
 }
@@ -27,18 +28,19 @@ u"es": u"Ranking de ediciones (incluye bots)",
 u"fr": u"Utilisateurs par nombre d'éditions (bots inclus)", 
 u"gl": u"Estatísticas/Lista de usuarios por número de edicións (bots incluídos)",
 u"hu": u"Wikipédisták listája szerkesztésszám szerint (botokkal)",
+u"ko": u"편집횟수 순 사용자 목록 (봇 포함)",
 u"pl": u"Użytkownicy według liczby edycji (w tym boty)",
 u"ro": u"Lista wikipediştilor după numărul de editări (inclusiv boţi)",
-u"sl": u"Wikipedija:Seznam Wikipedistov po številu urejanj (z boti)",
+u"sl": u"Seznam Wikipedistov po številu urejanj (z boti)",
 u"sv": u"Lista över Wikipedia-användare sorterad efter antalet redigeringar (inklusive robotar)",
 u"vi": u"Danh sách thành viên Wikipedia theo số lần sửa trang (tính cả bot)",
 }
 
-lll=['es', 'eo', 'hu', 'ca', 'tr', 'ro', 'vo', 'fi', 'it', 'nl', 'ru', 'sv', 'no', 'da', 'ar', 'ko', 'sr', 'sl', 'vi', 'bg', 'et', 'ht', 'fa', 'hr', 'new', 'nn', 'te', 'gl', 'th', 'simple']
+lll=['es', 'eo', 'hu', 'ca', 'tr', 'ro', 'vo', 'fi', 'it', 'nl', 'ru', 'sv', 'no', 'da', 'ar', 'ko', 'sr', 'sl', 'vi', 'bg', 'et', 'ht', 'fa', 'hr', 'new', 'nn', 'te', 'gl', 'th', 'simple', 'he']
 for lang in lll:
 	site=wikipedia.Site(lang, 'wikipedia')
 	
-	bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot', u'YurikBot', u'H-Bot', u'Paulatz bot', u'TekBot', u'Alfiobot', u'RoboRex', u'Agtbot']
+	bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot', u'YurikBot', u'H-Bot', u'Paulatz bot', u'TekBot', u'Alfiobot', u'RoboRex', u'Agtbot', 'Felixbot', 'Pixibot', 'Sz-iwbot', 'Timbot (Gutza)', 'Ginosbot', 'GrinBot']
 	data=site.getUrl("/w/index.php?title=Special:Listusers&limit=5000&group=bot")
 	data=data.split('<!-- start content -->')
 	data=data[1].split('<!-- end content -->')[0]
