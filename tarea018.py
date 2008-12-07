@@ -13,15 +13,11 @@ def urldecode(url):
 #os.system('rm /home/emijrp/pagecounts*.gz*') #limpiamos antes de empezar
 #os.system('rm /home/emijrp/python/pywikipedia/pagecounts*.gz*') #limpiamos antes de empezar
 
-lang='es'
-if len(sys.argv)>=2:
-	lang=sys.argv[1]
-
 limite=15
-if len(sys.argv)>=3:
-	limite=int(sys.argv[2])
+if len(sys.argv)>=2:
+	limite=int(sys.argv[1])
 
-site=wikipedia.Site(lang, 'wikipedia')
+langs=['es', 'pl', 'sl']
 
 #os.system('wget http://dammit.lt/wikistats/ -O /mnt/user-store/stats/tmpweb.html')
 file=open('/mnt/user-store/stats/tmpweb.html', 'r')
@@ -39,29 +35,37 @@ gzs=[]
 for i in m:
 	print i.group(1)
 	gzs.append(i.group(1))
+wikipedia.output("Elegidos %d ficheros..." % len(gzs))
 
-pagesdic={u'Principal':{}, u'Usuario':{}, u'Wikipedia':{}, u'Imagen':{}, u'Plantilla':{}, u'Ayuda':{}, u'Categoría':{}, u'Portal':{}, u'Wikiproyecto':{}, u'Anexo':{}}
+pagesdic={}
 
-data=site.getUrl("/w/index.php?title=Special:RecentChanges&limit=0")
-data=data.split('<select id="namespace" name="namespace" class="namespaceselector">')[1].split('</select>')[0]
-m=re.compile(ur'<option value="([1-9]\d*)">(.*?)</option>').finditer(data)
-namespaces={}
-for i in m:
-	number=int(i.group(1))
-	name=i.group(2)
-	namespaces[number]=name
+langs_=''
+langs__=''
+namespaces=[]
+for k in langs:
+	langs_+='%s|' % k
+	
+	data=wikipedia.Site(k, 'wikipedia').getUrl("/w/index.php?title=Special:RecentChanges&limit=0")
+	data=data.split('<select id="namespace" name="namespace" class="namespaceselector">')[1].split('</select>')[0]
+	m=re.compile(ur'<option value="([1-9]\d*)">(.*?)</option>').finditer(data)
+	
+	for i in m:
+		number=int(i.group(1))
+		name=i.group(2)
+		if namespaces.count(name)==0:
+			namespaces.append(name)
 
-r={'Usuario':re.compile(ur'(?m)^%s %s:' % (lang, namespaces[2])),
-'Wikipedia':re.compile(ur'(?m)^%s %s:' % (lang, namespaces[4])),
-'Imagen':re.compile(ur'(?m)^%s %s:' % (lang, namespaces[6])),
-'Plantilla':re.compile(ur'(?m)^%s %s:' % (lang, namespaces[10])),
-'Ayuda':re.compile(ur'(?m)^%s %s' % (lang, namespaces[12])),
-'Categoría':re.compile(ur'(?m)^%s %s:' % (lang, namespaces[14])), #Categor%C3%ADa
-#'Portal':re.compile(ur'(?m)^%s %s:' % (lang, namespaces[100])),
-#'Wikiproyecto':re.compile(ur'(?m)^%s %s:' % (lang, namespaces[102])),
-#'Anexo':re.compile(ur'(?m)^%s Anexo:' % lang),
-}
+for nm in namespaces:
+	langs__+='%s|' % nm
 
+langs_=langs_[:len(langs_)-1]
+langs__=langs__[:len(langs__)-1]
+langs__c=re.compile(ur'(%s)\:' % langs__)
+
+wikipedia.output("Se van a analizar los idiomas: %s" % langs_)
+wikipedia.output("%d excepciones: %s" % (len(namespaces), langs__))
+
+"""
 for gz in gzs:
 	try:
 		f=gzip.open('/mnt/user-store/stats/%s' % gz, 'r')
@@ -69,77 +73,83 @@ for gz in gzs:
 		os.system('wget http://dammit.lt/wikistats/%s -O /mnt/user-store/stats/%s' % (gz, gz))
 		f=gzip.open('/mnt/user-store/stats/%s' % gz, 'r')
 	
-	regex=re.compile(ur'(?im)^%s (.*) (\d{1,}) (\d{1,})$' % lang)
+	#regex=re.compile(ur'(?im)^([a-z]{2}) (.*?) (\d{1,}) (\d{1,})$') #evitamos aa.b
+	regex=re.compile(ur'(?im)^(%s) (.+) (\d{1,}) (\d{1,})$' % langs_) #evitamos aa.b
 	
-	line=f.readline()
-	line=urldecode(line)
+	line=re.sub('_', ' ', urldecode(f.readline()))
 	c=0
 	while line:
 		c+=1
 		if c % 250000 == 0:
 			print "Analizadas %d de lineas" % c
+			print "%d idiomas" % len(pagesdic.items())
+			cc=0
+			for proj, projpages in pagesdic.items():
+				cc+=1
+				if cc<=10:
+					print "  %d) %s.wikipedia.org" % (cc, proj)
+				
 		m=regex.finditer(line)
 		for i in m:
-			page=i.group(1)
-			times=int(i.group(2))
+			pagelang=i.group(1)
+			page=i.group(2)
+			if re.search(langs__c, page):
+				continue
+			times=int(i.group(3))
+			other=int(i.group(4))
 			
-			nm=u'Principal'
-			if re.search(r['Usuario'], line):
-				nm=u'Usuario'
-			elif re.search(r['Wikipedia'], line):
-				nm=u'Wikipedia'
-			elif re.search(r['Imagen'], line):
-				nm=u'Imagen'
-				continue #saltamos
-			elif re.search(r['Plantilla'], line):
-				nm=u'Plantilla'
-			elif re.search(r['Ayuda'], line):
-				nm=u'Ayuda'
-			elif re.search(r['Categoría'], line):
-				nm=u'Categoría'
-			"""elif re.search(r['Portal'], line):
-				nm=u'Portal'
-			elif re.search(r['Wikiproyecto'], line):
-				nm=u'Wikiproyecto'
-			elif re.search(r['Anexo'], line):
-				nm=u'Anexo'"""
+			#lang
+			if not pagesdic.has_key(pagelang):
+				pagesdic[pagelang]={}
 			
-			if pagesdic[nm].has_key(page):
-				pagesdic[nm][page]+=times
+			#page
+			if pagesdic[pagelang].has_key(page):
+				pagesdic[pagelang][page]+=times
 			else:
-				pagesdic[nm][page]=times
-		line=f.readline()
+				pagesdic[pagelang][page]=times
+		line=urldecode(f.readline())
 	
 	f.close()
 	break
 
+#ordenamos de mas visitas a menos, cada idioma
 pageslist={}
+cc=0
 for k, v in pagesdic.items():
+	cc+=1
+	print "Ordenando %s.wikipedia.org [%d/%d]" % (k, cc, len(pagesdic.items()))
 	pageslist[k] = [(v2, k2) for k2, v2 in v.items()]
 	pageslist[k].sort()
 	pageslist[k].reverse()
 	pageslist[k] = [(k2, v2) for v2, k2 in pageslist[k]]
 
-visitas={u'Total':0, u'Principal':0, u'Usuario':0, u'Wikipedia':0, u'Imagen':0, u'Plantilla':0, u'Ayuda':0, u'Categoría':0, u'Portal':0, u'Wikiproyecto':0, u'Anexo':0}
+visitas={u'Total':0}
 for k, v in pageslist.items():
 	for k2, v2 in v:
-		visitas[k]+=v2
+		if visitas.has_key(k):
+			visitas[k]+=v2
+		else:
+			visitas[k]=v2
 		visitas[u'Total']+=v2
 
 for k2, v2 in pageslist.items():
-	if k2!=u'Principal': #saltamos imagenes
-		continue #saltamos
+	projsite=wikipedia.Site(k2, 'wikipedia')
+	#if k2!=u'es': 
+	#	continue #saltamos
 	#salida=u"{{/begin|%d|%s|%d|%.1f|%d}}" % (limite, k2, visitas[k2], visitas[k2]/(visitas[u'Total']/100.0), visitas[u'Total'])
+	salida=u"{{/begin|%d|%s|%d}}" % (limite, k2, visitas[k2])
 	#salida=u"La siguiente tabla muestra las '''%d páginas más visitadas''' (en el espacio de nombres '%s') de [[Wikipedia en español]] en el día de ayer (de 00:00 UTC a 23:59 UTC). Ayer hubo un total de {{subst:formatnum:%d}} visitas para este espacio de nombres, %.1f%s del total ({{subst:formatnum:%d}}).\n<center>[[Wikipedia:Ranking de visitas (Principal)|Principal]] · [[Wikipedia:Ranking de visitas (Usuario)|Usuario]] · [[Wikipedia:Ranking de visitas (Wikipedia)|Wikipedia]] · [[Wikipedia:Ranking de visitas (Plantilla)|Plantilla]] · [[Wikipedia:Ranking de visitas (Ayuda)|Ayuda]] · [[Wikipedia:Ranking de visitas (Categoría)|Categoría]] · [[Wikipedia:Ranking de visitas (Portal)|Portal]] · [[Wikipedia:Ranking de visitas (Wikiproyecto)|Wikiproyecto]] · [[Wikipedia:Ranking de visitas (Anexo)|Anexo]]</center>\n\n<center>\n{| class='wikitable sortable' style='text-align:center;'\n! #\n! Página\n! Visitas" % (limite, k2, visitas[k2], visitas[k2]/(visitas[u'Total']/100.0), u'%', visitas[u'Total'])
-	salida=u"<center>\n{| class='wikitable sortable' style='text-align:center;'\n! #\n! Página\n! Visitas"
+	#salida=u"<center>\n{| class='wikitable sortable' style='text-align:center;'\n! #\n! Página\n! Visitas"
 	
 	c=0
 	for k, v in pageslist[k2]:
 		try:
 			if re.search(ur'(?im)(Special\:|sort_down\.gif|sort_up\.gif|sort_none\.gif|\&limit\=)', k):
 				continue
+			if re.search(langs__c, k):
+				continue
 			wikipedia.output(k)
-			tmp=wikipedia.Page(site, k)
+			tmp=wikipedia.Page(projsite, k)
 			detalles=u''
 			if tmp.exists():
 				if tmp.isRedirectPage():
@@ -162,21 +172,23 @@ for k2, v2 in pageslist.items():
 			k=re.sub('_', ' ', k)
 			c+=1
 			#salida+=u"\n|-\n| %d || [[%s]] %s || %s " % (c, k, detalles, v)
-			salida+=u"\n|-\n| %d || [[:%s:%s]] %s || %s " % (c, lang, tmp.title(), detalles, v)
+			salida+=u"\n|-\n| %d || [[%s]] %s || %s " % (c, tmp.title(), detalles, v)
 			if c>=limite:
 				break
 		except:
 			wikipedia.output(u'Error al generar item en lista de %s' % k2)
 	
-	#salida+=u"{{/end}}"
+	salida+=u"\n{{/end}}"
 	#salida+=u"\n|}\n</center>\n\n== Véase también ==\n*[[Wikipedia:Ranking de ediciones]]\n*[[Wikipedia:Ranking de ediciones (incluye bots)]]\n*[[Wikipedia:Ranking de ediciones anónimas por país]]\n*[[Wikipedia:Ranking de wikiproyectos]]\n\n[[Categoría:Wikipedia:Estadísticas|Ranking]]"
-	salida+=u"\n|}\n</center>"
+	#salida+=u"\n|}\n</center>"
 	
 	wikipedia.output(salida)
-	#wiii=wikipedia.Page(site, u'Wikipedia:Ranking de visitas (%s)' % k2)
-	#wiii.put(salida, u'BOT - Actualizando lista de páginas más visitadas (%s)' % k2)
+	#wiii=wikipedia.Page(projsite, u'Wikipedia:Ranking de visitas')
+	#wiii.put(salida, u'BOT - Actualizando lista de páginas más visitadas')
 	wiii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Usuario:Emijrp/Zona de pruebas/3')
-	wiii.put(salida, u'BOT - Actualizando lista de páginas más visitadas (%s)' % k2)
+	wiii.put(salida, u'BOT - Actualizando lista de páginas más visitadas')
 
 #os.system('rm /home/emijrp/pagecounts*.gz*') #limpiamos antes de empezar
 #os.system('rm /home/emijrp/python/pywikipedia/pagecounts*.gz*') #limpiamos antes de empezar
+
+"""
