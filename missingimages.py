@@ -314,4 +314,4 @@ for lenguajeobjetivo in lenguajesobjetivos:
 	f.close()
 	g.close()
 
-print 'Finalmente se encontraron %d articulos susceptibles de ser ilustrados' % c
+print 'Finalmente se encontraron %d articulos susceptibles de ser ilustrados en %s:' % (c, lenguajeobjetivo)
