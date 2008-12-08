@@ -19,7 +19,7 @@ pageid2pagetitle={}
 pagetitle2pageid={}
 imagelinks={}
 imagelinks_pattern=re.compile(ur'\((\d+)\,\'([^\']*?)\'\)')
-exclusion_pattern=re.compile(ur'(?i)(\.(gif|mid|ogg|pne?g|svg)|bandera|escudo|coa|blas[oó]n|icon|flag|coat|shield|wiki|logo|barnstar|dot|map)')
+exclusion_pattern=re.compile(ur'(?i)(\.(gif|mid|ogg|pne?g|svg)|[\'\(\)]|bandera|escudo|coa|blas[oó]n|icon|flag|coat|shield|wiki|logo|barnstar|dot|map|cover)')
 
 #cargamos templates para descartar imagenes inutiles
 templates={}
@@ -93,15 +93,15 @@ for lang in lenguajesobjetivos:
 			except:
 				continue
 			#filtro
-			#if re.search(exclusion_pattern, image):
-			#	continue
+			if re.search(exclusion_pattern, image):
+				continue
 			c+=1
 			percent(c)
 			if imagelinks[lang].has_key(pageid):
 				imagelinks[lang][pageid][image]=False
 			else:
 				imagelinks[lang][pageid]={image:False}
-	print 'Cargados %d imagelinks para %swiki' % (c, lang)
+	print 'Cargados %d imagelinks para %swiki, quitando excluidas' % (c, lang)
 	f.close()
 
 #en imagelinks['es'] estan todos los pageid que contienen alguna imagen
@@ -115,6 +115,9 @@ for lang in lenguajesobjetivos:
 			sinimagenes[lang][pageid]=False
 			c+=1
 	print 'Se encontraron %d articulos sin imagenes en %swiki' % (c, lang)
+
+print 'Vaciamos imagelinks{}'
+imagelinks={}
 
 #cargamos interwikis a articulos en español carentes de imagenes
 interwikis={}
@@ -192,10 +195,13 @@ for line in f:
 		image=i
 		try:
 			image=unicode(image, 'utf-8')
-			c+=1
-			percent(c)
 		except:
 			continue
+		#filtro
+		if re.search(exclusion_pattern, image):
+			continue
+		c+=1
+		percent(c)
 		images[lenguajefuente][image]=False
 		#print image.encode('utf-8')
 print 'Cargadas %d images para %swiki' % (c, lenguajefuente)
@@ -223,6 +229,10 @@ for lenguajeobjetivo in lenguajesobjetivos:
 			except:
 				continue
 			
+			#filtro
+			if re.search(exclusion_pattern, image):
+				continue
+			
 			if listanegra.has_key(image):
 				continue
 			if templates[lenguajefuente].has_key(pageid):
@@ -232,11 +242,11 @@ for lenguajeobjetivo in lenguajesobjetivos:
 				continue
 			
 			
-			#filtro
+			"""#filtro
 			if re.search(exclusion_pattern, image):
-				continue
+				continue"""
 			#print image.encode('utf-8')
-			if images[lenguajefuente].has_key(image):
+			if images[lenguajefuente].has_key(image): #comprobamossi esta subida a la inglesa
 				continue
 			
 			if not sinimagenes[lenguajeobjetivo].has_key(pagetitle2pageid[lenguajeobjetivo][interwikis[lenguajefuente][pageid]]):
@@ -252,6 +262,9 @@ for lenguajeobjetivo in lenguajesobjetivos:
 			else:
 				candidatas[lenguajefuente][pageid]={image:False}
 	f.close()
+
+print 'Vaciamos templates{}'
+templates={}
 
 #cargamos categorylinks de la inglesa que lleven a una categoria births o deaths, para cribar biografias
 categories={}
@@ -292,7 +305,8 @@ for lenguajeobjetivo in lenguajesobjetivos:
 				md5_=md5.new(k2_.encode('utf-8')).hexdigest()
 				salida='%s;%s;%s;\n' % (pageid2pagetitle[lenguajefuente][k], interwikis[lenguajefuente][k], k2)
 				salida=salida.encode('utf-8')
-				salida2='NULL	%s	%s	%s	http://upload.wikimedia.org/wikipedia/commons/%s/%s/%s	0\n' % (lenguajeobjetivo, interwikis[lenguajefuente][k], k2, md5_[0], md5_[0:2], k2_)
+				
+				salida2="INSERT INTO `imagesforbio` (`id`, `language`, `article`, `image`, `url`, `done`) VALUES (NULL, '%s', '%s', '%s', 'http://upload.wikimedia.org/wikipedia/commons/%s/%s/%s', 0);\n" % (lenguajeobjetivo, interwikis[lenguajefuente][k], k2, md5_[0], md5_[0:2], k2_)
 				salida2=salida2.encode('utf-8')
 				#print salida
 				f.write(salida)
