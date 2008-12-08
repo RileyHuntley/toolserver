@@ -41,7 +41,7 @@ lll=['es', 'eo', 'hu', 'ca', 'tr', 'ro', 'vo', 'nl', 'sv', 'no', 'da', 'ar', 'ko
 for lang in lll:
 	site=wikipedia.Site(lang, 'wikipedia')
 	
-	bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot', u'YurikBot', u'H-Bot', u'Paulatz bot', u'TekBot', u'Alfiobot', u'RoboRex', u'Agtbot', 'Felixbot', 'Pixibot', 'Sz-iwbot', 'Timbot (Gutza)', 'Ginosbot', 'GrinBot']
+	bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot', u'YurikBot', u'H-Bot', u'Paulatz bot', u'TekBot', u'Alfiobot', u'RoboRex', u'Agtbot', u'Felixbot', u'Pixibot', u'Sz-iwbot', u'Timbot (Gutza)', u'Ginosbot', u'GrinBot', u'.anacondabot', u'Omdirigeringsrättaren']
 	data=site.getUrl("/w/index.php?title=Special:Listusers&limit=5000&group=bot")
 	data=data.split('<!-- start content -->')
 	data=data[1].split('<!-- end content -->')[0]
