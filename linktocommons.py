@@ -1,0 +1,121 @@
+# -*- coding: utf-8 -*-
+
+import wikipedia, os, sys, re, time
+
+def percent(c):
+	if c % 10000 == 0:
+		print 'Llevamos %d' % c
+
+lang='es'
+if len(sys.argv)>=2:
+	lang=sys.argv[1]
+
+plantillas={
+'es':[u'Commonscat', u'Commons cat', u'Ccat', u'Commons'],
+'en':[u'Commons',u'Pic',u'Commonspar',u'Commonspiped',u'Commonsme',u'Siisterlinkswp',u'Wikicommons',u'Commons-gallery',u'Gallery-link',u'Commons cat',u'Commonscat',u'Commons2',u'CommonsCat',u'Cms-catlit-up',u'Catlst commons',u'Commonscategory',u'Commonscat',u'Commonscat-inline',u'Commons cat left',u'Commons cat multi',u'Commons page',u'Commons-inline',u'Commonstiny',u'Commonstmp',u'Sistercommons',u'Sisterlinks',u'Sisterlinks2'],
+}
+
+os.system('mysql -h commonswiki-p.db.toolserver.org -e "use commonswiki_p;select page_id, page_title, ll_title from langlinks, page where ll_lang=\'%s\' and page_id=ll_from and page_namespace=0;" > /home/emijrp/temporal/commonswikipageid.txt' % lang)
+f=open('/home/emijrp/temporal/commonswikipageid.txt', 'r')
+
+c=0
+commons={}
+for line in f:
+	line=unicode(line, 'utf-8')
+	line=line[:len(line)-1] #evitamos \n
+	line=re.sub('_', ' ', line)
+	trozos=line.split('	')
+	if len(trozos)==3:
+		pageid=trozos[0]
+		pagetitle=trozos[1]
+		lltitle=trozos[2]
+		if not commons.has_key(pageid):
+			c+=1
+			percent(c)
+			commons[pageid]=[pagetitle, lltitle, 0]
+print 'Cargados %d pageid/pagetitle/lltitle para commons con interwiki a %s:' % (c, lang)
+f.close()
+
+#que paginas de lang.wikipedia.org tienen ya enlace hacia commons?
+evitar='' #lo dejamos en blanco para que falle si no tenemos plantillas para cierto idioma
+if plantillas.has_key(lang):
+	for k in plantillas[lang]:
+		evitar+='tl_title=\'%s\' or ' % k
+		if k!=re.sub(' ', '_', k):
+			evitar+='tl_title=\'%s\' or ' % re.sub(' ', '_', k)
+	evitar=evitar[:len(evitar)-4]
+
+print evitar
+
+os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_id, page_title from templatelinks, page where tl_from=page_id and page_namespace=0 and (%s);" > /home/emijrp/temporal/usocommons.txt' % (lang, lang, evitar))
+f=open('/home/emijrp/temporal/usocommons.txt', 'r')
+
+c=0
+usocommons={}
+for line in f:
+	line=unicode(line, 'utf-8')
+	line=line[:len(line)-1] #evitamos \n
+	line=re.sub('_', ' ', line)
+	trozos=line.split('	')
+	if len(trozos)==2:
+		pageid=trozos[0]
+		pagetitle=trozos[1]
+		if not usocommons.has_key(pagetitle):
+			c+=1
+			percent(c)
+			usocommons[pagetitle]=True
+print 'Cargados %d pageid/pagetitle de paginas de %s: que ya apuntan a Commons' % (c, lang)
+f.close()
+
+#cuantas imagenes tienen las galerias? merece la pena enlazar?
+os.system('mysql -h commonswiki-p.db.toolserver.org -e "use commonswiki_p;select il_from from imagelinks where il_from in (select page_id from page where page_namespace=0);" > /home/emijrp/temporal/commonsgalleries.txt')
+f=open('/home/emijrp/temporal/commonsgalleries.txt', 'r')
+
+c=0
+for line in f:
+	line=unicode(line, 'utf-8')
+	line=line[:len(line)-1] #evitamos \n
+	line=re.sub('_', ' ', line)
+	trozos=line.split('	')
+	if len(trozos)==1:
+		pageid=trozos[0]
+		if commons.has_key(pageid):
+			c+=1
+			percent(c)
+			commons[pageid][2]+=1
+print 'Cargadas %d imagenes en las galerias' % (c)
+f.close()
+
+#salida
+
+evitar='' #lo dejamos en blanco para que falle si no tenemos plantillas para cierto idioma
+if plantillas.has_key(lang):
+	for k, v in plantillas[lang]:
+		for k2 in v:
+			evitar+='%s|' % k2
+			if k2!=re.sub(' ', '_', k2):
+				evitar+='%s|' % re.sub(' ', '_', k2)
+	evitar=evitar[:len(evitar)-1]
+
+print evitar
+
+c=0
+for k, v in commons.items():
+	if not usocommons.has_key(v[1]) and v[2]>=5:
+		c+=1
+		wikipedia.output(u'%d) %s %s %s' % (c, k, v[0], v[1]))
+		
+		"""page=wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), v[1])
+		if page.exists() and not page.isRedirectPage() and not page.isDisambig():
+			text=page.get()
+			if not re.search(ur'(?i)(%s)' % evitar, text):
+				if re.search(ur'(?im)^\=+ *Enlaces externos *\=+$', text):
+					newtext=re.sub(ur'(?im)(^\=+ *Enlaces externos *\=+$)', ur'\1\n{{Commons|%s}}' % v[0], text)
+					wikipedia.showDiff(text, newtext)
+					page.put(newtext, u'BOT - Añadiendo enlace a galería en Commons: [[:commons:%s|%s]]' % (v[0], v[0]))
+					time.sleep(10)"""
+
+
+
+
+
