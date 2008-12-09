@@ -90,11 +90,10 @@ f.close()
 
 evitar='' #lo dejamos en blanco para que falle si no tenemos plantillas para cierto idioma
 if plantillas.has_key(lang):
-	for k, v in plantillas[lang]:
-		for k2 in v:
-			evitar+='%s|' % k2
-			if k2!=re.sub(' ', '_', k2):
-				evitar+='%s|' % re.sub(' ', '_', k2)
+	for k2 in plantillas[lang]:
+		evitar+='%s|' % k2
+		if k2!=re.sub(' ', '_', k2):
+			evitar+='%s|' % re.sub(' ', '_', k2)
 	evitar=evitar[:len(evitar)-1]
 
 print evitar
@@ -105,7 +104,7 @@ for k, v in commons.items():
 		c+=1
 		wikipedia.output(u'%d) %s %s %s' % (c, k, v[0], v[1]))
 		
-		"""page=wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), v[1])
+		page=wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), v[1])
 		if page.exists() and not page.isRedirectPage() and not page.isDisambig():
 			text=page.get()
 			if not re.search(ur'(?i)(%s)' % evitar, text):
@@ -113,7 +112,7 @@ for k, v in commons.items():
 					newtext=re.sub(ur'(?im)(^\=+ *Enlaces externos *\=+$)', ur'\1\n{{Commons|%s}}' % v[0], text)
 					wikipedia.showDiff(text, newtext)
 					page.put(newtext, u'BOT - Añadiendo enlace a galería en Commons: [[:commons:%s|%s]]' % (v[0], v[0]))
-					time.sleep(10)"""
+					#time.sleep(10)
 
 
 

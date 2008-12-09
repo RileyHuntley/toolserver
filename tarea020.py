@@ -16,6 +16,7 @@ if len(sys.argv)>=3:
 
 translation={
 'es': u'Wikipedia:Ranking de creaciones (sin redirecciones)',
+'fr': u"Wikipédia:Liste des Wikipédiens par nombre d'articles créés",
 'sl': u'Wikipedija:Seznam Wikipedistov po ustvarjenih člankih',
 }
 
