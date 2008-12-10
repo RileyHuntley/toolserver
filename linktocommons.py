@@ -11,8 +11,12 @@ if len(sys.argv)>=2:
 	lang=sys.argv[1]
 
 plantillas={
+'eo':[u'Commons', u'Commonscat'],
 'es':[u'Commonscat', u'Commons cat', u'Ccat', u'Commons'],
 'en':[u'Commons',u'Pic',u'Commonspar',u'Commonspiped',u'Commonsme',u'Siisterlinkswp',u'Wikicommons',u'Commons-gallery',u'Gallery-link',u'Commons cat',u'Commonscat',u'Commons2',u'CommonsCat',u'Cms-catlit-up',u'Catlst commons',u'Commonscategory',u'Commonscat',u'Commonscat-inline',u'Commons cat left',u'Commons cat multi',u'Commons page',u'Commons-inline',u'Commonstiny',u'Commonstmp',u'Sistercommons',u'Sisterlinks',u'Sisterlinks2'],
+'hu':[u'Commons',u'Közvagyonkat',u'Commons-natúr'],
+'pt':[u'Commons',u'Commons1',u'Commonscat',u'Commons2'],
+'sl':[u'Commons',u'Zbirka'],
 }
 
 os.system('mysql -h commonswiki-p.db.toolserver.org -e "use commonswiki_p;select page_id, page_title, ll_title from langlinks, page where ll_lang=\'%s\' and page_id=ll_from and page_namespace=0;" > /home/emijrp/temporal/commonswikipageid.txt' % lang)
@@ -37,17 +41,17 @@ print 'Cargados %d pageid/pagetitle/lltitle para commons con interwiki a %s:' % 
 f.close()
 
 #que paginas de lang.wikipedia.org tienen ya enlace hacia commons?
-evitar='' #lo dejamos en blanco para que falle si no tenemos plantillas para cierto idioma
+evitar=u'' #lo dejamos en blanco para que falle si no tenemos plantillas para cierto idioma
 if plantillas.has_key(lang):
 	for k in plantillas[lang]:
-		evitar+='tl_title=\'%s\' or ' % k
+		evitar+=u'tl_title=\'%s\' or ' % k
 		if k!=re.sub(' ', '_', k):
-			evitar+='tl_title=\'%s\' or ' % re.sub(' ', '_', k)
+			evitar+=u'tl_title=\'%s\' or ' % re.sub(' ', '_', k)
 	evitar=evitar[:len(evitar)-4]
 
 print evitar
 
-os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_id, page_title from templatelinks, page where tl_from=page_id and page_namespace=0 and (%s);" > /home/emijrp/temporal/usocommons.txt' % (lang, lang, evitar))
+os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_id, page_title from templatelinks, page where tl_from=page_id and page_namespace=0 and (%s);" > /home/emijrp/temporal/usocommons.txt' % (lang, lang, evitar.encode('utf-8')))
 f=open('/home/emijrp/temporal/usocommons.txt', 'r')
 
 c=0
@@ -99,20 +103,32 @@ if plantillas.has_key(lang):
 print evitar
 
 c=0
+regexp={
+'eo': ur'(?im)(^\=+ *Eksteraj ligoj *\=+$)',
+'es': ur'(?im)(^\=+ *Enlaces externos *\=+$)',
+'en': ur'(?im)(^\=+ *External links *\=+$)',
+'hu': ur'(?im)(^\=+ *Külső hivatkozások *\=+$)',
+'pt': ur'(?im)(^\=+ *\{\{ *Ligações externas *\}\} *\=+$)',
+'sl': ur'(?im)(^\=+ *Zunanje povezave *\=+$)',
+}
 for k, v in commons.items():
 	if not usocommons.has_key(v[1]) and v[2]>=5:
 		c+=1
 		wikipedia.output(u'%d) %s %s %s' % (c, k, v[0], v[1]))
 		
+		if re.search(ur'(?i)(atlas)', v[0]):
+			continue
+		
+		
 		page=wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), v[1])
 		if page.exists() and not page.isRedirectPage() and not page.isDisambig():
 			text=page.get()
 			if not re.search(ur'(?i)(%s)' % evitar, text):
-				if re.search(ur'(?im)^\=+ *Enlaces externos *\=+$', text):
-					newtext=re.sub(ur'(?im)(^\=+ *Enlaces externos *\=+$)', ur'\1\n{{Commons|%s}}' % v[0], text)
+				if re.search(regexp[lang], text):
+					newtext=re.sub(regexp[lang], ur'\1\n{{Commons|%s}}' % v[0], text)
 					wikipedia.showDiff(text, newtext)
-					page.put(newtext, u'BOT - Añadiendo enlace a galería en Commons: [[:commons:%s|%s]]' % (v[0], v[0]))
-					#time.sleep(10)
+					page.put(newtext, u'BOT - Adding link to Commons: [[:commons:%s|%s]] (TESTING SOME EDITS, SUPERVISED)' % (v[0], v[0]))
+					time.sleep(10)
 
 
 
