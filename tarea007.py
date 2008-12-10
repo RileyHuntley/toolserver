@@ -48,8 +48,8 @@ for lang in langs:
 		else:
 			advertencia=advdic['default']
 		
-		#url=u"/w/index.php?action=purge&title=Template:%s/%s" % (exportador, urllib.quote(tema))
-		url=u"/w/index.php?title=Template:%s/%s" % (exportador, urllib.quote(tema))
+		url=u"/w/index.php?action=purge&title=Template:%s/%s" % (exportador, urllib.quote(tema))
+		#url=u"/w/index.php?title=Template:%s/%s" % (exportador, urllib.quote(tema))
 		data=newssite.getUrl(url)
 		trozos=data.split("start content")
 		trozos=trozos[1].split("end content")

@@ -11,12 +11,14 @@ if len(sys.argv)>=2:
 	lang=sys.argv[1]
 
 plantillas={
+'de':[u'Commons', u'Commonscat', u'CommonsCat'],
 'eo':[u'Commons', u'Commonscat'],
 'es':[u'Commonscat', u'Commons cat', u'Ccat', u'Commons'],
 'en':[u'Commons',u'Pic',u'Commonspar',u'Commonspiped',u'Commonsme',u'Siisterlinkswp',u'Wikicommons',u'Commons-gallery',u'Gallery-link',u'Commons cat',u'Commonscat',u'Commons2',u'CommonsCat',u'Cms-catlit-up',u'Catlst commons',u'Commonscategory',u'Commonscat',u'Commonscat-inline',u'Commons cat left',u'Commons cat multi',u'Commons page',u'Commons-inline',u'Commonstiny',u'Commonstmp',u'Sistercommons',u'Sisterlinks',u'Sisterlinks2'],
 'hu':[u'Commons',u'Közvagyonkat',u'Commons-natúr'],
 'pt':[u'Commons',u'Commons1',u'Commonscat',u'Commons2'],
 'sl':[u'Commons',u'Zbirka'],
+'tr':[u'Commons',u'CommonsKatÇoklu',u'CommonsKat',u'Commonscat',u'Commons cat',u'CommonsKat-ufak',u'Commons1',u'Commons-ufak'],
 }
 
 os.system('mysql -h commonswiki-p.db.toolserver.org -e "use commonswiki_p;select page_id, page_title, ll_title from langlinks, page where ll_lang=\'%s\' and page_id=ll_from and page_namespace=0;" > /home/emijrp/temporal/commonswikipageid.txt' % lang)
@@ -51,7 +53,7 @@ if plantillas.has_key(lang):
 
 print evitar
 
-os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_id, page_title from templatelinks, page where tl_from=page_id and page_namespace=0 and (%s);" > /home/emijrp/temporal/usocommons.txt' % (lang, lang, evitar.encode('utf-8')))
+os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_id, page_title from templatelinks, page where tl_from=page_id and page_namespace=0 and page_is_redirect=0 and (%s);" > /home/emijrp/temporal/usocommons.txt' % (lang, lang, evitar.encode('utf-8')))
 f=open('/home/emijrp/temporal/usocommons.txt', 'r')
 
 c=0
@@ -72,8 +74,11 @@ print 'Cargados %d pageid/pagetitle de paginas de %s: que ya apuntan a Commons' 
 f.close()
 
 #cuantas imagenes tienen las galerias? merece la pena enlazar?
-os.system('mysql -h commonswiki-p.db.toolserver.org -e "use commonswiki_p;select il_from from imagelinks where il_from in (select page_id from page where page_namespace=0);" > /home/emijrp/temporal/commonsgalleries.txt')
-f=open('/home/emijrp/temporal/commonsgalleries.txt', 'r')
+try:
+	f=open('/home/emijrp/temporal/commonsgalleries.txt', 'r')
+except:
+	os.system('mysql -h commonswiki-p.db.toolserver.org -e "use commonswiki_p;select il_from from imagelinks where il_from in (select page_id from page where page_namespace=0 and page_is_redirect=0);" > /home/emijrp/temporal/commonsgalleries.txt')
+	f=open('/home/emijrp/temporal/commonsgalleries.txt', 'r')
 
 c=0
 for line in f:
@@ -103,32 +108,40 @@ if plantillas.has_key(lang):
 print evitar
 
 c=0
+cc=0
 regexp={
+'de': ur'(?im)(^\=+ *Weblinks *\=+$)',
 'eo': ur'(?im)(^\=+ *Eksteraj ligoj *\=+$)',
 'es': ur'(?im)(^\=+ *Enlaces externos *\=+$)',
 'en': ur'(?im)(^\=+ *External links *\=+$)',
 'hu': ur'(?im)(^\=+ *Külső hivatkozások *\=+$)',
 'pt': ur'(?im)(^\=+ *\{\{ *Ligações externas *\}\} *\=+$)',
 'sl': ur'(?im)(^\=+ *Zunanje povezave *\=+$)',
+'tr': ur'(?im)(^\=+ *Dış bağlantılar *\=+$)',
 }
+
 for k, v in commons.items():
 	if not usocommons.has_key(v[1]) and v[2]>=5:
 		c+=1
-		wikipedia.output(u'%d) %s %s %s' % (c, k, v[0], v[1]))
+		wikipedia.output(u'%d) %s %s %s [Llevamos %d de %d]' % (c, k, v[0], v[1], cc, c))
 		
 		if re.search(ur'(?i)(atlas)', v[0]):
 			continue
 		
-		
-		page=wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), v[1])
-		if page.exists() and not page.isRedirectPage() and not page.isDisambig():
-			text=page.get()
-			if not re.search(ur'(?i)(%s)' % evitar, text):
-				if re.search(regexp[lang], text):
-					newtext=re.sub(regexp[lang], ur'\1\n{{Commons|%s}}' % v[0], text)
-					wikipedia.showDiff(text, newtext)
-					page.put(newtext, u'BOT - Adding link to Commons: [[:commons:%s|%s]] (TESTING SOME EDITS, SUPERVISED)' % (v[0], v[0]))
-					time.sleep(10)
+		"""try:
+			page=wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), v[1])
+			if page.exists() and not page.isRedirectPage() and not page.isDisambig():
+				text=page.get()
+				if not re.search(ur'(?i)(%s)' % evitar, text):
+					if re.search(regexp[lang], text):
+						newtext=re.sub(regexp[lang], ur'\1\n{{Commons|%s}}' % v[0], text)
+						wikipedia.showDiff(text, newtext)
+						page.put(newtext, u'BOT - Adding link to Commons: [[:commons:%s|%s]] (TESTING SOME EDITS, SUPERVISED)' % (v[0], v[0]))
+						#page.put(newtext, u'BOT - Adding link to Commons: [[:commons:%s|%s]]' % (v[0], v[0]))
+						#time.sleep(10)
+						cc+=1
+		except:
+			pass"""
 
 
 
