@@ -128,20 +128,20 @@ for k, v in commons.items():
 		if re.search(ur'(?i)(atlas)', v[0]):
 			continue
 		
-		"""try:
+		try:
 			page=wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), v[1])
 			if page.exists() and not page.isRedirectPage() and not page.isDisambig():
 				text=page.get()
-				if not re.search(ur'(?i)(%s)' % evitar, text):
+				if not re.search(ur'(?i)(%s)' % evitar, text) and not re.search(ur'taxo', text): #taxobox
 					if re.search(regexp[lang], text):
 						newtext=re.sub(regexp[lang], ur'\1\n{{Commons|%s}}' % v[0], text)
 						wikipedia.showDiff(text, newtext)
-						page.put(newtext, u'BOT - Adding link to Commons: [[:commons:%s|%s]] (TESTING SOME EDITS, SUPERVISED)' % (v[0], v[0]))
-						#page.put(newtext, u'BOT - Adding link to Commons: [[:commons:%s|%s]]' % (v[0], v[0]))
+						#page.put(newtext, u'BOT - Adding link to Commons: [[:commons:%s|%s]] (TESTING SOME EDITS, SUPERVISED)' % (v[0], v[0]))
+						page.put(newtext, u'BOT - Adding link to Commons: [[:commons:%s|%s]]' % (v[0], v[0]))
 						#time.sleep(10)
 						cc+=1
 		except:
-			pass"""
+			pass
 
 
 

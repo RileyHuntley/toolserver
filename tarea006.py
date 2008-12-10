@@ -47,7 +47,7 @@ for i in m:
 		if c<=5:
 			s+=u"|-\n| [[Discusión:%s|%s]] || [http://es.wikipedia.org/w/index.php?title=Discusión:%s&action=history %s] \n" % (art,art,art_,ed)
 		c+=1
-s+=u"|-\n| colspan='2' | Actualizado a las {{subst:CURRENTTIME}} (UTC) del {{subst:CURRENTDAY}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}} por [[Usuario:Toolserver|Toolserver]]\n"
+s+=u"|-\n| colspan='2' | Actualizado a las {{subst:CURRENTTIME}} (UTC) del {{subst:CURRENTDAY}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}} por [[Usuario:BOTijo|BOTijo]]\n"
 s+=u"|}\n</div>"
 wikipedia.output(s)
 page.put(s, u"BOT - Actualizando plantilla")
