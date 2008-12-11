@@ -24,26 +24,25 @@ exclusion_pattern=re.compile(ur'(?i)(\.(gif|mid|ogg|pne?g|svg)|[\'\(\)]|bandera|
 
 #cargamos templates para descartar imagenes inutiles
 templates={}
-for lang in ['en']:
-	print '-'*70
-	print 'Cargando plantillas de %s:' % (lang)
-	templates[lang]={}
-	os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_id, page_title from page where page_namespace=10 and page_is_redirect=0;" > /home/emijrp/temporal/%swikitemplatepageid.txt' % (lang, lang, lang)) # hay que  permitir las redireccinoes? no, seria raro que una imagen estuviera en 1 red
-	f=open('/home/emijrp/temporal/%swikitemplatepageid.txt' % lang, 'r')
-	c=0
-	for line in f:
-		line=unicode(line, 'utf-8')
-		line=line[:len(line)-1] #evitamos \n
-		line=re.sub('_', ' ', line)
-		trozos=line.split('	')
-		if len(trozos)==2:
-			pageid=trozos[0]
-			pagetitle=trozos[1]
-			c+=1
-			percent(c)
-			templates[lang][pageid]=False #intentando ahorrar memoria
-	print '\nCargadas %d plantillas %s:' % (c, lang)
-	f.close()
+print '-'*70
+print 'Cargando plantillas de %s:' % (lenguajefuente)
+templates[lenguajefuente]={}
+os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_id, page_title from page where page_namespace=10;" > /home/emijrp/temporal/%swikitemplatepageid.txt' % (lenguajefuente, lenguajefuente, lenguajefuente)) # hay que  permitir las redireccinoes? no, seria raro que una imagen estuviera en 1 red
+f=open('/home/emijrp/temporal/%swikitemplatepageid.txt' % lenguajefuente, 'r')
+c=0
+for line in f:
+	line=unicode(line, 'utf-8')
+	line=line[:len(line)-1] #evitamos \n
+	line=re.sub('_', ' ', line)
+	trozos=line.split('	')
+	if len(trozos)==2:
+		pageid=trozos[0]
+		pagetitle=trozos[1]
+		c+=1
+		percent(c)
+		templates[lenguajefuente][pageid]=False #intentando ahorrar memoria
+print '\nCargadas %d plantillas de %s:' % (c, lenguajefuente)
+f.close()
 
 #cargamos pageid/pagetitles para lenguajes objetivos
 for lang in lenguajesobjetivos:
@@ -89,9 +88,9 @@ for lang in lenguajesobjetivos:
 			pageid=trozos[0]
 			image=trozos[1]
 			
-			"""#filtro
+			#filtro
 			if re.search(exclusion_pattern, image):
-				continue"""
+				continue
 			
 			c+=1
 			percent(c)
@@ -140,7 +139,7 @@ for lang in lenguajesobjetivos:
 			percent(c)
 			if pagetitle2pageid[lang].has_key(interwiki) and sinimagenes[lang].has_key(pagetitle2pageid[lang][interwiki]):
 				interwikis[lenguajefuente][pageid]=interwiki
-	print '\nCargados %d interwikis desde %s: hacia %s:, que carecen de imagenes' % (c, lenguajefuente, lang)
+	print '\nCargados %d interwikis desde %s: hacia %s:' % (c, lenguajefuente, lang)
 	f.close()
 
 #nota1
@@ -187,9 +186,9 @@ for line in f:
 	trozos=line.split('	')
 	if len(trozos)==1:
 		image=trozos[0]
-		"""#filtro
+		#filtro
 		if re.search(exclusion_pattern, image):
-			continue"""
+			continue
 		c+=1
 		percent(c)
 		images[lenguajefuente][image]=False
@@ -207,7 +206,7 @@ for lang in lenguajesobjetivos:
 	try:
 		f=open('/home/emijrp/temporal/%swikiimagelinks.txt' % lenguajefuente, 'r')
 	except:
-		os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select il_from, il_to from imagelinks where il_from in (select page_id from page where page_namespace=0 and page_is_redirect=0);" > /home/emijrp/temporal/%swikiimagelinks.txt' % (lenguajefuente, lenguajefuente, lenguajefuente))
+		os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select il_from, il_to from imagelinks where il_from in (select page_id from page where (page_namespace=0 or page_namespace=10) and page_is_redirect=0);" > /home/emijrp/temporal/%swikiimagelinks.txt' % (lenguajefuente, lenguajefuente, lenguajefuente)) #el nm 10 hace falta para descartar las imagenes de las plantillas stub, etc, y meterlas en  listanegra
 		f=open('/home/emijrp/temporal/%swikiimagelinks.txt' % lenguajefuente, 'r')
 	c=0
 	for line in f:
@@ -219,27 +218,24 @@ for lang in lenguajesobjetivos:
 			pageid=trozos[0]
 			image=trozos[1]
 			
-			if not pageid2pagetitle[lenguajefuente].has_key(pageid):
-				continue
-			if not sinimagenes[lang].has_key(pagetitle2pageid[lang][interwikis[lenguajefuente][pageid]]):
-				continue
-			
-			#filtro
-			"""if re.search(exclusion_pattern, image):
-				continue"""
-			if listanegra.has_key(image):
+			if listanegra.has_key(image): #debe estar lo primero
 				continue
 			if templates[lenguajefuente].has_key(pageid):
 				listanegra[image]=False
 				continue
 			
-			"""#filtro
+			#filtro
 			if re.search(exclusion_pattern, image):
-				continue"""
+				continue
+				
 			#print image.encode('utf-8')
 			if images[lenguajefuente].has_key(image): #comprobamossi esta subida a la inglesa
 				continue
 			
+			if not pageid2pagetitle[lenguajefuente].has_key(pageid):
+				continue
+			if not sinimagenes[lang].has_key(pagetitle2pageid[lang][interwikis[lenguajefuente][pageid]]):
+				continue
 			
 			
 			c+=1
@@ -297,9 +293,9 @@ for line in f:
 	trozos=line.split('	')
 	if len(trozos)==1:
 		image=trozos[0]
-		"""#filtro
+		#filtro
 		if re.search(exclusion_pattern, image):
-			continue"""
+			continue
 		c+=1
 		percent(c)
 		images['commons'][image]=False
@@ -317,20 +313,30 @@ for lang in lenguajesobjetivos:
 			continue
 		c+=1
 		for k2, v2 in v.items():
-			if not listanegra.has_key(k2) and images['commons'].has_key(k2) and not re.search(exclusion_pattern, k2) and not re.search(ur'[\'\"]', interwikis[lenguajefuente][k]):
-				cc+=1
-				k2_=re.sub(' ', '_', k2)
-				md5_=md5.new(k2_.encode('utf-8')).hexdigest()
-				salida='%s;%s;%s;\n' % (pageid2pagetitle[lenguajefuente][k], interwikis[lenguajefuente][k], k2)
-				salida=salida.encode('utf-8')
-				
-				salida2="INSERT INTO `imagesforbio` (`id`, `language`, `article`, `image`, `url`, `done`) VALUES (NULL, '%s', '%s', '%s', 'http://upload.wikimedia.org/wikipedia/commons/%s/%s/%s', 0);\n" % (lang, interwikis[lenguajefuente][k], k2, md5_[0], md5_[0:2], k2_)
-				salida2=salida2.encode('utf-8')
-				#print salida
-				f.write(salida)
-				g.write(salida2)
+			article=interwikis[lenguajefuente][k]
+			trozos=article.split(' ')
+			temp=u''
+			for t in trozos:
+				if len(t)>=3:
+					temp+=u'%s|' % t
+			
+			if len(temp)>=3:
+				temp=temp[:len(temp)-1]
+				if not listanegra.has_key(k2) and images['commons'].has_key(k2) and not re.search(exclusion_pattern, k2) and not re.search(ur'[\'\"]', article) and re.search(ur"(?i)(%s)" % temp, k2):
+					cc+=1
+					k2_=re.sub(' ', '_', k2)
+					md5_=md5.new(k2_.encode('utf-8')).hexdigest()
+					salida='%s;%s;%s;\n' % (pageid2pagetitle[lenguajefuente][k], interwikis[lenguajefuente][k], k2)
+					salida=salida.encode('utf-8')
+					
+					salida2="INSERT INTO `imagesforbio` (`id`, `language`, `article`, `image`, `url`, `done`) VALUES (NULL, '%s', '%s', '%s', 'http://upload.wikimedia.org/wikipedia/commons/%s/%s/%s', 0);\n" % (lang, article, k2, md5_[0], md5_[0:2], k2_)
+					salida2=salida2.encode('utf-8')
+					#print salida
+					f.write(salida)
+					g.write(salida2)
 	f.close()
 	g.close()
 
-print '\nFinalmente se encontraron %d articulos susceptibles de ser ilustrados con %d imagenes, en %s:' % (c, cc, lang)
+#print '\nFinalmente se encontraron %d articulos susceptibles de ser ilustrados con %d imagenes, en %s:' % (c, cc, lang)
+print '\nFinalmente se encontraron %d imagenes, en %s:' % (cc, lang)
 
