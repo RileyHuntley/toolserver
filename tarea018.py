@@ -19,7 +19,7 @@ if len(sys.argv)>=2:
 
 langs=['es', 'pl', 'sl']
 
-#os.system('wget http://dammit.lt/wikistats/ -O /mnt/user-store/stats/tmpweb.html')
+os.system('wget http://dammit.lt/wikistats/ -O /mnt/user-store/stats/tmpweb.html')
 file=open('/mnt/user-store/stats/tmpweb.html', 'r')
 wget=file.read()
 ayer=datetime.date.today()-datetime.timedelta(days=1)
