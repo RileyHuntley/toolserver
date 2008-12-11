@@ -16,7 +16,7 @@ plantillas={
 'es':[u'Commonscat', u'Commons cat', u'Ccat', u'Commons'],
 'en':[u'Commons',u'Pic',u'Commonspar',u'Commonspiped',u'Commonsme',u'Siisterlinkswp',u'Wikicommons',u'Commons-gallery',u'Gallery-link',u'Commons cat',u'Commonscat',u'Commons2',u'CommonsCat',u'Cms-catlit-up',u'Catlst commons',u'Commonscategory',u'Commonscat',u'Commonscat-inline',u'Commons cat left',u'Commons cat multi',u'Commons page',u'Commons-inline',u'Commonstiny',u'Commonstmp',u'Sistercommons',u'Sisterlinks',u'Sisterlinks2'],
 'hu':[u'Commons',u'Közvagyonkat',u'Commons-natúr'],
-'pt':[u'Commons',u'Commons1',u'Commonscat',u'Commons2'],
+'pt':[u'Commons',u'Commons1',u'Commonscat',u'Commons2',u'Correlato/commons',u'Correlatos'],
 'sl':[u'Commons',u'Zbirka'],
 'tr':[u'Commons',u'CommonsKatÇoklu',u'CommonsKat',u'Commonscat',u'Commons cat',u'CommonsKat-ufak',u'Commons1',u'Commons-ufak'],
 }
@@ -120,6 +120,14 @@ regexp={
 'tr': ur'(?im)(^\=+ *Dış bağlantılar *\=+$)',
 }
 
+resumes={
+'pt': u'Adicionando ligação ao Commons',
+}
+
+resume=u'Adding link to Commons'
+if resumes.has_key(lang):
+	resume=resumes[lang]
+
 for k, v in commons.items():
 	if not usocommons.has_key(v[1]) and v[2]>=5:
 		c+=1
@@ -137,7 +145,7 @@ for k, v in commons.items():
 						newtext=re.sub(regexp[lang], ur'\1\n{{Commons|%s}}' % v[0], text)
 						wikipedia.showDiff(text, newtext)
 						#page.put(newtext, u'BOT - Adding link to Commons: [[:commons:%s|%s]] (TESTING SOME EDITS, SUPERVISED)' % (v[0], v[0]))
-						page.put(newtext, u'BOT - Adding link to Commons: [[:commons:%s|%s]]' % (v[0], v[0]))
+						page.put(newtext, u'BOT - %s: [[:commons:%s|%s]]' % (resume, v[0], v[0]))
 						#time.sleep(10)
 						cc+=1
 		except:

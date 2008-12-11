@@ -12,8 +12,9 @@ lenguajefuente='en' # mirar nota1 si meto una lista en vez de individual
 #los False son para ahorrar memoria
 
 def percent(c):
-	if c % 50000 == 0:
-		print 'Llevamos %d' % c
+	if c % 1000 == 0:
+		#print '\nLlevamos %d' % c
+		sys.stderr.write(".")
 
 pageid2pagetitle={}
 pagetitle2pageid={}
@@ -24,40 +25,34 @@ exclusion_pattern=re.compile(ur'(?i)(\.(gif|mid|ogg|pne?g|svg)|[\'\(\)]|bandera|
 #cargamos templates para descartar imagenes inutiles
 templates={}
 for lang in ['en']:
-	print 'Cargando templates para %swiki' % (lang)
+	print '-'*70
+	print 'Cargando plantillas de %s:' % (lang)
 	templates[lang]={}
-	try:
-		f=open('/home/emijrp/temporal/%swikitemplatepageid.txt' % lang, 'r')
-		a=0
-	except:
-		os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_id, page_title from page where page_namespace=10 and page_is_redirect=0;" > /home/emijrp/temporal/%swikitemplatepageid.txt' % (lang, lang, lang)) # hay que  permitir las redireccinoes? no, seria raro que una imagen estuviera en 1 red
-		f=open('/home/emijrp/temporal/%swikitemplatepageid.txt' % lang, 'r')
+	os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_id, page_title from page where page_namespace=10 and page_is_redirect=0;" > /home/emijrp/temporal/%swikitemplatepageid.txt' % (lang, lang, lang)) # hay que  permitir las redireccinoes? no, seria raro que una imagen estuviera en 1 red
+	f=open('/home/emijrp/temporal/%swikitemplatepageid.txt' % lang, 'r')
 	c=0
 	for line in f:
 		line=unicode(line, 'utf-8')
 		line=line[:len(line)-1] #evitamos \n
 		line=re.sub('_', ' ', line)
 		trozos=line.split('	')
-		if len(trozos)>=2:
+		if len(trozos)==2:
 			pageid=trozos[0]
 			pagetitle=trozos[1]
 			c+=1
 			percent(c)
 			templates[lang][pageid]=False #intentando ahorrar memoria
-	print 'Cargadas %d templates para %swiki' % (c, lang)
+	print '\nCargadas %d plantillas %s:' % (c, lang)
 	f.close()
 
 #cargamos pageid/pagetitles para lenguajes objetivos
 for lang in lenguajesobjetivos:
-	print 'Cargando pageid/pagetitles para %swiki' % (lang)
+	print '-'*70
+	print 'Cargando pageid/pagetitles para %s:' % (lang)
 	pageid2pagetitle[lang]={}
 	pagetitle2pageid[lang]={}
-	try:
-		f=open('/home/emijrp/temporal/%swikipageid.txt' % lang, 'r')
-		a=0
-	except:
-		os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_id, page_title from page where page_namespace=0 and page_is_redirect=0;" > /home/emijrp/temporal/%swikipageid.txt' % (lang, lang, lang))
-		f=open('/home/emijrp/temporal/%swikipageid.txt' % lang, 'r')
+	os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_id, page_title from page where page_namespace=0 and page_is_redirect=0;" > /home/emijrp/temporal/%swikipageid.txt' % (lang, lang, lang))
+	f=open('/home/emijrp/temporal/%swikipageid.txt' % lang, 'r')
 	c=0
 	for line in f:
 		line=unicode(line, 'utf-8')
@@ -71,42 +66,41 @@ for lang in lenguajesobjetivos:
 			percent(c)
 			pageid2pagetitle[lang][pageid]=pagetitle
 			pagetitle2pageid[lang][pagetitle]=pageid
-	print 'Cargados %d pageid/pagetitle para %swiki' % (c, lang)
+	print '\nCargados %d pageid/pagetitle para %s:' % (c, lang)
 	f.close()
 
 #cargamos imagelinks para lenguajes objetivos
 for lang in lenguajesobjetivos:
-	print 'Cargando imagelinks para %swiki' % (lang)
+	print '-'*70
+	print 'Cargando imagelinks de %s:' % (lang)
 	imagelinks[lang]={}
-	try:
-		f=gzip.open('/mnt/user-store/%swiki-latest-imagelinks.sql.gz' % lang, 'r')
-		a=0
-	except:
-		os.system('wget http://download.wikimedia.org/%swiki/latest/%swiki-latest-imagelinks.sql.gz -O /mnt/user-store/%swiki-latest-imagelinks.sql.gz' % (lang, lang, lang))
-		f=gzip.open('/mnt/user-store/%swiki-latest-imagelinks.sql.gz' % lang, 'r')
+	os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select il_from, il_to from imagelinks where il_from in (select page_id from page where page_namespace=0 and page_is_redirect=0);" > /home/emijrp/temporal/%swikiimagelinks.txt' % (lang, lang, lang))
+	f=open('/home/emijrp/temporal/%swikiimagelinks.txt' % lang, 'r')
 	c=0
 	for line in f:
+		try:
+			line=unicode(line, 'utf-8')
+		except:
+			continue
+		line=line[:len(line)-1] #evitamos \n
 		line=re.sub('_', ' ', line)
-		m=re.findall(imagelinks_pattern, line)
-		for i in m:
-			pageid=i[0]
-			image=i[1]
-			try:
-				image=unicode(image, 'utf-8')
-			except:
-				continue
-			#filtro
-			if re.search(exclusion_pattern, image):
-				continue
+		trozos=line.split('	')
+		if len(trozos)==2:
+			pageid=trozos[0]
+			image=trozos[1]
 			
-			if pageid2pagetitle[lang].has_key(pageid): #solo nos interesa cargar aquellos imagelinks q provienen de articulos
-				c+=1
-				percent(c)
-				if imagelinks[lang].has_key(pageid):
-					imagelinks[lang][pageid][image]=False
-				else:
-					imagelinks[lang][pageid]={image:False}
-	print 'Cargados %d imagelinks para %swiki, quitando excluidas e imagenes enlazadas desde nm!=0' % (c, lang)
+			"""#filtro
+			if re.search(exclusion_pattern, image):
+				continue"""
+			
+			c+=1
+			percent(c)
+			if imagelinks[lang].has_key(pageid):
+				imagelinks[lang][pageid][image]=False
+			else:
+				imagelinks[lang][pageid]={image:False}
+	
+	print '\nCargados %d imagelinks de %s:, quitando excluidas e imagenes enlazadas desde nm!=0' % (c, lang)
 	f.close()
 
 #en imagelinks['es'] estan todos los pageid que contienen alguna imagen
@@ -119,52 +113,45 @@ for lang in lenguajesobjetivos:
 		if not imagelinks[lang].has_key(pageid):
 			sinimagenes[lang][pageid]=False
 			c+=1
-	print 'Se encontraron %d articulos sin imagenes en %swiki' % (c, lang)
+	print '\nSe encontraron %d articulos "sin imagenes utiles" en %s:' % (c, lang)
 
 print 'Vaciamos imagelinks{}'
 imagelinks={}
 
-#cargamos interwikis a articulos en español carentes de imagenes
+#cargamos interwikis a articulos de lang: carentes de imagenes
 interwikis={}
 for lang in lenguajesobjetivos:
-	interwikis_pattern=re.compile(ur'\((\d+)\,\'%s\'\,\'([^\']*?)\'\)' % lang)
-	# (2286,'aa','Category:User sk'),
-	print 'Cargando interwikis para %swiki' % (lenguajefuente)
+	print '-'*70
+	print 'Cargando interwikis de %s: hacia %s:' % (lenguajefuente, lang)
 	interwikis[lenguajefuente]={}
-	try:
-		f=gzip.open('/mnt/user-store/%swiki-latest-langlinks.sql.gz' % lenguajefuente, 'r')
-	except:
-		os.system('wget http://download.wikimedia.org/%swiki/latest/%swiki-latest-langlinks.sql.gz -O /mnt/user-store/%swiki-latest-langlinks.sql.gz' % (lenguajefuente, lenguajefuente, lenguajefuente))
-		f=gzip.open('/mnt/user-store/%swiki-latest-langlinks.sql.gz' % lenguajefuente, 'r')
+	os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select ll_from, ll_title from langlinks where ll_lang=\'%s\';" > /home/emijrp/temporal/%swikiinterwikis-to-%s.txt' % (lenguajefuente, lenguajefuente, lang, lenguajefuente, lang))
+	f=open('/home/emijrp/temporal/%swikiinterwikis-to-%s.txt' % (lenguajefuente, lang), 'r')
 	c=0
 	for line in f:
+		line=unicode(line, 'utf-8')
+		line=line[:len(line)-1] #evitamos \n
 		line=re.sub('_', ' ', line)
-		m=re.findall(interwikis_pattern, line)
-		for i in m:
-			pageid=i[0]
-			interwiki=i[1]
-			try:
-				interwiki=unicode(interwiki, 'utf-8')
-				c+=1
-				percent(c)
-			except:
-				continue
+		trozos=line.split('	')
+		if len(trozos)==2:
+			pageid=trozos[0]
+			interwiki=trozos[1]
+			
+			c+=1
+			percent(c)
 			if pagetitle2pageid[lang].has_key(interwiki) and sinimagenes[lang].has_key(pagetitle2pageid[lang][interwiki]):
 				interwikis[lenguajefuente][pageid]=interwiki
-	print 'Cargadas %d interwikis desde %s: hacia %s:, que carecen de imagenes' % (c, lenguajefuente, lang)
+	print '\nCargados %d interwikis desde %s: hacia %s:, que carecen de imagenes' % (c, lenguajefuente, lang)
 	f.close()
 
 #nota1
-#cargamos pageid y pagetitles solo para aquellos articulos que tienen interwiki a es:
+#cargamos pageid y pagetitles solo para aquellos articulos que tienen interwiki a lang:
 for lang in lenguajesobjetivos:
-	print 'Cargando pageid/pagetitles para %swiki que tengan iw hacia articulos de %s: sin imagenes' % (lenguajefuente, lang)
+	print '-'*70
+	print 'Cargando pageid/pagetitles de %swiki que tengan iw hacia articulos de %s: sin imagenes' % (lenguajefuente, lang)
 	pageid2pagetitle[lenguajefuente]={}
 	pagetitle2pageid[lenguajefuente]={}
-	try:
-		f=open('/home/emijrp/temporal/%swikipageid.txt' % lenguajefuente, 'r')
-	except:
-		os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_id, page_title from page where page_namespace=0 and page_is_redirect=0;" > /home/emijrp/temporal/%swikipageid.txt' % (lenguajefuente, lenguajefuente, lenguajefuente))
-		f=open('/home/emijrp/temporal/%swikipageid.txt' % lenguajefuente, 'r')
+	os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_id, page_title from page where page_namespace=0 and page_is_redirect=0 and page_id in (select ll_from from langlinks where ll_lang=\'%s\');" > /home/emijrp/temporal/%swikipageid-to-%s.txt' % (lenguajefuente, lenguajefuente, lang, lenguajefuente, lang))
+	f=open('/home/emijrp/temporal/%swikipageid-to-%s.txt' % (lenguajefuente, lang), 'r')
 	c=0
 	for line in f:
 		line=unicode(line, 'utf-8')
@@ -179,74 +166,67 @@ for lang in lenguajesobjetivos:
 				percent(c)
 				pageid2pagetitle[lenguajefuente][pageid]=pagetitle
 				#pagetitle2pageid[lenguajefuente][pagetitle]=pageid
-	print 'Cargados %d pageid/pagetitle de %swiki que tienen iw hacia articulos de %s: sin imagenes' % (c, lenguajefuente, lang)
+	print '\nCargados %d pageid/pagetitle de %swiki que tienen iw hacia articulos de %s: sin imagenes' % (c, lenguajefuente, lang)
 	f.close()
 
 #cargamos imagenes subidas a la inglesa y que cumplan ls filtros
+print '-'*70
+print 'Cargando imagenes de %s:' % lenguajefuente
 images={}
-images_pattern=re.compile(ur'\(\'([^\']*?)\'\,\d+\,(\d+)\,(\d+)\,\'.*?\'\,\d+\,\'.*?\'\,\'.*?\'\,\'.*?\'\,\'.*?\'\,\d+\,\'.*?\'\,\'.*?\'\,\'.*?\'\)')
-#('1merkel.jpg',28359,360,500,'0',8,'BITMAP','image','jpeg','',29,'Test user','20050925014209','tbx5vswxtokje1o8to0tl1o5ccnje3h')
 images[lenguajefuente]={}
 try:
-	f=gzip.open('/mnt/user-store/%swiki-latest-image.sql.gz' % lenguajefuente, 'r')
+	f=open('/home/emijrp/temporal/%swiki-images.txt' % lenguajefuente, 'r')
 except:
-	os.system('wget http://download.wikimedia.org/%swiki/latest/%swiki-latest-image.sql.gz -O /mnt/user-store/%swiki-latest-image.sql.gz' % (lenguajefuente, lenguajefuente, lenguajefuente))
-	f=gzip.open('/mnt/user-store/%swiki-latest-image.sql.gz' % lenguajefuente, 'r')
+	os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select img_name from image where img_width<img_height;" > /home/emijrp/temporal/%swiki-images.txt' % (lenguajefuente, lenguajefuente, lenguajefuente))
+	f=open('/home/emijrp/temporal/%swiki-images.txt' % lenguajefuente, 'r')
 c=0
 for line in f:
+	line=unicode(line, 'utf-8')
+	line=line[:len(line)-1] #evitamos \n
 	line=re.sub('_', ' ', line)
-	m=re.findall(images_pattern, line)
-	for i in m:
-		image=i[0]
-		width=int(i[1])
-		height=int(i[2])
-		if width>height:
-			continue
-		try:
-			image=unicode(image, 'utf-8')
-		except:
-			continue
-		#filtro
+	trozos=line.split('	')
+	if len(trozos)==1:
+		image=trozos[0]
+		"""#filtro
 		if re.search(exclusion_pattern, image):
-			continue
+			continue"""
 		c+=1
 		percent(c)
 		images[lenguajefuente][image]=False
 		#print image.encode('utf-8')
-print 'Cargadas %d images de %swiki (descartando iconos, escudos... y width>height)' % (c, lenguajefuente)
+print '\nCargadas %d images de %swiki (descartando iconos, escudos... y width>height)' % (c, lenguajefuente)
 f.close()
 
 #cargamos las imagenes que se usan (y no estan subidas en la inglesa (están en Commons)) y en que articulos se usan
+print '-'*70
+print 'Cargamos imagenes que se usan en %s: y en que articulos' % lenguajefuente
 candidatas={}
 listanegra={}
-for lenguajeobjetivo in lenguajesobjetivos:
+for lang in lenguajesobjetivos:
 	candidatas[lenguajefuente]={}
 	try:
-		f=gzip.open('/mnt/user-store/%swiki-latest-imagelinks.sql.gz' % lenguajefuente, 'r')
+		f=open('/home/emijrp/temporal/%swikiimagelinks.txt' % lenguajefuente, 'r')
 	except:
-		os.system('wget http://download.wikimedia.org/%swiki/latest/%swiki-latest-imagelinks.sql.gz -O /mnt/user-store/%swiki-latest-imagelinks.sql.gz' % (lenguajefuente, lenguajefuente, lenguajefuente))
-		f=gzip.open('/mnt/user-store/%swiki-latest-imagelinks.sql.gz' % lenguajefuente, 'r')
+		os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select il_from, il_to from imagelinks where il_from in (select page_id from page where page_namespace=0 and page_is_redirect=0);" > /home/emijrp/temporal/%swikiimagelinks.txt' % (lenguajefuente, lenguajefuente, lenguajefuente))
+		f=open('/home/emijrp/temporal/%swikiimagelinks.txt' % lenguajefuente, 'r')
 	c=0
 	for line in f:
+		line=unicode(line, 'utf-8')
+		line=line[:len(line)-1] #evitamos \n
 		line=re.sub('_', ' ', line)
-		m=re.findall(imagelinks_pattern, line)
-		for i in m:
-			pageid=i[0]
-			image=i[1]
+		trozos=line.split('	')
+		if len(trozos)==2:
+			pageid=trozos[0]
+			image=trozos[1]
 			
 			if not pageid2pagetitle[lenguajefuente].has_key(pageid):
 				continue
-			if not sinimagenes[lenguajeobjetivo].has_key(pagetitle2pageid[lenguajeobjetivo][interwikis[lenguajefuente][pageid]]):
-				continue
-			
-			try:
-				image=unicode(image, 'utf-8')
-			except:
+			if not sinimagenes[lang].has_key(pagetitle2pageid[lang][interwikis[lenguajefuente][pageid]]):
 				continue
 			
 			#filtro
-			if re.search(exclusion_pattern, image):
-				continue
+			"""if re.search(exclusion_pattern, image):
+				continue"""
 			if listanegra.has_key(image):
 				continue
 			if templates[lenguajefuente].has_key(pageid):
@@ -273,7 +253,7 @@ for lenguajeobjetivo in lenguajesobjetivos:
 			else:
 				candidatas[lenguajefuente][pageid]={image:False}
 	f.close()
-
+print '\nCargadas %d imagenes que se usan en articulos de %s:' % (c, lenguajefuente)
 print 'Vaciamos templates{}'
 templates={}
 
@@ -292,65 +272,59 @@ for line in f:
 	line=re.sub('_', ' ', line)
 	m=re.findall(categories_pattern, line)
 	for i in m:
-		pageid=i[0]
+		pageid=str(i[0])
 		if categories[lenguajefuente].has_key(pageid):
 			continue
 		c+=1
 		percent(c)
 		categories[lenguajefuente][pageid]=False
-print 'Cargadas %d categorylinks desde biografias para %swiki' % (c, lenguajefuente)
+print '\nCargadas %d categorylinks desde biografias para %swiki' % (c, lenguajefuente)
 f.close()
 
 #cargamos imagenes subidas a commons y que cumplan los filtros
 images={}
 images['commons']={}
 try:
-	f=gzip.open('/mnt/user-store/commonswiki-latest-image.sql.gz', 'r')
+	f=open('/home/emijrp/temporal/commonswiki-images.txt', 'r')
 except:
-	os.system('wget http://download.wikimedia.org/commonswiki/latest/commonswiki-latest-image.sql.gz -O /mnt/user-store/commonswiki-latest-image.sql.gz')
-	f=gzip.open('/mnt/user-store/commonswiki-latest-image.sql.gz', 'r')
+	os.system('mysql -h commonswiki-p.db.toolserver.org -e "use commonswiki_p;select img_name from image where img_width<img_height;" > /home/emijrp/temporal/commonswiki-images.txt')
+	f=open('/home/emijrp/temporal/commonswiki-images.txt', 'r')
 c=0
 for line in f:
+	line=unicode(line, 'utf-8')
+	line=line[:len(line)-1] #evitamos \n
 	line=re.sub('_', ' ', line)
-	m=re.findall(images_pattern, line)
-	for i in m:
-		image=i[0]
-		width=int(i[1])
-		height=int(i[2])
-		if width>height:
-			continue
-		try:
-			image=unicode(image, 'utf-8')
-		except:
-			continue
-		#filtro
+	trozos=line.split('	')
+	if len(trozos)==1:
+		image=trozos[0]
+		"""#filtro
 		if re.search(exclusion_pattern, image):
-			continue
+			continue"""
 		c+=1
 		percent(c)
 		images['commons'][image]=False
 		#print image.encode('utf-8')
-print 'Cargadas %d images de commons (descartando iconos, escudos... y width>height)' % (c)
+print '\nCargadas %d images de commons (descartando iconos, escudos... y width>height)' % (c)
 f.close()
 
 c=0
 cc=0
-for lenguajeobjetivo in lenguajesobjetivos:
-	f=open('/home/emijrp/temporal/candidatas-%s.txt' % lenguajeobjetivo, 'w')
-	g=open('/home/emijrp/temporal/candidatas-%s.sql' % lenguajeobjetivo, 'w')
+for lang in lenguajesobjetivos:
+	f=open('/home/emijrp/temporal/candidatas-%s.txt' % lang, 'w')
+	g=open('/home/emijrp/temporal/candidatas-%s.sql' % lang, 'w')
 	for k, v in candidatas[lenguajefuente].items():
-		if not categories[lenguajefuente].has_key(k): #no es biografia?
+		if not categories[lenguajefuente].has_key(str(k)): #no es biografia?
 			continue
 		c+=1
 		for k2, v2 in v.items():
-			if not listanegra.has_key(k2) and images['commons'].has_key(k2):
+			if not listanegra.has_key(k2) and images['commons'].has_key(k2) and not re.search(exclusion_pattern, k2) and not re.search(ur'[\'\"]', interwikis[lenguajefuente][k]):
 				cc+=1
 				k2_=re.sub(' ', '_', k2)
 				md5_=md5.new(k2_.encode('utf-8')).hexdigest()
 				salida='%s;%s;%s;\n' % (pageid2pagetitle[lenguajefuente][k], interwikis[lenguajefuente][k], k2)
 				salida=salida.encode('utf-8')
 				
-				salida2="INSERT INTO `imagesforbio` (`id`, `language`, `article`, `image`, `url`, `done`) VALUES (NULL, '%s', '%s', '%s', 'http://upload.wikimedia.org/wikipedia/commons/%s/%s/%s', 0);\n" % (lenguajeobjetivo, interwikis[lenguajefuente][k], k2, md5_[0], md5_[0:2], k2_)
+				salida2="INSERT INTO `imagesforbio` (`id`, `language`, `article`, `image`, `url`, `done`) VALUES (NULL, '%s', '%s', '%s', 'http://upload.wikimedia.org/wikipedia/commons/%s/%s/%s', 0);\n" % (lang, interwikis[lenguajefuente][k], k2, md5_[0], md5_[0:2], k2_)
 				salida2=salida2.encode('utf-8')
 				#print salida
 				f.write(salida)
@@ -358,5 +332,5 @@ for lenguajeobjetivo in lenguajesobjetivos:
 	f.close()
 	g.close()
 
-print 'Finalmente se encontraron %d articulos susceptibles de ser ilustrados con %d imagenes, en %s:' % (c, cc, lenguajeobjetivo)
+print '\nFinalmente se encontraron %d articulos susceptibles de ser ilustrados con %d imagenes, en %s:' % (c, cc, lang)
 
