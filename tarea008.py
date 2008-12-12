@@ -152,10 +152,5 @@ for lang in lll:
 		page=wikipedia.Page(site, u"Template:Ediciones")
 		page.put(planti2, resume)
 
-	if lang!='es':
-		toolserver=u"This user is a bot. It won't understand you. Comments to [[:es:User talk:Emijrp]]. Thanks.\n\nThis bot is executed from [[meta:Toolserver]], so, if it is necessary, block it by nick. Other users can use the same IP address."
-		page=wikipedia.Page(site, u"User:Toolserver")
-		page.put(toolserver, u"BOT")
-		page=wikipedia.Page(site, u"User talk:Toolserver")
-		page.put(toolserver, u"BOT")
+
 
