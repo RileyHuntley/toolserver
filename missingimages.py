@@ -308,13 +308,14 @@ cc=0
 for lang in lenguajesobjetivos:
 	f=open('/home/emijrp/temporal/candidatas-%s.txt' % lang, 'w')
 	g=open('/home/emijrp/temporal/candidatas-%s.sql' % lang, 'w')
-	for k, v in candidatas[lenguajefuente].items():
-		if not categories[lenguajefuente].has_key(str(k)): #no es biografia?
+	for article, v in candidatas[lenguajefuente].items():
+		if not categories[lenguajefuente].has_key(str(article)): #no es biografia?
 			continue
 		c+=1
-		for k2, v2 in v.items():
-			article=interwikis[lenguajefuente][k]
-			trozos=article.split(' ')
+		for image, v2 in v.items():
+			iw=interwikis[lenguajefuente][article]
+			trocear=u'%s %s' % (iw, article) #para aquellos idiomas como ar: con alfabetos distintos
+			trozos=trocear.split(' ')
 			temp=u''
 			for t in trozos:
 				if len(t)>=3:
@@ -322,14 +323,14 @@ for lang in lenguajesobjetivos:
 			
 			if len(temp)>=3:
 				temp=temp[:len(temp)-1]
-				if not listanegra.has_key(k2) and images['commons'].has_key(k2) and not re.search(exclusion_pattern, k2) and not re.search(ur'[\'\"]', article) and re.search(ur"(?i)(%s)" % temp, k2):
+				if not listanegra.has_key(image) and images['commons'].has_key(image) and not re.search(exclusion_pattern, image) and not re.search(ur'[\'\"]', iw) and re.search(ur"(?i)(%s)" % temp, image):
 					cc+=1
-					k2_=re.sub(' ', '_', k2)
-					md5_=md5.new(k2_.encode('utf-8')).hexdigest()
-					salida='%s;%s;%s;\n' % (pageid2pagetitle[lenguajefuente][k], interwikis[lenguajefuente][k], k2)
+					image_=re.sub(' ', '_', image)
+					md5_=md5.new(image_.encode('utf-8')).hexdigest()
+					salida='%s;%s;%s;\n' % (pageid2pagetitle[lenguajefuente][article], interwikis[lenguajefuente][article], image)
 					salida=salida.encode('utf-8')
 					
-					salida2="INSERT INTO `imagesforbio` (`id`, `language`, `article`, `image`, `url`, `done`) VALUES (NULL, '%s', '%s', '%s', 'http://upload.wikimedia.org/wikipedia/commons/%s/%s/%s', 0);\n" % (lang, article, k2, md5_[0], md5_[0:2], k2_)
+					salida2="INSERT INTO `imagesforbio` (`id`, `language`, `article`, `image`, `url`, `done`) VALUES (NULL, '%s', '%s', '%s', 'http://upload.wikimedia.org/wikipedia/commons/%s/%s/%s', 0);\n" % (lang, iw, image, md5_[0], md5_[0:2], image_)
 					salida2=salida2.encode('utf-8')
 					#print salida
 					f.write(salida)
