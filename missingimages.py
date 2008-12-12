@@ -127,7 +127,10 @@ for lang in lenguajesobjetivos:
 	f=open('/home/emijrp/temporal/%swikiinterwikis-to-%s.txt' % (lenguajefuente, lang), 'r')
 	c=0
 	for line in f:
-		line=unicode(line, 'utf-8')
+		try:
+			line=unicode(line, 'utf-8')
+		except:
+			continue
 		line=line[:len(line)-1] #evitamos \n
 		line=re.sub('_', ' ', line)
 		trozos=line.split('	')
@@ -153,7 +156,10 @@ for lang in lenguajesobjetivos:
 	f=open('/home/emijrp/temporal/%swikipageid-to-%s.txt' % (lenguajefuente, lang), 'r')
 	c=0
 	for line in f:
-		line=unicode(line, 'utf-8')
+		try:
+			line=unicode(line, 'utf-8')
+		except:
+			continue
 		line=line[:len(line)-1] #evitamos \n
 		line=re.sub('_', ' ', line)
 		trozos=line.split('	')
@@ -180,7 +186,10 @@ except:
 	f=open('/home/emijrp/temporal/%swiki-images.txt' % lenguajefuente, 'r')
 c=0
 for line in f:
-	line=unicode(line, 'utf-8')
+	try:
+		line=unicode(line, 'utf-8')
+	except:
+		continue
 	line=line[:len(line)-1] #evitamos \n
 	line=re.sub('_', ' ', line)
 	trozos=line.split('	')
@@ -210,7 +219,10 @@ for lang in lenguajesobjetivos:
 		f=open('/home/emijrp/temporal/%swikiimagelinks.txt' % lenguajefuente, 'r')
 	c=0
 	for line in f:
-		line=unicode(line, 'utf-8')
+		try:
+			line=unicode(line, 'utf-8')
+		except:
+			continue
 		line=line[:len(line)-1] #evitamos \n
 		line=re.sub('_', ' ', line)
 		trozos=line.split('	')
@@ -288,7 +300,10 @@ except:
 	f=open('/home/emijrp/temporal/commonswiki-images.txt', 'r')
 c=0
 for line in f:
-	line=unicode(line, 'utf-8')
+	try:
+		line=unicode(line, 'utf-8')
+	except:
+		continue
 	line=line[:len(line)-1] #evitamos \n
 	line=re.sub('_', ' ', line)
 	trozos=line.split('	')
@@ -336,8 +351,14 @@ for lang in lenguajesobjetivos:
 					salida2="INSERT INTO `imagesforbio` (`id`, `language`, `article`, `image`, `url`, `done`) VALUES (NULL, '%s', '%s', '%s', 'http://upload.wikimedia.org/wikipedia/commons/%s/%s/%s', 0);\n" % (lang, iw, image, md5_[0], md5_[0:2], image_)
 					salida2=salida2.encode('utf-8')
 					
-					f.write(salida)
-					g.write(salida2)
+					try:
+						f.write(salida)
+					except:
+						pass
+					try:
+						g.write(salida2)
+					except:
+						pass
 	f.close()
 	g.close()
 
