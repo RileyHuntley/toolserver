@@ -308,12 +308,13 @@ cc=0
 for lang in lenguajesobjetivos:
 	f=open('/home/emijrp/temporal/candidatas-%s.txt' % lang, 'w')
 	g=open('/home/emijrp/temporal/candidatas-%s.sql' % lang, 'w')
-	for article, v in candidatas[lenguajefuente].items():
-		if not categories[lenguajefuente].has_key(str(article)): #no es biografia?
+	for pageid, v in candidatas[lenguajefuente].items():
+		article=pageid2pagetitle[lenguajefuente][pageid]
+		if not categories[lenguajefuente].has_key(pageid): #no es biografia?
 			continue
 		c+=1
 		for image, v2 in v.items():
-			iw=interwikis[lenguajefuente][article]
+			iw=interwikis[lenguajefuente][pageid]
 			trocear=u'%s %s' % (iw, article) #para aquellos idiomas como ar: con alfabetos distintos
 			trozos=trocear.split(' ')
 			temp=u''
@@ -327,17 +328,18 @@ for lang in lenguajesobjetivos:
 					cc+=1
 					image_=re.sub(' ', '_', image)
 					md5_=md5.new(image_.encode('utf-8')).hexdigest()
-					salida='%s;%s;%s;\n' % (pageid2pagetitle[lenguajefuente][article], interwikis[lenguajefuente][article], image)
+					
+					salida='%s;%s;%s;\n' % (article, iw, image)
 					salida=salida.encode('utf-8')
 					
 					salida2="INSERT INTO `imagesforbio` (`id`, `language`, `article`, `image`, `url`, `done`) VALUES (NULL, '%s', '%s', '%s', 'http://upload.wikimedia.org/wikipedia/commons/%s/%s/%s', 0);\n" % (lang, iw, image, md5_[0], md5_[0:2], image_)
 					salida2=salida2.encode('utf-8')
-					#print salida
+					
 					f.write(salida)
 					g.write(salida2)
 	f.close()
 	g.close()
 
 #print '\nFinalmente se encontraron %d articulos susceptibles de ser ilustrados con %d imagenes, en %s:' % (c, cc, lang)
-print '\nFinalmente se encontraron %d imagenes, en %s:' % (cc, lang)
+print '\n---->(((((Finalmente se encontraron %d imagenes, en %s:)))))<----' % (cc, lang)
 
