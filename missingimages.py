@@ -176,7 +176,7 @@ images[lenguajefuente]={}
 try:
 	f=open('/home/emijrp/temporal/%swiki-images.txt' % lenguajefuente, 'r')
 except:
-	os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select img_name from image where img_width<img_height;" > /home/emijrp/temporal/%swiki-images.txt' % (lenguajefuente, lenguajefuente, lenguajefuente))
+	os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select img_name from image;" > /home/emijrp/temporal/%swiki-images.txt' % (lenguajefuente, lenguajefuente, lenguajefuente)) #no poner img_width<img_height, ya que hay que tenerlas para descartarlas
 	f=open('/home/emijrp/temporal/%swiki-images.txt' % lenguajefuente, 'r')
 c=0
 for line in f:
@@ -193,7 +193,7 @@ for line in f:
 		percent(c)
 		images[lenguajefuente][image]=False
 		#print image.encode('utf-8')
-print '\nCargadas %d images de %swiki (descartando iconos, escudos... y width>height)' % (c, lenguajefuente)
+print '\nCargadas %d images de %swiki (descartando iconos, escudos... )' % (c, lenguajefuente)
 f.close()
 
 #cargamos las imagenes que se usan (y no estan subidas en la inglesa (están en Commons)) y en que articulos se usan
@@ -230,6 +230,7 @@ for lang in lenguajesobjetivos:
 				
 			#print image.encode('utf-8')
 			if images[lenguajefuente].has_key(image): #comprobamossi esta subida a la inglesa
+				listanegra[image]=False
 				continue
 			
 			if not pageid2pagetitle[lenguajefuente].has_key(pageid):
