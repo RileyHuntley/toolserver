@@ -332,6 +332,7 @@ for lang in lenguajesobjetivos:
 		for image, v2 in v.items():
 			iw=interwikis[lenguajefuente][pageid]
 			trocear=u'%s %s' % (iw, article) #para aquellos idiomas como ar: con alfabetos distintos
+			trocear=re.sub(ur'[\(\)]', ur'', trocear)
 			trozos=trocear.split(' ')
 			temp=u''
 			for t in trozos:
@@ -340,25 +341,29 @@ for lang in lenguajesobjetivos:
 			
 			if len(temp)>=3:
 				temp=temp[:len(temp)-1]
-				if not listanegra.has_key(image) and images['commons'].has_key(image) and not re.search(exclusion_pattern, image) and not re.search(ur'[\'\"]', iw) and re.search(ur"(?i)(%s)" % temp, image):
-					cc+=1
-					image_=re.sub(' ', '_', image)
-					md5_=md5.new(image_.encode('utf-8')).hexdigest()
-					
-					salida='%s;%s;%s;\n' % (article, iw, image)
-					salida=salida.encode('utf-8')
-					
-					salida2="INSERT INTO `imagesforbio` (`id`, `language`, `article`, `image`, `url`, `done`) VALUES (NULL, '%s', '%s', '%s', 'http://upload.wikimedia.org/wikipedia/commons/%s/%s/%s', 0);\n" % (lang, iw, image, md5_[0], md5_[0:2], image_)
-					salida2=salida2.encode('utf-8')
-					
-					try:
-						f.write(salida)
-					except:
-						pass
-					try:
-						g.write(salida2)
-					except:
-						pass
+				if not listanegra.has_key(image):
+					if images['commons'].has_key(image):
+						if not re.search(exclusion_pattern, image):
+							if not re.search(ur'([\'\"]|[^\d]0\d\d[^\d])', u'%s %s' % (iw, image)):
+								if re.search(ur"(?i)(%s)" % temp, image):
+									cc+=1
+									image_=re.sub(' ', '_', image)
+									md5_=md5.new(image_.encode('utf-8')).hexdigest()
+									
+									salida='%s;%s;%s;\n' % (article, iw, image)
+									salida=salida.encode('utf-8')
+									
+									salida2="INSERT INTO `imagesforbio` (`id`, `language`, `article`, `image`, `url`, `done`) VALUES (NULL, '%s', '%s', '%s', 'http://upload.wikimedia.org/wikipedia/commons/%s/%s/%s', 0);\n" % (lang, iw, image, md5_[0], md5_[0:2], image_)
+									salida2=salida2.encode('utf-8')
+									
+									try:
+										f.write(salida)
+									except:
+										pass
+									try:
+										g.write(salida2)
+									except:
+										pass
 	f.close()
 	g.close()
 
