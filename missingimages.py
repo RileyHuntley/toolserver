@@ -20,7 +20,7 @@ pageid2pagetitle={}
 pagetitle2pageid={}
 imagelinks={}
 imagelinks_pattern=re.compile(ur'\((\d+)\,\'([^\']*?)\'\)')
-exclusion_pattern=re.compile(ur'(?i)(\.(gif|mid|ogg|pne?g|svg)|[\'\(\)]|bandera|escudo|coa|blas[oó]n|icon|flag|coat|shield|wiki|logo|barnstar|dot|map|cover)')
+exclusion_pattern=re.compile(ur'(?i)(\.(gif|mid|ogg|pne?g|svg)|bandera|escudo|coa|blas[oó]n|icon|flag|coat|shield|wiki|logo|barnstar|dot|map|cover)') # los ' y " los filtramos al final
 
 #cargamos templates para descartar imagenes inutiles
 templates={}

@@ -14,6 +14,7 @@ u"es": u"Ranking de ediciones",
 u"fi": u"Luettelo wikipedian käyttäjistä muokkausmäärän mukaan",
 u"fr": u"Utilisateurs par nombre d'éditions", 
 u"gl": u"Estatísticas/Lista de usuarios por número de edicións",
+u"hr": u"Popis Wikipedista po broju uređivanja",
 u"hu": u"Wikipédisták listája szerkesztésszám szerint",
 u"ko": u"편집횟수 순 사용자 목록",
 u"pl": u"Użytkownicy według liczby edycji",
@@ -110,7 +111,7 @@ for lang in lll:
 	planti2+=u"|USUARIO DESCONOCIDO\n}}<noinclude>{{uso de plantilla}}</noinclude>"
 	planti+=u"|-\n| colspan=3 | Véase también [[Wikipedia:Ranking de ediciones]]<br/>Actualizado a las {{subst:CURRENTTIME}} (UTC) del  {{subst:CURRENTDAY}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}} por [[Usuario:Toolserver|Toolserver]] \n|}<noinclude>{{uso de plantilla}}</noinclude>"
 	
-	resume=u"BOT - Updating ranking"
+	resume=u"BOT - Updating ranking (TESTING BOT, PLEASE DON'T PANIC, I'M GOING TO REQUEST FLAG SOON)"
 	title=u''
 	#first ranking
 	if tras1.has_key(lang):
@@ -152,5 +153,10 @@ for lang in lll:
 		page=wikipedia.Page(site, u"Template:Ediciones")
 		page.put(planti2, resume)
 
+	if lang!='es':
+		up=u"This user is a bot. It won't understand you. Comments to [[:es:User talk:Emijrp]]. Thanks.\n\nThis bot is executed from [[meta:Toolserver]], so, if it is necessary, block it by nick. Other users can use the same IP address."
+		page=wikipedia.Page(site, u"User:BOTijo")
+		if not page.exists():
+			page.put(up, u"BOT")
 
 
