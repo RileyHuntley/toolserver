@@ -16,6 +16,7 @@ plantillas={
 'es':[u'Commonscat', u'Commons cat', u'Ccat', u'Commons'],
 'en':[u'Commons',u'Pic',u'Commonspar',u'Commonspiped',u'Commonsme',u'Siisterlinkswp',u'Wikicommons',u'Commons-gallery',u'Gallery-link',u'Commons cat',u'Commonscat',u'Commons2',u'CommonsCat',u'Cms-catlit-up',u'Catlst commons',u'Commonscategory',u'Commonscat',u'Commonscat-inline',u'Commons cat left',u'Commons cat multi',u'Commons page',u'Commons-inline',u'Commonstiny',u'Commonstmp',u'Sistercommons',u'Sisterlinks',u'Sisterlinks2'],
 'hu':[u'Commons',u'Közvagyonkat',u'Commons-natúr'],
+#'it':[u'Commons',u'Commonscat'],
 'pt':[u'Commons',u'Commons1',u'Commonscat',u'Commons2',u'Correlato/commons',u'Correlatos'],
 'sl':[u'Commons',u'Zbirka'],
 'tr':[u'Commons',u'CommonsKatÇoklu',u'CommonsKat',u'Commonscat',u'Commons cat',u'CommonsKat-ufak',u'Commons1',u'Commons-ufak'],
