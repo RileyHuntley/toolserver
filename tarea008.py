@@ -9,6 +9,7 @@ end=u"|}\n</center>\n\n''Please, put here a category similar to <nowiki>[[Catego
 end2=end
 
 tras1={
+u"ca": u"Llista de viquipedistes per nombre d'edicions",
 u"eo": u"Listo de uzantoj laŭ redaktonombro",
 u"es": u"Ranking de ediciones", 
 u"fi": u"Luettelo wikipedian käyttäjistä muokkausmäärän mukaan",

@@ -20,7 +20,7 @@ pageid2pagetitle={}
 pagetitle2pageid={}
 imagelinks={}
 imagelinks_pattern=re.compile(ur'\((\d+)\,\'([^\']*?)\'\)')
-exclusion_pattern=re.compile(ur'(?i)(\.(gif|mid|ogg|pne?g|svg)|bandera|escudo|coa|blas[oó]n|icon|flag|coat|shield|wiki|logo|barnstar|dot|map|cover)') # los ' y " los filtramos al final
+exclusion_pattern=re.compile(ur'(?i)(\.(gif|mid|ogg|pne?g|svg)|bandera|escudo|herb|coa|blas[oó]n|icon|flag|coat|shield|wiki|logo|barnstar|dot|map|cover)') # los ' y " los filtramos al final
 
 #cargamos templates para descartar imagenes inutiles
 templates={}
@@ -290,6 +290,7 @@ for line in f:
 print '\nCargadas %d categorylinks desde biografias para %swiki' % (c, lenguajefuente)
 f.close()
 
+
 #cargamos imagenes subidas a commons y que cumplan los filtros
 images={}
 images['commons']={}
@@ -318,6 +319,7 @@ for line in f:
 		#print image.encode('utf-8')
 print '\nCargadas %d images de commons (descartando iconos, escudos... y width>height)' % (c)
 f.close()
+
 
 c=0
 cc=0
