@@ -27,7 +27,7 @@ for i in m:
 		salida+=u"\n|-\n| %d || [[Wikiproyecto:%s|%s]] || [[Wikiproyecto:%s/participantes|%d]] " % (cont, project, project, project, contpart)
 	cont+=1
 
-salida+=u"\n|}\nActualizado a las {{subst:CURRENTTIME}} (UTC) del  {{subst:CURRENTDAY}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}} por [[Usuario:Toolserver|Toolserver]]\n</center>\n\n== Véase también ==\n*[[Wikipedia:Ranking de ediciones]]\n*[[Wikipedia:Ranking de ediciones (incluye bots)]]\n\n[[Categoría:Wikipedia:Estadísticas|Ranking]]"
+salida+=u"\n|}\n</center>\n\n== Véase también ==\n*[[Wikipedia:Ranking de ediciones]]\n*[[Wikipedia:Ranking de ediciones (incluye bots)]]\n\n[[Categoría:Wikipedia:Estadísticas|Ranking]]"
 
 wiii=wikipedia.Page(site, u"Wikipedia:Ranking de wikiproyectos")
 wiii.put(salida, u"BOT - Actualizando ranking de wikiproyectos")
