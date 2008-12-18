@@ -15,7 +15,7 @@ limitenuevos=2000
 categories={}
 proyects=[]
 proyectsall=[]
-avisotoolserver=u'<noinclude>{{aviso|Esta plantilla es actualizada automáticamente por {{u|Toolserver}}. No hagas cambios aquí. Si hay errores avisa a {{u|emijrp}}.}}</noinclude>\n'
+avisotoolserver=u'<noinclude>{{aviso|Esta plantilla es actualizada automáticamente. No hagas cambios aquí. Si hay errores avisa a {{u|emijrp}}.}}</noinclude>\n'
 nohay=u':No hay contenido con estas características.'
 
 wikipedia.output(u'Cargando proyectos')
@@ -76,7 +76,7 @@ newpagesgen=wikisite.newpages(number=limitenuevos)
 for newpage in newpagesgen:
 	newpagetitle=newpage[0].title()
 	newpagedate=newpage[1]
-	newpageuser=re.sub(ur'( \(aún no redactado\)|(Contribuciones|Contributions)\/)', ur'', newpage[4])
+	newpageuser=re.sub(ur'( \(aún no redactado\)|(Contribuciones|Contributions)\/|\" class\=\"mw\-userlink)', ur'', newpage[4])
 	if not nuevos_dic.has_key(newpagetitle):
 		nuevos_dic[newpagetitle]={'date':newpagedate,'user':newpageuser}
 		nuevos_list.append(newpagetitle) #para conservar orden cronologico usando el indice de la list[]
