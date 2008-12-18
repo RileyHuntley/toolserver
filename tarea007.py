@@ -24,8 +24,9 @@ advdic={
 }
 
 tempdic={
+#no poner u'', sino no funciona. Luego con urllib.quote se soluciona
 'es': 'Plantilla',
-'fr': u'Modèle',
+'fr': 'Modèle',
 }
 
 temas={
@@ -36,6 +37,7 @@ temas={
 for lang in langs:
 	wikisite=wikipedia.Site(lang, 'wikipedia')
 	newssite=wikipedia.Site(lang, 'wikinews')
+	wikipedia.Page(newssite, u'User:BOTijo/Sandbox').put(u'1', u'BOT')
 	for tema in temas[lang]:
 		exportador=u''
 		if expdic.has_key(lang):
@@ -53,7 +55,7 @@ for lang in langs:
 		else:
 			advertencia=advdic['default']
 		
-		url=u"/w/index.php?action=purge&title=%s:%s/%s" % (tempdic[lang], exportador, urllib.quote(tema))
+		url=u"/w/index.php?action=purge&title=%s:%s/%s" % (urllib.quote(tempdic[lang]), exportador, urllib.quote(tema))
 		#url=u"/w/index.php?title=Template:%s/%s" % (exportador, urllib.quote(tema))
 		data=newssite.getUrl(url)
 		trozos=data.split("start content")
