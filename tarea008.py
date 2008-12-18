@@ -10,6 +10,7 @@ end2=end
 
 tras1={
 u"ca": u"Llista de viquipedistes per nombre d'edicions",
+u"da": u"Wikipedianere efter antal redigeringer",
 u"eo": u"Listo de uzantoj laŭ redaktonombro",
 u"es": u"Ranking de ediciones", 
 u"fi": u"Luettelo wikipedian käyttäjistä muokkausmäärän mukaan",
@@ -25,6 +26,7 @@ u"sv": u"Lista över Wikipedia-användare sorterad efter antalet redigeringar",
 u"vi": u"Danh sách thành viên Wikipedia theo số lần sửa trang",
 }
 tras2={
+u"ca": u"Llista de viquipedistes per nombre d'edicions (bots inclosos)",
 u"eo": u"Listo de uzantoj laŭ redaktonombro (inkluzivante robotojn)",
 u"es": u"Ranking de ediciones (incluye bots)", 
 u"fr": u"Utilisateurs par nombre d'éditions (bots inclus)", 
@@ -113,7 +115,12 @@ for lang in lll:
 	planti2+=u"|USUARIO DESCONOCIDO\n}}<noinclude>{{uso de plantilla}}</noinclude>"
 	planti+=u"|-\n| colspan=3 | Véase también [[Wikipedia:Ranking de ediciones]]<br/>Actualizado a las {{subst:CURRENTTIME}} (UTC) del  {{subst:CURRENTDAY}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}} por [[Usuario:Toolserver|Toolserver]] \n|}<noinclude>{{uso de plantilla}}</noinclude>"
 	
-	resume=u"BOT - Updating ranking (TESTING BOT, PLEASE DON'T PANIC, I'M GOING TO REQUEST FLAG SOON)"
+	resume=u""
+	if bots.count(u"BOTijo"):
+		u"BOT - Updating ranking"
+	else:
+		resume=u"BOT - Updating ranking (TESTING BOT, PLEASE DON'T PANIC, I'M GOING TO REQUEST FLAG SOON)"
+	
 	title=u''
 	#first ranking
 	if tras1.has_key(lang):
