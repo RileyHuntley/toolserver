@@ -27,6 +27,7 @@ u"vi": u"Danh sách thành viên Wikipedia theo số lần sửa trang",
 }
 tras2={
 u"ca": u"Llista de viquipedistes per nombre d'edicions (bots inclosos)",
+u"da": u"Wikipedianere efter antal redigeringer (bots inkluderet)",
 u"eo": u"Listo de uzantoj laŭ redaktonombro (inkluzivante robotojn)",
 u"es": u"Ranking de ediciones (incluye bots)", 
 u"fr": u"Utilisateurs par nombre d'éditions (bots inclus)", 
