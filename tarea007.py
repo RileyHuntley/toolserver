@@ -2,11 +2,10 @@
 
 import wikipedia,re,urllib,sys
 
-langs=['es', 'fr']
+langs=['pt', 'es', 'fr']
 
-lang='es'
 if len(sys.argv)>=2:
-	lang=sys.argv[1]
+	langs=[sys.argv[1]]
 
 impdic={
 'default': 'NewsImporter',
@@ -27,11 +26,13 @@ tempdic={
 #no poner u'', sino no funciona. Luego con urllib.quote se soluciona
 'es': 'Plantilla',
 'fr': 'Modèle',
+'pt': 'Predefinição',
 }
 
 temas={
 'es': ['Afganistán', 'Albania', 'Alemania', 'Andorra', 'Angola', 'Arabia Saudita', 'Argelia', 'Argentina', 'Armenia', 'Astronomía', 'Australia', 'Austria', 'Azerbaiyán', 'Bahamas', 'Bahréin', 'Bangladesh', 'Belice', 'Benín', 'Birmania', 'Bolivia', 'Bosnia-Herzegovina', 'Brasil', 'Brunéi', 'Burkina Faso', 'Burundi', 'Bélgica', 'Camboya', 'Camerún', 'Canadá', 'Chad', 'Chile', 'China', 'Chipre', 'Colombia', 'Comoras', 'Corea del Norte', 'Corea del Sur', 'Costa Rica', 'Costa de Marfil', 'Croacia', 'Cuba', 'Deportes', 'Dinamarca', 'Dominica', 'Ecuador', 'Egipto', 'El Salvador', 'Emiratos Árabes Unidos', 'Eritrea', 'Escocia', 'Eslovaquia', 'Eslovenia', 'España', 'Estados Unidos', 'Europa', 'Estonia', 'Etiopía', 'Filipinas', 'Finlandia', 'Fiyi', 'Francia', 'Gales', 'Georgia', 'Ghana', 'Grecia', 'Guatemala', 'Guinea', 'Guinea Ecuatorial', 'Guinea-Bissau', 'Guyana', 'Haití', 'Honduras', 'Hungría', 'India', 'Indonesia', 'Inglaterra', 'Iraq', 'Irlanda', 'Irlanda del Norte', 'Irán', 'Islandia', 'Islas Marshall', 'Islas Salomón', 'Israel', 'Italia', 'Jamaica', 'Japón', 'Jordania', 'Judicial', 'Kenia', 'Kosovo', 'Kuwait', 'Letonia', 'Liberia', 'Libia', 'Liechtenstein', 'Lituania', 'Luxemburgo', 'Líbano', 'Macedonia', 'Madagascar', 'Malasia', 'Malta', 'Malí', 'Marruecos', 'Martinica', 'Mauricio', 'Mauritania', 'Micronesia', 'Montenegro', 'Mozambique', 'México', 'Namibia', 'Nauru', 'Nepal', 'Nicaragua', 'Nigeria', 'Noruega', 'Nueva Zelanda', 'Níger', 'Pakistán', 'Palau', 'Palestina', 'Panamá', 'Paraguay', 'Países Bajos', 'Perú', 'Polonia', 'Portugal', 'Puerto Rico', 'Qatar', 'Reino Unido', 'República Centroafricana', 'República Checa', 'República Democrática del Congo', 'República Dominicana', 'República del Congo', 'Ruanda', 'Rumania', 'Rusia', 'Samoa', 'San Marino', 'Senegal', 'Serbia', 'Sierra Leona', 'Singapur', 'Siria', 'Somalia', 'Sri Lanka', 'Sudáfrica', 'Sudán', 'Suecia', 'Suiza', 'Surinam', 'Tailandia', 'Taiwán', 'Tanzania', 'Tayikistán', 'Tecnología', 'Timor Oriental', 'Todas', 'Togo', 'Tonga', 'Turquía', 'Túnez', 'Ucrania', 'Uganda', 'Uruguay', 'Vanuatu', 'Vaticano', 'Venezuela', 'Vietnam', 'Yemen', 'Zambia', 'Zimbabue'],
 'fr': ['All'],
+'pt': ['All'],
 }
 
 for lang in langs:
