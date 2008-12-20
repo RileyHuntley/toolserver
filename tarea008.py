@@ -120,7 +120,7 @@ for lang in lll:
 	if bots.count(u"BOTijo"):
 		resume=u"BOT - Updating ranking"
 	else:
-		resume=u"BOT - Updating ranking (TESTING BOT, PLEASE DON'T PANIC, I'M GOING TO REQUEST FLAG SOON)"
+		resume=u"BOT - Updating ranking (Testing bot, please don't panic, I'm going to request flag soon)"
 	
 	title=u''
 	#first ranking
