@@ -72,7 +72,7 @@ for lang in langs:
 			noticia=i.group(2)
 			noticias+="\n* %s: [[n:%s|%s]]" % (fecha, noticia, noticia)
 		
-		wikipedia.output(u"----------------------------------------\n%s" % noticias)
+		#wikipedia.output(u"----------------------------------------\n%s" % noticias)
 		page=wikipedia.Page(wikisite, u'Template:%s/%s' % (importador, urllib.quote(tema)))
 		
 		if page.exists():

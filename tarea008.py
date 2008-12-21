@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime
-import os, re, wikipedia
+import os, re, wikipedia, sys
 
 begin=u"''Please, translate this into your language and delete the english text'': This table shows '''first {{{1}}} users with more edits''' in this Wikipedia. Bots are not included.\n\n''If you want to change page title, contact to [[:es:User talk:Emijrp]]. Thanks.''\n\n<center>\n{| class='wikitable sortable' style='text-align:center;'\n! #\n! User\n! Edits\n"
 begin2=u"''Please, translate this into your language and delete the english text'': This table shows '''first {{{1}}} users with more edits''' in this Wikipedia. Bots are included.\n\n''If you want to change page title, contact to [[:es:User talk:Emijrp]]. Thanks.''\n\n<center>\n{| class='wikitable sortable' style='text-align:center;'\n! #\n! User\n! Edits\n"
@@ -17,6 +17,7 @@ u"fi": u"Luettelo wikipedian käyttäjistä muokkausmäärän mukaan",
 u"fr": u"Utilisateurs par nombre d'éditions", 
 u"gl": u"Estatísticas/Lista de usuarios por número de edicións",
 u"hr": u"Popis Wikipedista po broju uređivanja",
+u"ht": u"Lis Wikipedyen pa nonm edisyon yo fè",
 u"hu": u"Wikipédisták listája szerkesztésszám szerint",
 u"ko": u"편집횟수 순 사용자 목록",
 u"pl": u"Użytkownicy według liczby edycji",
@@ -44,6 +45,10 @@ u"vi": u"Danh sách thành viên Wikipedia theo số lần sửa trang (tính c�
 
 lll=['es', 'eo', 'hu', 'ca', 'tr', 'ro', 'vo', 'fi', 'it', 'nl', 'ru', 'sv', 'no', 'da', 'ar', 'ko', 'sr', 'sl', 'vi', 'bg', 'et', 'ht', 'fa', 'hr', 'new', 'nn', 'te', 'gl', 'th', 'simple', 'he']
 lll=['es', 'eo', 'hu', 'ca', 'tr', 'ro', 'vo', 'nl', 'sv', 'no', 'da', 'ar', 'ko', 'sr', 'sl', 'vi', 'et', 'ht', 'fa', 'hr', 'new', 'nn', 'te', 'gl', 'th', 'simple', 'he']
+
+if len(sys.argv)>1:
+	lll=[sys.argv[1]]
+
 for lang in lll:
 	site=wikipedia.Site(lang, 'wikipedia')
 	
