@@ -11,7 +11,7 @@ if len(sys.argv)>1:
 	lang=sys.argv[1]
 
 file='%swiki-latest-stub-meta-history.xml.gz' % lang
-path='/mnt/user-store/'
+path='/mnt/user-store/stub-meta-history/'
 
 try:
 	f=gzip.open('%s%s' % (path, file), 'r')
@@ -29,7 +29,7 @@ r_timestamp = re.compile(ur'<timestamp>(.*?)</timestamp>')
 r_author = re.compile(ur'<(ip|username)>(.*?)</\1>')
 r_comment = re.compile(ur'<comment>(.*?)</comment>')
 
-g=gzip.open('fetch-%s.txt.gz' % file.split('.')[0], 'w')
+g=gzip.open('%sfetch/fetch-%s.txt.gz' % (path, file.split('.')[0]), 'w')
 output='pagetitle;;;pageid;;;revisionid;;;timestamp;;;author;;;comment;;;\n'
 output=output.encode('utf-8')
 g.write(output)
