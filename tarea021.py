@@ -19,7 +19,8 @@ avisotoolserver=u'<noinclude>{{aviso|Esta plantilla es actualizada automáticame
 nohay=u':No hay contenido con estas características.'
 
 wikipedia.output(u'Cargando proyectos')
-wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/Wikiproyectos')
+site=wikipedia.Site('es', 'wikipedia')
+wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/Wikiproyectos')
 if wii.exists() and not wii.isRedirectPage():
 	text=wii.get()
 	trozos=text.split('\n')
@@ -34,15 +35,13 @@ if wii.exists() and not wii.isRedirectPage():
 		if proyects.count(trozo)==0:
 			proyects.append(trozo)
 	proyectsall.sort()
-	salida=u''
-	for i in proyectsall:
-		salida+=u'%s\n' % i
+	salida='\n'.join(proyectsall)
 	wii.put(salida, u'BOT - Ordenado lista de wikiproyectos y quitando repeticiones si las hay')
 
 #hacer que carguen las categorias desde una pagina, que quite category: etc, y compruebe que existen
 for pr in proyects:
 	wikipedia.output(u'Cargando categorias de %s' % pr)
-	wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s/Categorías' % pr)
+	wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Categorías' % pr)
 	if wii.exists() and not wii.isRedirectPage():
 		text=wii.get()
 		categories[pr]={}
@@ -59,19 +58,16 @@ for pr in proyects:
 				categoriesall.append(trozo)
 				categories[pr][trozo]=[]
 		categoriesall.sort()
-		salida=u''
-		for i in categoriesall:
-			salida+=u'%s\n' % i
+		salida='\n'.join(categoriesall)
 		wii.put(salida, u'BOT - Ordenado lista de categorías y quitando repeticiones si las hay')
 
 page={}
 pagetitle2pageid={}
 
-#bajamos los ultimos nuevos y los metemos en un diccionario, nuevos={}
+#bajamos los ultimos articulos nuevos y los metemos en un diccionario
 nuevos_dic={}
 nuevos_list=[]
-wikisite=wikipedia.Site('es', 'wikipedia')
-newpagesgen=wikisite.newpages(number=limitenuevos)
+newpagesgen=site.newpages(number=limitenuevos)
 
 for newpage in newpagesgen:
 	newpagetitle=newpage[0].title()
@@ -387,7 +383,7 @@ for pr, cats in categories.items():
 			page[artid]['im']=4
 		i+=1
 	
-	#blanqueamos para ahorra memoria
+	#blanqueamos para ahorrar memoria
 	artstitles2=[]
 	
 	#ordenamos listas de importancia
@@ -397,12 +393,8 @@ for pr, cats in categories.items():
 	listqclaseb.reverse()
 	
 	#generamos salida de listas de importancia
-	listqclaseaplana=u''
-	for artentrantes, arttitle in listqclasea:
-		listqclaseaplana+=u'# [[%s]] (%d enlaces entrantes)\n' % (arttitle, artentrantes)
-	listqclasebplana=u''
-	for artentrantes, arttitle in listqclaseb:
-		listqclasebplana+=u'# [[%s]] (%d enlaces entrantes)\n' % (arttitle, artentrantes)
+	listqclaseaplana='\n'.join(['# [[%s]] (%d enlaces entrantes)' % (arttitle, artentrantes) for artentrantes, arttitle in listqclasea])
+	listqclasebplana='\n'.join(['# [[%s]] (%d enlaces entrantes)\n' % (arttitle, artentrantes) for artentrantes, arttitle in listqclaseb])
 	
 	#recorremos los articulos del wikiproyecto
 	qfusionar=0
@@ -416,7 +408,7 @@ for pr, cats in categories.items():
 	qentraduccion=0
 	qveracidaddiscutida=0
 	for arttitle, pageid in artstitles:
-		#resumen tamanos
+		#resumen tamanios
 		if page[pageid]['l']>=10*1024:
 			resumen['>10']+=1
 		if page[pageid]['l']>=5*1024:
@@ -429,7 +421,6 @@ for pr, cats in categories.items():
 			resumen['<1']+=1
 		if page[pageid]['l']<2*1024:
 			resumen['<2']+=1
-		
 		
 		#resumen calidad
 		if page[pageid]['c']==1:
@@ -449,69 +440,58 @@ for pr, cats in categories.items():
 		otros=u''
 		if page[pageid]['f']:
 			qfusionar+=1
-			if not otros:
-				otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Fusionar|fusionar]]' % pr
-			else:
-				otros+=u', [[Wikipedia:Contenido por wikiproyecto/%s#Fusionar|fusionar]]' % pr
+			if otros:
+				otros+=u', '
+			otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Fusionar|fusionar]]' % pr
 		if page[pageid]['con']:
 			qcontextualizar+=1
-			if not otros:
-				otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Contextualizar|contextualizar]]' % pr
-			else:
-				otros+=u', [[Wikipedia:Contenido por wikiproyecto/%s#Contextualizar|contextualizar]]' % pr
+			if otros:
+				otros+=u', '
+			otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Contextualizar|contextualizar]]' % pr
 		if page[pageid]['rel']:
 			qsinrelevancia+=1
-			if not otros:
-				otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Sin relevancia|sin relevancia]]' % pr
-			else:
-				otros+=u', [[Wikipedia:Contenido por wikiproyecto/%s#Sin relevancia|sin relevancia]]' % pr
+			if otros:
+				otros+=u', '
+			otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Sin relevancia|sin relevancia]]' % pr
 		if page[pageid]['wik']:
 			qwikificar+=1
-			if not otros:
-				otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Wikificar|wikificar]]' % pr
-			else:
-				otros+=u', [[Wikipedia:Contenido por wikiproyecto/%s#Wikificar|wikificar]]' % pr
+			if otros:
+				otros+=u', '
+			otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Wikificar|wikificar]]' % pr
 		if page[pageid]['edit']:
 			qcopyedit+=1
-			if not otros:
-				otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Copyedit|copyedit]]' % pr
-			else:
-				otros+=u', [[Wikipedia:Contenido por wikiproyecto/%s#Copyedit|copyedit]]' % pr
+			if otros:
+				otros+=u', '
+			otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Copyedit|copyedit]]' % pr
 		if page[pageid]['ref']:
 			qsinreferencias+=1
-			if not otros:
-				otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Sin referencias|sin referencias]]' % pr
-			else:
-				otros+=u', [[Wikipedia:Contenido por wikiproyecto/%s#Sin referencias|sin referencias]]' % pr
+			if otros:
+				otros+=u', '
+			otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Sin referencias|sin referencias]]' % pr
 		if page[pageid]['obras']:
 			qenobras+=1
-			if not otros:
-				otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#En obras|en obras]]' % pr
-			else:
-				otros+=u', [[Wikipedia:Contenido por wikiproyecto/%s#En obras|en obras]]' % pr
+			if otros:
+				otros+=u', '
+			otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#En obras|en obras]]' % pr
 		if page[pageid]['neutral']:
 			qnoneutral+=1
-			if not otros:
-				otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#No neutral|no neutral]]' % pr
-			else:
-				otros+=u', [[Wikipedia:Contenido por wikiproyecto/%s#No neutral|no neutral]]' % pr
+			if otros:
+				otros+=u', '
+			otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#No neutral|no neutral]]' % pr
 		if page[pageid]['trad']:
 			qentraduccion+=1
-			if not otros:
-				otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#En traducción|en traducción]]' % pr
-			else:
-				otros+=u', [[Wikipedia:Contenido por wikiproyecto/%s#En traducción|en traducción]]' % pr
+			if otros:
+				otros+=u', '
+			otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#En traducción|en traducción]]' % pr
 		if page[pageid]['discutido']:
 			qveracidaddiscutida+=1
-			if not otros:
-				otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Veracidad discutida|discutido]]' % pr
-			else:
-				otros+=u', [[Wikipedia:Contenido por wikiproyecto/%s#Veracidad discutida|discutido]]' % pr
+			if otros:
+				otros+=u', '
+			otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Veracidad discutida|discutido]]' % pr
 		if page[pageid]['nuevo']:
-			if not otros:
-				otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Nuevos|nuevo]]' % pr
-			else:
-				otros+=u', [[Wikipedia:Contenido por wikiproyecto/%s#Nuevos|nuevo]]' % pr
+			if otros:
+				otros+=u', '
+			otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Nuevos|nuevo]]' % pr
 		
 		clasificacionplana=u''
 		if page[pageid]['c']==1: #1 destacado
@@ -542,13 +522,13 @@ for pr, cats in categories.items():
 		if c % limpag == 0:
 			salida+=fin
 			#guardamos
-			wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s/%d' % (pr, c/limpag)) #numeracion
+			wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/%d' % (pr, c/limpag)) #numeracion
 			wii.put(salida, u'BOT - Actualizando lista para [[Wikiproyecto:%s]]' % pr)
 			salida=inicio
 	if salida!=inicio:
 		salida+=fin
 		#guardamos
-		wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s/%d' % (pr, c/limpag+1)) #numeracion
+		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/%d' % (pr, c/limpag+1)) #numeracion
 		wii.put(salida, u'BOT - Actualizando lista para [[Wikiproyecto:%s]]' % pr)
 	salida=u''
 	for i in range(1, c/limpag+2):
@@ -556,7 +536,7 @@ for pr, cats in categories.items():
 			salida+=u' – [[Wikipedia:Contenido por wikiproyecto/%s/%d|Página %d]]' % (pr, i, i)
 		else:
 			salida+=u'[[Wikipedia:Contenido por wikiproyecto/%s|Resumen]]: [[Wikipedia:Contenido por wikiproyecto/%s/%d|Página %d]]' % (pr, pr, i, i)
-	wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s/Índice' % pr) #index
+	wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Índice' % pr) #index
 	wii.put(salida, u'BOT - Actualizando índice')
 	
 	
@@ -571,10 +551,10 @@ for pr, cats in categories.items():
 	tablaclasificacion+=u'\n|-\n| %.1f%s || %.1f%s || %.1f%s || %.1f%s || %.1f%s || %.1f%s || 100%s' % ((resumen['destacado']/(lenartstitles/100.0)), u'%', (resumen['bueno']/(lenartstitles/100.0)), u'%', (resumen['esbozo']/(lenartstitles/100.0)), u'%', (resumen['miniesbozo']/(lenartstitles/100.0)), u'%', (resumen['desambig']/(lenartstitles/100.0)), u'%', (resumen['desconocida']/(lenartstitles/100.0)), u'%', u'%')
 	tablaclasificacion+=u'\n|}</onlyinclude>\n'
 	
-	wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s/Resumen/Clasificación' % pr) #resumen
+	wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Resumen/Clasificación' % pr) #resumen
 	wii.put(tablaclasificacion, u'BOT - Actualizando tabla de clasificación para [[Wikiproyecto:%s]]' % pr)
 	
-	#tabla de tamanos
+	#tabla de tamanios
 	tablatamanos=avisotoolserver
 	tablatamanos+=u'<onlyinclude>{| class="wikitable" style="text-align: center;clear: {{{1|}}};float: {{{1|}}};"\n'
 	tablatamanos+=u'! colspan=6 | Tamaño !! rowspan=2 | Total '
@@ -583,7 +563,7 @@ for pr, cats in categories.items():
 	tablatamanos+=u'\n|-\n| %.1f%s || %.1f%s || %.1f%s || %.1f%s || %.1f%s || %.1f%s || 100%s' % ((resumen['>10']/(lenartstitles/100.0)), u'%', (resumen['>5']/(lenartstitles/100.0)), u'%', (resumen['>2']/(lenartstitles/100.0)), u'%', (resumen['>1']/(lenartstitles/100.0)), u'%', (resumen['<1']/(lenartstitles/100.0)), u'%', (resumen['<2']/(lenartstitles/100.0)), u'%', u'%')
 	tablatamanos+=u'\n|}</onlyinclude>\n'
 	
-	wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s/Resumen/Tamaños' % pr) #resumen
+	wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Resumen/Tamaños' % pr) #resumen
 	wii.put(tablatamanos, u'BOT - Actualizando tabla de tamaños para [[Wikiproyecto:%s]]' % pr)
 	
 	#tabla de clases (importancia)
@@ -595,7 +575,7 @@ for pr, cats in categories.items():
 	tablaimportancia+=u'\n|-\n| 1–2%s || 3–5%s || 6–10%s || 11–100%s || 100%s ' % (u'%', u'%', u'%', u'%', u'%')
 	tablaimportancia+=u'\n|}</onlyinclude>\n'
 	
-	wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s/Resumen/Importancia' % pr) #resumen
+	wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Resumen/Importancia' % pr) #resumen
 	wii.put(tablaimportancia, u'BOT - Actualizando tabla de importancia para [[Wikiproyecto:%s]]' % pr)
 	
 	#tabla de mantenimiento
@@ -616,7 +596,7 @@ for pr, cats in categories.items():
 	tablamantenimiento+=u'\n|-\n| Total \n| %d \n| 100%s ' % (qmantenimiento, u'%')
 	tablamantenimiento+=u'\n|}</onlyinclude>\n'
 	
-	wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s/Resumen/Mantenimiento' % pr) #resumen
+	wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Resumen/Mantenimiento' % pr) #resumen
 	wii.put(tablamantenimiento, u'BOT - Actualizando tabla de mantenimiento para [[Wikiproyecto:%s]]' % pr)
 	
 	#tabla con categorias y numero de articulos que contienen, en desuso
@@ -631,7 +611,7 @@ for pr, cats in categories.items():
 		cont+=1
 	categoriasanalizadas+=u'\n|}'
 
-	#ppagina de resumen con hijas
+	#pagina de resumen con hijas
 	resumen=u'\'\'Actualizado por última vez a las {{subst:CURRENTTIME}} ([[UTC]]) del {{subst:CURRENTDAY}} de {{subst:CURRENTMONTHNAME}} de {{subst:CURRENTYEAR}}.\'\'\n'
 	resumen+=u'{| style="background-color: transparent"\n| valign=top |\n'
 	resumen+=u'{{Wikipedia:Contenido por wikiproyecto/%s/Resumen/Clasificación}}\n' % pr
@@ -645,7 +625,7 @@ for pr, cats in categories.items():
 	resumen+=u'<small>\'\'Esta tabla proviene de <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Resumen/Mantenimiento]]<nowiki>}}</nowiki>\'\'.</small>\n' % pr
 	resumen+=u'|}'
 	
-	wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s/Resumen' % pr) #resumen
+	wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Resumen' % pr) #resumen
 	wii.put(resumen, u'BOT - Actualizando resumen para [[Wikiproyecto:%s]]' % pr)
 	
 	#seccion importancia, mantenimiento
@@ -708,7 +688,7 @@ for pr, cats in categories.items():
 	if destacados:
 		if destacados==avisotoolserver:
 			destacados+=nohay
-		wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s/Artículos destacados' % pr)
+		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Artículos destacados' % pr)
 		wii.put(destacados, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
 		salida+=u'=== Artículos destacados [[Imagen:Cscr-featured.svg|14px|Artículo destacado]] ===\n'
 		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/Artículos destacados|R}}<=%d*1024\n' % (pr, limkblist)
@@ -719,7 +699,7 @@ for pr, cats in categories.items():
 	if buenos:
 		if buenos==avisotoolserver:
 			buenos+=nohay
-		wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s/Artículos buenos' % pr)
+		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Artículos buenos' % pr)
 		wii.put(buenos, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
 		salida+=u'=== Artículos buenos [[Imagen:Artículo bueno.svg|14px|Artículo bueno]] ===\n'
 		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/Artículos buenos|R}}<=%d*1024\n' % (pr, limkblist)
@@ -731,7 +711,7 @@ for pr, cats in categories.items():
 	if clasea:
 		if clasea==avisotoolserver:
 			clasea+=nohay
-		wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s/Importancia Clase-A' % pr)
+		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Importancia Clase-A' % pr)
 		wii.put(clasea, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
 		salida+=u'=== Clase-A ===\n'
 		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/Importancia Clase-A|R}}<=%d*1024\n' % (pr, limkblist)
@@ -742,7 +722,7 @@ for pr, cats in categories.items():
 	if claseb:
 		if claseb==avisotoolserver:
 			claseb+=nohay
-		wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s/Importancia Clase-B' % pr)
+		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Importancia Clase-B' % pr)
 		wii.put(claseb, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
 		salida+=u'=== Clase-B ===\n'
 		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/Importancia Clase-B|R}}<=%d*1024\n' % (pr, limkblist)
@@ -754,7 +734,7 @@ for pr, cats in categories.items():
 	if fusionar:
 		if fusionar==avisotoolserver:
 			fusionar+=nohay
-		wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s/Fusionar' % pr)
+		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Fusionar' % pr)
 		wii.put(fusionar, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
 		salida+=u'=== Fusionar ===\n'
 		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/Fusionar|R}}<=%d*1024\n' % (pr, limkblist)
@@ -765,7 +745,7 @@ for pr, cats in categories.items():
 	if contextualizar:
 		if contextualizar==avisotoolserver:
 			contextualizar+=nohay
-		wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s/Contextualizar' % pr)
+		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Contextualizar' % pr)
 		wii.put(contextualizar, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
 		salida+=u'=== Contextualizar ===\n'
 		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/Contextualizar|R}}<=%d*1024\n' % (pr, limkblist)
@@ -776,7 +756,7 @@ for pr, cats in categories.items():
 	if sinrelevancia:
 		if sinrelevancia==avisotoolserver:
 			sinrelevancia+=nohay
-		wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s/Sin relevancia' % pr)
+		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Sin relevancia' % pr)
 		wii.put(sinrelevancia, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
 		salida+=u'=== Sin relevancia ===\n'
 		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/Sin relevancia|R}}<=%d*1024\n' % (pr, limkblist)
@@ -787,7 +767,7 @@ for pr, cats in categories.items():
 	if wikificar:
 		if wikificar==avisotoolserver:
 			wikificar+=nohay
-		wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s/Wikificar' % pr)
+		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Wikificar' % pr)
 		wii.put(wikificar, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
 		salida+=u'=== Wikificar ===\n'
 		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/Wikificar|R}}<=%d*1024\n' % (pr, limkblist)
@@ -798,7 +778,7 @@ for pr, cats in categories.items():
 	if copyedit:
 		if copyedit==avisotoolserver:
 			copyedit+=nohay
-		wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s/Copyedit' % pr)
+		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Copyedit' % pr)
 		wii.put(copyedit, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
 		salida+=u'=== Copyedit ===\n'
 		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/Copyedit|R}}<=%d*1024\n' % (pr, limkblist)
@@ -809,7 +789,7 @@ for pr, cats in categories.items():
 	if sinreferencias:
 		if sinreferencias==avisotoolserver:
 			sinreferencias+=nohay
-		wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s/Sin referencias' % pr)
+		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Sin referencias' % pr)
 		wii.put(sinreferencias, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
 		salida+=u'=== Sin referencias ===\n'
 		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/Sin referencias|R}}<=%d*1024\n' % (pr, limkblist)
@@ -820,7 +800,7 @@ for pr, cats in categories.items():
 	if enobras:
 		if enobras==avisotoolserver:
 			enobras+=nohay
-		wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s/En obras' % pr)
+		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/En obras' % pr)
 		wii.put(enobras, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
 		salida+=u'=== En obras ===\n'
 		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/En obras|R}}<=%d*1024\n' % (pr, limkblist)
@@ -831,7 +811,7 @@ for pr, cats in categories.items():
 	if noneutral:
 		if noneutral==avisotoolserver:
 			noneutral+=nohay
-		wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s/No neutral' % pr)
+		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/No neutral' % pr)
 		wii.put(noneutral, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
 		salida+=u'=== No neutral ===\n'
 		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/No neutral|R}}<=%d*1024\n' % (pr, limkblist)
@@ -842,7 +822,7 @@ for pr, cats in categories.items():
 	if traduccion:
 		if traduccion==avisotoolserver:
 			traduccion+=nohay
-		wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s/En traducción' % pr)
+		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/En traducción' % pr)
 		wii.put(traduccion, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
 		salida+=u'=== En traducción ===\n'
 		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/En traducción|R}}<=%d*1024\n' % (pr, limkblist)
@@ -853,7 +833,7 @@ for pr, cats in categories.items():
 	if discutido:
 		if discutido==avisotoolserver:
 			discutido+=nohay
-		wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s/Veracidad discutida' % pr)
+		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Veracidad discutida' % pr)
 		wii.put(discutido, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
 		salida+=u'=== Veracidad discutida ===\n'
 		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/Veracidad discutida|R}}<=%d*1024\n' % (pr, limkblist)
@@ -865,7 +845,7 @@ for pr, cats in categories.items():
 	if nuevos:
 		if nuevos==avisotoolserver:
 			nuevos+=nohay
-		wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s/Nuevos' % pr)
+		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Nuevos' % pr)
 		wii.put(nuevos, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
 		salida+=u'== Nuevos ==\n'
 		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/Nuevos|R}}<=%d*1024\n' % (pr, limkblist)
@@ -874,14 +854,14 @@ for pr, cats in categories.items():
 		salida+=u'|:\'\'Esta lista excede los %d KB y no se mostrará. Se puede consultar directamente en <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Nuevos]]<nowiki>}}</nowiki>\'\'.\n' % (limkblist, pr)
 		salida+=u'}}\n\n'
 	
-	wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s/Detalles' % pr) #detalles
+	wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Detalles' % pr) #detalles
 	wii.put(salida, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
 	
 	
 	#pagina del pr
 	#salida=u'{{Wikipedia:Contenido por wikiproyecto/Iconos|%s}}\nAnálisis del contenido en el ámbito de [[Wikiproyecto:%s]]. Para añadir páginas debes modificar la <span class="plainlinks">[http://es.wikipedia.org/w/index.php?title=Wikipedia:Contenido_por_wikiproyecto/%s/Categorías&action=edit lista de categorías]</span>.\n\n== Índice ==\n{{Wikipedia:Contenido por wikiproyecto/%s/Índice}}\n\n== Resumen ==\n{{Wikipedia:Contenido por wikiproyecto/%s/Resumen}}\n\n{{Wikipedia:Contenido por wikiproyecto/%s/Detalles}}\n\n[[Categoría:Wikipedia:Contenido por wikiproyecto|%s]]\n[[Categoría:Wikipedia:Contenido por wikiproyecto/%s| ]]' % (pr, pr, re.sub(u' ', u'_', pr), pr, pr, pr, pr, pr)
 	salida=u'{{Wikipedia:Contenido por wikiproyecto/Iconos|%s}}\nAnálisis del contenido en el ámbito de [[Wikiproyecto:%s]]. Para añadir páginas debes modificar la <span class="plainlinks">[http://es.wikipedia.org/w/index.php?title=Wikipedia:Contenido_por_wikiproyecto/%s/Categorías&action=edit lista de categorías]</span>. {{Purgar|Actualizar esta página}}.\n\n== Índice ==\n{{Wikipedia:Contenido por wikiproyecto/%s/Índice}}\n\n== Resumen ==\n{{Wikipedia:Contenido por wikiproyecto/%s/Resumen}}\n\n{{Wikipedia:Contenido por wikiproyecto/%s/Detalles}}\n\n[[Categoría:Wikipedia:Contenido por wikiproyecto|%s]]\n[[Categoría:Wikipedia:Contenido por wikiproyecto/%s| ]]' % (pr, pr, re.sub(u' ', u'_', pr), pr, pr, pr, pr, pr)
-	wii=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'Wikipedia:Contenido por wikiproyecto/%s' % pr) #principal
+	wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s' % pr) #principal
 	wii.put(salida, u'BOT - Actualizando página de [[Wikiproyecto:%s]]' % pr)
 	
 
