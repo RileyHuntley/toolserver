@@ -51,7 +51,7 @@ for i in m:
 	
 	send=True
 
-s+="\n|-\n| colspan=6 | Actualizado a las {{subst:CURRENTTIME}} (UTC) del {{subst:CURRENTDAY}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}} por [[Usuario:Toolserver|Toolserver]]\n|}"
+s+="\n|-\n| colspan=6 | Actualizado a las {{subst:CURRENTTIME}} (UTC) del {{subst:CURRENTDAY}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}}\n|}<noinclude>{{uso de plantilla}}</noinclude>"
 
 if send:
 	wikipedia.output(s)
