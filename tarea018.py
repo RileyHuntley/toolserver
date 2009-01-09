@@ -3,15 +3,15 @@
 import wikipedia, gzip, os, re, datetime, sys
 import urllib
 import time
+import pagegenerators
 
 import tareas
 
-limite=30
+limite=100
 if len(sys.argv)>1:
 	limite=int(sys.argv[1])
 
 langs=['es', 'en', 'de', 'fr']
-langs=['de']
 exitpage=u'User:BOTijo/Sandbox'
 
 index='/home/emijrp/temporal/tmpweb.html'
@@ -48,6 +48,7 @@ for lang in langs:
 	wikipedia.output("Excepciones de %s: %s" % (lang, exceptions[lang]['raw']))
 
 for gz in gzs:
+	print gz
 	try:
 		f=gzip.open('/mnt/user-store/stats/%s' % gz, 'r')
 	except:
@@ -104,7 +105,7 @@ for gz in gzs:
 			else:
 				pagesdic[pagelang][page]=times
 				analized+=1
-	break
+	#break
 	f.close()
 
 #ordenamos de mas visitas a menos, cada idioma
@@ -125,28 +126,44 @@ for lang, pages in pageslist.items():
 	for page, visits in pages:
 		totalvisits[lang]+=visits
 
+pageselection={}
 for lang, pages in pageslist.items():
-	projsite=wikipedia.Site(lang, 'wikipedia')
-	salida="{{/begin|%d|%s|%d}}" % (limite, lang, totalvisits[lang])
-	
 	c=0
+	pageselection[lang]=[]
 	for page, visits in pages:
 		if re.search(ur'(?im)(Special\:|sort_down\.gif|sort_up\.gif|sort_none\.gif|\&limit\=)', page): #ampliar con otros idiomas
 			continue
 		
-		tmp=wikipedia.Page(projsite, urllib.quote(page))
-		#tmp=wikipedia.Page(projsite, page)
+		c+=1
+		if c<=limite*2: #margen de error, pueden no existir las paginas, aunque seria raro
+			pageselection[lang].append([urllib.quote(page), visits])
+		else:
+			break
+
+for lang, list in pageselection.items():
+	projsite=wikipedia.Site(lang, 'wikipedia')
+	salida="{{/begin|%d|%s|%d}}" % (limite, lang, totalvisits[lang])
+	
+	list2=[]
+	for quotedpage, visits in list:
+		list2.append(quotedpage)
+	gen=pagegenerators.PagesFromTitlesGenerator(list2, projsite)
+	pre=pagegenerators.PreloadingGenerator(gen, pageNumber=limite, lookahead=10)
+	c=0
+	ind=-1
+	for page in pre:
 		detalles=u''
-		if tmp.exists():
-			wtitle=tmp.title()
+		ind+=1
+		if page.exists():
+			wtitle=page.title()
 			
-			if tmp.isRedirectPage():
-				detalles+=u'(#REDIRECT [[%s]]) ' % (tmp.getRedirectTarget().title())
-			elif tmp.isDisambig():
+			if page.isRedirectPage():
+				detalles+=u'(#REDIRECT [[%s]]) ' % (page.getRedirectTarget().title())
+			elif page.isDisambig():
 				detalles+=u'(Desambiguación) '
 			else:
 				pass
-				"""tmpget=tmp.get()
+				"""tmpget=page.get()
 				if re.search(ur'(?i)\{\{ *Artículo bueno', tmpget):
 					detalles+='[[Image:Artículo bueno.svg|14px|Artículo bueno]]'
 				if re.search(ur'(?i)\{\{ *(Artículo destacado|Zvezdica)', tmpget):
@@ -159,10 +176,10 @@ for lang, pages in pageslist.items():
 			wikipedia.output('%s - %d - %s' % (wtitle, visits, detalles))
 			#continue
 			
-			if tmp.namespace() in [6, 14]:
+			if page.namespace() in [6, 14]:
 				wtitle=u':%s' % wtitle
 			c+=1
-			salida+="\n|-\n| %d || [[%s]] %s|| %s " % (c, wtitle, detalles, visits)
+			salida+="\n|-\n| %d || [[%s]] %s|| %s " % (c, wtitle, detalles, list[ind][1])
 			if c>=limite:
 				break
 			#except:

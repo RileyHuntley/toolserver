@@ -127,15 +127,18 @@ for lang in lll:
 	else:
 		resume=u"BOT - Updating ranking (Testing bot, please don't panic, I'm going to request flag soon)"
 	
-	title=u''
+	
 	#first ranking
-	if tras1.has_key(lang):
-		title=u"%s:%s" % (wikipedianm, tras1[lang])
-	else:
-		title=u"%s:List of Wikipedians by number of edits" % wikipedianm
-	page=wikipedia.Page(site, title)
-	if not page.isRedirectPage() and not page.isDisambig():
-		page.put(s, resume)
+	if len(s)>1000: #evitando errores de db replication
+		title=u''
+		if tras1.has_key(lang):
+			title=u"%s:%s" % (wikipedianm, tras1[lang])
+		else:
+			title=u"%s:List of Wikipedians by number of edits" % wikipedianm
+		page=wikipedia.Page(site, title)
+		if not page.isRedirectPage() and not page.isDisambig():
+			page.put(s, resume)
+	
 	#begin & end
 	page=wikipedia.Page(site, u"%s/begin" % title)
 	if not page.exists():
@@ -145,14 +148,16 @@ for lang in lll:
 		page.put(end, resume)
 	
 	#second ranking
-	title=u''
-	if tras2.has_key(lang):
-		title=u"%s:%s" % (wikipedianm, tras2[lang])
-	else:
-		title=u"%s:List of Wikipedians by number of edits (bots included)" % wikipedianm
-	page=wikipedia.Page(site, title)
-	if not page.isRedirectPage() and not page.isDisambig():
-		page.put(sbots, resume)
+	if len(sbots)>1000: #evitando errores de db replication
+		title=u''
+		if tras2.has_key(lang):
+			title=u"%s:%s" % (wikipedianm, tras2[lang])
+		else:
+			title=u"%s:List of Wikipedians by number of edits (bots included)" % wikipedianm
+		page=wikipedia.Page(site, title)
+		if not page.isRedirectPage() and not page.isDisambig():
+			page.put(sbots, resume)
+	
 	#begin & end
 	page=wikipedia.Page(site, u"%s/begin" % title)
 	if not page.exists():
@@ -161,13 +166,15 @@ for lang in lll:
 	if not page.exists():
 		page.put(end2, resume)
 	
+	#otras plantillas
 	if lang=='es':
 		page=wikipedia.Page(site, u"Template:RankingEdiciones")
 		page.put(planti, resume)
 		
 		page=wikipedia.Page(site, u"Template:Ediciones")
 		page.put(planti2, resume)
-
+	
+	#userpages
 	if lang!='es':
 		up=u"This user is a bot. It won't understand you. Comments to [[:es:User talk:Emijrp]]. Thanks.\n\nThis bot is executed from [[meta:Toolserver]], so, if it is necessary, block it by nick. Other users can use the same IP address."
 		page=wikipedia.Page(site, u"User:BOTijo")
