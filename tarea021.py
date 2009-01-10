@@ -394,7 +394,7 @@ for pr, cats in categories.items():
 	
 	#generamos salida de listas de importancia
 	listqclaseaplana='\n'.join(['# [[%s]] (%d enlaces entrantes)' % (arttitle, artentrantes) for artentrantes, arttitle in listqclasea])
-	listqclasebplana='\n'.join(['# [[%s]] (%d enlaces entrantes)\n' % (arttitle, artentrantes) for artentrantes, arttitle in listqclaseb])
+	listqclasebplana='\n'.join(['# [[%s]] (%d enlaces entrantes)' % (arttitle, artentrantes) for artentrantes, arttitle in listqclaseb])
 	
 	#recorremos los articulos del wikiproyecto
 	qfusionar=0
