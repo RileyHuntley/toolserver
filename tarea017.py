@@ -1,6 +1,7 @@
 ﻿# -*- coding: utf-8 -*-
 
 import wikipedia, re
+import pagegenerators
 
 site=wikipedia.Site("es", "wikipedia")
 
@@ -9,25 +10,35 @@ data=data.split('<!-- start content -->')[1]
 data=data.split('<!-- end content -->')[0]
 m=re.compile(ur'title="Wikiproyecto:(.*?)">Wikiproyecto').finditer(data)
 
-salida=u"La siguiente es una '''lista de [[Wikipedia:Wikiproyectos|wikiproyectos]]''' ordenada por número de participantes.\n\n<center>\n{| class='wikitable sortable' style='text-align:center;'\n! #\n! Wikiproyecto\n! Participantes"
-cont=1
+salida=u"{{/begin}}"
+
+projectslists=[]
 for i in m:
-	project=i.group(1)
-	p=wikipedia.Page(site, u"Wikiproyecto:%s" % project)
-	vh=p.getVersionHistory()
-	
-	participantes=wikipedia.Page(site, u"Wikiproyecto:%s/participantes" % project)
-	if participantes.exists() and not participantes.isRedirectPage():
+	projectslists.append(u"Wikiproyecto:%s/participantes" % i.group(1))
+
+projects=[]
+gen=pagegenerators.PagesFromTitlesGenerator(projectslists, site)
+pre=pagegenerators.PreloadingGenerator(gen, pageNumber=100, lookahead=10)
+for p in pre:
+	if p.exists() and not p.isRedirectPage():
 		contpart=0
-		parttext=participantes.get()
+		parttext=p.get()
 		n=re.compile(ur'(?i)(\[\[(User|Usuario):|\{\{ *u *\|)').finditer(parttext)
 		for i in n:
 			contpart+=1
-		wikipedia.output(ur'%d) Wikiproyecto:%s [%d participantes]' % (cont, project, contpart))
-		salida+=u"\n|-\n| %d || [[Wikiproyecto:%s|%s]] || [[Wikiproyecto:%s/participantes|%d]] " % (cont, project, project, project, contpart)
+		project=p.title().split(':')[1].split('/')[0]
+		wikipedia.output(ur'Wikiproyecto:%s [%d participantes]' % (project, contpart))
+		projects.append([contpart, project])
+
+projects.sort()
+projects.reverse()
+
+cont=1
+for contpart, project in projects:
+	salida+=u"\n|-\n| %d || [[Wikiproyecto:%s|%s]] || [[Wikiproyecto:%s/participantes|%d]] " % (cont, project, project, project, contpart)
 	cont+=1
 
-salida+=u"\n|}\n</center>\n\n== Véase también ==\n*[[Wikipedia:Ranking de ediciones]]\n*[[Wikipedia:Ranking de ediciones (incluye bots)]]\n\n[[Categoría:Wikipedia:Estadísticas|Ranking]]"
+salida+=u"\n{{/end}}"
 
 wiii=wikipedia.Page(site, u"Wikipedia:Ranking de wikiproyectos")
 wiii.put(salida, u"BOT - Actualizando ranking de wikiproyectos")

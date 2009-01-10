@@ -39,16 +39,19 @@ m=re.compile(ur"(\d+)	(.*)").finditer(sql)
 page=wikipedia.Page(site, "Template:DiscusionesActivas")
 s=u"<div class='plainlinks'>\n{| class='wikitable' style='clear: right;float: right;margin: 0 0 1em 1em;font-size: 90%;text-align: center;'\n! Discusiones más activas [[Image:FireIcon.svg|18px]]\n! Ediciones\n"
 c=1
+ss=""
 for i in m:
 	ed=str(i.group(1))
 	art_=i.group(2)
 	art=re.sub("_", " ", art_)
 	if not re.search(u"Candidatura a destacado", art):
 		if c<=5:
-			s+=u"|-\n| [[Discusión:%s|%s]] || [http://es.wikipedia.org/w/index.php?title=Discusión:%s&action=history %s] \n" % (art,art,art_,ed)
+			ss+=u"|-\n| [[Discusión:%s|%s]] || [http://es.wikipedia.org/w/index.php?title=Discusión:%s&action=history %s] \n" % (art,art,art_,ed)
 		c+=1
-s+=u"|-\n| colspan='2' | Actualizado a las {{subst:CURRENTTIME}} (UTC) del {{subst:CURRENTDAY}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}} por [[Usuario:BOTijo|BOTijo]]\n"
+s+=ss
+s+=u"|-\n| colspan='2' | Actualizado a las {{subst:CURRENTTIME}} (UTC) del {{subst:CURRENTDAY}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}}\n"
 s+=u"|}\n</div>"
 wikipedia.output(s)
-page.put(s, u"BOT - Actualizando plantilla")
+if ss: #evita errores de db 
+	page.put(s, u"BOT - Actualizando plantilla")
 f.close()
