@@ -9,6 +9,7 @@ end=u"|}\n</center>\n\n''Please, put here a category similar to <nowiki>[[Catego
 end2=end
 
 tras1={
+u"ar": u"قائمة الويكيبيديين حسب عدد التعديلات",
 u"ca": u"Llista de viquipedistes per nombre d'edicions",
 u"da": u"Wikipedianere efter antal redigeringer",
 u"eo": u"Listo de uzantoj laŭ redaktonombro",
@@ -27,6 +28,7 @@ u"sv": u"Lista över Wikipedia-användare sorterad efter antalet redigeringar",
 u"vi": u"Danh sách thành viên Wikipedia theo số lần sửa trang",
 }
 tras2={
+u"ar": u"قائمة الويكيبيديين حسب عدد التعديلات (متضمنة البوتات",
 u"ca": u"Llista de viquipedistes per nombre d'edicions (bots inclosos)",
 u"da": u"Wikipedianere efter antal redigeringer (bots inkluderet)",
 u"eo": u"Listo de uzantoj laŭ redaktonombro (inkluzivante robotojn)",
@@ -40,6 +42,7 @@ u"pl": u"Użytkownicy według liczby edycji (w tym boty)",
 u"ro": u"Lista wikipediştilor după numărul de editări (inclusiv boţi)",
 u"sl": u"Seznam Wikipedistov po številu urejanj (z boti)",
 u"sv": u"Lista över Wikipedia-användare sorterad efter antalet redigeringar (inklusive robotar)",
+u"th": u"รายชื่อชาววิกิพีเดียที่แก้ไขมากที่สุด 500 อันดับ (รวมบอต)",
 u"vi": u"Danh sách thành viên Wikipedia theo số lần sửa trang (tính cả bot)",
 }
 
