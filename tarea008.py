@@ -28,7 +28,7 @@ u"sv": u"Lista över Wikipedia-användare sorterad efter antalet redigeringar",
 u"vi": u"Danh sách thành viên Wikipedia theo số lần sửa trang",
 }
 tras2={
-u"ar": u"قائمة الويكيبيديين حسب عدد التعديلات (متضمنة البوتات",
+u"ar": u"(قائمة الويكيبيديين حسب عدد التعديلات (متضمنة البوتات",
 u"ca": u"Llista de viquipedistes per nombre d'edicions (bots inclosos)",
 u"da": u"Wikipedianere efter antal redigeringer (bots inkluderet)",
 u"eo": u"Listo de uzantoj laŭ redaktonombro (inkluzivante robotojn)",
@@ -46,10 +46,10 @@ u"th": u"รายชื่อชาววิกิพีเดียที่�
 u"vi": u"Danh sách thành viên Wikipedia theo số lần sửa trang (tính cả bot)",
 }
 
-#do not want: nl
+#do not want: nl, simple 
 
 lll=['es', 'eo', 'hu', 'ca', 'tr', 'ro', 'vo', 'fi', 'it', 'nl', 'ru', 'sv', 'no', 'da', 'ar', 'ko', 'sr', 'sl', 'vi', 'bg', 'et', 'ht', 'fa', 'hr', 'new', 'nn', 'te', 'gl', 'th', 'simple', 'he']
-lll=['es', 'eo', 'hu', 'ca', 'tr', 'ro', 'vo', 'sv', 'no', 'da', 'ar', 'ko', 'sr', 'sl', 'vi', 'et', 'ht', 'fa', 'hr', 'new', 'nn', 'te', 'gl', 'th', 'simple', 'he']
+lll=['es', 'eo', 'hu', 'ca', 'tr', 'ro', 'vo', 'sv', 'no', 'da', 'ar', 'ko', 'sr', 'sl', 'vi', 'et', 'ht', 'fa', 'hr', 'new', 'nn', 'te', 'gl', 'th', 'he']
 
 if len(sys.argv)>1:
 	lll=[sys.argv[1]]
