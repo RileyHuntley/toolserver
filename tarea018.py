@@ -11,7 +11,7 @@ limite=100
 if len(sys.argv)>1:
 	limite=int(sys.argv[1])
 
-langs=['es', 'en', 'de', 'fr']
+langs=['de']
 exitpage=u'User:BOTijo/Sandbox'
 
 index='/home/emijrp/temporal/tmpweb.html'
@@ -27,7 +27,8 @@ if len(ayermes)==1:
 ayerdia=str(ayer.day)
 if len(ayerdia)==1:
 	ayerdia='0%s' % ayerdia
-m=re.compile(ur'(?i)\"(pagecounts\-%s%s%s\-\d{6}\.gz)\"' % (ayerano, ayermes, ayerdia)).finditer(wget)
+#m=re.compile(ur'(?i)\"(pagecounts\-%s%s%s\-\d{6}\.gz)\"' % (ayerano, ayermes, ayerdia)).finditer(wget)
+m=re.compile(ur'(?i)\"(pagecounts\-20081201\-\d{6}\.gz)\"').finditer(wget)
 gzs=[]
 for i in m:
 	print i.group(1)
@@ -89,8 +90,8 @@ for gz in gzs:
 			pagelang=i.group('pagelang')
 			page=re.sub('_', ' ', i.group('page'))
 			
-			if re.search(exceptions[pagelang]['compiled'], page):
-				continue
+			#if re.search(exceptions[pagelang]['compiled'], page):
+			#	continue
 			
 			times=int(i.group('times'))
 			other=int(i.group('other'))
@@ -105,7 +106,7 @@ for gz in gzs:
 			else:
 				pagesdic[pagelang][page]=times
 				analized+=1
-	#break
+	break
 	f.close()
 
 #ordenamos de mas visitas a menos, cada idioma
