@@ -81,10 +81,9 @@ for l in f:
 			'anon':{'edits':0,'users':{}},
 			'all':{'edits':0,'users':{}},
 			}
-		else:
-			timestamps[timestamp2][userclass]['edits']+=1
-			timestamps[timestamp2]['all']['edits']+=1
 		
+		timestamps[timestamp2][userclass]['edits']+=1
+		timestamps[timestamp2]['all']['edits']+=1
 		
 		if userclass=='bot':
 			if timestamps[timestamp2][userclass]['users'].has_key(author):
