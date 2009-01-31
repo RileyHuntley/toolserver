@@ -36,13 +36,18 @@ for page in preloadingGen:
 			if iw.site().lang==langorig:
 				wtext=page.get()
 				m=re.compile(ur'\'{3,}(?P<bold>[^\']{3,})\'{3,}').finditer(wtext)
+				bolds=[]
 				for i in m:
-					bold=i.group('bold')
+					if bolds.count(i.group('bold'))==0:
+						bolds.append(i.group('bold'))
+				
+				for bold in bolds:
 					if bold!=wtitle and redirects.has_key(bold) and redirects[bold]==iw.title() and not localpages.has_key(bold):
 						wikipedia.output(u'%s: #REDIRECT [[%s]]' % (bold, wtitle))
 						#comprobar si existe antes de crear redireccion
 						red=wikipedia.Page(wikipediadestino, bold)
 						if not red.exists():
 							red.put(u'#REDIRECT [[%s]]' % wtitle, u'BOT - #REDIRECT [[%s]]' % wtitle)
+				break
 		
 		
