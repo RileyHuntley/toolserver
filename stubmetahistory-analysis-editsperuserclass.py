@@ -18,7 +18,10 @@ site=wikipedia.Site(lang, 'wikipedia')
 
 bots=tareas.getBotsDic(site)
 admins=tareas.getAdminsDic(site)
-namespacesreg=tareas.getNamespacesRegexp(site)
+namespacesreg=tareas.getNamespacesList(site)
+namespacesreg='|'.join(namespacesreg)
+namespacesreg=ur'(%s)' % namespacesreg
+namespacesreg=re.compile(namespacesreg)
 
 path='/mnt/user-store/stub-meta-history/fetch/'
 filename = 'fetch-%swiki-latest-stub-meta-history.txt.gz' % (lang)
