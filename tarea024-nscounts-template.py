@@ -27,6 +27,7 @@ report_template = u'''{{#switch:{{{1|0}}}
 | NR = %s
 | R = %s
 | T = %s}}
+| date = ~~~~~
 }}<noinclude>{{uso de plantilla}}</noinclude>'''
 
 site = wikipedia.getSite()

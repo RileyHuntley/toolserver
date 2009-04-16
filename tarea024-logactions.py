@@ -74,7 +74,7 @@ for query in query_list:
             
 output = u''
 
-report_template = u'Usuarios por acciones de log; actualizado a las ~~~~~.\n%s'
+report_template = u'Usuarios por acciones de log; actualizado a las <onlyinclude>~~~~~</onlyinclude>.\n%s'
 
 table_template = u'''
 == %s ==

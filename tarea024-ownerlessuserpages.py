@@ -24,7 +24,7 @@ import datetime
 report_template = u'''
 {{/begin}}
 
-Páginas de usuario sin dueño; actualizado a las ~~~~~.
+Páginas de usuario sin dueño; actualizado a las <onlyinclude>~~~~~</onlyinclude>.
 
 {| class="wikitable sortable plainlinks" style="width:100%%; margin:auto;"
 |- style="white-space:nowrap;"

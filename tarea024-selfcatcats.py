@@ -36,7 +36,7 @@ page_list = []
 for i, page in enumerate(query): page_list.append(u'| %d\n%s' % (i + 1, page))
  
 report = wikipedia.Page(site, u'Wikipedia:Informes automáticos/Categorías autocontenidas')
-report.put(u'{{/begin}}\n\nCategorías autocontenidas. Informe generado a las ~~~~~.\n\n{| class=\"wikitable ' +
+report.put(u'{{/begin}}\n\nCategorías autocontenidas. Informe generado a las <onlyinclude>~~~~~</onlyinclude>.\n\n{| class=\"wikitable ' +
 u'sortable\" style=\"width:100%; margin:auto;\"\n! #\n! Categoría\n|-\n' + 
 '\n'.join(page_list) + '\n|}\n\n{{/end}}', u'BOT - Actualizando informe', None, False)
 cursor.close()

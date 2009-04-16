@@ -23,7 +23,7 @@ import datetime
 report_template = u'''
 {{/begin}}
 
-El número de páginas de cada [[Wikipedia:Espacio de nombres|espacio de nombres]]; actualizado a las ~~~~~.
+El número de páginas de cada [[Wikipedia:Espacio de nombres|espacio de nombres]]; actualizado a las <onlyinclude>~~~~~</onlyinclude>.
 
 {| class="wikitable sortable" style="width:100%%; margin:auto;"
 |- style="white-space:nowrap;"

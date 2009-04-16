@@ -22,7 +22,7 @@ import MySQLdb, wikipedia
 report_title = 'Wikipedia:Informes automáticos/Páginas con más ediciones'
 
 report_template = u'''
-Páginas con más ediciones; actualizado a las ~~~~~.
+Páginas con más ediciones; actualizado a las <onlyinclude>~~~~~</onlyinclude>.
 
 {| class="wikitable sortable" style="width:100%%; margin:auto;"
 |- style="white-space:nowrap;"
