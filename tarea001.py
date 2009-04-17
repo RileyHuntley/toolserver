@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import generators
 import sys, re
 import wikipedia, pagegenerators,catlib, config,time, thread
@@ -44,6 +46,6 @@ for p in [u"M%C3%BAsica", u"Compositores_e_int%C3%A9rpretes", u"Tauromaquia", u"
 
 por=ta*1.0/(tr+ta)*100
 salida+=u"|%.2f" % (por)
-salida+=u"}}"
+salida+=u"}}<noinclude>{{documentación de plantilla}}</noinclude>"
 wi=wikipedia.Page(wikipedia.Site("es", "wikipedia"), u"Plantilla:ProgresoEncarta")
 wi.put(salida, u"BOT - Actualizando plantilla %.2f%s" % (por, "%"))

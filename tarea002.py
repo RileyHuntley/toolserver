@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import generators
 import sys, re
 import wikipedia, pagegenerators,catlib, config,time, thread
@@ -45,6 +47,6 @@ for p in [u"a-absolver", u"absorbencia-achicadura", u"achicamiento-acullicar", u
 
 por=ta*1.0/(tr+ta)*100
 salida+=u"|%.2f" % (por)
-salida+=u"}}"
+salida+=u"}}<noinclude>{{documentación de plantilla}}</noinclude>"
 wi=wikipedia.Page(wikipedia.Site("es", "wikipedia"), u"Plantilla:ProgresoLemario")
 wi.put(salida, u"BOT - Actualizando plantilla %.2f%s" % (por, "%"))

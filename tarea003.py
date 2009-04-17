@@ -95,6 +95,6 @@ for p in preloadingGen:
  
 porcentaje=contt1*1.0/(contt1+contt2)*100
 progreso+=u"|%.2f" % porcentaje
-progreso+=u"}}"
+progreso+=u"}}<noinclude>{{documentación de plantilla}}</noinclude>"
 x=wikipedia.Page(wikipedia.Site("es", "wikipedia"), u"Plantilla:Progreso1911")
 x.put(progreso, u"BOT - Actualizando plantilla")
