@@ -14,6 +14,7 @@ u"ca": u"Llista de viquipedistes per nombre d'edicions",
 u"da": u"Wikipedianere efter antal redigeringer",
 u"eo": u"Listo de uzantoj laŭ redaktonombro",
 u"es": u"Ranking de ediciones", 
+u"fa": u"فهرست کاربران ویکی‌پدیا بر اساس تعداد ویرایش‌ها",
 u"fi": u"Luettelo Wikipedian käyttäjistä muokkausmäärän mukaan",
 u"fr": u"Utilisateurs par nombre d'éditions", 
 u"gl": u"Estatísticas/Lista de usuarios por número de edicións",
@@ -25,6 +26,7 @@ u"pl": u"Użytkownicy według liczby edycji",
 u"ro": u"Lista wikipediştilor după numărul de editări",
 u"sl": u"Seznam Wikipedistov po številu urejanj",
 u"sv": u"Lista över Wikipedia-användare sorterad efter antalet redigeringar",
+u"tr": u"Değişiklik sayılarına göre Vikipedistler listesi",
 u"vi": u"Danh sách thành viên Wikipedia theo số lần sửa trang",
 }
 tras2={
@@ -43,6 +45,7 @@ u"ro": u"Lista wikipediştilor după numărul de editări (inclusiv boţi)",
 u"sl": u"Seznam Wikipedistov po številu urejanj (z boti)",
 u"sv": u"Lista över Wikipedia-användare sorterad efter antalet redigeringar (inklusive robotar)",
 u"th": u"รายชื่อชาววิกิพีเดียที่แก้ไขมากที่สุด 500 อันดับ (รวมบอต)",
+u"tr": u"Değişiklik sayılarına göre Vikipedistler listesi (botlar dahil)",
 u"vi": u"Danh sách thành viên Wikipedia theo số lần sửa trang (tính cả bot)",
 }
 
@@ -51,7 +54,7 @@ u"vi": u"Danh sách thành viên Wikipedia theo số lần sửa trang (tính c�
 
 lll=['es', 'eo', 'hu', 'ca', 'tr', 'ro', 'vo', 'fi', 'it', 'nl', 'ru', 'sv', 'no', 'da', 'ar', 'ko', 'sr', 'sl', 'vi', 'bg', 'et', 'ht', 'fa', 'hr', 'new', 'nn', 'te', 'gl', 'th', 'simple', 'he']
 
-lll=['es', 'tr']
+lll=['es', 'hr', 'ro', 'simple', 'th', 'tr', 'vi']
 
 if len(sys.argv)>1:
 	lll=[sys.argv[1]]
