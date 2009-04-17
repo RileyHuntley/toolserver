@@ -21,7 +21,7 @@ import MySQLdb, wikipedia
 
 report_title = 'Wikipedia:Informes automáticos/Páginas con más ediciones'
 
-report_template = u'''
+report_template = u'''{{/begin}}
 Páginas con más ediciones; actualizado a las <onlyinclude>~~~~~</onlyinclude>.
 
 {| class="wikitable sortable" style="width:100%%; margin:auto;"
@@ -33,6 +33,7 @@ Páginas con más ediciones; actualizado a las <onlyinclude>~~~~~</onlyinclude>.
 |-
 %s
 |}
+{{/end}}
 '''
 
 conn = MySQLdb.connect(host='sql-s3', db='eswiki_p', read_default_file='~/.my.cnf')

@@ -11,7 +11,17 @@ estool = wikipedia.Page(essite, u'Template:Toolserver')
 enwtext=entool.get()
 update=enwtext.split("<!--update-->")[1]
 update=update.replace("January", "de enero de")
+update=update.replace("February", "de febrero de")
+update=update.replace("March", "de marzo de")
 update=update.replace("April", "de abril de")
+update=update.replace("May", "de mayo de")
+update=update.replace("June", "de junio de")
+update=update.replace("July", "de julio de")
+update=update.replace("August", "de agosto de")
+update=update.replace("September", "de septiembre de")
+update=update.replace("October", "de octubre de")
+update=update.replace("November", "de noviembre de")
+update=update.replace("December", "de diciembre de")
 rosemary=enwtext.split("<!--rosemary-->")[1]
 zedler=enwtext.split("<!--zedler-->")[1]
 yarrow=enwtext.split("<!--yarrow-->")[1]
@@ -21,8 +31,7 @@ s3=enwtext.split("<!--s3-->")[1]
 
 dic={u'up':u'En línea',u'down':u'Fuera de línea'}
 
-salida=u'''
-{| class="infobox" style="width: {{{width|auto}}}; float: {{{float|right}}}; clear: {{{clear|right}}};"
+salida=u'''{| class="infobox" style="width: {{{width|auto}}}; float: {{{float|right}}}; clear: {{{clear|right}}};"
 |-
 ! colspan="2" | Estado de [[m:Toolserver|Toolserver]]
 |-

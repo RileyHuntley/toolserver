@@ -20,8 +20,7 @@ import wikipedia
 import MySQLdb
 import datetime
 
-report_template = u'''
-{{/begin}}
+report_template = u'''{{/begin}}
 
 El número de páginas de cada [[Wikipedia:Espacio de nombres|espacio de nombres]]; actualizado a las <onlyinclude>~~~~~</onlyinclude>.
 
