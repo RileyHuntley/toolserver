@@ -75,8 +75,8 @@ for row in cursor.fetchall():
     else:
         ns_count_r = '0'
     ns_count_trow = int(ns_count) + int(ns_count_r)
-    ns_count_tcol += ns_count
-    ns_count_r_tcol += ns_count_r
+    ns_count_tcol += int(ns_count)
+    ns_count_r_tcol += int(ns_count_r)
     ns_count_gtotal = ns_count_tcol + ns_count_r_tcol
     table_row = u'''| %s | %s = 
 {{#switch:{{{2|NR}}}
