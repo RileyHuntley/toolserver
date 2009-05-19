@@ -49,146 +49,151 @@ u"tr": u"Değişiklik sayılarına göre Vikipedistler listesi (botlar dahil)",
 u"vi": u"Danh sách thành viên Wikipedia theo số lần sửa trang (tính cả bot)",
 }
 
+bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot', u'YurikBot', u'H-Bot', u'Paulatz bot', u'TekBot', u'Alfiobot', u'RoboRex', u'Agtbot', u'Felixbot', u'Pixibot', u'Sz-iwbot', u'Timbot (Gutza)', u'Ginosbot', u'GrinBot', u'.anacondabot', u'Omdirigeringsrättaren']
 #do not want: nl, simple 
 # fix: hr
+projects={
+'wikinews': ['es'],
+#'wikipedia': ['es', 'eo', 'hu', 'ca', 'tr', 'ro', 'vo', 'fi', 'it', 'nl', 'ru', 'sv', 'no', 'da', 'ar', 'ko', 'sr', 'sl', 'vi', 'bg', 'et', 'ht', 'fa', 'hr', 'new', 'nn', 'te', 'gl', 'th', 'simple', 'he'],
+'wikipedia': ['es', 'hr', 'ro', 'simple', 'th', 'tr', 'vi'],
+}
 
-lll=['es', 'eo', 'hu', 'ca', 'tr', 'ro', 'vo', 'fi', 'it', 'nl', 'ru', 'sv', 'no', 'da', 'ar', 'ko', 'sr', 'sl', 'vi', 'bg', 'et', 'ht', 'fa', 'hr', 'new', 'nn', 'te', 'gl', 'th', 'simple', 'he']
+#if len(sys.argv)>1:
+#	lll=[sys.argv[1]]
 
-lll=['es', 'hr', 'ro', 'simple', 'th', 'tr', 'vi']
-
-if len(sys.argv)>1:
-	lll=[sys.argv[1]]
-
-for lang in lll:
-	site=wikipedia.Site(lang, 'wikipedia')
-	
-	bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot', u'YurikBot', u'H-Bot', u'Paulatz bot', u'TekBot', u'Alfiobot', u'RoboRex', u'Agtbot', u'Felixbot', u'Pixibot', u'Sz-iwbot', u'Timbot (Gutza)', u'Ginosbot', u'GrinBot', u'.anacondabot', u'Omdirigeringsrättaren']
-	data=site.getUrl("/w/index.php?title=Special:Listusers&limit=5000&group=bot")
-	data=data.split('<!-- start content -->')
-	data=data[1].split('<!-- end content -->')[0]
-	m=re.compile(ur" title=\".*?:(.*?)\">").finditer(data)
-	for i in m:
-		bots.append(i.group(1))
-	
-	admins=[]
-	data=site.getUrl("/w/index.php?title=Special:Listusers&limit=5000&group=sysop")
-	data=data.split('<!-- start content -->')
-	data=data[1].split('<!-- end content -->')[0]
-	m=re.compile(ur" title=\".*?:(.*?)\">").finditer(data)
-	for i in m:
-		admins.append(i.group(1))
-	
-	data=site.getUrl("/w/index.php?title=Special:RecentChanges&limit=0")
-	data=data.split('<select id="namespace" name="namespace" class="namespaceselector">')[1].split('</select>')[0]
-	m=re.compile(ur'<option value="([1-9]\d*)">(.*?)</option>').finditer(data)
-	wikipedianm=u''
-	for i in m:
-		number=i.group(1)
-		name=i.group(2)
-		if number=='4':
-			wikipedianm+=name
-	
-	
-	os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select user_name, user_editcount from user where user_editcount!=0 order by user_editcount desc limit 5000;" > /home/emijrp/temporal/tarea008.data' % (lang, lang))
-	
-	f=open('/home/emijrp/temporal/tarea008.data', 'r')
-	sql=unicode(f.read(), 'utf-8')
-	f.close()
-	m=re.compile(ur"(.+)	(\d+)").finditer(sql)
-	
-	c=1
-	cbots=1
-	cplanti2=1
-	cuantos=500
-	s=u"{{/begin|%d}}\n" % cuantos
-	sbots=u"{{/begin|%d}}\n" % cuantos
-	planti2=u"{{#switch:{{{1|User}}}\n"
-	planti=u"{| class='wikitable sortable' style='font-size: 90%;text-align: center;float: right;'\n! #\n! Usuario\n! Ediciones\n"
-	for i in m:
-		ed=str(i.group(2))
-		nick=i.group(1)
-		if c<=cuantos:
-			if bots.count(nick)==0:
-				if admins.count(nick):
-					s+=u"|-\n| %s || [[User:%s|%s]] (Admin) || [[Special:Contributions/%s|%s]] \n" % (str(c),nick,nick,nick,ed)
-				else:
-					s+=u"|-\n| %s || [[User:%s|%s]] || [[Special:Contributions/%s|%s]] \n" % (str(c),nick,nick,nick,ed)
-				if c<=10:
-					planti+=u"|-\n| %s || [[User:%s|%s]] || [[Special:Contributions/%s|%s]] \n" % (str(c),nick,nick,nick,ed)
-				c+=1
-		if cbots<=cuantos:
-			if bots.count(nick):
-				sbots+=u"|-\n| %s || [[User:%s|%s]] (Bot) || [[Special:Contributions/%s|%s]] \n" % (str(cbots),nick,nick,nick,ed)
-			else:
-				sbots+=u"|-\n| %s || [[User:%s|%s]] || [[Special:Contributions/%s|%s]] \n" % (str(cbots),nick,nick,nick,ed)
-			cbots+=1
-		if cplanti2<=2500:
-			planti2+=u"|%s=%s\n" % (nick,ed)
-			cplanti2+=1
-	
-	s+=u"{{/end}}"
-	sbots+=u"{{/end}}"
-	planti2+=u"|USUARIO DESCONOCIDO\n}}<noinclude>{{uso de plantilla}}</noinclude>"
-	planti+=u"|-\n| colspan=3 | Véase también [[Wikipedia:Ranking de ediciones]]<br/>Actualizado a las {{subst:CURRENTTIME}} (UTC) del  {{subst:CURRENTDAY}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}} por [[Usuario:Toolserver|Toolserver]] \n|}<noinclude>{{uso de plantilla}}</noinclude>"
-	
-	resume=u""
-	if bots.count(u"BOTijo"):
-		resume=u"BOT - Updating ranking"
-	else:
-		resume=u"BOT - Updating ranking (Testing bot, please don't panic, I'm going to request flag soon)"
-	
-	
-	#first ranking
-	if len(s)>1000: #evitando errores de db replication
-		title=u''
-		if tras1.has_key(lang):
-			title=u"%s:%s" % (wikipedianm, tras1[lang])
-		else:
-			title=u"%s:List of Wikipedians by number of edits" % wikipedianm
-		page=wikipedia.Page(site, title)
-		if not page.isRedirectPage() and not page.isDisambig():
-			page.put(s, resume)
-	
-	#begin & end
-	page=wikipedia.Page(site, u"%s/begin" % title)
-	if not page.exists():
-		page.put(begin, resume)
-	page=wikipedia.Page(site, u"%s/end" % title)
-	if not page.exists():
-		page.put(end, resume)
-	
-	#second ranking
-	if len(sbots)>1000: #evitando errores de db replication
-		title=u''
-		if tras2.has_key(lang):
-			title=u"%s:%s" % (wikipedianm, tras2[lang])
-		else:
-			title=u"%s:List of Wikipedians by number of edits (bots included)" % wikipedianm
-		page=wikipedia.Page(site, title)
-		if not page.isRedirectPage() and not page.isDisambig():
-			page.put(sbots, resume)
-	
-	#begin & end
-	page=wikipedia.Page(site, u"%s/begin" % title)
-	if not page.exists():
-		page.put(begin2, resume)
-	page=wikipedia.Page(site, u"%s/end" % title)
-	if not page.exists():
-		page.put(end2, resume)
-	
-	#otras plantillas
-	if lang=='es':
-		page=wikipedia.Page(site, u"Template:RankingEdiciones")
-		page.put(planti, resume)
+for family, langs in projects.items():
+	for lang in langs:
+		site=wikipedia.Site(lang, family)
 		
-		page=wikipedia.Page(site, u"Template:Ediciones")
-		page.put(planti2, resume)
-	
-	#userpages
-	if lang!='es':
-		up=u"This user is a bot. It won't understand you. Comments to [[:es:User talk:Emijrp]]. Thanks.\n\nThis bot is executed from [[meta:Toolserver]], so, if it is necessary, block it by nick. Other users can use the same IP address."
-		page=wikipedia.Page(site, u"User:BOTijo")
+		data=site.getUrl("/w/index.php?title=Special:Listusers&limit=5000&group=bot")
+		data=data.split('<!-- start content -->')
+		data=data[1].split('<!-- end content -->')[0]
+		m=re.compile(ur" title=\".*?:(.*?)\">").finditer(data)
+		for i in m:
+			bots.append(i.group(1))
+		
+		admins=[]
+		data=site.getUrl("/w/index.php?title=Special:Listusers&limit=5000&group=sysop")
+		data=data.split('<!-- start content -->')
+		data=data[1].split('<!-- end content -->')[0]
+		m=re.compile(ur" title=\".*?:(.*?)\">").finditer(data)
+		for i in m:
+			admins.append(i.group(1))
+		
+		data=site.getUrl("/w/index.php?title=Special:RecentChanges&limit=0")
+		data=data.split('<select id="namespace" name="namespace" class="namespaceselector">')[1].split('</select>')[0]
+		m=re.compile(ur'<option value="([1-9]\d*)">(.*?)</option>').finditer(data)
+		wikipedianm=u''
+		for i in m:
+			number=i.group(1)
+			name=i.group(2)
+			if number=='4':
+				wikipedianm+=name
+		
+		family2='wiki'
+		if family=='wikinews':
+			family2='wikinews'
+		
+		os.system('mysql -h %s%s-p.db.toolserver.org -e "use %s%s_p;select user_name, user_editcount from user where user_editcount!=0 order by user_editcount desc limit 5000;" > /home/emijrp/temporal/tarea008.data' % (lang, family2, lang, family2))
+		
+		f=open('/home/emijrp/temporal/tarea008.data', 'r')
+		sql=unicode(f.read(), 'utf-8')
+		f.close()
+		m=re.compile(ur"(.+)	(\d+)").finditer(sql)
+		
+		c=1
+		cbots=1
+		cplanti2=1
+		cuantos=500
+		s=u"{{/begin|%d}}\n" % cuantos
+		sbots=u"{{/begin|%d}}\n" % cuantos
+		planti2=u"{{#switch:{{{1|User}}}\n"
+		planti=u"{| class='wikitable sortable' style='font-size: 90%;text-align: center;float: right;'\n! #\n! Usuario\n! Ediciones\n"
+		for i in m:
+			ed=str(i.group(2))
+			nick=i.group(1)
+			if c<=cuantos:
+				if bots.count(nick)==0:
+					if admins.count(nick):
+						s+=u"|-\n| %s || [[User:%s|%s]] (Admin) || [[Special:Contributions/%s|%s]] \n" % (str(c),nick,nick,nick,ed)
+					else:
+						s+=u"|-\n| %s || [[User:%s|%s]] || [[Special:Contributions/%s|%s]] \n" % (str(c),nick,nick,nick,ed)
+					if c<=10:
+						planti+=u"|-\n| %s || [[User:%s|%s]] || [[Special:Contributions/%s|%s]] \n" % (str(c),nick,nick,nick,ed)
+					c+=1
+			if cbots<=cuantos:
+				if bots.count(nick):
+					sbots+=u"|-\n| %s || [[User:%s|%s]] (Bot) || [[Special:Contributions/%s|%s]] \n" % (str(cbots),nick,nick,nick,ed)
+				else:
+					sbots+=u"|-\n| %s || [[User:%s|%s]] || [[Special:Contributions/%s|%s]] \n" % (str(cbots),nick,nick,nick,ed)
+				cbots+=1
+			if cplanti2<=2500:
+				planti2+=u"|%s=%s\n" % (nick,ed)
+				cplanti2+=1
+		
+		s+=u"{{/end}}"
+		sbots+=u"{{/end}}"
+		planti2+=u"|USUARIO DESCONOCIDO\n}}<noinclude>{{uso de plantilla}}</noinclude>"
+		planti+=u"|-\n| colspan=3 | Véase también [[Wikipedia:Ranking de ediciones]]<br/>Actualizado a las {{subst:CURRENTTIME}} (UTC) del  {{subst:CURRENTDAY}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}} por [[Usuario:BOTijo|BOTijo]] \n|}<noinclude>{{uso de plantilla}}</noinclude>"
+		
+		resume=u""
+		if bots.count(u"BOTijo"):
+			resume=u"BOT - Updating ranking"
+		else:
+			resume=u"BOT - Updating ranking (Testing bot, please don't panic, I'm going to request flag soon)"
+		
+		
+		#first ranking
+		if len(s)>1000: #evitando errores de db replication
+			title=u''
+			if tras1.has_key(lang):
+				title=u"%s:%s" % (wikipedianm, tras1[lang])
+			else:
+				title=u"%s:List of Wikipedians by number of edits" % wikipedianm
+			page=wikipedia.Page(site, title)
+			if not page.isRedirectPage() and not page.isDisambig():
+				page.put(s, resume)
+		
+		#begin & end
+		page=wikipedia.Page(site, u"%s/begin" % title)
 		if not page.exists():
-			page.put(up, u"BOT")
+			page.put(begin, resume)
+		page=wikipedia.Page(site, u"%s/end" % title)
+		if not page.exists():
+			page.put(end, resume)
+		
+		#second ranking
+		if len(sbots)>1000: #evitando errores de db replication
+			title=u''
+			if tras2.has_key(lang):
+				title=u"%s:%s" % (wikipedianm, tras2[lang])
+			else:
+				title=u"%s:List of Wikipedians by number of edits (bots included)" % wikipedianm
+			page=wikipedia.Page(site, title)
+			if not page.isRedirectPage() and not page.isDisambig():
+				page.put(sbots, resume)
+		
+		#begin & end
+		page=wikipedia.Page(site, u"%s/begin" % title)
+		if not page.exists():
+			page.put(begin2, resume)
+		page=wikipedia.Page(site, u"%s/end" % title)
+		if not page.exists():
+			page.put(end2, resume)
+		
+		#otras plantillas
+		if lang=='es':
+			page=wikipedia.Page(site, u"Template:RankingEdiciones")
+			page.put(planti, resume)
+			
+			page=wikipedia.Page(site, u"Template:Ediciones")
+			page.put(planti2, resume)
+		
+		#userpages
+		if lang!='es':
+			up=u"This user is a bot. It won't understand you. Comments to [[:es:User talk:Emijrp]]. Thanks.\n\nThis bot is executed from [[meta:Toolserver]], so, if it is necessary, block it by nick. Other users can use the same IP address."
+			page=wikipedia.Page(site, u"User:BOTijo")
+			if not page.exists():
+				page.put(up, u"BOT")
 
 
