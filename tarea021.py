@@ -81,7 +81,7 @@ for newpage in newpagesgen:
 os.system('mysql -h eswiki-p.db.toolserver.org -e "use eswiki_p;select page_id, page_title, page_len, page_namespace from page where (page_namespace=0 or page_namespace=104) and page_is_redirect=0;" > /home/emijrp/temporal/eswikipage.txt')
 f=open('/home/emijrp/temporal/eswikipage.txt', 'r')
 c=0
-print 'Cargando paginas de eswik'
+print 'Cargando paginas de eswiki'
 for line in f:
 	if c==0: #saltamos la primera linea q es el describe de sql
 		c+=1
@@ -407,6 +407,7 @@ for pr, cats in categories.items():
 	qnoneutral=0
 	qentraduccion=0
 	qveracidaddiscutida=0
+	relatedchanges=u''
 	for arttitle, pageid in artstitles:
 		#resumen tamanios
 		if page[pageid]['l']>=10*1024:
@@ -517,6 +518,7 @@ for pr, cats in categories.items():
 			artnm_=namespaces_[page[pageid]['nm']]
 		
 		salida+=u'\n|-\n| %d || [[%s%s]] || [[%sDiscusión:%s|Disc]] || %d || %s || %s || %d || %d || %d || %d || %s ' % (c, artnm_, arttitle, artnm, arttitle, page[pageid]['l'], clasificacionplana, importanciaplana, page[pageid]['en'], page[pageid]['cat'], page[pageid]['i'], page[pageid]['iws'], otros)
+		relatedchanges+=u'# [[%s%s]]\n' % (artnm_, arttitle) #pagina 0
 		#if c % limcabecera == 0:
 		#	salida+=cabeceratabla
 		if c % limpag == 0:
@@ -530,6 +532,12 @@ for pr, cats in categories.items():
 		#guardamos
 		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/%d' % (pr, c/limpag+1)) #numeracion
 		wii.put(salida, u'BOT - Actualizando lista para [[Wikiproyecto:%s]]' % pr)
+	
+	#pagina 0 para hacer relatedchanges
+	wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/0' % (pr))
+	wii.put(relatedchanges, u'BOT - Actualizando lista para [[Wikiproyecto:%s]]' % pr)
+	#fin pagina 0
+	
 	salida=u''
 	for i in range(1, c/limpag+2):
 		if salida:
@@ -545,9 +553,9 @@ for pr, cats in categories.items():
 	#tabla de clasificacion
 	tablaclasificacion=avisotoolserver
 	tablaclasificacion+=u'<onlyinclude>{| class="wikitable" style="text-align: center;clear: {{{1|}}};float: {{{1|}}};"\n'
-	tablaclasificacion+=u'! colspan=6 | Clasificación !! rowspan=2 | Total '
-	tablaclasificacion+=u'\n|-\n! [[Wikipedia:Artículos destacados|Destacado]] [[Imagen:Cscr-featured.svg|14px|Artículo destacado]] !! [[Wikipedia:Artículos buenos|Bueno]] [[Imagen:Artículo bueno.svg|14px|Artículo bueno]] !! [[Wikipedia:Esbozo|Esbozo]] !! Miniesbozo !! [[Wikipedia:Página de desambiguación|Desambiguación]] !! Desconocido'
-	tablaclasificacion+=u'\n|-\n| [[Wikipedia:Contenido por wikiproyecto/%s#Artículos destacados|%d]] || [[Wikipedia:Contenido por wikiproyecto/%s#Artículos buenos|%d]] || %d || %d || %d || %d || %d ' % (pr, resumen['destacado'], pr, resumen['bueno'], resumen['esbozo'], resumen['miniesbozo'], resumen['desambig'], resumen['desconocida'], lenartstitles)
+	tablaclasificacion+=u'! colspan=4 | Clasificación !! rowspan=2 | Total '
+	tablaclasificacion+=u'\n|-\n! [[Wikipedia:Artículos destacados|Destacado]] [[Imagen:Cscr-featured.svg|14px|Artículo destacado]] !! [[Wikipedia:Artículos buenos|Bueno]] [[Imagen:Artículo bueno.svg|14px|Artículo bueno]] !! [[Wikipedia:Página de desambiguación|Desambiguación]] !! Desconocido'
+	tablaclasificacion+=u'\n|-\n| [[Wikipedia:Contenido por wikiproyecto/%s#Artículos destacados|%d]] || [[Wikipedia:Contenido por wikiproyecto/%s#Artículos buenos|%d]] || %d || %d || %d ' % (pr, resumen['destacado'], pr, resumen['bueno'], resumen['desambig'], resumen['desconocida'], lenartstitles)
 	tablaclasificacion+=u'\n|-\n| %.1f%s || %.1f%s || %.1f%s || %.1f%s || %.1f%s || %.1f%s || 100%s' % ((resumen['destacado']/(lenartstitles/100.0)), u'%', (resumen['bueno']/(lenartstitles/100.0)), u'%', (resumen['esbozo']/(lenartstitles/100.0)), u'%', (resumen['miniesbozo']/(lenartstitles/100.0)), u'%', (resumen['desambig']/(lenartstitles/100.0)), u'%', (resumen['desconocida']/(lenartstitles/100.0)), u'%', u'%')
 	tablaclasificacion+=u'\n|}</onlyinclude>\n'
 	
