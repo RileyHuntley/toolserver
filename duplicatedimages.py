@@ -4,9 +4,17 @@ import re
 import sys
 import md5
 import random 
+import os
 
-url = sys.argv[1] #requiere un enwiki-latest-image.sql.gz
-f = gzip.open(url, 'r')
+lang = sys.argv[1] #requiere un enwiki-latest-image.sql.gz
+file='%swiki-latest-image.sql.gz' % lang
+path='/mnt/user-store/'
+
+try:
+	f=gzip.open('%s%s' % (path, file), 'r')
+except:
+	os.system('wget http://download.wikimedia.org/%swiki/latest/%s -O %s%s' % (lang, file, path, file)) #entorno a 700MB
+	f=gzip.open('%s%s' % (path, file), 'r')
 
 image_pattern = re.compile(ur'\'([^\']*?)\',(\d+)\,(\d+)\,(\d+)\,')
 

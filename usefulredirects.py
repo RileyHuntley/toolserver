@@ -13,6 +13,8 @@ st='A'
 langdest='es'
 if len(sys.argv)>=2:
 	langdest=sys.argv[1]
+if len(sys.argv)>=3:
+	st=sys.argv[1]
 
 redirects=tareas.getRedirectsAndTargets(langorig, targetStartsWith=st)
 localpages=tareas.getPageTitle(langdest, redirects=True)
@@ -22,7 +24,7 @@ gen=pagegenerators.AllpagesPageGenerator(start=st, namespace=0, includeredirects
 preloadingGen=pagegenerators.PreloadingGenerator(gen, pageNumber=100, lookahead=100)
  
 for page in preloadingGen:
-	if page.isRedirectPage() or page.isDisambig():
+	if page.exists() and page.isRedirectPage() or page.isDisambig():
 		pass
 	else:
 		wtitle=page.title()

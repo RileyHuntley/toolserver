@@ -26,7 +26,7 @@ def extraerBiografias(wtext, regexp, lang, type):
 		if re.search(regexp, i):
 			bio=t[c+1]
 		c+=1
-	wikipedia.output(bio)
+	#wikipedia.output(bio)
 	m=""
 	if type=='year':
 		if lang=='es':
@@ -106,7 +106,7 @@ def mantenimiento(pagetitle, type):
 					
 			
 			if not re.search(ur"\d{%s}" % len(anyoget), nombredic['linea']):
-				wikipedia.output(nombre+" "+anyoget)
+				#wikipedia.output(nombre+" "+anyoget)
 				linea=nombredic['linea']
 				linea_=re.sub(ur"(?i)([^a-z\d])", ur"\\\1", linea) #protegemos caracteres extraños
 				linea=re.sub(ur"(?im) *[\.\;\,\-\:]+ *$", ur"", linea) #quitamos punto final
@@ -116,7 +116,7 @@ def mantenimiento(pagetitle, type):
 					eswtext=re.sub(linea_, ur"%s (%s. %s)" % (linea, option3[type], anyoget), eswtext)
 
 	if espage.get()!=eswtext:
-		wikipedia.showDiff(espage.get(), eswtext)
+		#wikipedia.showDiff(espage.get(), eswtext)
 		espage.put(eswtext, u"BOT - Unificando y/o añadiendo algunos años usando las biografías")
 
 """
