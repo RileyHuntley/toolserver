@@ -18,7 +18,7 @@ for i in [u'Wikipedia:Artículos sin contextualizar', u'Wikipedia:Fusionar', u'W
 		continue
 	
 	for j in l:
-		if l.namespace() in [0, 104]:
+		if j.namespace() in [0, 104]:
 			l2.append(j.title())
 	
 	length=len(l2)
