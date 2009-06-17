@@ -534,8 +534,9 @@ for pr, cats in categories.items():
 		wii.put(salida, u'BOT - Actualizando lista para [[Wikiproyecto:%s]]' % pr)
 	
 	#pagina 0 para hacer relatedchanges
-	wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/0' % (pr))
-	wii.put(relatedchanges, u'BOT - Actualizando lista para [[Wikiproyecto:%s]]' % pr)
+	if len(relatedchanges)<=1024*500: #limite de KBs
+		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/0' % (pr))
+		wii.put(relatedchanges, u'BOT - Actualizando lista para [[Wikiproyecto:%s]]' % pr)
 	#fin pagina 0
 	
 	salida=u''
@@ -556,7 +557,7 @@ for pr, cats in categories.items():
 	tablaclasificacion+=u'! colspan=4 | Clasificación !! rowspan=2 | Total '
 	tablaclasificacion+=u'\n|-\n! [[Wikipedia:Artículos destacados|Destacado]] [[Imagen:Cscr-featured.svg|14px|Artículo destacado]] !! [[Wikipedia:Artículos buenos|Bueno]] [[Imagen:Artículo bueno.svg|14px|Artículo bueno]] !! [[Wikipedia:Página de desambiguación|Desambiguación]] !! Desconocido'
 	tablaclasificacion+=u'\n|-\n| [[Wikipedia:Contenido por wikiproyecto/%s#Artículos destacados|%d]] || [[Wikipedia:Contenido por wikiproyecto/%s#Artículos buenos|%d]] || %d || %d || %d ' % (pr, resumen['destacado'], pr, resumen['bueno'], resumen['desambig'], resumen['desconocida'], lenartstitles)
-	tablaclasificacion+=u'\n|-\n| %.1f%s || %.1f%s || %.1f%s || %.1f%s || %.1f%s || %.1f%s || 100%s' % ((resumen['destacado']/(lenartstitles/100.0)), u'%', (resumen['bueno']/(lenartstitles/100.0)), u'%', (resumen['esbozo']/(lenartstitles/100.0)), u'%', (resumen['miniesbozo']/(lenartstitles/100.0)), u'%', (resumen['desambig']/(lenartstitles/100.0)), u'%', (resumen['desconocida']/(lenartstitles/100.0)), u'%', u'%')
+	tablaclasificacion+=u'\n|-\n| %.1f%s || %.1f%s || %.1f%s || %.1f%s || 100%s' % ((resumen['destacado']/(lenartstitles/100.0)), u'%', (resumen['bueno']/(lenartstitles/100.0)), u'%', (resumen['desambig']/(lenartstitles/100.0)), u'%', (resumen['desconocida']/(lenartstitles/100.0)), u'%', u'%')
 	tablaclasificacion+=u'\n|}</onlyinclude>\n'
 	
 	wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Resumen/Clasificación' % pr) #resumen
