@@ -12,7 +12,7 @@ import wikipedia, catlib, pagegenerators
 
 def getAllInterwikis(wtext):
 	iws={}
-	m=re.compile(ur"(?i)\[\[ *([a-z\-]{2,5}) *\: *([^\]\|]+?) *\]\]").finditer(wtext)
+	m=re.compile(ur"(?i)\[\[ *([a-z]{2,3}|[a-z]{2,3}\-[a-z]{2,3}) *\: *([^\]\|]+?) *\]\]").finditer(wtext)
 	for i in m:
 		iws[i.group(1)]=i.group(2)
 	return iws
@@ -72,17 +72,32 @@ for page in pre:
 	#fin datos
 	
 	#'''wtitle'''->'''[[:lang:title|title]]'''
-	iws=getAllInterwikis(newtext)
-	difftext=newtext
-	for lang, title in iws.items():
-		r_intro=ur"(?im)^\{\{ *%s *\| *(?P<ini>[^\']{0,10})\'{3} *\[?\[? *(?P<name>%s|%s) *\]?\]? *\'{3}" % (lang, title, wtitle)
-		if re.search(r_intro, newtext):
-			newtext=re.sub(r_intro, ur"{{%s|\g<ini>'''[[:%s:%s|\g<name>]]'''" % (lang, lang, title), newtext, 1)
-	if difftext!=newtext:
-		summary+=" Linking descriptions;"
+	"""http://commons.wikimedia.org/w/index.php?title=User_talk:Emijrp&diff=cur#Paulus_Moreelse
+	if len(wtitle)>3: #por seguridad
+		iws=getAllInterwikis(newtext)
+		iwslist=[]
+		for lang, title in iws.items():
+			try:
+				iwslist.append(wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), title))
+			except:
+				pass
+		iws2={}
+		iwsgen = iter(iwslist)
+		iwspre = pagegenerators.PreloadingGenerator(iwsgen, pageNumber = 50)
+		for iw in iwspre:
+			if iw.exists() and not iw.isRedirectPage() and not iw.isDisambig(): #enlazaremos aquellos que existan
+				iws2[iw.site().lang]=iw.title()
+		difftext=newtext
+		for lang, title in iws2.items(): #enlazaremos aquellos que existan
+			r_intro=ur"(?im)^\{\{ *%s *\| *(?P<ini>[^\'\[\:\|]{0,10})(?P<comillas>\'{0,3})\[?\[?(?P<name>%s|%s)\]?\]?(?P=comillas)" % (lang, title, wtitle)
+			if re.search(r_intro, newtext):
+				newtext=re.sub(r_intro, ur"{{%s|\g<ini>'''[[:%s:%s|\g<name>]]'''" % (lang, lang, title), newtext, 1)
+		if difftext!=newtext:
+			summary+=" Linking descriptions;"
+	"""
 	
 	#sugerir imagenes
-	difftext=newtext
+	"""difftext=newtext
 	imagesource={}
 	imagesource_=[]
 	if len(re.findall(ur"(?i)< *gallery *>", newtext))==1 and len(commonsimages)<=5: #agregar cuando solo haya <5 imagenes?
@@ -108,6 +123,7 @@ for page in pre:
 				imagesource_.append(imagesource[sugerencia])
 	if difftext!=newtext:
 		summary+=" Adding %d image(s) from %s;" % (len(sugerencias) ,", ".join(imagesource_))
+	"""
 	
 	#ampliar descripciones
 	difftext=newtext
@@ -131,10 +147,12 @@ for page in pre:
 	#redirects
 	iws=getAllInterwikis(newtext)
 	redirectscandidates=[]
+	redirectscandidatestitles=[]
 	redirectscandidatesdic={}
 	for lang, title in iws.items():
 		if not re.search(ur"(?i)[^a-záéíóúàèìòùñçäëïöü ]", title):
-			if redirectscandidates.count(title)==0:
+			if redirectscandidatestitles.count(title)==0:
+				redirectscandidatestitles.append(title)
 				redirectscandidates.append(wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), title))
 				redirectscandidatesdic[title]=lang
 	
@@ -149,7 +167,10 @@ for page in pre:
 	for red in redpre:
 		if not red.exists():
 			redtext=u"#REDIRECT [[%s]]" % wtitle
-			red.put(redtext, u"BOT - Creating (%s:) redirect to [[%s]]" % (redirectscandidatesdic[red.title()], wtitle))
+			try:
+				red.put(redtext, u"BOT - Creating (%s:) redirect to [[%s]]" % (redirectscandidatesdic[red.title()], wtitle))
+			except:
+				pass
 	
 	if wtext!=newtext:
 		#[[Category:wtitle| ]]
