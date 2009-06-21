@@ -55,8 +55,6 @@ salida=u'''{| class="infobox" style="width: {{{width|auto}}}; float: {{{float|ri
 |-
 !Lag en s3
 | <!--s3-->%s<!--s3-->
-|-
-| colspan="2" style="text-align:center;" |''[[tools:~leon/stats/replag/all/replag-daily.png|Gráfica diaria de lag]]'' 
 |}<noinclude>{{uso de plantilla}}</noinclude>''' % (update, dic[rosemary], dic[zedler], dic[yarrow], s1, s2, s3)
 
 estool.put(salida, u'Estado: rosemary: %s; zedler %s; yarrow %s; Replag: s1 %s; s2 %s; s3 %s;' % (dic[rosemary], dic[zedler], dic[yarrow], s1, s2, s3))
