@@ -8,7 +8,7 @@ enmeses=ur"January|February|March|April|May|June|July|August|September|October|N
 
 def unificar(wtext, lang, type):
 	if lang=='es':
-		wtext=re.sub(ur"(?im)^\* *\[\[ *(?P<diames>\d{1,2} de (%s)) *\]\] *[\-\:\–] *(?P<linea>.*?)$" % esmeses, ur"* [[\g<diames>]]: \g<linea>", wtext)
+		wtext=re.sub(ur"(?im)^\*(?P<inicio> *)\[\[ *(?P<diames>\d{1,2} de (%s)) *\]\] *[\-\:\–] *(?P<linea>.*?)$" % esmeses, ur"*\g<inicio>[[\g<diames>]]: \g<linea>", wtext)
 		wtext=re.sub(ur"(?i)\( *[md] *\. *\[?\[?(?P<anyo>\d{4})\]?\]? *\) *\.?", ur"(f. [[\g<anyo>]])", wtext)
 		wtext=re.sub(ur"(?i)\( *[b] *\. *\[?\[?(?P<anyo>\d{4})\]?\]? *\) *\.?", ur"(n. [[\g<anyo>]])", wtext)
 		if type=='daymonth':

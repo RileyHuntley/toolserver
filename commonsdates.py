@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import re, urllib, sys
+#ideas:
+#15junio2009, cuidado con las regexp tipo ddmmaaaa
+#coger meses de todos los idiomas con el select html de las contribs, mirar que distintos meses en distintos idiomas no tengan en mismo nombre (colisión), hacer una versión simple que admita 12juin2009 y 12 juin 2009 y va que chuta
+#hora delante de la fecha, invetir, 17:22 26 июня 2009
+#para las fechas que coincida dd y mm, no pasa nada, el resto verficiar con exif?
+
+import re, urllib, sys, time
 import wikipedia, catlib, pagegenerators
 
 commonssite=wikipedia.Site('commons', 'commons')
@@ -11,35 +17,23 @@ gen=pagegenerators.AllpagesPageGenerator(start = st, namespace = 6, includeredir
 pre=pagegenerators.PreloadingGenerator(gen, pageNumber=250, lookahead=250)
 
 inicio=ur"(?im)^(?P<inicio> *\| *Date *\= *)"
-separador_es=[ur" *del? *", ur" *[\-\/\,\.] *"] #cuidado no meter ()
 fin=ur"[ \.]*(?P<fin> *[\n\r\|])" #eliminamos . finales que no permiten hacer la conversión de fechas
+
+separador_es=[ur" *del? *", ur" *[\-\/\,\.] *"] #cuidado no meter ()
 month2number_es={
-u"enero":u"01", 
-u"ene":u"01", 
-u"febrero":u"02", 
-u"feb":u"02", 
-u"marzo":u"03", 
-u"mar":u"03", 
-u"abril":u"04", 
-u"abr":u"04", 
-u"mayo":u"05", 
-u"may":u"05", 
-u"junio":u"06", 
-u"jun":u"06", 
-u"julio":u"07", 
-u"jul":u"07", 
-u"agosto":u"08", 
-u"ago":u"08", 
-u"agos":u"08", 
-u"septiembre":u"09", 
-u"sep":u"09", 
-u"sept":u"09", 
-u"octubre":u"10", 
-u"oct":u"10", 
-u"noviembre":u"11", 
-u"nov":u"11", 
-u"diciembre":u"12",
-u"dic":u"12",
+u"enero":u"01", u"ene":u"01", 
+u"febrero":u"02", u"feb":u"02", 
+u"marzo":u"03", u"mar":u"03", 
+u"abril":u"04", u"abr":u"04", 
+u"mayo":u"05", u"may":u"05", 
+u"junio":u"06", u"jun":u"06", 
+u"julio":u"07", u"jul":u"07", 
+u"agosto":u"08", u"ago":u"08", 
+u"agos":u"08", u"septiembre":u"09", 
+u"sep":u"09", u"sept":u"09", 
+u"octubre":u"10", u"oct":u"10", 
+u"noviembre":u"11", u"nov":u"11", 
+u"diciembre":u"12", u"dic":u"12",
 }
 monthsnames_es=[]
 for k, v in month2number_es.items():
