@@ -26,6 +26,7 @@ u"pl": u"Użytkownicy według liczby edycji",
 u"ro": u"Lista wikipediştilor după numărul de editări",
 u"sl": u"Seznam Wikipedistov po številu urejanj",
 u"sv": u"Lista över Wikipedia-användare sorterad efter antalet redigeringar",
+u"th": u"รายชื่อชาววิกิพีเดียที่แก้ไขมากที่สุด 500 อันดับ",
 u"tr": u"Değişiklik sayılarına göre Vikipedistler listesi",
 u"vi": u"Danh sách thành viên Wikipedia theo số lần sửa trang",
 }
@@ -49,13 +50,12 @@ u"tr": u"Değişiklik sayılarına göre Vikipedistler listesi (botlar dahil)",
 u"vi": u"Danh sách thành viên Wikipedia theo số lần sửa trang (tính cả bot)",
 }
 
-bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot', u'YurikBot', u'H-Bot', u'Paulatz bot', u'TekBot', u'Alfiobot', u'RoboRex', u'Agtbot', u'Felixbot', u'Pixibot', u'Sz-iwbot', u'Timbot (Gutza)', u'Ginosbot', u'GrinBot', u'.anacondabot', u'Omdirigeringsrättaren']
 #do not want: nl, simple 
 # fix: hr
 projects={
 'wikinews': ['es'],
 #'wikipedia': ['es', 'eo', 'hu', 'ca', 'tr', 'ro', 'vo', 'fi', 'it', 'nl', 'ru', 'sv', 'no', 'da', 'ar', 'ko', 'sr', 'sl', 'vi', 'bg', 'et', 'ht', 'fa', 'hr', 'new', 'nn', 'te', 'gl', 'th', 'simple', 'he'],
-'wikipedia': ['es', 'hr', 'ro', 'simple', 'th', 'tr', 'vi'],
+'wikipedia': ['es', 'hr', 'ro', 'simple', 'th', 'tr', 'vi', 'da'],
 }
 
 #if len(sys.argv)>1:
@@ -63,6 +63,7 @@ projects={
 
 for family, langs in projects.items():
 	for lang in langs:
+		bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot', u'YurikBot', u'H-Bot', u'Paulatz bot', u'TekBot', u'Alfiobot', u'RoboRex', u'Agtbot', u'Felixbot', u'Pixibot', u'Sz-iwbot', u'Timbot (Gutza)', u'Ginosbot', u'GrinBot', u'.anacondabot', u'Omdirigeringsrättaren']
 		site=wikipedia.Site(lang, family)
 		
 		data=site.getUrl("/w/index.php?title=Special:Listusers&limit=5000&group=bot")

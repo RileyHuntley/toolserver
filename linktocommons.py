@@ -11,6 +11,8 @@ if len(sys.argv)>=2:
 	lang=sys.argv[1]
 
 plantillas={
+'af':[u'Commons', u'CommonsKategorie', u'Commonscat', u'CommonsKategorie-inlyn'],
+'az':[u'Commons', u'Commons2', u'Commons3', u'CommonsKat', u'Commonscat', u'Commonskat', u'CommonsKat2', u'CommonsKat3'],
 'de':[u'Commons', u'Commonscat', u'CommonsCat'],
 'eo':[u'Commons', u'Commonscat'],
 'es':[u'Commonscat', u'Commons cat', u'Ccat', u'Commons'],
@@ -20,6 +22,23 @@ plantillas={
 'pt':[u'Commons',u'Commons1',u'Commonscat',u'Commons2',u'Correlato/commons',u'Correlatos'],
 'sl':[u'Commons',u'Zbirka'],
 'tr':[u'Commons',u'CommonsKatÇoklu',u'CommonsKat',u'Commonscat',u'Commons cat',u'CommonsKat-ufak',u'Commons1',u'Commons-ufak'],
+}
+
+regexp={
+'af': ur'(?im)(^\=+ *Eksterne skakels *\=+$)',
+'az': ur'(?im)(^\=+ *Xarici keçidlər *\=+$)',
+'de': ur'(?im)(^\=+ *Weblinks *\=+$)',
+'eo': ur'(?im)(^\=+ *Eksteraj ligoj *\=+$)',
+'es': ur'(?im)(^\=+ *Enlaces externos *\=+$)',
+'en': ur'(?im)(^\=+ *External links *\=+$)',
+'hu': ur'(?im)(^\=+ *Külső hivatkozások *\=+$)',
+'pt': ur'(?im)(^\=+ *\{\{ *Ligações externas *\}\} *\=+$)',
+'sl': ur'(?im)(^\=+ *Zunanje povezave *\=+$)',
+'tr': ur'(?im)(^\=+ *Dış bağlantılar *\=+$)',
+}
+
+resumes={
+'pt': u'Adicionando ligação ao Commons',
 }
 
 os.system('mysql -h commonswiki-p.db.toolserver.org -e "use commonswiki_p;select page_id, page_title, ll_title from langlinks, page where ll_lang=\'%s\' and page_id=ll_from and page_namespace=0;" > /home/emijrp/temporal/commonswikipageid.txt' % lang)
@@ -93,7 +112,7 @@ for line in f:
 			c+=1
 			percent(c)
 			commons[pageid][2]+=1
-print 'Cargadas %d imagenes en las galerias' % (c)
+print 'Cargadas %d galerias' % (c)
 f.close()
 
 #salida
@@ -110,20 +129,6 @@ print evitar
 
 c=0
 cc=0
-regexp={
-'de': ur'(?im)(^\=+ *Weblinks *\=+$)',
-'eo': ur'(?im)(^\=+ *Eksteraj ligoj *\=+$)',
-'es': ur'(?im)(^\=+ *Enlaces externos *\=+$)',
-'en': ur'(?im)(^\=+ *External links *\=+$)',
-'hu': ur'(?im)(^\=+ *Külső hivatkozások *\=+$)',
-'pt': ur'(?im)(^\=+ *\{\{ *Ligações externas *\}\} *\=+$)',
-'sl': ur'(?im)(^\=+ *Zunanje povezave *\=+$)',
-'tr': ur'(?im)(^\=+ *Dış bağlantılar *\=+$)',
-}
-
-resumes={
-'pt': u'Adicionando ligação ao Commons',
-}
 
 resume=u'Adding link to Commons'
 if resumes.has_key(lang):
@@ -141,7 +146,7 @@ for k, v in commons.items():
 			page=wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), v[1])
 			if page.exists() and not page.isRedirectPage() and not page.isDisambig():
 				text=page.get()
-				if not re.search(ur'(?i)(%s)' % evitar, text) and not re.search(ur'taxo', text): #taxobox
+				if evitar and not re.search(ur'(?i)(%s)' % evitar, text) and not re.search(ur'taxo', text): #taxobox
 					if re.search(regexp[lang], text):
 						newtext=re.sub(regexp[lang], ur'\1\n{{Commons|%s}}' % v[0], text)
 						wikipedia.showDiff(text, newtext)
