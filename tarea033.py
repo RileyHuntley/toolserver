@@ -46,7 +46,7 @@ f.close()
 
 c=0
 for red, v in reds.items():
-	if not re.search(ur"(?i)[^a-záéíóú]", red):
+	if not re.search(ur"(?i)[^a-záéíóú ]", red):
 		red2=red
 		red2=re.sub(ur"Á", ur"A", red2)
 		red2=re.sub(ur"É", ur"E", red2)
@@ -61,10 +61,16 @@ for red, v in reds.items():
 		red2=re.sub(ur"ú", ur"u", red2)
 		
 		if red!=red2 and not pages.has_key(red2) and not reds.has_key(red2):
+			c+=1
+			
+			if c % 50 == 0:
+				print c
+				wikipedia.output(red)
+			"""
 			redpage=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), red)
 			red2page=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), red2)
 			if redpage.isRedirectPage() and not red2page.exists():
 				salida=u"#REDIRECT [[%s]]" % redpage.getRedirectTarget().title()
 				wikipedia.output(salida)
-				red2page.put(salida, u"BOT - %s" % salida)
+				red2page.put(salida, u"BOT - %s" % salida)"""
 				

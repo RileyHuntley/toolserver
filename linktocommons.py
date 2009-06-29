@@ -38,6 +38,7 @@ regexp={
 }
 
 resumes={
+'es': u'Añadiendo enlace a Commons',
 'pt': u'Adicionando ligação ao Commons',
 }
 
@@ -112,7 +113,7 @@ for line in f:
 			c+=1
 			percent(c)
 			commons[pageid][2]+=1
-print 'Cargadas %d galerias' % (c)
+print 'Cargadas %d imagenes en galerias' % (c)
 f.close()
 
 #salida
