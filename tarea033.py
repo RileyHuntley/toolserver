@@ -66,11 +66,11 @@ for red, v in reds.items():
 			if c % 50 == 0:
 				print c
 				wikipedia.output(red)
-			"""
+			
 			redpage=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), red)
 			red2page=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), red2)
 			if redpage.isRedirectPage() and not red2page.exists():
 				salida=u"#REDIRECT [[%s]]" % redpage.getRedirectTarget().title()
 				wikipedia.output(salida)
-				red2page.put(salida, u"BOT - %s" % salida)"""
+				red2page.put(salida, u"BOT - %s" % salida)
 				
