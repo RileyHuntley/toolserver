@@ -17,7 +17,7 @@ plantillas={
 'eo':[u'Commons', u'Commonscat'],
 'es':[u'Commonscat', u'Commons cat', u'Ccat', u'Commons'],
 'en':[u'Commons',u'Pic',u'Commonspar',u'Commonspiped',u'Commonsme',u'Siisterlinkswp',u'Wikicommons',u'Commons-gallery',u'Gallery-link',u'Commons cat',u'Commonscat',u'Commons2',u'CommonsCat',u'Cms-catlit-up',u'Catlst commons',u'Commonscategory',u'Commonscat',u'Commonscat-inline',u'Commons cat left',u'Commons cat multi',u'Commons page',u'Commons-inline',u'Commonstiny',u'Commonstmp',u'Sistercommons',u'Sisterlinks',u'Sisterlinks2'],
-'hu':[u'Commons',u'Közvagyonkat',u'Commons-natúr'],
+'hu':[u'Commons',u'Közvagyonkat',u'Commons-natúr',u'Taxobox'], #taxobox por http://hu.wikipedia.org/w/index.php?title=Szerkeszt%C5%91vita:Syp/Arch%C3%ADv06&diff=next&oldid=4606364#Taxobox_and_BOTijo
 #'it':[u'Commons',u'Commonscat'],
 'pt':[u'Commons',u'Commons1',u'Commonscat',u'Commons2',u'Correlato/commons',u'Correlatos'],
 'sl':[u'Commons',u'Zbirka'],
@@ -147,7 +147,7 @@ for k, v in commons.items():
 			page=wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), v[1])
 			if page.exists() and not page.isRedirectPage() and not page.isDisambig():
 				text=page.get()
-				if evitar and not re.search(ur'(?i)(%s)' % evitar, text) and not re.search(ur'taxo', text): #taxobox
+				if evitar and not re.search(ur'(?i)(%s)' % evitar, text) and not re.search(ur'(?i)\{\{ *(taxo|takso)', text): #taxobox
 					if re.search(regexp[lang], text):
 						newtext=re.sub(regexp[lang], ur'\1\n{{Commons|%s}}' % v[0], text)
 						wikipedia.showDiff(text, newtext)

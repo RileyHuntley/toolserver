@@ -109,6 +109,10 @@ for page in pre:
 				time.sleep(0.1)
 			t1=time.time()
 			c=0
-		c+=1
-		page.put(newtext, u"BOT - Normalize date format to allow localization: %s → %s" % (change, changed))
+		
+		try:
+			page.put(newtext, u"BOT - Normalize date format to allow localization: %s → %s" % (change, changed))
+			c+=1
+		except:
+			pass
 		
