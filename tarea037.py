@@ -12,28 +12,32 @@ if len(sys.argv)>1:
 	limite=int(sys.argv[1])
 
 langs=['es']
-exitpage=u'User:BOTijo/Sandbox'
+exitpages={
+'es': u'Plantilla:Artículos populares',
+}
+
 
 index='/home/emijrp/temporal/tmpweb.html'
 os.system('wget http://dammit.lt/wikistats/ -O %s' % index)
 f=open(index, 'r')
 wget=f.read()
 f.close()
-ayer=datetime.date.today()-datetime.timedelta(days=1)
-ayerano=str(ayer.year)
-ayermes=str(ayer.month)
-if len(ayermes)==1:
-	ayermes='0%s' % ayermes
-ayerdia=str(ayer.day)
-if len(ayerdia)==1:
-	ayerdia='0%s' % ayerdia
-#m=re.compile(ur'(?i)\"(pagecounts\-%s%s%s\-\d{6}\.gz)\"' % (ayerano, ayermes, ayerdia)).finditer(wget)
-m=re.compile(ur'(?i)\"(pagecounts\-20081201\-\d{6}\.gz)\"').finditer(wget)
+hoy=datetime.date.today()
+hoyano=str(hoy.year)
+hoymes=str(hoy.month)
+if len(hoymes)==1:
+	hoymes='0%s' % hoymes
+hoydia=str(hoy.day)
+if len(hoydia)==1:
+	hoydia='0%s' % hoydia
+m=re.compile(ur'(?i)\"(pagecounts\-%s%s%s\-\d{6}\.gz)\"' % (hoyano, hoymes, hoydia)).finditer(wget)
+#m=re.compile(ur'(?i)\"(pagecounts\-20081201\-\d{6}\.gz)\"').finditer(wget)
 gzs=[]
 for i in m:
 	print i.group(1)
 	gzs.append(i.group(1))
-wikipedia.output("Elegidos %d ficheros..." % len(gzs))
+gzs=gzs[len(gzs)-1:len(gzs)] #nos quedamos con el ultimo que es el mas reciente
+wikipedia.output("Elegidos %d fichero(s)..." % len(gzs))
 
 pagesdic={}
 namespaceslists={}
@@ -51,10 +55,10 @@ for lang in langs:
 for gz in gzs:
 	print gz
 	try:
-		f=gzip.open('/mnt/user-store/stats/%s' % gz, 'r')
+		f=gzip.open('/home/emijrp/temporal/stats/%s' % gz, 'r')
 	except:
-		os.system('wget http://dammit.lt/wikistats/%s -O /mnt/user-store/stats/%s' % (gz, gz))
-		f=gzip.open('/mnt/user-store/stats/%s' % gz, 'r')
+		os.system('wget http://dammit.lt/wikistats/%s -O /home/emijrp/temporal/stats/%s' % (gz, gz))
+		f=gzip.open('/home/emijrp/temporal/stats/%s' % gz, 'r')
 	
 	#regex=re.compile(ur'(?im)^([a-z]{2}) (.*?) (\d{1,}) (\d{1,})$') #evitamos aa.b
 	regex=re.compile(r'(?im)^(?P<pagelang>%s) (?P<page>.+) (?P<times>\d{1,}) (?P<other>\d{1,})$' % '|'.join(langs)) #evitamos aa.b
@@ -90,8 +94,8 @@ for gz in gzs:
 			pagelang=i.group('pagelang')
 			page=re.sub('_', ' ', i.group('page'))
 			
-			#if re.search(exceptions[pagelang]['compiled'], page):
-			#	continue
+			if re.search(exceptions[pagelang]['compiled'], page):
+				continue
 			
 			times=int(i.group('times'))
 			other=int(i.group('other'))
@@ -142,15 +146,22 @@ for lang, pages in pageslist.items():
 			break
 
 for lang, list in pageselection.items():
+	exitpage=u""
+	if exitpages.has_key(lang):
+		exitpage=exitpages[lang]
+	else:
+		exitpage=u'Template:Popular articles'
+	
 	projsite=wikipedia.Site(lang, 'wikipedia')
-	salida="{{/begin|%d|%s|%d}}" % (limite, lang, totalvisits[lang])
+	salida=u"<noinclude>{{%s/begin|{{subst:CURRENTHOUR}}}}</noinclude>\n{| class=\"wikitable sortable\" style=\"text-align: center;\" width=350px \n|+ [[Plantilla:Artículos populares|Artículos populares]] en la última hora \n! # !! Artículo !! Visitas " % exitpage
 	
 	list2=[]
 	for quotedpage, visits in list:
 		list2.append(quotedpage)
 	gen=pagegenerators.PagesFromTitlesGenerator(list2, projsite)
 	pre=pagegenerators.PreloadingGenerator(gen, pageNumber=limite, lookahead=10)
-	c=0
+	c=d=0
+	sum=0
 	ind=-1
 	for page in pre:
 		detalles=u''
@@ -180,7 +191,13 @@ for lang, list in pageselection.items():
 			if page.namespace() in [6, 14]:
 				wtitle=u':%s' % wtitle
 			c+=1
-			salida+="\n|-\n| %d || [[%s]] %s|| %s " % (c, wtitle, detalles, list[ind][1])
+			if c-1 in [3,5,10,15,20]:
+				salida+=u"\n{{#ifexpr:{{{top|15}}} > %d|" % (c-1)
+				d+=1
+			salida+=u"\n{{!}}-\n{{!}} %d {{!}}{{!}} [[%s]]{{#if:{{{novistas|}}}||{{!}}{{!}} %s}} " % (c, wtitle, list[ind][1])
+			
+			sum+=int(list[ind][1])
+			
 			if c>=limite:
 				break
 			#except:
@@ -190,7 +207,8 @@ for lang, list in pageselection.items():
 	for iw in langs:
 		if iw!=lang:
 			iws+=u'[[%s:%s]]\n' % (iw, exitpage)
-	salida+="\n{{/end}}\n%s" % (iws)
+	#salida+="\n{{/end}}\n%s" % (iws)
+	salida+=u"\n%s\n{{%s/end|%d|%d|top={{{top|15}}}|fecha={{subst:CURRENTTIME}} ([[UTC]]) del {{subst:CURRENTDAY2}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}}}}\n|}\n<noinclude>{{documentación de plantilla}}\n%s</noinclude>" % ("}} "*d, exitpage, sum, totalvisits[lang], iws)
 	wikipedia.output(salida)
 	wiii=wikipedia.Page(projsite, exitpage)
 	wiii.put(salida, u'BOT - Updating list')
