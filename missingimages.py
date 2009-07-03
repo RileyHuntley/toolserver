@@ -9,8 +9,6 @@ import md5
 lenguajesobjetivos=[sys.argv[1]] # de momento probar con 1 solo a la vez
 lenguajefuente='en' # mirar nota1 si meto una lista en vez de individual
 
-#los False son para ahorrar memoria
-
 def percent(c):
 	if c % 1000 == 0:
 		#print '\nLlevamos %d' % c

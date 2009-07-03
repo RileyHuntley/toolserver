@@ -6,8 +6,6 @@ def percent(c):
 	if c % 100000 == 0:
 		wikipedia.output(u'Llevamos %d' % c)
 
-os.system("killall python") #paramos todos los procesos para dejar memoria libre
-
 clasificacion={0:u'·',1:u'Destacado',2:u'Bueno',3:u'Esbozo',4:u'Miniesbozo',5:u'Desambiguación'}
 #calidad={0:u'·',1:u'Bueno ([[Imagen:Artículo bueno.svg|14px|Artículo bueno]])',2:u'Destacado ([[Imagen:Cscr-featured.svg|14px|Artículo destacado]])'}
 importancia={0:u'·',1:u'Clase-A',2:u'Clase-B',3:u'Clase-C',4:u'Clase-D'}
