@@ -55,7 +55,7 @@ u"vi": u"Danh sách thành viên Wikipedia theo số lần sửa trang (tính c�
 projects={
 'wikinews': ['es'],
 #'wikipedia': ['es', 'eo', 'hu', 'ca', 'tr', 'ro', 'vo', 'fi', 'it', 'nl', 'ru', 'sv', 'no', 'da', 'ar', 'ko', 'sr', 'sl', 'vi', 'bg', 'et', 'ht', 'fa', 'hr', 'new', 'nn', 'te', 'gl', 'th', 'simple', 'he'],
-'wikipedia': ['ar', 'es', 'hr', 'ro', 'simple', 'th', 'tr', 'vi', 'da'],
+'wikipedia': ['es', 'hr', 'ro', 'simple', 'th', 'tr', 'vi', 'da'],
 }
 
 #if len(sys.argv)>1:

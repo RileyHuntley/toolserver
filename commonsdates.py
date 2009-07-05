@@ -57,6 +57,7 @@ u"december":u"12", u"dec":u"12",
 }
 monthsnames_en=month2number_en.keys()
 regexp_en=ur"%s(?P<change>\[?\[?(?P<day>[1-9]|0[1-9]|1[0-9]|2[0-9]|3[0-1])(?P<separator1>%s)(?P<month>%s)\]?\]?(?P<separator2>%s)\[?\[?(?P<year>200\d)\]?\]?)%s" % (inicio, "|".join(separador_en), "|".join(monthsnames_en), "|".join(separador_en), fin)
+regexp_en_monthddaaaa=ur"%s(?P<change>\[?\[?(?P<month>%s)(?P<separator1>%s)(?P<day>[1-9]|0[1-9]|1[0-9]|2[0-9]|3[0-1])\]?\]?(?P<separator2>%s)\[?\[?(?P<year>200\d)\]?\]?)%s" % (inicio, "|".join(monthsnames_en), "|".join(separador_en), "|".join(separador_en), fin)
 sub_en=ur"\g<inicio>%s-%s-%s\g<fin>"
 
 #francés    dd month aaaa
@@ -79,24 +80,38 @@ monthsnames_fr=month2number_fr.keys()
 regexp_fr=ur"%s(?P<change>\[?\[?(?P<day>[1-9]|0[1-9]|1[0-9]|2[0-9]|3[0-1])(?P<separator1>%s)(?P<month>%s)\]?\]?(?P<separator2>%s)\[?\[?(?P<year>200\d)\]?\]?)%s" % (inicio, "|".join(separador_fr), "|".join(monthsnames_fr), "|".join(separador_fr), fin)
 sub_fr=ur"\g<inicio>%s-%s-%s\g<fin>"
 
-
 #dd/mm/aaaa para dd>12
-separador_ddmmaaa=[ur" *del? *", ur" *[\-\/\,\. ] *"]  #cuidado no meter ()
-regexp_ddmmaaa=ur"%s(?P<change>(?P<day>1[3-9]|2[0-9]|3[0-1])(?P<separator1>%s)(?P<month>[1-9]|0[1-9]|1[0-2])(?P<separator2>%s)(?P<year>200\d))%s" % (inicio, "|".join(separador_ddmmaaa), "|".join(separador_ddmmaaa), fin)
-sub_ddmmaaa=ur"\g<inicio>%s-%s-%s\g<fin>"
+separador_ddmmaaaa=[ur" *del? *", ur" *[\-\/\,\. ] *"]  #cuidado no meter ()
+regexp_ddmmaaaa=ur"%s(?P<change>(?P<day>1[3-9]|2[0-9]|3[0-1])(?P<separator1>%s)(?P<month>[1-9]|0[1-9]|1[0-2])(?P<separator2>%s)(?P<year>200\d))%s" % (inicio, "|".join(separador_ddmmaaaa), "|".join(separador_ddmmaaaa), fin)
+sub_ddmmaaaa=ur"\g<inicio>%s-%s-%s\g<fin>"
 
 #mm/dd/aaaa para dd>12
+separador_mmddaaaa=[ur" *del? *", ur" *[\-\/\,\. ] *"]  #cuidado no meter ()
+regexp_mmddaaaa=ur"%s(?P<change>(?P<month>[1-9]|0[1-9]|1[0-2])(?P<separator1>%s)(?P<day>1[3-9]|2[0-9]|3[0-1])(?P<separator2>%s)(?P<year>200\d))%s" % (inicio, "|".join(separador_mmddaaaa), "|".join(separador_mmddaaaa), fin)
+sub_mmddaaaa=ur"\g<inicio>%s-%s-%s\g<fin>"
+
+
 #aaaa/mm/dd para dd>12
+#no tiene mucho sentido http://commons.wikimedia.org/w/index.php?title=File:0-Bullet-anatomy.svg&diff=prev&oldid=23123025
+"""
+separador_aaaammdd=[ur" *del? *", ur" *[\-\/\,\. ] *"]  #cuidado no meter ()
+regexp_aaaammdd=ur"%s(?P<change>(?P<year>200\d)(?P<separator1>%s)(?P<month>[1-9]|0[1-9]|1[0-2])(?P<separator2>%s)(?P<day>1[3-9]|2[0-9]|3[0-1]))%s" % (inicio, "|".join(separador_aaaammdd), "|".join(separador_aaaammdd), fin)
+sub_aaaammdd=ur"\g<inicio>%s-%s-%s\g<fin>"
+"""
+
 #aaaa/dd/mm para dd>12
+separador_aaaaddmm=[ur" *del? *", ur" *[\-\/\,\. ] *"]  #cuidado no meter ()
+regexp_aaaaddmm=ur"%s(?P<change>(?P<year>200\d)(?P<separator1>%s)(?P<day>1[3-9]|2[0-9]|3[0-1])(?P<separator2>%s)(?P<month>[1-9]|0[1-9]|1[0-2]))%s" % (inicio, "|".join(separador_aaaaddmm), "|".join(separador_aaaaddmm), fin)
+sub_aaaaddmm=ur"\g<inicio>%s-%s-%s\g<fin>"
 
 #June 2007
 #15.8.07 complicado http://commons.wikimedia.org/wiki/File:Schlossportal_Ringelheim.jpg
-#13-jun-2009 http://commons.wikimedia.org/wiki/File:Ascenso1-minotauro.JPG
 #November 02, 2006 at 22:50 http://commons.wikimedia.org/wiki/File:Christina_Aguilera_(2006).jpg
 #[[20 July]] [[2008]] http://commons.wikimedia.org/wiki/File:Kit_left_arm_black_flick.png
 
 c=0
 t1=time.time()
+regexp_changed=ur"(?im)^ *\| *Date *\= *(?P<changed>\d{4}\-\d{2}\-\d{2})"
 for page in pre:
 	if not page.exists() or page.isRedirectPage() or page.isDisambig():
 		continue
@@ -118,44 +133,11 @@ for page in pre:
 			break
 		
 		newtext=re.sub(regexp_es, sub_es % (year, month2number_es[month.lower()], day), newtext, 1)
-		m=re.compile(ur"Date *\= *(?P<changed>\d{4}\-\d{2}\-\d{2})").finditer(newtext)
+		m=re.compile(regexp_changed).finditer(newtext)
 		for i in m:
 			changed=i.group("changed")
 			break
-	elif len(re.findall(regexp_ddmmaaa, newtext))==1:
-		m=re.compile(regexp_ddmmaaa).finditer(newtext)
-		
-		year=month=day=u""
-		for i in m:
-			change=i.group("change")
-			[year, month, day]=[i.group("year"), i.group("month"), i.group("day")]
-			if len(month)==1:
-				month="0"+month
-			if len(day)==1: #nunca deberia entrar aqui
-				day="0"+day
-			break
-		
-		newtext=re.sub(regexp_ddmmaaa, sub_ddmmaaa % (year, month, day), newtext, 1)
-		m=re.compile(ur"Date *\= *(?P<changed>\d{4}\-\d{2}\-\d{2})").finditer(newtext)
-		for i in m:
-			changed=i.group("changed")
-			break
-	
-	if newtext!=wtext:
-		wikipedia.showDiff(wtext, newtext)
-		if c>=10:
-			while time.time()-t1<60:
-				time.sleep(0.1)
-			t1=time.time()
-			c=0
-		
-		try:
-			page.put(newtext, u"BOT - Normalize date format to allow localization: %s → %s" % (change, changed))
-			c+=1
-		except:
-			pass
-
-"""elif len(re.findall(regexp_en, newtext))==1: #ingles
+	elif len(re.findall(regexp_en, newtext))==1: #ingles
 		m=re.compile(regexp_en).finditer(newtext)
 		
 		year=month=day=u""
@@ -167,7 +149,23 @@ for page in pre:
 			break
 		
 		newtext=re.sub(regexp_en, sub_en % (year, month2number_en[month.lower()], day), newtext, 1)
-		m=re.compile(ur"Date *\= *(?P<changed>\d{4}\-\d{2}\-\d{2})").finditer(newtext)
+		m=re.compile(regexp_changed).finditer(newtext)
+		for i in m:
+			changed=i.group("changed")
+			break
+	elif len(re.findall(regexp_en_monthddaaaa, newtext))==1: #ingles regexp_en_monthddaaaa
+		m=re.compile(regexp_en_monthddaaaa).finditer(newtext)
+		
+		year=month=day=u""
+		for i in m:
+			change=i.group("change")
+			[year, month, day]=[i.group("year"), i.group("month"), i.group("day")]
+			if len(day)==1:
+				day="0"+day
+			break
+		
+		newtext=re.sub(regexp_en_monthddaaaa, sub_en % (year, month2number_en[month.lower()], day), newtext, 1)
+		m=re.compile(regexp_changed).finditer(newtext)
 		for i in m:
 			changed=i.group("changed")
 			break
@@ -184,6 +182,94 @@ for page in pre:
 		
 		newtext=re.sub(regexp_fr, sub_fr % (year, month2number_fr[month.lower()], day), newtext, 1)
 		m=re.compile(ur"Date *\= *(?P<changed>\d{4}\-\d{2}\-\d{2})").finditer(newtext)
+		for i in m:
+			changed=i.group("changed")
+			break
+	elif len(re.findall(regexp_ddmmaaaa, newtext))==1:
+		m=re.compile(regexp_ddmmaaaa).finditer(newtext)
+		
+		year=month=day=u""
+		for i in m:
+			change=i.group("change")
+			[year, month, day]=[i.group("year"), i.group("month"), i.group("day")]
+			if len(month)==1:
+				month="0"+month
+			if len(day)==1: #nunca deberia entrar aqui
+				day="0"+day
+			break
+		
+		newtext=re.sub(regexp_ddmmaaaa, sub_ddmmaaaa % (year, month, day), newtext, 1)
+		m=re.compile(regexp_changed).finditer(newtext)
+		for i in m:
+			changed=i.group("changed")
+			break
+	elif len(re.findall(regexp_mmddaaaa, newtext))==1:
+		m=re.compile(regexp_mmddaaaa).finditer(newtext)
+		
+		year=month=day=u""
+		for i in m:
+			change=i.group("change")
+			[year, month, day]=[i.group("year"), i.group("month"), i.group("day")]
+			if len(month)==1:
+				month="0"+month
+			if len(day)==1: #nunca deberia entrar aqui
+				day="0"+day
+			break
+		
+		newtext=re.sub(regexp_mmddaaaa, sub_mmddaaaa % (year, month, day), newtext, 1)
+		m=re.compile(regexp_changed).finditer(newtext)
+		for i in m:
+			changed=i.group("changed")
+			break
+	elif len(re.findall(regexp_aaaaddmm, newtext))==1:
+		m=re.compile(regexp_aaaaddmm).finditer(newtext)
+		
+		year=month=day=u""
+		for i in m:
+			change=i.group("change")
+			[year, month, day]=[i.group("year"), i.group("month"), i.group("day")]
+			if len(month)==1:
+				month="0"+month
+			if len(day)==1: #nunca deberia entrar aqui
+				day="0"+day
+			break
+		
+		newtext=re.sub(regexp_aaaaddmm, sub_aaaaddmm % (year, month, day), newtext, 1)
+		m=re.compile(regexp_changed).finditer(newtext)
+		for i in m:
+			changed=i.group("changed")
+			break
+	
+	if newtext!=wtext:
+		wikipedia.showDiff(wtext, newtext)
+		if c>=10:
+			while time.time()-t1<60:
+				time.sleep(0.1)
+			t1=time.time()
+			c=0
+		
+		try:
+			if changed:
+				page.put(newtext, u"BOT - Normalize date format to allow localization: %s → %s" % (change, changed))
+				c+=1
+		except:
+			pass
+
+"""elif len(re.findall(regexp_aaaammdd, newtext))==1:
+		m=re.compile(regexp_aaaammdd).finditer(newtext)
+		
+		year=month=day=u""
+		for i in m:
+			change=i.group("change")
+			[year, month, day]=[i.group("year"), i.group("month"), i.group("day")]
+			if len(month)==1:
+				month="0"+month
+			if len(day)==1: #nunca deberia entrar aqui
+				day="0"+day
+			break
+		
+		newtext=re.sub(regexp_aaaammdd, sub_aaaammdd % (year, month, day), newtext, 1)
+		m=re.compile(regexp_changed).finditer(newtext)
 		for i in m:
 			changed=i.group("changed")
 			break"""
