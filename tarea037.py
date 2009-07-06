@@ -55,10 +55,11 @@ for lang in langs:
 for gz in gzs:
 	print gz
 	try:
-		f=gzip.open('/home/emijrp/temporal/stats/%s' % gz, 'r')
+		f=gzip.open('/mnt/user-store/stats/%s' % gz, 'r')
 	except:
-		os.system('wget http://dammit.lt/wikistats/%s -O /home/emijrp/temporal/stats/%s' % (gz, gz))
-		f=gzip.open('/home/emijrp/temporal/stats/%s' % gz, 'r')
+		#os.system('wget http://dammit.lt/wikistats/%s -O /mnt/user-store/stats/%s' % (gz, gz))
+		#f=gzip.open('/mnt/user-store/stats/%s' % gz, 'r')
+		sys.exit()
 	
 	#regex=re.compile(ur'(?im)^([a-z]{2}) (.*?) (\d{1,}) (\d{1,})$') #evitamos aa.b
 	regex=re.compile(r'(?im)^(?P<pagelang>%s) (?P<page>.+) (?P<times>\d{1,}) (?P<other>\d{1,})$' % '|'.join(langs)) #evitamos aa.b
