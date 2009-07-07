@@ -118,6 +118,10 @@ for page in pre:
 	
 	wtitle=page.title()
 	wtext=newtext=page.get()
+	
+	if re.search(ur"(?i)\{\{ *User\:Tivedshambo\/Information", wtext): #http://commons.wikimedia.org/wiki/User_talk:Emijrp
+		continue
+	
 	change=u""
 	changed=""
 	
