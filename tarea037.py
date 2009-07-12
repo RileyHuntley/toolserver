@@ -158,7 +158,9 @@ for lang, list in pageselection.items():
 	
 	list2=[]
 	for quotedpage, visits in list:
-		list2.append(quotedpage)
+		quotedpage=re.sub("%20", " ", quotedpage).strip()
+		if quotedpage:
+			list2.append(quotedpage)
 	gen=pagegenerators.PagesFromTitlesGenerator(list2, projsite)
 	pre=pagegenerators.PreloadingGenerator(gen, pageNumber=limite, lookahead=10)
 	c=d=0

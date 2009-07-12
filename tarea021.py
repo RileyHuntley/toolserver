@@ -53,7 +53,7 @@ for pr in proyects:
 			trozo=re.sub('_', ' ', trozo)
 			if trozo[0]=='#':
 				continue
-			wikipedia.output(u'  Categoría:%s' % trozo)
+			#wikipedia.output(u'  Categoría:%s' % trozo)
 			if categoriesall.count(trozo)==0:
 				categoriesall.append(trozo)
 				categories[pr][trozo]=[]
