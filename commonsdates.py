@@ -109,9 +109,18 @@ sub_aaaaddmm=ur"\g<inicio>%s-%s-%s\g<fin>"
 #November 02, 2006 at 22:50 http://commons.wikimedia.org/wiki/File:Christina_Aguilera_(2006).jpg
 #[[20 July]] [[2008]] http://commons.wikimedia.org/wiki/File:Kit_left_arm_black_flick.png
 
+
+#{{Own}}
+inicio_own=ur"(?im)^(?P<inicio> *\| *Source *\= *)"
+fin_own=ur"[ \.]*(?P<fin> *[\n\r\|])" #eliminamos . finales que no permiten hacer la conversión
+own_synonym=[ur"own[ \-]*work", ur"self[ \-]*made", ur"eie[ \-]*werk", ur"Treballo de qui la cargó", ur"Trabayu propiu", ur"Уласны твор", ur"Собствена творба", ur"Vlastito djelo", ur"Treball propi", ur"Vlastní dílo", ur"Eget arbejde", ur"Eigene Arbeit", ur"Propra verko", ur"Trabajo propio", ur"Üleslaadija oma töö", ur"Oma teos", ur"Travail personnel", ur"Traballo propio", ur"Vlastito djelo postavljača", ur"A feltöltő saját munkája", ur"Karya sendiri", ur"Opera propria", ur"Opus proprium", ur"Mano darbas", ur"Egen Wark", ur"Eigen waark", ur"Eigen werk", ur"Eget arbeide", ur"Trabalh personal", ur"Ejen Woakj", ur"Praca własna", ur"Trabalho próprio", ur"Operă proprie", ur"Vlastné dielo", ur"Lastno delo", ur"Eget arbete", ur"Sariling gawa"] #no meter  ()
+regexp_own=ur"%s(?P<change>\[?\[?%s\]?\]?)%s" % (inicio_own, "|".join(own_synonym), fin_own)
+sub_own=ur"\g<inicio>{{Own}}\g<fin>"
+
 c=0
 t1=time.time()
 regexp_changed=ur"(?im)^ *\| *Date *\= *(?P<changed>\d{4}\-\d{2}\-\d{2})"
+regexp_changed_own=ur"(?im)^ *\| *Source *\= *(?P<changed>\{\{Own\}\})"
 for page in pre:
 	if not page.exists() or page.isRedirectPage() or page.isDisambig():
 		continue
@@ -244,6 +253,22 @@ for page in pre:
 			changed=i.group("changed")
 			break
 	
+	#{{Own}}
+	change_own=u""
+	changed_own=u""
+	if len(re.findall(regexp_own, newtext))==1:
+		m=re.compile(regexp_own).finditer(newtext)
+		
+		for i in m:
+			change_own=i.group("change")
+			break
+		
+		newtext=re.sub(regexp_own, sub_own, newtext, 1)
+		m=re.compile(regexp_changed_own).finditer(newtext)
+		for i in m:
+			changed_own=i.group("changed")
+			break
+	
 	if newtext!=wtext:
 		wikipedia.showDiff(wtext, newtext)
 		if c>=10:
@@ -253,9 +278,16 @@ for page in pre:
 			c=0
 		
 		try:
+			summary=u""
 			if changed:
-				page.put(newtext, u"BOT - Normalize date format to allow localization: %s → %s" % (change, changed))
-				c+=1
+				summary+=u"BOT - Normalize date format to allow localization: %s → %s" % (change, changed)
+				if changed_own:
+					summary+=u"; {{[[Template:Own|Own]]}} to allow localization: %s → %s" % (change_own, changed_own)
+			elif changed_own:
+				summary+=u"BOT - {{[[Template:Own|Own]]}} to allow localization: %s → %s" % (change_own, changed_own)
+			
+			page.put(newtext, summary)
+			c+=1
 		except:
 			pass
 
