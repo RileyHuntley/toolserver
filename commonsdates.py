@@ -9,6 +9,7 @@
 import re, urllib, sys, time
 import wikipedia, catlib, pagegenerators
 
+ratelimit=20
 commonssite=wikipedia.Site('commons', 'commons')
 st=u"Es"
 if (len(sys.argv)>=2):
@@ -19,7 +20,7 @@ pre=pagegenerators.PreloadingGenerator(gen, pageNumber=250, lookahead=250)
 inicio=ur"(?im)^(?P<inicio> *\| *Date *\= *)"
 fin=ur"[ \.]*(?P<fin> *[\n\r\|])" #eliminamos . finales que no permiten hacer la conversión de fechas
 
-#español
+#español   dd month aaaa
 separador_es=[ur" *del? *", ur" *[\-\/\,\. ] *"] #cuidado no meter ()
 month2number_es={
 u"enero":u"01", u"ene":u"01", 
@@ -58,7 +59,9 @@ u"december":u"12", u"dec":u"12",
 monthsnames_en=month2number_en.keys()
 regexp_en=ur"%s(?P<change>\[?\[?(?P<day>[1-9]|0[1-9]|1[0-9]|2[0-9]|3[0-1])(?P<separator1>%s)(?P<month>%s)\]?\]?(?P<separator2>%s)\[?\[?(?P<year>200\d)\]?\]?)%s" % (inicio, "|".join(separador_en), "|".join(monthsnames_en), "|".join(separador_en), fin)
 regexp_en_monthddaaaa=ur"%s(?P<change>\[?\[?(?P<month>%s)(?P<separator1>%s)(?P<day>[1-9]|0[1-9]|1[0-9]|2[0-9]|3[0-1])\]?\]?(?P<separator2>%s)\[?\[?(?P<year>200\d)\]?\]?)%s" % (inicio, "|".join(monthsnames_en), "|".join(separador_en), "|".join(separador_en), fin)
+regexp_en_monthaaaa=ur"%s(?P<change>\[?\[?(?P<month>%s)\]?\]?(?P<separator2>%s)\[?\[?(?P<year>200\d)\]?\]?)%s" % (inicio, "|".join(monthsnames_en), "|".join(separador_en), fin)
 sub_en=ur"\g<inicio>%s-%s-%s\g<fin>"
+sub_en_monthaaaa=ur"\g<inicio>%s-%s\g<fin>"
 
 #francés    dd month aaaa
 separador_fr=[ur" *[\-\/\,\. ] *", ] #cuidado no meter ()
@@ -113,6 +116,7 @@ sub_aaaaddmm=ur"\g<inicio>%s-%s-%s\g<fin>"
 #{{Own}}
 inicio_own=ur"(?im)^(?P<inicio> *\| *Source *\= *)"
 fin_own=ur"[ \.]*(?P<fin> *[\n\r\|])" #eliminamos . finales que no permiten hacer la conversión
+#CUIDADO con own photograph! http://commons.wikimedia.org/w/index.php?title=File:Teatro_Coccia_chandelier.jpg&diff=next&oldid=19903214
 own_synonym=[ur"own[ \-]*work", ur"self[ \-]*made", ur"eie[ \-]*werk", ur"Treballo de qui la cargó", ur"Trabayu propiu", ur"Уласны твор", ur"Собствена творба", ur"Vlastito djelo", ur"Treball propi", ur"Vlastní dílo", ur"Eget arbejde", ur"Eigene Arbeit", ur"Propra verko", ur"Trabajo propio", ur"Üleslaadija oma töö", ur"Oma teos", ur"Travail personnel", ur"Traballo propio", ur"Vlastito djelo postavljača", ur"A feltöltő saját munkája", ur"Karya sendiri", ur"Opera propria", ur"Opus proprium", ur"Mano darbas", ur"Egen Wark", ur"Eigen waark", ur"Eigen werk", ur"Eget arbeide", ur"Trabalh personal", ur"Ejen Woakj", ur"Praca własna", ur"Trabalho próprio", ur"Operă proprie", ur"Vlastné dielo", ur"Lastno delo", ur"Eget arbete", ur"Sariling gawa"] #no meter  ()
 regexp_own=ur"%s(?P<change>\[?\[?%s\]?\]?)%s" % (inicio_own, "|".join(own_synonym), fin_own)
 sub_own=ur"\g<inicio>{{Own}}\g<fin>"
@@ -120,6 +124,7 @@ sub_own=ur"\g<inicio>{{Own}}\g<fin>"
 c=0
 t1=time.time()
 regexp_changed=ur"(?im)^ *\| *Date *\= *(?P<changed>\d{4}\-\d{2}\-\d{2})"
+regexp_changed_aaaamm=ur"(?im)^ *\| *Date *\= *(?P<changed>\d{4}\-\d{2})"
 regexp_changed_own=ur"(?im)^ *\| *Source *\= *(?P<changed>\{\{Own\}\})"
 for page in pre:
 	if not page.exists() or page.isRedirectPage() or page.isDisambig():
@@ -179,6 +184,20 @@ for page in pre:
 		
 		newtext=re.sub(regexp_en_monthddaaaa, sub_en % (year, month2number_en[month.lower()], day), newtext, 1)
 		m=re.compile(regexp_changed).finditer(newtext)
+		for i in m:
+			changed=i.group("changed")
+			break
+	elif len(re.findall(regexp_en_monthaaaa, newtext))==1: #ingles regexp_en_monthaaaa
+		m=re.compile(regexp_en_monthaaaa).finditer(newtext)
+		
+		year=month=u""
+		for i in m:
+			change=i.group("change")
+			[year, month]=[i.group("year"), i.group("month")]
+			break
+		
+		newtext=re.sub(regexp_en_monthaaaa, sub_en_monthaaaa % (year, month2number_en[month.lower()]), newtext, 1)
+		m=re.compile(regexp_changed_aaaamm).finditer(newtext)
 		for i in m:
 			changed=i.group("changed")
 			break
@@ -271,7 +290,7 @@ for page in pre:
 	
 	if newtext!=wtext:
 		wikipedia.showDiff(wtext, newtext)
-		if c>=10:
+		if c>=ratelimit:
 			while time.time()-t1<60:
 				time.sleep(0.1)
 			t1=time.time()
