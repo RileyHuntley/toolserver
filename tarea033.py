@@ -46,7 +46,7 @@ f.close()
 
 c=0
 for red, v in reds.items():
-	if not re.search(ur"(?i)[^a-záéíóú ]", red):
+	if not re.search(ur"(?i)[^a-záéíóú0-9 ]", red):
 		red2=red
 		red2=re.sub(ur"Á", ur"A", red2)
 		red2=re.sub(ur"É", ur"E", red2)

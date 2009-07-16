@@ -9,7 +9,7 @@
 import re, urllib, sys, time
 import wikipedia, catlib, pagegenerators
 
-ratelimit=20
+ratelimit=60
 commonssite=wikipedia.Site('commons', 'commons')
 st=u"Es"
 if (len(sys.argv)>=2):
@@ -117,6 +117,7 @@ sub_aaaaddmm=ur"\g<inicio>%s-%s-%s\g<fin>"
 inicio_own=ur"(?im)^(?P<inicio> *\| *Source *\= *)"
 fin_own=ur"[ \.]*(?P<fin> *[\n\r\|])" #eliminamos . finales que no permiten hacer la conversión
 #CUIDADO con own photograph! http://commons.wikimedia.org/w/index.php?title=File:Teatro_Coccia_chandelier.jpg&diff=next&oldid=19903214
+#ideas: own photo, own photograph
 own_synonym=[ur"own[ \-]*work", ur"self[ \-]*made", ur"eie[ \-]*werk", ur"Treballo de qui la cargó", ur"Trabayu propiu", ur"Уласны твор", ur"Собствена творба", ur"Vlastito djelo", ur"Treball propi", ur"Vlastní dílo", ur"Eget arbejde", ur"Eigene Arbeit", ur"Propra verko", ur"Trabajo propio", ur"Üleslaadija oma töö", ur"Oma teos", ur"Travail personnel", ur"Traballo propio", ur"Vlastito djelo postavljača", ur"A feltöltő saját munkája", ur"Karya sendiri", ur"Opera propria", ur"Opus proprium", ur"Mano darbas", ur"Egen Wark", ur"Eigen waark", ur"Eigen werk", ur"Eget arbeide", ur"Trabalh personal", ur"Ejen Woakj", ur"Praca własna", ur"Trabalho próprio", ur"Operă proprie", ur"Vlastné dielo", ur"Lastno delo", ur"Eget arbete", ur"Sariling gawa"] #no meter  ()
 regexp_own=ur"%s(?P<change>\[?\[?%s\]?\]?)%s" % (inicio_own, "|".join(own_synonym), fin_own)
 sub_own=ur"\g<inicio>{{Own}}\g<fin>"

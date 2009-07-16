@@ -17,5 +17,6 @@ for i in users:
 	f.close()
 salida+=u"\n|Total=%d\n|%d}}" % (total, total)
 
-editcount=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u"User:Emijrp/Editcount")
-editcount.put(salida, u"BOT - Actualizando ediciones globales de %s: %d" % (", ".join(users), total))
+if total>0:
+	editcount=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u"User:Emijrp/Editcount")
+	editcount.put(salida, u"BOT - Actualizando ediciones globales de %s: %d" % (", ".join(users), total))
