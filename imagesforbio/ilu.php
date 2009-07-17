@@ -7,7 +7,8 @@ function leer($url)
 
 	$data="";
 
-	/*$c=0;
+	/*a vees provoca bucle infinito
+	$c=0;
 	while(!feof($f)){ 
 		$data.= fgets($f);
 		$c+=1;
@@ -88,8 +89,12 @@ if (isset($_POST['image']) and isset($_POST['article']) and isset($_POST['lang']
 		case 'ar': $resume="إضافة صورة من http://toolserver.org/~emijrp/imagesforbio/"; $position="left"; break;
 		case 'bn': $resume="ছবি যোগ হয়েছে http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'bs': $resume="Dodajem sliku sa http://toolserver.org/~emijrp/imagesforbio/"; break;
+		case 'ca': $resume="Afegeixo imatge des de http://toolserver.org/~emijrp/imagesforbio/"; break;
+		case '': $resume=""; break;
 		case 'cs': $resume="Přidaný obrázek pomocí http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'de': $resume="Bild hinzufügen mit http://toolserver.org/~emijrp/imagesforbio/"; break;
+		case 'da': $resume="Tilføjer billede fra http://toolserver.org/~emijrp/imagesforbio/"; break;
+		case 'dsb': $resume="Pśidał jo wobraz wužywacy http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'el': $resume="Προσθήκη εικόνας με το http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'en': $resume="Add image from http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'eo': $resume="Aldonis bildon per http://toolserver.org/~emijrp/imagesforbio/"; break;
@@ -99,16 +104,22 @@ if (isset($_POST['image']) and isset($_POST['article']) and isset($_POST['lang']
 		case 'fr': $resume="Ajout d'une image depuis http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'he': $resume="הוספת תמונה בעזרת http://toolserver.org/~emijrp/imagesforbio/"; $position="left"; break;
 		case 'hr': $resume="Dodajem sliku sa http://toolserver.org/~emijrp/imagesforbio/"; break;
+		case 'hsb': $resume="Přida wobraz wužiwajo http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'it': $resume="Aggiungi un'immagine usando http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'ja': $resume="http://toolserver.org/~emijrp/imagesforbio/ から画像を追加"; break;
 		case 'nl': $resume="Afbeelding toegevoegd via http://toolserver.org/~emijrp/imagesforbio/"; break;
+		case 'nn': $resume="Legg til bilete frå http://toolserver.org/~emijrp/imagesforbio/"; break;
+		case 'no': $resume="Legger til bilde fra http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'pl': $resume="Dodaj grafikę z tego źródła: http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'pt': $resume="Adicionada imagem usando http://toolserver.org/~emijrp/imagesforbio/"; break;
+		case 'ro': $resume="Adăugat imagine de la http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'ru': $resume="Добавлено изображение. http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'sk': $resume="Pridaný obrázok pomocou http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'sl': $resume="Vključena bioslika s pomočjo http://tools.wikimedia.de/~emijrp/imagesforbio/"; break;
 		case 'sr': $resume="додајем слику са http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'sv': $resume="Lägger till bild från http://toolserver.org/~emijrp/imagesforbio/"; break;
+		case 'uk': $resume="Додано зображення з http://toolserver.org/~emijrp/imagesforbio/"; break;
+		case 'zh': $resume="由 http://toolserver.org/~emijrp/imagesforbio/ 加入圖片"; break;
 	}
 	
 	$text=leer("http://$lang.wikipedia.org/w/index.php?title=".str_replace(" ", "_", $article)."&action=raw", 'r');
