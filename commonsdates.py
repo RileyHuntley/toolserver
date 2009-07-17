@@ -41,7 +41,7 @@ regexp_es=ur"%s(?P<change>\[?\[?(?P<day>[1-9]|0[1-9]|1[0-9]|2[0-9]|3[0-1])(?P<se
 sub_es=ur"\g<inicio>%s-%s-%s\g<fin>"
 
 #inglés    dd month aaaa
-separador_en=[ur" *[\-\/\,\. ] *", ] #cuidado no meter ()
+separador_en=[ur" *[\-\/\,\. ] *", ur" *nd *[\.\,]? *", ur" *rd *[\.\,]? *", ur" *st *[\.\,]? *", ur" *th *[\.\,]? *"] #cuidado no meter ()
 month2number_en={
 u"january":u"01", u"jan":u"01", 
 u"february":u"02", u"feb":u"02", 
@@ -107,7 +107,6 @@ separador_aaaaddmm=[ur" *del? *", ur" *[\-\/\,\. ] *"]  #cuidado no meter ()
 regexp_aaaaddmm=ur"%s(?P<change>(?P<year>200\d)(?P<separator1>%s)(?P<day>1[3-9]|2[0-9]|3[0-1])(?P<separator2>%s)(?P<month>[1-9]|0[1-9]|1[0-2]))%s" % (inicio, "|".join(separador_aaaaddmm), "|".join(separador_aaaaddmm), fin)
 sub_aaaaddmm=ur"\g<inicio>%s-%s-%s\g<fin>"
 
-#June 2007
 #15.8.07 complicado http://commons.wikimedia.org/wiki/File:Schlossportal_Ringelheim.jpg
 #November 02, 2006 at 22:50 http://commons.wikimedia.org/wiki/File:Christina_Aguilera_(2006).jpg
 #[[20 July]] [[2008]] http://commons.wikimedia.org/wiki/File:Kit_left_arm_black_flick.png
@@ -276,18 +275,19 @@ for page in pre:
 	#{{Own}}
 	change_own=u""
 	changed_own=u""
-	if len(re.findall(regexp_own, newtext))==1:
-		m=re.compile(regexp_own).finditer(newtext)
-		
-		for i in m:
-			change_own=i.group("change")
-			break
-		
-		newtext=re.sub(regexp_own, sub_own, newtext, 1)
-		m=re.compile(regexp_changed_own).finditer(newtext)
-		for i in m:
-			changed_own=i.group("changed")
-			break
+	if newtext!=wtext:
+		if len(re.findall(regexp_own, newtext))==1:
+			m=re.compile(regexp_own).finditer(newtext)
+			
+			for i in m:
+				change_own=i.group("change")
+				break
+			
+			newtext=re.sub(regexp_own, sub_own, newtext, 1)
+			m=re.compile(regexp_changed_own).finditer(newtext)
+			for i in m:
+				changed_own=i.group("changed")
+				break
 	
 	if newtext!=wtext:
 		wikipedia.showDiff(wtext, newtext)
