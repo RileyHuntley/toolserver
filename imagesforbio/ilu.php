@@ -2,13 +2,24 @@
 
 function leer($url)
 {
+	//fixed Disabling of ilu.php email bug
 	$f = fopen($url,"r"); 
 
 	$data="";
 
+	/*$c=0;
 	while(!feof($f)){ 
-		$data.= fgets($f); 
-	}
+		$data.= fgets($f);
+		$c+=1;
+		if ($c>100){
+			$data="";
+			break;
+		}
+	}*/
+	
+	$data=stream_get_contents($f);
+	
+	fclose($f);
 	
 	return $data;
 }
@@ -61,13 +72,13 @@ function cGetEditButton ( $text , $title , $lang , $project , $summary , $button
 	return $ncb ;
 }
 
-if (isset($_GET['image']) and isset($_GET['article']) and isset($_GET['lang']))
+if (isset($_POST['image']) and isset($_POST['article']) and isset($_POST['lang']))
 {
-	$article=urldecode($_GET['article']);
-	$image=urldecode($_GET['image']);
+	$article=urldecode($_POST['article']);
+	$image=urldecode($_POST['image']);
 	$article=str_replace("\\", "", $article);
 	$image=str_replace("\\", "", $image);
-	$lang=$_GET['lang'];
+	$lang=$_POST['lang'];
 	
 	// Create form
 	$resume="Add image from http://tools.wikimedia.de/~emijrp/imagesforbio/";
@@ -101,22 +112,27 @@ if (isset($_GET['image']) and isset($_GET['article']) and isset($_GET['lang']))
 	}
 	
 	$text=leer("http://$lang.wikipedia.org/w/index.php?title=".str_replace(" ", "_", $article)."&action=raw", 'r');
-	if ($lang=='sl')
-	{
-		$text="{{bioslika|islike=$image|napis={{subst:PAGENAME}}}}\n$text";
-	}else{
-		$text="[[{{subst:ns:6}}:$image|thumb|$position|{{subst:PAGENAME}}]]\n$text";
-	}
-	
-	$button = cGetEditButton ( $text , $article , $lang , "wikipedia" , $resume , "Click me if you have JavaScript disabled" , false , false , true , true ) ;
-	$button = str_replace ( "type='submit'" , "type='submit' id='thebutton'" , $button ) ;
+	if (strlen($text)>0){
+		if ($lang=='sl')
+		{
+			$text="{{bioslika|islike=$image|napis={{subst:PAGENAME}}}}\n$text";
+		}else{
+			$text="[[{{subst:ns:6}}:$image|thumb|$position|{{subst:PAGENAME}}]]\n$text";
+		}
+		
+		$button = cGetEditButton ( $text , $article , $lang , "wikipedia" , $resume , "Click me if you have JavaScript disabled" , false , false , true , true ) ;
+		$button = str_replace ( "type='submit'" , "type='submit' id='thebutton'" , $button ) ;
 
-	// Output
-	print "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"pl\" lang=\"pl\" dir=\"ltr\">\n<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" /></head>\n";
-	print "<body onload=\"document.getElementById('thebutton').click();\">" ;
-	print $button ;
-	print "<br/>(otherwise, wait a second or two...)<br/>Using some Magnus functions... Thank you Magnus" ;
-	print "</body></html>" ;
+		// Output
+		print "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"pl\" lang=\"pl\" dir=\"ltr\">\n<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" /></head>\n";
+		print "<body onload=\"document.getElementById('thebutton').click();\">" ;
+		print $button ;
+		print "<br/>(otherwise, wait a second or two...)<br/>Using some Magnus functions... Thank you Magnus" ;
+		print "</body></html>" ;
+	}else{
+		print "http://$lang.wikipedia.org/w/index.php?title=".str_replace(" ", "_", $article)."&action=raw";
+		print "error found";
+	}
 }
 
 ?>
