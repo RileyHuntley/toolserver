@@ -73,7 +73,7 @@ else
 	echo "<b>Options:</b> <a href=index.php?language={$language}&show=1>Show done or useless</a> - <a href='stats.php'>Stats</a>";
 echo "<hr/>";
 
-$limit=25;
+$limit=20;
 if ($language)
 {
 	if ($language=="all")

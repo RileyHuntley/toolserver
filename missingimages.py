@@ -18,7 +18,7 @@ pageid2pagetitle={}
 pagetitle2pageid={}
 imagelinks={}
 imagelinks_pattern=re.compile(ur'\((\d+)\,\'([^\']*?)\'\)')
-exclusion_pattern=re.compile(ur'(?i)(\.(gif|mid|ogg|pne?g|svg)|bandera|escudo|herb|coa|blas[oó]n|icon|flag|coat|shield|wiki|logo|barnstar|dot|map|cover)') # los ' y " los filtramos al final
+exclusion_pattern=re.compile(ur'(?i)(\.(gif|mid|ogg|pne?g|svg)|bandera|escudo|herb|coa|blas[oó]n|icon|flag|coat|shield|wiki|logo|barnstar|dot|map|cover|tomb|tumb|grave|50 ?cent|hitler)') # los ' y " los filtramos al final
 
 #cargamos templates para descartar imagenes inutiles
 templates={}
@@ -172,7 +172,7 @@ for lang in lenguajesobjetivos:
 	print '\nCargados %d pageid/pagetitle de %swiki que tienen iw hacia articulos de %s: sin imagenes' % (c, lenguajefuente, lang)
 	f.close()
 
-#cargamos imagenes subidas a la inglesa y que cumplan ls filtros
+#cargamos imagenes subidas a la inglesa y que cumplan los filtros
 print '-'*70
 print 'Cargando imagenes de %s:' % lenguajefuente
 images={}

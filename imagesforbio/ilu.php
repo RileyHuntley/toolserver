@@ -90,7 +90,6 @@ if (isset($_POST['image']) and isset($_POST['article']) and isset($_POST['lang']
 		case 'bn': $resume="ছবি যোগ হয়েছে http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'bs': $resume="Dodajem sliku sa http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'ca': $resume="Afegeixo imatge des de http://toolserver.org/~emijrp/imagesforbio/"; break;
-		case '': $resume=""; break;
 		case 'cs': $resume="Přidaný obrázek pomocí http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'de': $resume="Bild hinzufügen mit http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'da': $resume="Tilføjer billede fra http://toolserver.org/~emijrp/imagesforbio/"; break;
@@ -108,6 +107,7 @@ if (isset($_POST['image']) and isset($_POST['article']) and isset($_POST['lang']
 		case 'it': $resume="Aggiungi un'immagine usando http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'ja': $resume="http://toolserver.org/~emijrp/imagesforbio/ から画像を追加"; break;
 		case 'nl': $resume="Afbeelding toegevoegd via http://toolserver.org/~emijrp/imagesforbio/"; break;
+		case 'nds': $resume="Bild rinstellt. http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'nn': $resume="Legg til bilete frå http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'no': $resume="Legger til bilde fra http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'pl': $resume="Dodaj grafikę z tego źródła: http://toolserver.org/~emijrp/imagesforbio/"; break;
@@ -119,6 +119,7 @@ if (isset($_POST['image']) and isset($_POST['article']) and isset($_POST['lang']
 		case 'sr': $resume="додајем слику са http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'sv': $resume="Lägger till bild från http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'uk': $resume="Додано зображення з http://toolserver.org/~emijrp/imagesforbio/"; break;
+		case 'ur': $resume="Add image from http://toolserver.org/~emijrp/imagesforbio/"; $position="left"; break;
 		case 'zh': $resume="由 http://toolserver.org/~emijrp/imagesforbio/ 加入圖片"; break;
 	}
 	
