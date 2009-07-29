@@ -118,14 +118,30 @@ fin_own=ur"[ \.]*(?P<fin> *[\n\r\|])" #eliminamos . finales que no permiten hace
 #CUIDADO con own photograph! http://commons.wikimedia.org/w/index.php?title=File:Teatro_Coccia_chandelier.jpg&diff=next&oldid=19903214
 #ideas: own photo, own photograph
 own_synonym=[ur"own[ \-]*work", ur"self[ \-]*made", ur"eie[ \-]*werk", ur"Treballo de qui la cargó", ur"Trabayu propiu", ur"Уласны твор", ur"Собствена творба", ur"Vlastito djelo", ur"Treball propi", ur"Vlastní dílo", ur"Eget arbejde", ur"Eigene Arbeit", ur"Propra verko", ur"Trabajo propio", ur"Üleslaadija oma töö", ur"Oma teos", ur"Travail personnel", ur"Traballo propio", ur"Vlastito djelo postavljača", ur"A feltöltő saját munkája", ur"Karya sendiri", ur"Opera propria", ur"Opus proprium", ur"Mano darbas", ur"Egen Wark", ur"Eigen waark", ur"Eigen werk", ur"Eget arbeide", ur"Trabalh personal", ur"Ejen Woakj", ur"Praca własna", ur"Trabalho próprio", ur"Operă proprie", ur"Vlastné dielo", ur"Lastno delo", ur"Eget arbete", ur"Sariling gawa"] #no meter  ()
-regexp_own=ur"%s(?P<change>\[?\[?%s\]?\]?)%s" % (inicio_own, "|".join(own_synonym), fin_own)
+regexp_own=ur"%s(?P<change>\[?\[?(%s)\]?\]?)%s" % (inicio_own, "|".join(own_synonym), fin_own)
 sub_own=ur"\g<inicio>{{Own}}\g<fin>"
+
+#== Licensing ==
+inicio_lic=ur"" #noseusade momento
+fin_lic=ur"(?P<fin> *[\n\r])"
+lic_synonym=[ur"Licensing", ur"License", ur"\[\[Commons\:Copyright tags\|Licensing\]\]", ur"Licencia", ur"Lizenz", ur"Licence", ur"Licencja", ur"Licença", ur"ライセンス", ur"Лицензирование", ur"Licencado", ur"ترخيص", ur"\[\[Commons\:Copyright tags\|ترخيص\]\]", ur"Licenţiere", ur"Licenza", ur"Licenza d\'uso", ur"Licentie", ur"Llicència", ur"Licenc", ur"Lisenssi", ur"\[\[COM\:TOM\|Lisenssi\]\]"]  #no meter  ()
+regexp_lic=ur"(?im)^%s(?P<h1>\=\=) *(?P<change>\[?\[?(%s)\]?\]? *\:?) *(?P<h2>\=\=)%s" % (inicio_lic, "|".join(lic_synonym), fin_lic)
+sub_lic=ur"\g<h1> {{int:license}} \g<h2>\g<fin>"
+
+#== Summary ==
+inicio_sum=ur"" #noseusade momento
+fin_sum=ur"(?P<fin> *[\n\r])"
+sum_synonym=[ur"Summary", ur"Sumario", ur"Beschreibung", ur"Description", ur"Opis", ur"Descrição do ficheiro", ur"Beskrivning", ur"Dettagli", ur"ファイルの概要", ur"Beschrijving", ur"Краткое описание", ur"ملخص", ur"Resum", ur"Popis", ur"Resumo", ur"Beskrivelse", ur"Összegzés", ur"Beskrivelse", ur"Yhteenveto", ur"Descriere fişier"]
+regexp_sum=ur"(?im)^%s(?P<h1>\=\=) *(?P<change>\[?\[?(%s)\]?\]? *\:?) *(?P<h2>\=\=)%s" % (inicio_sum, "|".join(sum_synonym), fin_sum)
+sub_sum=ur"\g<h1> {{int:filedesc}} \g<h2>\g<fin>"
 
 c=0
 t1=time.time()
-regexp_changed=ur"(?im)^ *\| *Date *\= *(?P<changed>\d{4}\-\d{2}\-\d{2})"
-regexp_changed_aaaamm=ur"(?im)^ *\| *Date *\= *(?P<changed>\d{4}\-\d{2})"
-regexp_changed_own=ur"(?im)^ *\| *Source *\= *(?P<changed>\{\{Own\}\})"
+regexp_changed=ur"(?m)^ *\| *Date *\= *(?P<changed>\d{4}\-\d{2}\-\d{2})"
+regexp_changed_aaaamm=ur"(?m)^ *\| *Date *\= *(?P<changed>\d{4}\-\d{2})"
+regexp_changed_own=ur"(?m)^ *\| *Source *\= *(?P<changed>\{\{Own\}\})"
+regexp_changed_lic=ur"(?m)^\=+ *(?P<changed>\{\{int:license\}\}) *\=+"
+regexp_changed_sum=ur"(?m)^\=+ *(?P<changed>\{\{int:filedesc\}\}) *\=+"
 for page in pre:
 	if not page.exists() or page.isRedirectPage() or page.isDisambig():
 		continue
@@ -133,7 +149,8 @@ for page in pre:
 	wtitle=page.title()
 	wtext=newtext=page.get()
 	
-	if re.search(ur"(?i)\{\{ *User\:Tivedshambo\/Information", wtext): #http://commons.wikimedia.org/wiki/User_talk:Emijrp
+	if re.search(ur"(?i)(\{\{ *User\:Tivedshambo\/Information|\<nowiki\>)", wtext): #http://commons.wikimedia.org/wiki/User_talk:Emijrp
+		#nowiki para evitar historiales 
 		continue
 	
 	change=u""
@@ -275,7 +292,7 @@ for page in pre:
 	#{{Own}}
 	change_own=u""
 	changed_own=u""
-	if newtext!=wtext:
+	if True or newtext!=wtext:
 		if len(re.findall(regexp_own, newtext))==1:
 			m=re.compile(regexp_own).finditer(newtext)
 			
@@ -289,6 +306,40 @@ for page in pre:
 				changed_own=i.group("changed")
 				break
 	
+	#== {{int:license}} ==
+	change_lic=u""
+	changed_lic=u""
+	if True or newtext!=wtext:
+		if len(re.findall(regexp_lic, newtext))==1:
+			m=re.compile(regexp_lic).finditer(newtext)
+			
+			for i in m:
+				change_lic=i.group("change")
+				break
+			
+			newtext=re.sub(regexp_lic, sub_lic, newtext, 1)
+			m=re.compile(regexp_changed_lic).finditer(newtext)
+			for i in m:
+				changed_lic=i.group("changed")
+				break
+	
+	#== {{int:filedesc}} ==
+	change_sum=u""
+	changed_sum=u""
+	if True or newtext!=wtext:
+		if len(re.findall(regexp_sum, newtext))==1:
+			m=re.compile(regexp_sum).finditer(newtext)
+			
+			for i in m:
+				change_sum=i.group("change")
+				break
+			
+			newtext=re.sub(regexp_sum, sub_sum, newtext, 1)
+			m=re.compile(regexp_changed_sum).finditer(newtext)
+			for i in m:
+				changed_sum=i.group("changed")
+				break
+	
 	if newtext!=wtext:
 		wikipedia.showDiff(wtext, newtext)
 		if c>=ratelimit:
@@ -298,13 +349,15 @@ for page in pre:
 			c=0
 		
 		try:
-			summary=u""
+			summary=u"BOT - Changes to allow localization:"
 			if changed:
-				summary+=u"BOT - Normalize date format to allow localization: %s → %s" % (change, changed)
-				if changed_own:
-					summary+=u"; {{[[Template:Own|Own]]}} to allow localization: %s → %s" % (change_own, changed_own)
-			elif changed_own:
-				summary+=u"BOT - {{[[Template:Own|Own]]}} to allow localization: %s → %s" % (change_own, changed_own)
+				summary+=u" %s → %s;" % (change, changed)
+			if changed_own:
+				summary+=u" %s → %s;" % (change_own, changed_own)
+			if changed_lic:
+				summary+=u" %s → %s;" % (change_lic, changed_lic)
+			if changed_sum:
+				summary+=u" %s → %s;" % (change_sum, changed_sum)
 			
 			page.put(newtext, summary)
 			c+=1
