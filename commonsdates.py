@@ -131,7 +131,7 @@ sub_lic=ur"\g<h1> {{int:license}} \g<h2>\g<fin>"
 #== Summary ==
 inicio_sum=ur"" #noseusade momento
 fin_sum=ur"(?P<fin> *[\n\r])"
-sum_synonym=[ur"Summary", ur"Sumario", ur"Beschreibung", ur"Description", ur"Opis", ur"Descrição do ficheiro", ur"Beskrivning", ur"Dettagli", ur"ファイルの概要", ur"Beschrijving", ur"Краткое описание", ur"ملخص", ur"Resum", ur"Popis", ur"Resumo", ur"Beskrivelse", ur"Összegzés", ur"Beskrivelse", ur"Yhteenveto", ur"Descriere fişier"]
+sum_synonym=[ur"Summary", ur"Sumario", ur"Beschreibung", ur"Description", ur"Opis", ur"Descrição do ficheiro", ur"Beskrivning", ur"Dettagli", ur"ファイルの概要", ur"Beschrijving", ur"Краткое описание", ur"ملخص", ur"Resum", ur"Popis", ur"Resumo", ur"Beskrivelse", ur"Összegzés", ur"Beskrivelse", ur"Yhteenveto", ur"Descriere fişier", ur"Σύνοψη"]
 regexp_sum=ur"(?im)^%s(?P<h1>\=\=) *(?P<change>\[?\[?(%s)\]?\]? *\:?) *(?P<h2>\=\=)%s" % (inicio_sum, "|".join(sum_synonym), fin_sum)
 sub_sum=ur"\g<h1> {{int:filedesc}} \g<h2>\g<fin>"
 
