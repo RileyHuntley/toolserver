@@ -18,7 +18,7 @@ pageid2pagetitle={}
 pagetitle2pageid={}
 imagelinks={}
 imagelinks_pattern=re.compile(ur'\((\d+)\,\'([^\']*?)\'\)')
-exclusion_pattern=re.compile(ur'(?i)(\.(gif|mid|ogg|pne?g|svg)|bandera|escudo|herb|coa|blas[oó]n|icon|flag|coat|shield|wiki|logo|barnstar|dot|map|cover|tomb|tumb|grave|50 ?cent|hitler)') # los ' y " los filtramos al final
+exclusion_pattern=re.compile(ur'(?i)(\.(gif|mid|ogg|pne?g|svg)|bandera|escudo|herb|coa|blas[oó]n|icon|flag|coat|shield|wiki|logo|barnstar|dot|map|cover|tomb|tumb|grave|50 ?cent|hitler|abu|gadd?afi)') # los ' y " los filtramos al final
 
 #cargamos templates para descartar imagenes inutiles
 templates={}
@@ -331,6 +331,8 @@ for lang in lenguajesobjetivos:
 		c+=1
 		for image, v2 in v.items():
 			iw=interwikis[lenguajefuente][pageid]
+			if re.search(ur"(?i)(abu|nidal|gadd?afi|cent)", iw):  #evitamos imagenes y articulos que no sirven o erroneas que ya se han comprobado en otras actualizacione
+				continue
 			trocear=u'%s %s' % (iw, article) #para aquellos idiomas como ar: con alfabetos distintos
 			trocear=re.sub(ur'[\(\)]', ur'', trocear)
 			trozos=trocear.split(' ')
@@ -343,7 +345,7 @@ for lang in lenguajesobjetivos:
 				temp=temp[:len(temp)-1]
 				if not listanegra.has_key(image):
 					if images['commons'].has_key(image):
-						if not re.search(exclusion_pattern, image):
+						if not re.search(exclusion_pattern, image): #evitamos imagenes que no sirven o erroneas que ya se han comprobado en otras actualizaciones
 							if not re.search(ur'([\'\"]|[^\d]0\d\d[^\d])', u'%s %s' % (iw, image)):
 								if re.search(ur"(?i)(%s)" % temp, image):
 									cc+=1
