@@ -24,7 +24,7 @@ u"hu": u"Wikipédisták listája szerkesztésszám szerint",
 u"ko": u"편집횟수 순 사용자 목록",
 u"pl": u"Użytkownicy według liczby edycji",
 u"ro": u"Lista wikipediştilor după numărul de editări",
-u"simple": u"List of Wikipedians by number of edits",
+u"simple": u"List of Wikipedians by number of changes",
 u"sl": u"Seznam Wikipedistov po številu urejanj",
 u"sv": u"Lista över Wikipedia-användare sorterad efter antalet redigeringar",
 u"th": u"รายชื่อชาววิกิพีเดียที่แก้ไขมากที่สุด 500 อันดับ",
@@ -44,7 +44,7 @@ u"hu": u"Wikipédisták listája szerkesztésszám szerint (botokkal)",
 u"ko": u"편집횟수 순 사용자 목록 (봇 포함)",
 u"pl": u"Użytkownicy według liczby edycji (w tym boty)",
 u"ro": u"Lista wikipediştilor după numărul de editări (inclusiv boţi)",
-u"simple": u"List of Wikipedians by number of edits (bots included)",
+u"simple": u"List of Wikipedians by number of changes (bots included)",
 u"sl": u"Seznam Wikipedistov po številu urejanj (z boti)",
 u"sv": u"Lista över Wikipedia-användare sorterad efter antalet redigeringar (inklusive robotar)",
 u"th": u"รายชื่อชาววิกิพีเดียที่แก้ไขมากที่สุด 500 อันดับ (รวมบอต)",
@@ -66,7 +66,7 @@ projects={
 for family, langs in projects.items():
 	for lang in langs:
 		#la lista de bots debe ir dentro del bucle
-		bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot', u'YurikBot', u'H-Bot', u'Paulatz bot', u'TekBot', u'Alfiobot', u'RoboRex', u'Agtbot', u'Felixbot', u'Pixibot', u'Sz-iwbot', u'Timbot (Gutza)', u'Ginosbot', u'GrinBot', u'.anacondabot', u'Omdirigeringsrättaren', u'Rubinbot', u'HasharBot', u'NetBot', u"D'ohBot", u'Byrialbot', u'Broadbot', u'Guanabot', u'Chris G Bot 2', u'CCyeZBot', u'Soulbot', u'MSBOT', u'GnawnBot', u'Chris G Bot 3', u'Huzzlet the bot', u'JCBot']
+		bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot', u'YurikBot', u'H-Bot', u'Paulatz bot', u'TekBot', u'Alfiobot', u'RoboRex', u'Agtbot', u'Felixbot', u'Pixibot', u'Sz-iwbot', u'Timbot (Gutza)', u'Ginosbot', u'GrinBot', u'.anacondabot', u'Omdirigeringsrättaren', u'Rubinbot', u'HasharBot', u'NetBot', u"D'ohBot", u'Byrialbot', u'Broadbot', u'Guanabot', u'Chris G Bot 2', u'CCyeZBot', u'Soulbot', u'MSBOT', u'GnawnBot', u'Chris G Bot 3', u'Huzzlet the bot', u'JCbot']
 		site=wikipedia.Site(lang, family)
 		
 		data=site.getUrl("/w/index.php?title=Special:Listusers&limit=5000&group=bot")
