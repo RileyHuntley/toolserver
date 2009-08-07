@@ -47,7 +47,7 @@ f.close()
 
 c=0
 for page, v in pages.items():
-	if not re.search(ur"(?i)[^a-záéíóú0-9 ]", page):
+	if not re.search(ur"(?i)[^a-záéíóú0-9\-\. ]", page): #no meter (    ), A (desambiguacion) Pi (pelicula)
 		page2=page
 		page2=re.sub(ur"Á", ur"A", page2)
 		page2=re.sub(ur"É", ur"E", page2)
