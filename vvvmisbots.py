@@ -6,7 +6,7 @@ import urllib, re
 users=['AVBOT', 'BOTijo', 'Emijrp', 'Emijrpbot', 'Poc-oban', 'Toolserver']
 path="http://toolserver.org/~vvv/sulutil.php?user="
 salida=u"{{#switch:{{{1|}}}"
-total=0
+total=oldtotal=0
 for i in users:
 	url=path+i
 	f=urllib.urlopen(url, 'r')
@@ -17,6 +17,9 @@ for i in users:
 	f.close()
 salida+=u"\n|Total=%d\n|%d}}" % (total, total)
 
-if total>0:
-	editcount=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u"User:Emijrp/Editcount")
+editcount=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u"User:Emijrp/Editcount")
+#evitamos regresiones en el contador
+editcountold=int(editcount.get().split("Total=")[1].split("\n")[0])
+
+if total>oldtotal:
 	editcount.put(salida, u"BOT - Actualizando ediciones globales de %s: %d" % (", ".join(users), total))
