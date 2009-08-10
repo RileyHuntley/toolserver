@@ -47,19 +47,29 @@ f.close()
 
 c=0
 for page, v in pages.items():
-	if not re.search(ur"(?i)[^a-záéíóú0-9\-\. ]", page): #no meter (    ), A (desambiguacion) Pi (pelicula)
+	if not re.search(ur"(?i)[^a-záéíóúàèìòù0-9\-\. ]", page): #no meter (    ), A (desambiguacion) Pi (pelicula)
 		page2=page
 		page2=re.sub(ur"Á", ur"A", page2)
+		page2=re.sub(ur"À", ur"A", page2)
 		page2=re.sub(ur"É", ur"E", page2)
+		page2=re.sub(ur"È", ur"E", page2)
 		page2=re.sub(ur"Í", ur"I", page2)
+		page2=re.sub(ur"Ì", ur"I", page2)
 		page2=re.sub(ur"Ó", ur"O", page2)
+		page2=re.sub(ur"Ò", ur"O", page2)
 		page2=re.sub(ur"Ú", ur"U", page2)
+		page2=re.sub(ur"Ù", ur"U", page2)
 		
 		page2=re.sub(ur"á", ur"a", page2)
+		page2=re.sub(ur"à", ur"a", page2)
 		page2=re.sub(ur"é", ur"e", page2)
+		page2=re.sub(ur"è", ur"e", page2)
 		page2=re.sub(ur"í", ur"i", page2)
+		page2=re.sub(ur"ì", ur"i", page2)
 		page2=re.sub(ur"ó", ur"o", page2)
+		page2=re.sub(ur"ò", ur"o", page2)
 		page2=re.sub(ur"ú", ur"u", page2)
+		page2=re.sub(ur"ù", ur"u", page2)
 		
 		if page!=page2 and not reds.has_key(page2) and not pages.has_key(page2):
 			c+=1
