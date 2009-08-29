@@ -9,7 +9,7 @@
 import re, urllib, sys, time
 import wikipedia, catlib, pagegenerators
 
-ratelimit=60
+ratelimit=15
 commonssite=wikipedia.Site('commons', 'commons')
 st=u"Es"
 if (len(sys.argv)>=2):
