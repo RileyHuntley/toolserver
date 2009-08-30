@@ -32,7 +32,7 @@ u"tr": u"Değişiklik sayılarına göre Vikipedistler listesi",
 u"vi": u"Danh sách thành viên Wikipedia theo số lần sửa trang",
 }
 tras2={
-u"ar": u"(قائمة الويكيبيديين حسب عدد التعديلات (متضمنة البوتات",
+u"ar": u"قائمة الويكيبيديين حسب عدد التعديلات (متضمنة البوتات)",
 u"ca": u"Llista de viquipedistes per nombre d'edicions (bots inclosos)",
 u"da": u"Wikipedianere efter antal redigeringer (bots inkluderet)",
 u"eo": u"Listo de uzantoj laŭ redaktonombro (inkluzivante robotojn)",
@@ -57,7 +57,7 @@ u"vi": u"Danh sách thành viên Wikipedia theo số lần sửa trang (tính c�
 projects={
 'wikinews': ['es'],
 #'wikipedia': ['es', 'eo', 'hu', 'ca', 'tr', 'ro', 'vo', 'fi', 'it', 'nl', 'ru', 'sv', 'no', 'da', 'ar', 'ko', 'sr', 'sl', 'vi', 'bg', 'et', 'ht', 'fa', 'hr', 'new', 'nn', 'te', 'gl', 'th', 'simple', 'he'],
-'wikipedia': ['es', 'hr', 'ro', 'simple', 'th', 'tr', 'vi', 'da', 'eo'],
+'wikipedia': ['es', 'hr', 'ro', 'simple', 'th', 'tr', 'vi', 'da', 'eo', 'ar'],
 }
 
 #if len(sys.argv)>1:
