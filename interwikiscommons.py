@@ -51,7 +51,7 @@ for page in preloadingGen:
 				
 				if nuevo!=ctext and len(nuevo)>len(ctext)+10:
 					wikipedia.showDiff(ctext, nuevo)
-					page.put(nuevo, u"updating interwikis")
+					page.put(nuevo, u"BOT - Updating interwikis")
 				else:
 					wikipedia.output(u"Los interwikis ya estan actualizados")
 		except:
