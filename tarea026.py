@@ -23,7 +23,7 @@ update=update.replace("October", "de octubre de")
 update=update.replace("November", "de noviembre de")
 update=update.replace("December", "de diciembre de")
 rosemary=enwtext.split("<!--rosemary-->")[1]
-zedler=enwtext.split("<!--zedler-->")[1]
+daphne=enwtext.split("<!--daphne-->")[1]
 yarrow=enwtext.split("<!--yarrow-->")[1]
 s1=enwtext.split("<!--s1-->")[1]
 s2=enwtext.split("<!--s2-->")[1]
@@ -41,8 +41,8 @@ salida=u'''{| class="infobox" style="width: {{{width|auto}}}; float: {{{float|ri
 !MySQL rosemary
 | <!--rosemary-->%s<!--rosemary-->
 |-
-!MySQL zedler
-| <!--zedler-->%s<!--zedler--> 
+!MySQL daphne
+| <!--daphne-->%s<!--daphne--> 
 |-
 !MySQL yarrow
 | <!--yarrow-->%s<!--yarrow-->
@@ -55,8 +55,8 @@ salida=u'''{| class="infobox" style="width: {{{width|auto}}}; float: {{{float|ri
 |-
 !Lag en s3
 | <!--s3-->%s<!--s3-->
-|}<noinclude>{{uso de plantilla}}</noinclude>''' % (update, dic[rosemary], dic[zedler], dic[yarrow], s1, s2, s3)
+|}<noinclude>{{uso de plantilla}}</noinclude>''' % (update, dic[rosemary], dic[daphne], dic[yarrow], s1, s2, s3)
 
-estool.put(salida, u'Estado: rosemary: %s; zedler %s; yarrow %s; Replag: s1 %s; s2 %s; s3 %s;' % (dic[rosemary], dic[zedler], dic[yarrow], s1, s2, s3))
+estool.put(salida, u'BOT - Estado: rosemary: %s; daphne %s; yarrow %s; Replag: s1 %s; s2 %s; s3 %s;' % (dic[rosemary], dic[daphne], dic[yarrow], s1, s2, s3))
 
 

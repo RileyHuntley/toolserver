@@ -9,7 +9,7 @@ def percent(c):
 		
 site=wikipedia.Site('es', 'wikipedia')
 
-bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot']
+bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot', u'PatruBOT']
 data=site.getUrl("/w/index.php?title=Special:Listusers&limit=5000&group=bot")
 data=data.split('<!-- start content -->')
 data=data[1].split('<!-- end content -->')[0]

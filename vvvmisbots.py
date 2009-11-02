@@ -3,6 +3,7 @@
 import wikipedia
 import urllib, re
 
+eswiki=wikipedia.Site('es', 'wikipedia')
 users=['AVBOT', 'BOTijo', 'Emijrp', 'Emijrpbot', 'Poc-oban', 'Toolserver']
 path="http://toolserver.org/~vvv/sulutil.php?user="
 salida=u"{{#switch:{{{1|}}}"
@@ -17,9 +18,10 @@ for i in users:
 	f.close()
 salida+=u"\n|Total=%d\n|%d}}" % (total, total)
 
-editcount=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u"User:Emijrp/Editcount")
+editcount=wikipedia.Page(eswiki, u"User:Emijrp/Editcount")
 #evitamos regresiones en el contador
 editcountold=int(editcount.get().split("Total=")[1].split("\n")[0])
 
 if total>oldtotal:
+	wikipedia.Page(eswiki, u"User:Emijrp/Editcount/Old").put(editcount.get(), u"BOT - Datos de la versión anterior de [[User:Emijrp/Editcount]]")	
 	editcount.put(salida, u"BOT - Actualizando ediciones globales de %s: %d" % (", ".join(users), total))
