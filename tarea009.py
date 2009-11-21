@@ -16,11 +16,13 @@ page=wikipedia.Page(wikipedia.Site("commons", "commons"), u"Template:Potd/%s" % 
 file=u"Example.jpg"
 if page.exists() and not page.isRedirectPage() and not page.isDisambig():
 	file=page.get()
+file=file.split("|")[1].split("|")[0]
 
 page=wikipedia.Page(wikipedia.Site("commons", "commons"), u"Template:Potd/%s (es)" % date)
 description=u"Error. No hay imagen del día."
 if page.exists() and not page.isRedirectPage() and not page.isDisambig():
 	description=page.get()
+description=description.split("=")[1].split("\n")[0]
 
 page=wikipedia.Page(wikipedia.Site("es", "wikipedia"), u"Template:IDDC/Imagen")
 page.put(file, u"BOT - Actualizando imagen del día de Commons")
