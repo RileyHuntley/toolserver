@@ -28,6 +28,8 @@ yarrow=enwtext.split("<!--yarrow-->")[1]
 s1=enwtext.split("<!--s1-->")[1]
 s2=enwtext.split("<!--s2-->")[1]
 s3=enwtext.split("<!--s3-->")[1]
+s4=enwtext.split("<!--s4-->")[1]
+s5=enwtext.split("<!--s5-->")[1]
 
 dic={u'up':u'En línea',u'down':u'Fuera de línea'}
 
@@ -55,8 +57,14 @@ salida=u'''{| class="infobox" style="width: {{{width|auto}}}; float: {{{float|ri
 |-
 !Lag en s3
 | <!--s3-->%s<!--s3-->
-|}<noinclude>{{uso de plantilla}}</noinclude>''' % (update, dic[rosemary], dic[daphne], dic[yarrow], s1, s2, s3)
+|-
+!Lag en s4
+| <!--s4-->%s<!--s4-->
+|-
+!Lag en s5
+| <!--s5-->%s<!--s5-->
+|}<noinclude>{{uso de plantilla}}</noinclude>''' % (update, dic[rosemary], dic[daphne], dic[yarrow], s1, s2, s3, s4, s5)
 
-estool.put(salida, u'BOT - Estado: rosemary: %s; daphne %s; yarrow %s; Replag: s1 %s; s2 %s; s3 %s;' % (dic[rosemary], dic[daphne], dic[yarrow], s1, s2, s3))
+estool.put(salida, u'BOT - Estado: rosemary: %s; daphne %s; yarrow %s; Replag: s1 %s; s2 %s; s3 %s; s4 %s; s5 %s' % (dic[rosemary], dic[daphne], dic[yarrow], s1, s2, s3, s4, s5))
 
 
