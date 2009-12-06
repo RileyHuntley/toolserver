@@ -117,7 +117,7 @@ inicio_own=ur"(?im)^(?P<inicio> *\| *Source *\= *)"
 fin_own=ur"[ \.]*(?P<fin> *[\n\r\|])" #eliminamos . finales que no permiten hacer la conversión
 #CUIDADO con own photograph! http://commons.wikimedia.org/w/index.php?title=File:Teatro_Coccia_chandelier.jpg&diff=next&oldid=19903214
 #ideas: own photo, own photograph
-own_synonym=[ur"own[ \-]*work", ur"self[ \-]*made", ur"eie[ \-]*werk", ur"Treballo de qui la cargó", ur"Trabayu propiu", ur"Уласны твор", ur"Собствена творба", ur"Vlastito djelo", ur"Treball propi", ur"Vlastní dílo", ur"Eget arbejde", ur"Eigene Arbeit", ur"Propra verko", ur"Trabajo propio", ur"Üleslaadija oma töö", ur"Oma teos", ur"Travail personnel", ur"Traballo propio", ur"Vlastito djelo postavljača", ur"A feltöltő saját munkája", ur"Karya sendiri", ur"Opera propria", ur"Opus proprium", ur"Mano darbas", ur"Egen Wark", ur"Eigen waark", ur"Eigen werk", ur"Eget arbeide", ur"Trabalh personal", ur"Ejen Woakj", ur"Praca własna", ur"Trabalho próprio", ur"Operă proprie", ur"Vlastné dielo", ur"Lastno delo", ur"Eget arbete", ur"Sariling gawa"] #no meter  ()
+own_synonym=[ur"own[ \-]*work", ur"self[ \-]*made", ur"eie[ \-]*werk", ur"Treballo de qui la cargó", ur"Trabayu propiu", ur"Уласны твор", ur"Собствена творба", ur"Vlastito djelo", ur"Treball propi", ur"Vlastní dílo", ur"Eget arbejde", ur"Eigene Arbeit", ur"Propra verko", ur"Trabajo propio", ur"self[ \-]*made *\/ *foto propia", ur"Üleslaadija oma töö", ur"Oma teos", ur"Travail personnel", ur"Traballo propio", ur"Vlastito djelo postavljača", ur"A feltöltő saját munkája", ur"Karya sendiri", ur"Opera propria", ur"Opus proprium", ur"Mano darbas", ur"Egen Wark", ur"Eigen waark", ur"Eigen werk", ur"Eget arbeide", ur"Trabalh personal", ur"Ejen Woakj", ur"Praca własna", ur"Trabalho próprio", ur"Operă proprie", ur"Vlastné dielo", ur"Lastno delo", ur"Eget arbete", ur"Sariling gawa"] #no meter  ()
 regexp_own=ur"%s(?P<change>\[?\[?(%s)\]?\]?)%s" % (inicio_own, "|".join(own_synonym), fin_own)
 sub_own=ur"\g<inicio>{{Own}}\g<fin>"
 
@@ -309,7 +309,7 @@ for page in pre:
 	#== {{int:license}} ==
 	change_lic=u""
 	changed_lic=u""
-	if True or newtext!=wtext:
+	"""if True or newtext!=wtext:
 		if len(re.findall(regexp_lic, newtext))==1:
 			m=re.compile(regexp_lic).finditer(newtext)
 			
@@ -322,11 +322,11 @@ for page in pre:
 			for i in m:
 				changed_lic=i.group("changed")
 				break
-	
+	"""
 	#== {{int:filedesc}} ==
 	change_sum=u""
 	changed_sum=u""
-	if True or newtext!=wtext:
+	"""if True or newtext!=wtext:
 		if len(re.findall(regexp_sum, newtext))==1:
 			m=re.compile(regexp_sum).finditer(newtext)
 			
@@ -339,7 +339,7 @@ for page in pre:
 			for i in m:
 				changed_sum=i.group("changed")
 				break
-	
+	"""
 	if newtext!=wtext:
 		wikipedia.showDiff(wtext, newtext)
 		if c>=ratelimit:
