@@ -1,0 +1,99 @@
+Generar una estructura igual para cada tool, que permita ser explorada por un script que genere la documentación para toolserver.org/~emijrp/
+
+Un script que recorra todos los public_html de todos los usuarios, buscando aquellos que han publicado algo
+
+Procurar dar las salidas en texto plano, xml, etc, además de la visual en html o php
+
+Generar estadísticas de uso de las tools
+
+Random tool que te lleve a una tool aleatoria
+
+Subir los códigos a Google Code, SVN personal o FishEye
+
+Usar db.inc.php
+
+Proyectos: Wikipedia, Wikinews, Wikcionario, Commons, Wikibooks, Wikisource, Wikispecies
+
+0001: BBDD del Toolserver
+0002: Ranking de creaciones (sin contar redirecciones, desambiguaciones, etc)
+0003: Estado de los servidores, lags, bases de datos, y gráficas (quizás las gráficas deban ir en otra tool de lag)
+0004: Schema de las bases de datos. http://toolserver.org/~agony/dbinfo/
+0005: Idiomas y bbdd activas (nocnocnoc)
+0006: En categoría desde... http://toolserver.org/~agony/incatsince
+0007: Páginas actualizadas por última vez... (supongo que usa el campo touched) http://toolserver.org/~agony/lastupdate
+0008: Páginas de discusión huérfanas. http://toolserver.org/~agony/orphantalk/
+0009: Plantillas sin categorizar. http://toolserver.org/~agony/uncattemplates/
+0010: Espacios de nombres por idioma http://toolserver.org/~agony/components/ns.php
+0011: Imágenes que faltan en artículos geolocalizados http://toolserver.org/~alexz/coord/
+0012: Artículos más visitados por wikiproyecto http://toolserver.org/~alexz/pop/
+0013: Páginas de usuario más visitadas
+0014: Subidas de imágenes por día a Commons, tamaño, media... http://toolserver.org/~ariel/commons-stuff.html
+0015: imágenes que faltan para artículos taxonómicos y sugerencias en otras wikipedias o flickr: http://toolserver.org/~aroche/wikimages/
+0016: Artículo destacado/bueno del día, frase, imagen, por RSS (XML) para la española. Aglutinar los que existan de otros idiomas
+0017: Encontrar imágenes a alta resolución/tamaño en Commons y otros idiomas: http://toolserver.org/~aweenieman/highResImages/
+0018: Estadísticas de votaciones de borrado: http://toolserver.org/~betacommand/afd/
+0019: Estadísticas de IRC #wikipedia-es: comandos más usados, horas más transitadas
+0020: Detector de dumps nuevos usando el RSS, ranking de lo más nuevo
+0021: WikiTrivial online
+0022: Wikicumpleaños (según log de alta usuarios o primera edición). Posibilidad de suscribirse por RSS (XML) por idiomas o a todos a la vez.
+0023: Extractor de artículos que tienen más de X bytes (detector de artículos que ya no son esbozos, y están en categorías de esbozos). Es ampliable a < > = bytes. http://toolserver.org/~agony/antistub/index.php
+0024: 
+0025: 
+0026: 
+0027: 
+0028: 
+0029: 
+0030: 
+0031: 
+
+
+
+Otras cosas que se les han ocurrido a usuarios:
+- plantilla con temperaturas para wikinews: http://en.wikinews.org/wiki/Template:Weather_World_C
+- mapa de temperaturas: http://toolserver.org/~apper/proj_wetter.php
+- patrullaje de ips: http://toolserver.org/~apper/ipp/
+- patrullaje de páginas nuevas: http://toolserver.org/~apper/npp/ ¿sale una ventanita?
+- visualizar escudos de comunas de Francia sobre Google Earth http://toolserver.org/~aroche/geoBlasons/
+- geolocalización de ficheros de Commons http://toolserver.org/~aroche/mapCommons/
+- últimos ficheros subidos a Commons: http://toolserver.org/~azatoth/latest_files
+- imágenes redimensionadas http://toolserver.org/~azatoth/reduced
+- http://toolserver.org/~byrial/
+- 
+- 
+- 
+- 
+- 
+
+Miscelánea:
+- felicitar a los autores de buenas tools
+- poner un "cv" en mi ~emijrp, idiomas, país, wikipedias donde colaboro, e-mail, lenguajes programación, nick en irc y canales, etc http://toolserver.org/~agony/
+- estructura simple? http://toolserver.org/~az1568/
+- 
+-  
+-  
+-  
+-  
+-  
+-  
+-  
+-  
+- 
+
+Tools que no he entendido para que sirven:
+- http://toolserver.org/~agony/listoflists
+- http://toolserver.org/~agony/components/langproj.php
+- http://toolserver.org/~anaconda/forum.txt
+- http://toolserver.org/~annabel/transtool.php
+- http://toolserver.org/~balu/
+- Cosas a medio terminar creo http://toolserver.org/~bayo/
+- Stats de dumps, antiguo parece http://toolserver.org/~beland/
+- 
+- 
+-  
+- 
+-  
+- 
+- 
+
+
+
