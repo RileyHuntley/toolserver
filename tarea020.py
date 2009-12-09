@@ -6,11 +6,11 @@ import sys
 import wikipedia
 import time, os
 
-lang='es'
+lang='es' #idioma que será analizado
 if len(sys.argv)>=2:
 	lang=sys.argv[1]
 
-limite=500
+limite=500 #límite de usuarios a listar, los X más creadores
 if len(sys.argv)>=3:
 	limite=int(sys.argv[2])
 
