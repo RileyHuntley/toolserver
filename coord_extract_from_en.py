@@ -6,18 +6,25 @@ import wikipedia
 eswiki=wikipedia.Site("es", "wikipedia")
 enwiki=wikipedia.Site("en", "wikipedia")
 
-f=open("zzzcoord-missing.txt", "r")
+"""f=open("zzzcoord-missing.txt", "r")
 
 for l in f:
 	l=unicode(l, "utf-8")
 	wtitle=l.split("	")[0]
-	page=wikipedia.Page(eswiki, wtitle)
+	page=wikipedia.Page(eswiki, wtitle)"""
+
+st=u"A"
+if (len(sys.argv)>=2):
+	st=sys.argv[1]
+gen=pagegenerators.AllpagesPageGenerator(start = st, namespace = 0, includeredirects = False, site = eswiki)
+pre=pagegenerators.PreloadingGenerator(gen, pageNumber=250, lookahead=250)
+for page in pre:
 	if not page.exists():
 		continue
 	while page.isRedirectPage():
 		page=page.getRedirectTarget()
 	eswtext=page.get()
-	if re.search(ur"(?i)\{\{ *coord *\|", eswtext):
+	if re.search(ur"(?i)(\{\{ *coord? *\||latitude *\=|longitude *\=|nacidos en|fallecidos en|coor)", eswtext):
 		continue
 	iws=page.interwiki()
 	enwtitle=""
@@ -45,6 +52,7 @@ for l in f:
 			if eswtext!=esnewtext:
 				wikipedia.showDiff(eswtext, esnewtext)
 				page.put(esnewtext, u"BOT - Insertando coordenadas %s desde [[:en:%s]]" % (coord, enwtitle))
+			break
 	
 f.close()
 
