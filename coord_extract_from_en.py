@@ -2,6 +2,10 @@
 
 import re
 import wikipedia
+import sys
+import pagegenerators
+
+#TODO: insertar {{coord}} en el parámetro coor de las infobox de localidad
 
 eswiki=wikipedia.Site("es", "wikipedia")
 enwiki=wikipedia.Site("en", "wikipedia")
@@ -13,7 +17,7 @@ for l in f:
 	wtitle=l.split("	")[0]
 	page=wikipedia.Page(eswiki, wtitle)"""
 
-st=u"A"
+st=u"Estadio Sheikh"
 if (len(sys.argv)>=2):
 	st=sys.argv[1]
 gen=pagegenerators.AllpagesPageGenerator(start = st, namespace = 0, includeredirects = False, site = eswiki)
@@ -24,8 +28,11 @@ for page in pre:
 	while page.isRedirectPage():
 		page=page.getRedirectTarget()
 	eswtext=page.get()
-	if re.search(ur"(?i)(\{\{ *coord? *\||latitude *\=|longitude *\=|nacidos en|fallecidos en|coor)", eswtext):
+	if re.search(ur"(?i)\{\{ *coord *\|", eswtext):
 		continue
+	#if not re.search(ur"(?i)\{\{ *ficha de localidad", eswtext):
+	#	continue
+	wikipedia.output(u"%s" % page.title())
 	iws=page.interwiki()
 	enwtitle=""
 	for iw in iws:
@@ -52,7 +59,6 @@ for page in pre:
 			if eswtext!=esnewtext:
 				wikipedia.showDiff(eswtext, esnewtext)
 				page.put(esnewtext, u"BOT - Insertando coordenadas %s desde [[:en:%s]]" % (coord, enwtitle))
-			break
 	
-f.close()
+#f.close()
 
