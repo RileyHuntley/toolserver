@@ -28,7 +28,7 @@ for page in pre:
 	while page.isRedirectPage():
 		page=page.getRedirectTarget()
 	eswtext=page.get()
-	if re.search(ur"(?i)\{\{ *coord *\|", eswtext):
+	if re.search(ur"(?i)(\{\{ *coord *\|coor|latitude? *\=|longitude? *\=|nacidos en|fallecidos en)", eswtext):
 		continue
 	#if not re.search(ur"(?i)\{\{ *ficha de localidad", eswtext):
 	#	continue
@@ -48,7 +48,12 @@ for page in pre:
 		if re.search(ur"#", enpage.title()):
 			continue
 		enwtext=enpage.get()
-		m=re.compile(ur"(?i)(?P<coord>\{\{ *coord *\|[^\}]*\}\})").finditer(enwtext)
+		m=n=re.compile(ur"(?i)(?P<coord>\{\{ *coord *\|[^\}]*\}\})").finditer(enwtext)
+		ii=0
+		for i in n:
+			ii+=1
+		if ii>1:
+			continue
 		for i in m:
 			coord=i.group("coord")
 			print enwtitle, coord
@@ -59,6 +64,7 @@ for page in pre:
 			if eswtext!=esnewtext:
 				wikipedia.showDiff(eswtext, esnewtext)
 				page.put(esnewtext, u"BOT - Insertando coordenadas %s desde [[:en:%s]]" % (coord, enwtitle))
+			break
 	
 #f.close()
 
