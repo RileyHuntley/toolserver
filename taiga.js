@@ -289,6 +289,18 @@ content.insertBefore(marquee, content.firstChild);
 document.getElementById("contentSub").innerHTML+="<center><iframe style=\"display:none;\" id=\"iframevisitas\"  frameborder=0  vspace=0  hspace=0  marginwidth=0  marginheight=0 width=1000  scrolling=yes  height=600  src=\"http://stats.grok.se/"+vars["wgContentLanguage"]+"/"+currentYear+currentMonth+"/"+vars["wgPageName"]+"\"></iframe></center>";
 document.getElementById("contentSub").innerHTML+="<center><iframe style=\"display:none;\" id=\"iframeautores\"  frameborder=0  vspace=0  hspace=0  marginwidth=0  marginheight=0 width=1000  scrolling=yes  height=600  src=\"http://toolserver.org/~daniel/WikiSense/Contributors.php?wikilang="+vars["wgContentLanguage"]+"&wikifam=.wikipedia.org&page="+vars["wgTitle"]+"&grouped=on&order=-edit_count&max=200&format=html\"></iframe></center>";
 
+//descripciones de imágenes a commons
+elems=document.getElementsByTagName("*");
+for (var i=0;i<elems.length;i++)
+{
+	if (elems[i].className=="thumbcaption")
+	{
+		var desc=elems[i].innerHTML.split("</div>")[1];
+		elems[i].innerHTML+=" <span style=\"font-size: x-small;\"><i>(<a href=\"\">descripción a Commons</a>)</i></span>";
+	}
+}
+//fin descripciones
+
 //alert(wgUserName);
 //alert(a);
 // Create a new <li> element for to insert inside <ul id="myList">
