@@ -9,6 +9,12 @@
 //usar cookies para controlar preferencias 
 //iluminar las ediciones de ips en RC
 
+var headID = document.getElementsByTagName("head")[0];         
+var newScript = document.createElement('script');
+newScript.type = 'text/javascript';
+newScript.innerHTML = "function getSelectedText(){    if (window.getSelection)    {     return window.getSelection();  }    else if(document.getSelection)    {    return document.getSelection();         }    else if (document.selection)    {     return document.selection.createRange().text;         }    else return ;};";
+headID.appendChild(newScript);
+
 // 
 // Inicialización de fechas actuales
 // 
@@ -50,6 +56,7 @@ if (vars["wgRestrictionEdit"].length>0) {
 // 
 var rcp_http_tablon;
 var rcp_http_marquee;
+var rcp_http_marquee_random=Math.floor(Math.random()*100);
 var rcp_http_saltar;
 
 rcp_init ();
@@ -111,23 +118,50 @@ document.getElementById('tablon').innerHTML=text2;
 function rcp_ajax_request_marquee() {
    rcp_http_marquee=rcp_create_request (rcp_ajax_response_marquee, rcp_http_marquee);
    // Then make the request
-   rcp_http_marquee.open("GET", vars["wgServer"] + vars["wgScriptPath"] + "/api.php?action=query&list=recentchanges&rctype=new&rcnamespace=0&rcshow=!redirect&rcprop=title|user|sizes&rclimit=5&format=xml", true);
+   var url="";
+	switch (rcp_http_marquee_random % 2)
+	{
+	case 1: url=vars["wgServer"] + vars["wgScriptPath"] + "/api.php?action=query&prop=revisions&titles=Plantilla:ResumenCandidaturasBibliotecario&rvprop=content&format=xml"; break;
+	default: url=vars["wgServer"] + vars["wgScriptPath"] + "/api.php?action=query&list=recentchanges&rctype=new&rcnamespace=0&rcshow=!redirect&rcprop=title|user|sizes&rclimit=5&format=xml";
+	}
+rcp_http_marquee.open("GET", url, true);
    rcp_http_marquee.send(null);
 }
  
 // Respuesta AJAX para marquee
 function rcp_ajax_response_marquee(rcp_http) {
-   var items = rcp_http.responseXML.getElementsByTagName('rc');
+   
    
 var text="";
-for (var i=0;i<items.length;i++)
-{
+
+	switch (rcp_http_marquee_random % 2)
+	{
+	case 1:
+	var items = rcp_http.responseXML.getElementsByTagName('rev');
+   	var temptext = items[0].childNodes[0].nodeValue;
+	tempsplit=temptext.split("<!-- RAW --><!--\n")[1].split("\n--><!-- RAW -->")[0].split("\n");
+	text="<b><a href=\""+vars["wgServer"]+"/wiki/"+"/Wikipedia:Candidaturas a bibliotecario\">Candidaturas a bibliotecario</a>:</b>&nbsp;&nbsp;&nbsp;&nbsp;";
+	var candidatos=new Array();
+	for (var i =0;i<tempsplit.length;i++)
+	{
+		temp2split=tempsplit[i].split(";;;");
+		var candidato = temp2split[0];
+		var propuesto = temp2split[1];
+		candidatos.push("<a href=\""+vars["wgServer"]+"/wiki/"+"/Wikipedia:Candidaturas a bibliotecario/"+candidato+"\">"+candidato+"</a> propuesto por «"+propuesto+"»");
+	}
+	text+=candidatos.join("&nbsp;&nbsp;&nbsp;–&nbsp;&nbsp;&nbsp;");
+	break;
+	default:
+	var items = rcp_http.responseXML.getElementsByTagName('rc');
+	text="<b>Artículos nuevos:</b>&nbsp;&nbsp;&nbsp;&nbsp;";
+	for (var i=0;i<items.length;i++)
+	{
 	var title=items[i].getAttribute('title');
 	var user=items[i].getAttribute('user');
 	var pagelen=parseInt(items[i].getAttribute('newlen'));
 	text+=" <a href=\""+vars["wgServer"]+"/wiki/"+title+"\">"+title+"</a> ["+pagelen+" bytes] ["+user+"]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-}
-
+	}
+	}
 document.getElementById('marqueespan').innerHTML=text;
 }
 
@@ -149,7 +183,7 @@ for (var i=0;i<items.length;i++)
 	var wtitle=items[i].childNodes[0].nodeValue;
 	if (lang=="en")
 	{
-		document.getElementById("firstHeading").innerHTML+=" <span style=\"font-size: small;\"><i>(Saltar a la <a href=\"http://en.wikipedia.org/wiki/"+wtitle+"\">inglesa</a>)</i></span>";
+		document.getElementById("firstHeading").innerHTML+=" <span style=\"font-size: small;\"><i>(Ir a la <a href=\"http://en.wikipedia.org/wiki/"+wtitle+"\">inglesa</a>)</i></span>";
 		break;
 	}
 }
@@ -171,7 +205,7 @@ document.getElementById("p-navigation").innerHTML="<h5 lang=\"es\" xml:lang=\"es
 document.getElementById("pt-optin-try").innerHTML="";
 //botón de salir
 document.getElementById("pt-logout").innerHTML="";
-document.getElementById("pt-mycontris").innerHTML+=" (<a href=\"/w/api.php?action=query&list=users&ususers="+vars["wgUserName"]+"&usprop=editcount\">num</a>)";
+document.getElementById("pt-mycontris").innerHTML+=" (<a href=\"/w/api.php?action=query&list=users&ususers="+vars["wgUserName"]+"&usprop=editcount\">num</a>) (<a href=\"http://toolserver.org/~vvv/sulutil.php?user="+vars["wgUserName"]+"\">globales</a>)";
 document.getElementById("pt-mytalk").innerHTML+=" (<a href=\"/w/index.php?title=Usuario_Discusión:Emijrp&action=history\">hist</a>)";
 
 //cosas para borrar
@@ -275,7 +309,12 @@ for (var i=0;i<250;i++)
 	descanso+="&nbsp;";
 //capturar paginas nuevas
 
-marquee.innerHTML="<center><MARQUEE bgcolor = \"#FFFFFF\" width = 75% scrolldelay = 100 loop = infinite ><b>Nuevos</b>&nbsp;&nbsp;&nbsp;<span id='marqueespan'></span>"+descanso+"</MARQUEE></center>";
+function mostrarOcultar(id)
+{
+	return "var container=document.getElementById('"+id+"');var container2=document.getElementById('"+id+"button');if (container.style.visibility=='hidden') { container.style.visibility=''; container2.innerHTML='ocultar'; } else { container.style.visibility='hidden'; container2.innerHTML='mostrar'; }";
+}
+
+marquee.innerHTML="<center><MARQUEE id=\"marquee\" bgcolor = \"#FFFFFF\" width = 75% scrolldelay = 100 loop = infinite ><span id='marqueespan'></span>"+descanso+"</MARQUEE>&nbsp;&nbsp;<span style=\"font-size: x-small;vertical-align: top;\">[<a id=\"marqueebutton\" onclick=\"javascript:"+mostrarOcultar('marquee')+"\">ocultar</a>]</a></center>";
 content=document.getElementById('content');
 content.insertBefore(marquee, content.firstChild);
 //fin marquesina
@@ -287,7 +326,7 @@ content.insertBefore(marquee, content.firstChild);
 
 
 document.getElementById("contentSub").innerHTML+="<center><iframe style=\"display:none;\" id=\"iframevisitas\"  frameborder=0  vspace=0  hspace=0  marginwidth=0  marginheight=0 width=1000  scrolling=yes  height=600  src=\"http://stats.grok.se/"+vars["wgContentLanguage"]+"/"+currentYear+currentMonth+"/"+vars["wgPageName"]+"\"></iframe></center>";
-document.getElementById("contentSub").innerHTML+="<center><iframe style=\"display:none;\" id=\"iframeautores\"  frameborder=0  vspace=0  hspace=0  marginwidth=0  marginheight=0 width=1000  scrolling=yes  height=600  src=\"http://toolserver.org/~daniel/WikiSense/Contributors.php?wikilang="+vars["wgContentLanguage"]+"&wikifam=.wikipedia.org&page="+vars["wgTitle"]+"&grouped=on&order=-edit_count&max=200&format=html\"></iframe></center>";
+document.getElementById("contentSub").innerHTML+="<center><iframe style=\"display:none;\" id=\"iframeautores\"  frameborder=0  vspace=0  hspace=0  marginwidth=0  marginheight=0 width=1000  scrolling=yes  height=600  src=\"http://toolserver.org/~daniel/WikiSense/Contributors.php?wikilang="+vars["wgContentLanguage"]+"&wikifam=.wikipedia.org&page="+vars["wgPageName"]+"&grouped=on&order=-edit_count&max=200&format=html\"></iframe></center>";
 
 //descripciones de imágenes a commons
 elems=document.getElementsByTagName("*");
@@ -300,6 +339,17 @@ for (var i=0;i<elems.length;i++)
 	}
 }
 //fin descripciones
+
+
+//
+
+document.getElementById("firstHeading").innerHTML+="<input type=\"button\" value=\"RAE\" onclick=\"javascript:var selectedText=getSelectedText();if (selectedText==''){alert('Selecciona un texto con el ratón y entonces pulsa el botón.');}else{alert(selectedText);}\">";
+
+footer="<div style=\"position:fixed;z-index:99;bottom:0;right:0;height:80px;width:100%;background-color: #c6c6c6;\"><h3>Taiga</h3>";
+footer+="<center><span style=\"font-size: small;\"><a href=\"http://www.google.com\">Google</a> – <a href=\"http://buscon.rae.es/draeI/SrvltConsulta?TIPO_BUS=3&LEMA=\">DRAE</a> – <a href=\"http://dpd.rae.es\">DPD</a> – <a href=\"http://www.wordreference.com\">WordReference</a> – <a href=\"http://en.wikipedia.org\">Wikipedia en inglés</a></span></center>";
+footer+="</div>";
+document.body.innerHTML+=footer;
+
 
 //alert(wgUserName);
 //alert(a);

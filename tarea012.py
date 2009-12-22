@@ -8,7 +8,7 @@ page=wikipedia.Page(site, u"Wikipedia:Candidaturas a bibliotecario/Tabla")
 #{{CandidaturaBibliotecario|Racso|Tomatejc|18/01/2008|03/04/2007|4402|color=#FFFFCC}}
 m=re.compile(ur"\{\{CandidaturaBibliotecario\|(?P<candidato>[^\|]+)\|(?P<propuesto>[^\|]+)\|").finditer(page.get())
 
-s=u"{| class='wikitable' width='500px' style='font-size: 90%s;text-align: center;'\n|+ <big><big>'''Candidaturas a bibliotecario'''</big></big>\n! # !! Usuario !! Propuesto por !! A favor !! En contra !! %s !! Estado" % ("%", "%")
+s=u"{| class='wikitable' width='500px' style='font-size: 90%s;text-align: center;'\n! colspan=7 | Candidaturas a bibliotecario \n|-\n! # !! Usuario !! Propuesto por !! A favor !! En contra !! %s !! Estado" % ("%", "%")
 raw=u""
 c=0
 send=False
@@ -64,9 +64,11 @@ for i in m:
 	raw+=u"%s;;;%s;;;%s;;;%s;;;%.0f;;;%s;;;%s;;;\n" % (candidato, propuesto, cafavor, cencontra, porcentaje, candidatura, estado)
 	send=True
 
-s+="\n|-\n| colspan=6 | Actualizado a las {{subst:CURRENTTIME}} (UTC) del {{subst:CURRENTDAY}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}}\n|}<!-- RAW --><!--\n%s--><!-- RAW --><noinclude>{{uso de plantilla}}</noinclude>" % raw
+#s+="\n|-\n| colspan=6 | Actualizado a las {{subst:CURRENTTIME}} (UTC) del {{subst:CURRENTDAY}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}}"
+s+="\n|}<!-- RAW --><!--\n%s--><!-- RAW --><noinclude>{{uso de plantilla}}</noinclude>" % raw
 
 if send:
 	wikipedia.output(s)
 	page=wikipedia.Page(site, u"Template:ResumenCandidaturasBibliotecario")
-	page.put(s, u"BOT - Actualizando plantilla")
+	if page.get()!=s:
+		page.put(s, u"BOT - Actualizando plantilla")
