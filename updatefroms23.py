@@ -14,14 +14,21 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import wikipedia,re,sys,os,gzip,time, datetime
-import time, urllib
+## @package updatefroms23
+# Copy some stats from s23.org and paste in a page in Wikipedia for log purposes
 
+import wikipedia,re,urllib
+
+## @var url
+# URL to statistics page
 url='http://s23.org/wikistats/wikipedias_wiki.php'
 f=urllib.urlopen(url, 'r')
 text=f.read()
-text=re.sub(ur'(?im)[\n\r]*</?pre>[\n\r]*', ur'', text)
+text=re.sub(ur'(?im)[\n\r]*</?pre>[\n\r]*', ur'', text) #cleaning...
 text=u'Lista de Wikipedias extraida de %s\n\n%s' % (url, text)
+## @var p
+# Page where to save
 p=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'User:Emijrp/Lista de Wikipedias')
 p.put(text, u'BOT - Updating from %s' % url)
+f.close()
 
