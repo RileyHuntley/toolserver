@@ -1,5 +1,19 @@
 # -*- coding: utf-8 -*-
 
+# Copyright (C) 2009 emijrp
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 #crear categoria con el nombre de la galeria, llevar a ella las categorias, y poner la galería en primer lugar con | ]]
 #{{en|...}}{{de|...}} meter salto de linea
 #ocultar nl http://commons.wikimedia.org/w/index.php?title=Al-Aqsa_Mosque&oldid=20753394
