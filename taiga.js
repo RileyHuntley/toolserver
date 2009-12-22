@@ -5,7 +5,6 @@
 // ==/UserScript==
 
 //TODO
-//añadir a recentchanges una pestaña a newbies y a newpages
 //usar cookies para controlar preferencias 
 //iluminar las ediciones de ips en RC
 
@@ -34,7 +33,8 @@ for (var i=0;i<raw_vars.length;i++)
 {
 	var var_name=raw_vars[i].split("=", 1)[0];
 	var var_value=raw_vars[i].split("=", 2)[1];
-	var_value=var_value.substring(1,var_value.length-1);
+	var_value=var_value.replace(/^"/i, "");
+	var_value=var_value.replace(/"$/i, "");
 	
 	vars[var_name]=var_value;
 }
@@ -181,6 +181,7 @@ for (var i=0;i<items.length;i++)
 {
 	var lang=items[i].getAttribute("lang");
 	var wtitle=items[i].childNodes[0].nodeValue;
+	wtitle=wtitle.replace(/ /g, "_");
 	if (lang=="en")
 	{
 		document.getElementById("firstHeading").innerHTML+=" <span style=\"font-size: small;\"><i>(Ir a la <a href=\"http://en.wikipedia.org/wiki/"+wtitle+"\">inglesa</a>)</i></span>";
@@ -262,15 +263,19 @@ if (vars["wgCanonicalNamespace"]=="User")
 }
 
 //namespace!=-1
-if (vars["wgNamespace"]!=-1)
+if (vars["wgNamespaceNumber"]!=-1)
 {
 	var new_element = document.createElement('li');
 	new_element.innerHTML = "<a href=\"/w/index.php?title=Especial:LoQueEnlazaAquí/"+vars["wgTitle"]+"&hidelinks=1&hidetrans=1\">Redirecciones</a>";
+	var new_element2 = document.createElement('li');
+	new_element2.innerHTML = "<a onclick=\"javascript:var container=document.getElementById('iframeautores');if (container.style.display=='none') { container.style.display='';  }else{ container.style.display='none'; }\">Autores</a>";
 
 	container=document.getElementById("p-cactions");
 	container=container.getElementsByTagName("div")[0];
 	container=container.getElementsByTagName("ul")[0];
+	
 	container.insertBefore(new_element, container.lastChild);
+	container.insertBefore(new_element2, container.lastChild);
 }
 
 //cualquier namespace
@@ -279,11 +284,10 @@ container=container.getElementsByTagName("div")[0];
 container=container.getElementsByTagName("ul")[0];
 
 var new_element = document.createElement('li');
-var new_element2 = document.createElement('li');
+
 new_element.innerHTML = "<a onclick=\"javascript:var container=document.getElementById('iframevisitas');if (container.style.display=='none') { container.style.display='';  }else{ container.style.display='none'; }\">Visitas</a>";
 container.insertBefore(new_element, container.lastChild);
-new_element2.innerHTML = "<a onclick=\"javascript:var container=document.getElementById('iframeautores');if (container.style.display=='none') { container.style.display='';  }else{ container.style.display='none'; }\">Autores</a>";
-container.insertBefore(new_element2, container.lastChild);
+
 
 //inicio tablón
 
@@ -341,14 +345,11 @@ for (var i=0;i<elems.length;i++)
 //fin descripciones
 
 
-//
 
-document.getElementById("firstHeading").innerHTML+="<input type=\"button\" value=\"RAE\" onclick=\"javascript:var selectedText=getSelectedText();if (selectedText==''){alert('Selecciona un texto con el ratón y entonces pulsa el botón.');}else{alert(selectedText);}\">";
-
-footer="<div style=\"position:fixed;z-index:99;bottom:0;right:0;height:80px;width:100%;background-color: #c6c6c6;\"><h3>Taiga</h3>";
-footer+="<center><span style=\"font-size: small;\"><a href=\"http://www.google.com\">Google</a> – <a href=\"http://buscon.rae.es/draeI/SrvltConsulta?TIPO_BUS=3&LEMA=\">DRAE</a> – <a href=\"http://dpd.rae.es\">DPD</a> – <a href=\"http://www.wordreference.com\">WordReference</a> – <a href=\"http://en.wikipedia.org\">Wikipedia en inglés</a></span></center>";
+footer="<div style=\"position:fixed;z-index:99;bottom:0;right:0;height:80px;width:100%;background-color: #c6c6c6;border-top: 2px solid #444;\"><h3>Taiga</h3>";
+footer+="<center><span style=\"font-size: small;\"><a href=\"http://www.google.com\">Google</a> <input type=\"text\" name=\"googlequery\" id=\"googlequery\" value=\"Buscar...\" size=\"10\" onKeyEnter=\"javascript:alert(document.googlequery.value);\"> <input type=\"button\" value=\"Ir\"> – <a href=\"http://buscon.rae.es/draeI/SrvltConsulta?TIPO_BUS=3&LEMA=\">DRAE</a> – <a href=\"http://dpd.rae.es\">DPD</a> – <a href=\"http://www.wordreference.com\">WordReference</a> – <a href=\"http://en.wikipedia.org\">Wikipedia en inglés</a></span></center>";
 footer+="</div>";
-document.body.innerHTML+=footer;
+document.body.innerHTML+="<br/><br/><br/><br/><br/><br/>"+footer;
 
 
 //alert(wgUserName);
