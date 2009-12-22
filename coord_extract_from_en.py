@@ -28,7 +28,7 @@ for page in pre:
 	while page.isRedirectPage():
 		page=page.getRedirectTarget()
 	eswtext=page.get()
-	if re.search(ur"(?i)(\{\{ *coord *\||coor|latitude? *\=|longitude? *\=|nacidos en|fallecidos en)", eswtext):
+	if re.search(ur"(?i)(\{\{ *coord *\||coor|latitude? *\=|longitude? *\=|nacidos en|fallecidos en|\{\{ *BD *\|)", eswtext):
 		continue
 	#if not re.search(ur"(?i)\{\{ *ficha de localidad", eswtext):
 	#	continue
@@ -55,8 +55,10 @@ for page in pre:
 		
 		for i in m:
 			coord=i.group("coord")
+			if not re.search(ur"(?i)title", coord): #evitamos coordenadas que estén por el medio del texto y no salgan arriba a la derecha
+				break
 			print enwtitle, coord
-			coord=re.sub(ur"display *\=[^\|\}]+([\|\}])", ur"display=title\1", coord) #anulamos display
+			coord=re.sub(ur"display *\=[^\|\}]+([\|\}])", ur"display=title\1", coord) #dejamos display title solo
 			
 			eswtext=page.get()
 			esnewtext=re.sub(ur"(?i)(\[\[ *Categor(y|ía) *\:)", ur"%s\n\n\1" % coord, eswtext, 1) #solo insertamos 1 vez
