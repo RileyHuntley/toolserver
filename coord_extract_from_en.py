@@ -55,10 +55,8 @@ for page in pre:
 
 	if enwtitle and not re.search(ur"#", enwtitle):
 		enpage=wikipedia.Page(enwiki, enwtitle)
-		if not enpage.exists():
+		if not enpage.exists() or enpage.isRedirectPage():
 			continue
-		while enpage.isRedirectPage():
-			enpage=enpage.getRedirectTarget()
 		if re.search(ur"#", enpage.title()):
 			continue
 		enwtext=enpage.get()
