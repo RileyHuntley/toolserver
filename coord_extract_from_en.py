@@ -41,6 +41,8 @@ for page in pre:
 		continue
 	while page.isRedirectPage():
 		page=page.getRedirectTarget()
+	if page.isDisambig():
+		continue
 	eswtext=page.get()
 	if re.search(ur"(?i)(\{\{ *coord *\||coor|latitude? *\=|longitude? *\=|nacidos en|fallecidos en|\{\{ *BD *\|)", eswtext):
 		continue
@@ -55,7 +57,7 @@ for page in pre:
 
 	if enwtitle and not re.search(ur"#", enwtitle):
 		enpage=wikipedia.Page(enwiki, enwtitle)
-		if not enpage.exists() or enpage.isRedirectPage():
+		if not enpage.exists() or enpage.isRedirectPage() or enpage.isDisambig():
 			continue
 		if re.search(ur"#", enpage.title()):
 			continue
