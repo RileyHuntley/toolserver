@@ -23,7 +23,7 @@
 ## @package commonsdates
 # Localisation for dates (YYYY-MM-DD) and some usual headings in images descriptions in Commons
 
-import re, urllib, sys, time
+import re, urllib, sys, time, getopt
 import wikipedia, catlib, pagegenerators
 
 def main():
