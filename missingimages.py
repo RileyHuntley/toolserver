@@ -80,6 +80,9 @@ for line in f:
 print '\nCargados %d pageid/pagetitle para %s:' % (c, lenguajeobjetivo)
 f.close()
 
+if c==0:
+	sys.exit()
+
 #cargamos imagelinks para lenguajes objetivos
 print '-'*70
 print 'Cargando imagelinks de %s:' % (lenguajeobjetivo)

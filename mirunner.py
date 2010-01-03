@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os, datetime, re
+import os, datetime, re, urllib
 
 inactivas=['aa',]
 
@@ -27,7 +27,20 @@ inactivas=['aa',]
 #de menos a mas articulos, 10k-100k
 #langs=['war', 'cv', 'ml', 'ur', 'qu', 'bat-smg', 'wa', 'zh-yue', 'sw', 'ast', 'fy', 'af', 'ku', 'nap', 'scn', 'su', 'nds', 'an', 'be', 'io', 'ta', 'oc', 'bn', 'jv', 'be-x-old', 'pms', 'lv', 'tl', 'sh', 'bpy', 'mr', 'sq', 'cy', 'az', 'is', 'bs', 'lb', 'br', 'la', 'ka', 'mk', 'hi', 'ceb', 'eu', 'ms', 'el', 'te', 'th', 'gl', 'ht', 'simple', 'new', 'hr', 'fa', 'et', 'bg', 'sl', 'sr', 'lt', 'vi', 'he']
 #+100k
-langs=['ar', 'ko', 'id', 'sk', 'da', 'eo', 'vo', 'ro', 'hu', 'cs', 'tr', 'uk', 'fi', 'no', 'zh', 'sv', 'ru', 'pt', 'es', 'nl', 'it', 'ja', 'pl', 'fr', 'de']
+#langs=['ar', 'ko', 'id', 'sk', 'da', 'eo', 'vo', 'ro', 'hu', 'cs', 'tr', 'uk', 'fi', 'no', 'zh', 'sv', 'ru', 'pt', 'es', 'nl', 'it', 'ja', 'pl', 'fr', 'de']
+
+f=urllib.urlopen('http://noc.wikimedia.org/conf/all.dblist', 'r')
+raw=f.read()
+l=raw.splitlines()
+langs=[]
+for t in l:
+	if t[-4:]=='wiki':
+		lang=t.split("wiki")[0]
+		if not lang in ["en"]:
+			langs.append(lang)
+f.close()
+
+print "Se van a analizar", len(langs), "idiomas"
 
 for lang in langs:
 	os.system('python missingimages.py %s' % lang)
