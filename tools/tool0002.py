@@ -1,5 +1,10 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+#TODO:
+#no contar aquellas páginas que fueron creadas como redirecciones: http://es.wikipedia.org/w/index.php?title=Luis_Martin&action=history
+#evitar que cargue todas las paginas en memoria
+#ocupa menos una lista que un diccionario? dic.has_key y l.count son igual de rápidas?
 import re
 import gzip
 import sys
