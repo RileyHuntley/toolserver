@@ -45,7 +45,32 @@ def getPHPHeader(tool_id=0, tool_title=""):
 <meta name="generator" content="Sitio web hecho a manopla" />
 <meta name="description" content="emijrp tools"/>
 <meta name="keywords" content="emijrp,toolserver,tools,wikipedia,wiki"/> 
-<meta name="author" content="emijrp"/> 
+<meta name="author" content="emijrp"/>
+<style>
+		body {
+			margin-left: 42px;
+			background: #ffffff;
+			/*color: #002070;*/
+			font-family: Verdana, Arial, Helvetica, sans-serif;
+			font-size: 12px;
+		}
+		h1 {
+			font-weight: bold;
+			font-size: 16px;
+		}
+
+		h2 {
+			font-size: 14px;
+		}
+
+		table, td {
+			border: 1px solid black;
+			text-align: center;
+		}
+/*
+estilo para los párrafos, tablas...
+*/
+</style>
 </head>
 <body>
 <!-- start content -->

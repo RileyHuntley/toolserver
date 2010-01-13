@@ -39,9 +39,9 @@ Proyectos: Wikipedia, Wikinews, Wikcionario, Commons, Wikibooks, Wikisource, Wik
 0022: Wikicumpleaños (según log de alta usuarios o primera edición). Posibilidad de suscribirse por RSS (XML) por idiomas o a todos a la vez.
 0023: Extractor de artículos que tienen más de X bytes (detector de artículos que ya no son esbozos, y están en categorías de esbozos). Es ampliable a < > = bytes. http://toolserver.org/~agony/antistub/index.php
 0024: Estadísticas de reversiones y vandalismos (horas, día de la semana, meses). Incremento con los años
-0025: 
-0026: 
-0027: 
+0025: Gráficas páginas nuevas
+0026: Wayback machine
+0027: Proyectos por última edición (proyectos en peligro de extinción)
 0028: 
 0029: 
 0030: 
