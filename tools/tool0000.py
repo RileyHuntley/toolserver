@@ -60,7 +60,7 @@ echo '</div>';
 <h1><a href="http://toolserver.org/~emijrp/">emijrp's tools</a></h1>
 <hr/>"""
 	if tool_title and tool_id:
-		output+=u"<h2>%s (Tool #%s)</h2>" % (tool_title, tool_id)
+		output+=u"<h2>%s (Tool #%s, <a href='http://toolserver.org/~emijrp/archive/tool%s'>archive</a>)</h2>" % (tool_title, tool_id, tool_id)
 	return output
 
 def getPHPFooter():
@@ -79,12 +79,18 @@ ob_end_flush();
 """ % datetime.datetime.now()
 
 def getPHPTools():
-	return u"""<ul>
+	return u"""<ol>
 
-<li><a href="tool0001/">Bases de datos replicadas en Toolserver</a>: </li>
+<li><a href="tool0001/">Replicated databases in Toolserver</a> (<a href="archive/tool0001/">archive</a>)</li>
+<li><a href="tool0002/">List of users by article count</a> (<a href="archive/tool0002/">archive</a>)</li>
+<li>aa<a href="tool0003/"></a></li>
+<li>aa<a href="tool0004/"></a></li>
+<li><a href="tool0005/">Active projects and languages in Wikimedia servers</a> (<a href="archive/tool0005/">archive</a>)</li>
+<li>aa<a href="tool0006/"></a></li>
+<li>aa<a href="tool0007/"></a></li>
+<li>aa<a href="tool0008/"></a></li>
 
-
-</ul>
+</ol>
 """
 
 def writeToFile(filename, output):

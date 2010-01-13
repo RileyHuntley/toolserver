@@ -62,7 +62,8 @@ output+=u"<ul>"
 for i in range(0, len(queries)):
 	os.system('%s > %s/%s' % (queries[i], tool_path, filenames[i]))
 	os.system('cp %s/%s %s/%s-%s' % (tool_path, filenames[i], tool_archive_path, datetime.date.today().isoformat(), filenames[i]))
-	output+=u"<li><tt><a href=\"%s\">%s</a></tt> - %s<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<small>Consulta SQL: <tt>%s</tt></small></li>" % (filenames[i], filenames[i], descriptions[i], queries[i])
+	#output+=u"<li><tt><a href=\"%s\">%s</a></tt> - %s<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<small>Consulta SQL: <tt>%s</tt></small></li>" % (filenames[i], filenames[i], descriptions[i], queries[i])
+	output+=u"<li><tt><a href=\"%s\">%s</a></tt> - %s</li>" % (filenames[i], filenames[i], descriptions[i])
 output+=u"</ul>"
 
 output+=getPHPFooter()
