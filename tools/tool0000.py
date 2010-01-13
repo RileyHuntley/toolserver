@@ -49,6 +49,7 @@ def getPHPHeader(tool_id=0, tool_title=""):
 <style>
 		body {
 			margin-left: 42px;
+			margin-right: 42px;
 			background: #ffffff;
 			/*color: #002070;*/
 			font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -114,6 +115,26 @@ def getPHPTools():
 <li>aa<a href="tool0006/"></a></li>
 <li>aa<a href="tool0007/"></a></li>
 <li>aa<a href="tool0008/"></a></li>
+<li>aa<a href="tool0009/"></a></li>
+<li>aa<a href="tool0010/"></a></li>
+<li>aa<a href="tool0011/"></a></li>
+<li>aa<a href="tool0012/"></a></li>
+<li>aa<a href="tool0013/"></a></li>
+<li>aa<a href="tool0014/"></a></li>
+<li>aa<a href="tool0015/"></a></li>
+<li>aa<a href="tool0016/"></a></li>
+<li>aa<a href="tool0017/"></a></li>
+<li>aa<a href="tool0018/"></a></li>
+<li>aa<a href="tool0019/"></a></li>
+<li>aa<a href="tool0020/"></a></li>
+<li>aa<a href="tool0021/"></a></li>
+<li>aa<a href="tool0022/"></a></li>
+<li>aa<a href="tool0023/"></a></li>
+<li>aa<a href="tool0024/"></a></li>
+<li><a href="tool0025/">Most active users in all projects</a></li>
+<li>aa<a href="tool0026/"></a></li>
+<li><a href="tool00027/">Last edit in all projects</a></li>
+<li>aa<a href="tool0028/"></a></li>
 
 </ol>
 """
