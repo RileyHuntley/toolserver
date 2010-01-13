@@ -70,5 +70,3 @@ filename="%s/index.php" % tool_path
 writeToFile(filename, output)
 
 
-targz(tool_archive_path)
-

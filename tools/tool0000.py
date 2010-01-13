@@ -5,13 +5,22 @@ import datetime
 import re
 import urllib
 
-def generateToolPath(tool_id):
-	return "/home/emijrp/public_html/tool%s" % tool_id
+def generateToolPath(tool_id, tool_subdir=""):
+	if tool_subdir:
+		tool_subdir="/%s" % tool_subdir
+	return "/home/emijrp/public_html/tool%s%s" % (tool_id, tool_subdir)
 
-def generateToolArchivePath(tool_id):
-	today=datetime.date.today()
-	return "/home/emijrp/public_html/archive/tool%s/%s/%s" % (tool_id, today.year, today.strftime("%m")
-)
+def generateToolArchivePath(tool_id, tool_subdir="", tool_date=""):
+	#tool_date debe ser un datetime.date() con año, mes y día
+	#tool_subdir sirve para ordenar por wikis por ejemplo, en la tool0002
+	if tool_subdir:
+		if tool_subdir[0]!='/':
+			tool_subdir="/%s" % tool_subdir
+		if tool_subdir[-1]=='/':
+			tool_subdir=tool_subdir[:len(tool_subdir)-1] #tool_subdir[:-1] no funciona bien
+	if not tool_date:
+		tool_date=datetime.date.today()
+	return "/home/emijrp/public_html/archive/tool%s%s/%s/%s/%s" % (tool_id, tool_subdir, tool_date.year, tool_date.strftime("%m"), tool_date.strftime("%d"))
 
 def loadAllDatabasesFromNoc():
 	dbs=[]
