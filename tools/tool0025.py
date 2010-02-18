@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+#TODO: al parecer tarda un rato en ejecutarse, por lo que el date_add de mysql va desplazándose, corregir y poner la hora fija
+
 import datetime
 import sys
 from tool0000 import *
@@ -9,7 +11,7 @@ import os
 import MySQLdb
 
 tool_id="0025"
-tool_title="Recent activity graphs"
+tool_title="Last hour activity"
 tool_desc=""
 tool_path=generateToolPath(tool_id)
 tool_archive_path=generateToolArchivePath(tool_id)
@@ -37,7 +39,7 @@ for row in result:
 		conn2 = MySQLdb.connect(host=dbserver, db=dbname, read_default_file='~/.my.cnf', use_unicode=True)
 		cursor2 = conn2.cursor()
 		print "OK:", dbserver, dbname
-		cursor2.execute("select rc_user_text, count(*) as edits from recentchanges where rc_timestamp>=date_add(now(), interval -1 hour) and rc_namespace>=0 group by rc_user_text order by edits desc")
+		cursor2.execute("select rc_user_text, count(*) as edits from recentchanges where rc_timestamp>=date_add(now(), interval -1 hour) and (rc_type=0 or rc_type=1) group by rc_user_text order by edits desc")
 		result2=cursor2.fetchall()
 		for row2 in result2:
 			username=unicode(row2[0], "utf-8")
@@ -57,7 +59,6 @@ output=getPHPHeader(tool_id, tool_title)
 output+=u""
 c=0
 output+=u"<center>\n<table>\n<tr><th>#</th><th>Project</th><th>User</th><th>Edits</th><th>%</th></tr>\n"
-subtotal=0.0
 for edits, lang, family, username in users:
 	if family=="commons":
 		wikiurl="commons.wikimedia.org"
@@ -65,12 +66,10 @@ for edits, lang, family, username in users:
 		wikiurl="%s.%s.org" % (lang, family)
 	c+=1
 	if c<=limit:
-		subtotal+=edits
 		output+=u"<tr><td>%s</td><td>%s</td><td><a href='http://%s/wiki/User:%s'>%s</a></td><td><a href='http://%s/wiki/Special:Contributions/%s'>%s</a></td><td>%.3f%%</td></tr>\n" % (c, wikiurl, wikiurl, username, username, wikiurl, username, edits, edits/(total/100))
-	else:
-		break
 
-output+=u"<tr><td></td><td></td><td>%s users</td><td>%s</td><td>%.3f%%</td></tr>\n" % (len(users)-limit, subtotal, subtotal/(total/100))
+
+output+=u"<tr><td></td><td></td><td>%s users</td><td>%.0f</td><td>100%%</td></tr>\n" % (len(users), total)
 output+=u"</table>\n</center>\n"
 
 #output+=u"<ul>\n<li><tt><a href=\"%s\">%s</a></tt> - %s</li>\n</ul>" % (filename, filename, filedesc)
