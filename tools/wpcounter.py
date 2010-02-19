@@ -29,7 +29,7 @@ for row in result:
 	family=row[1]
 	if family not in families:
 		continue
-	dbserver=row[2]+""
+	dbserver=row[2]+"-fast"
 	dbname=row[3]
 	
 	try:
@@ -178,12 +178,61 @@ switch(lang){
 		f11='';
 		author='<a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (<a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
+	case "af":
+		header='Totale wysigings in alle <a href="http://www.wikimedia.org">Wikimedia-projekte</a>:';
+		spliter='&nbsp;';
+		donate="<a href='http://wikimediafoundation.org/wiki/Support_Wikipedia'>Skenk 'n donasie aan die Wikimedia-stigting</a>"; //be careful with 'n
+		f11='Druk op F11 vir volskerm';
+		author='Ontwikkel deur <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (inspirasie deur <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
+		break;
+	case "als":
+		header='Gsamtaazahl Bearbeitige uff de <a href="http://www.wikimedia.org">Wikimedia-Brojäkt:</a>';
+		spliter='&nbsp;';
+		donate="<a href='http://wikimediafoundation.org/wiki/Support_Wikipedia'>Understütz d'Wikimedia Foundation</a>"; //be careful with d'
+		f11='Vollbild: F11';
+		author='Gschribe vum <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (uff Basis vu <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
+		break;
 	case "ar":
 		header='مجموع التعديلات في <a href="http://www.wikimedia.org">مشاريع ويكيميديا</a>:';
 		spliter=',';
 		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">تبرع لمؤسسة ويكيميديا</a>';
 		f11='للشاشة الكاملة اضغط F11';
 		author='من تطوير <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (ملهمة من <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
+		break;
+	case "be-tarask":
+		header='Агулам правак у <a href="http://www.wikimedia.org">праектах Вікімэдыі</a>:';
+		spliter='&nbsp;';
+		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Ахвяруйце Фундацыі Вікімэдыя</a>';
+		f11='Націсьніце F11 для поўнаэкраннага прагляду';
+		author='Распрацаваў <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (ідэя <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
+		break;
+	case "bg":
+		header='Общ брой редакции в <a href="http://www.wikimedia.org">проектите на Уикимедия</a>:';
+		spliter='&nbsp;';
+		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Подкрепете с дарение Фондация Уикимедия</a>';
+		f11='Натиснете F11 за показване на голям екран';
+		author='Разработено от <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (вдъхновено от <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
+		break;
+	case "bn":
+		header='<a href="http://www.wikimedia.org">উইকিমিডিয়ার বিভিন্ন প্রকল্পে</a> সর্বমোট সম্পাদনার সংখ্যা:';
+		spliter=',';
+		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">উইকিমিডিয়া ফাউন্ডেশনে দান করুন</a>';
+		f11='সম্পূর্ন স্ক্রিন জুড়ে দেখতে হলে F11 চাপুন';
+		author='এই কাউন্টারটি তৈরী করেছেন <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (<a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a> এর অনুপ্রেরণায়)';
+		break;
+	case "br":
+		header='Niver hollek a gemmoù er <a href="http://www.wikimedia.org">raktresoù Wikimedia</a> :';
+		spliter='&nbsp;';
+		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Donezoniñ da Ziazezadur Wikimedia</a>';
+		f11='Pouezit war F11 evit ar mod skramm leun';
+		author='Diorroet gant <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Awenet gant <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
+		break;
+	case "bs":
+		header='Ukupne izmjene u svim <a href="http://www.wikimedia.org">Wikimedia projektima</a>:';
+		spliter='.';
+		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Donirajte Wikimedia Fondaciji</a>';
+		f11='Pritisnite F11 za prikaz preko cijelog ekrana';
+		author='Razvio korisnik <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Inspiriran od strane <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
 	case "ca":
 		header='Edicions entre tots els <a href="http://www.wikimedia.org">projectes de Wikimedia</a>:';
@@ -199,6 +248,13 @@ switch(lang){
 		f11='Stisknutím klávesy F11 zobrazíte stránku na celou obrazovku';
 		author='Vyvinul <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (inspirováno stránkami <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
+	case "cy":
+		header='Cyfanswm yr holl olygiadau ym <a href="http://www.wikimedia.org">mhrosiectau Wikimedia</a>:';
+		spliter='&nbsp;';
+		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Cyfrannwch at Sefydliad Wikimedia</a>';
+		f11='Gwasgwch F11 am sgrîn lawn';
+		author='Datblygwyd gan <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Ysbrydolwyd gan <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
+		break;
 	case "da":
 		header='Totalt antal redigeringer i <a href="http://www.wikimedia.org">Wikimedias projekter</a>:';
 		spliter='.';
@@ -207,11 +263,11 @@ switch(lang){
 		author='Udviklet af <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Inspireret af <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
 	case "de":
-		header='Gesamtzahl der Bearbeitungen an <a href="http://www.wikimedia.org">den Wikimedia Projekten</a>:';
-		//spliter='';
-		//donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia"></a>';
-		//f11='';
-		//author='<a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (<a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
+		header='Gesamtzahl der Bearbeitungen in <a href="http://www.wikimedia.org">den Wikimedia-Projekten</a>:';
+		spliter='.';
+		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Spende an die Wikimedia Foundation</a>';
+		f11='Drücken Sie F11 für Vollbild-Anzeige';
+		author='Entwickelt von <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Inspiriert durch <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
 	case "eo":
 		header='Totala nombro de redaktoj en <a href="http://www.wikimedia.org">Vikimediaj projektoj</a>:';
@@ -220,6 +276,13 @@ switch(lang){
 		f11='Premu F11 por plenekrana modo';
 		author='Kreita de <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Inspirita de <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
+	case "el":
+		header='Συνολικές επεξεργασίες στα <a href="http://www.wikimedia.org">εγχειρήματα του Wikimedia</a>:';
+		spliter='.';
+		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Κάντε δωρεά στο Ίδρυμα Wikimedia</a>';
+		f11='Πατήστε F11 για πλήρη οθόνη';
+		author='Αναπτύχθηκε από τον <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Εμπνευσμένο από το <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
+		break;
 	case "es":
 		header='Ediciones entre todos los <a href="http://www.wikimedia.org">proyectos Wikimedia</a>:';
 		spliter='.';
@@ -227,12 +290,26 @@ switch(lang){
 		f11='Pantalla completa pulsando F11';
 		author='Desarrollado por <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Inspirado en <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
+	case "et":
+		header='<a href="http://www.wikimedia.org">Wikimedia projektides</a> tehtud redigeerimiste koguarv:';
+		spliter='&nbsp;';
+		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Anneta Wikimedia sihtasutusele</a>';
+		f11='Täisekraani jaoks vajuta F11';
+		author='Kasutajalt <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (<a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a> eeskujul)';
+		break;
 	case "eu":
 		header='<a href="http://www.wikimedia.org">Wikimedia proiektuetan</a> egindako eguneraketak guztira:';
 		spliter='.';
 		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Wikimedia Foundazioari dohaintza egin</a>';
 		f11='F11 sakatu pantaila osoan erakusteko';
 		author='<a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a>-ek garatua (<a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>-ek inspiratuta)';
+		break;
+	case "fa":
+		header='مجموع ویرایش‏ها در <a href="http://www.wikimedia.org">پروژه ویکی‏مدیا</a>:';
+		spliter=',';
+		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">کمک مالی به بنیاد ویکی‏مدیا</a>';
+		f11='را برای نمایش تمام صفحه فشار دهید F11کلید';
+		author='گسترش یافته بوسیله <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (الهام شده بوسیله <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
 	case "fr":
 		header="Nombre total d'éditions dans les <a href='http://www.wikimedia.org'>projets Wikimedia</a>:"; // be careful with d'éditions
