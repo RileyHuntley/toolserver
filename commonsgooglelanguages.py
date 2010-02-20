@@ -37,6 +37,9 @@ def checkLanguage(desc):
 	print "RAW de Google:", raw
 	time.sleep(0.5)
 	n=re.compile(ur'"language":"(?P<lang>[a-z]+)","isReliable":(?P<rel>true|false),"confidence":(?P<con>[0-9\.]+)\}').finditer(raw)
+	lang=False
+	con=0
+	rel="false"	
 	for j in n:
 		lang=j.group("lang")
 		con=float(j.group("con"))
@@ -73,13 +76,14 @@ for page in pre:
 		if len(desc)<50 or len(desc)>4000: #el limite de google es 5000, probar límite inferior
 			break
 		
-		
-		
-		[lang, rel, con]=checkLanguage(desc)
+		try:
+			[lang, rel, con]=checkLanguage(desc)
+		except:
+			continue
 		if rel=="true" and con>0.5:
-			[lang1, rel1, con1]=checkLanguage(desc[:len(desc)/2])
-			[lang2, rel2, con2]=checkLanguage(desc[len(desc)/2:])
-			if lang1==lang and lang2==lang:
+			[lang1, rel1, con1]=checkLanguage(desc[:(len(desc)-1)/2])
+			[lang2, rel2, con2]=checkLanguage(desc[(len(desc)-1)/2:])
+			if lang and lang1 and lang2 and lang1==lang and lang2==lang: # and rel1=="true" and rel2=="true":
 				newtext=re.sub(reg, ur"\g<ini>{{%s|\g<desc>}}\g<fin>" % lang, wtext)
 				print "Response by Google: Language:", lang, "	isReliable", rel, "	Confidence", con
 				print '-'*50
