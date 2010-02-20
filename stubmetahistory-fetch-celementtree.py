@@ -81,7 +81,8 @@ for event, elem in context:
 		if crevisions % limit == 0:
 			print u'Pages: %d | Revisions: %d | Rev/pag = %.2f | %.2f pags/s | %.2f revs/s' % (cpages, crevisions, (crevisions/cpages), cpages/(time.time()-t1), (crevisions/(time.time()-t1)))		
 		#output rev
-		output='%s	%s	%s	%s	%s	%s	%s\n' % (page_title, page_id, rev_id, rev_timestamp, rev_author, rev_comment, len(rev_text))
+		#output='%s	%s	%s	%s	%s	%s	%s\n' % (page_title, page_id, rev_id, rev_timestamp, rev_author, rev_comment, len(rev_text))
+		output='%s	%s	%s	%s	%s	%s	%s\n' % (page_title, page_id, rev_id, rev_timestamp, rev_author)
 		g.write(output.encode('utf-8'))
 		#print page_title, page_id, rev_id, rev_timestamp, len(rev_text)
 		#limpiamos

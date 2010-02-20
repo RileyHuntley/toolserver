@@ -77,10 +77,38 @@ projects={
 #if len(sys.argv)>1:
 #	lll=[sys.argv[1]]
 
+#generating interwikis
+iws1={}
+iws2={}
+for family, langs in projects.items():
+	iws1[family]=[]
+	iws2[family]=[]
+	for lang in langs:
+		site=wikipedia.Site(lang, family)
+		data=site.getUrl("/w/index.php?title=Special:RecentChanges&limit=0")
+		data=data.split('<select id="namespace" name="namespace" class="namespaceselector">')[1].split('</select>')[0]
+		m=re.compile(ur'<option value="([1-9]\d*)">(.*?)</option>').finditer(data)
+		wikipedianm=u''
+		for i in m:
+			number=i.group(1)
+			name=i.group(2)
+			if number=='4':
+				wikipedianm+=name
+		traslation1="List of Wikipedians by number of edits"
+		if tras1.has_key(lang):
+			traslation1=tras1[lang]
+		iws1[family].append(u"[[%s:%s:%s]]" % (lang, wikipedianm, traslation1)
+		traslation2="List of Wikipedians by number of edits (bots included)"
+		if tras2.has_key(lang):
+			traslation2=tras2[lang]
+		iws2[family].append(u"[[%s:%s:%s]]" % (lang, wikipedianm, traslation2))
+	iws1[family].sort()
+	iws2[family].sort()
+
 for family, langs in projects.items():
 	for lang in langs:
 		#la lista de bots debe ir dentro del bucle
-		bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot', u'YurikBot', u'H-Bot', u'Paulatz bot', u'TekBot', u'Alfiobot', u'RoboRex', u'Agtbot', u'Felixbot', u'Pixibot', u'Sz-iwbot', u'Timbot (Gutza)', u'Ginosbot', u'GrinBot', u'.anacondabot', u'Omdirigeringsrättaren', u'Rubinbot', u'HasharBot', u'NetBot', u"D'ohBot", u'Byrialbot', u'Broadbot', u'Guanabot', u'Chris G Bot 2', u'CCyeZBot', u'Soulbot', u'MSBOT', u'GnawnBot', u'Chris G Bot 3', u'Huzzlet the bot', u'JCbot', u'DodekBot', u'John Bot II', u'CyeZBot', u'Beefbot', u'Louperibot', u'SOTNBot', u'DirlBot', u'Obersachsebot', u'WikiDreamer Bot', u'YonaBot', u'Chlewbot', u'PixelBot', u'ToePeu.bot', u'HujiBot', u'Le Pied-bot', u'Ugur Basak Bot', u'NigelJBot', u'CommonsTicker', u'Tangobot', u'SeanBot', u'Corrector de redirecciones', u'HermesBot', u'Darkicebot', u'RedBot', u'HerculeBot', u'PatruBOT']
+		bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot', u'EmxBot', u'YurikBot', u'H-Bot', u'Paulatz bot', u'TekBot', u'Alfiobot', u'RoboRex', u'Agtbot', u'Felixbot', u'Pixibot', u'Sz-iwbot', u'Timbot (Gutza)', u'Ginosbot', u'GrinBot', u'.anacondabot', u'Omdirigeringsrättaren', u'Rubinbot', u'HasharBot', u'NetBot', u"D'ohBot", u'Byrialbot', u'Broadbot', u'Guanabot', u'Chris G Bot 2', u'CCyeZBot', u'Soulbot', u'MSBOT', u'GnawnBot', u'Chris G Bot 3', u'Huzzlet the bot', u'JCbot', u'DodekBot', u'John Bot II', u'CyeZBot', u'Beefbot', u'Louperibot', u'SOTNBot', u'DirlBot', u'Obersachsebot', u'WikiDreamer Bot', u'YonaBot', u'Chlewbot', u'PixelBot', u'ToePeu.bot', u'HujiBot', u'Le Pied-bot', u'Ugur Basak Bot', u'NigelJBot', u'CommonsTicker', u'Tangobot', u'SeanBot', u'Corrector de redirecciones', u'HermesBot', u'Darkicebot', u'RedBot', u'HerculeBot', u'PatruBOT']
 		site=wikipedia.Site(lang, family)
 		
 		data=site.getUrl("/w/index.php?title=Special:Listusers&limit=5000&group=bot")
@@ -149,7 +177,11 @@ for family, langs in projects.items():
 				planti2+=u"|%s=%s\n" % (nick,ed)
 				cplanti2+=1
 		
+		s+=u"%s\n" % ("\n".join(iws1[family]))
+		s=re.sub(ur"(?im)\[\[%s:.*?\]\]\n" % lang, ur"", s)
 		s+=u"{{/end}}"
+		sbots+=u"%s\n" % ("\n".join(iws2[family]))
+		sbots=re.sub(ur"(?im)\[\[%s:.*?\]\]\n" % lang, ur"", sbots)
 		sbots+=u"{{/end}}"
 		planti2+=u"|USUARIO DESCONOCIDO\n}}<noinclude>{{uso de plantilla}}</noinclude>"
 		planti+=u"|-\n| colspan=3 | Véase también [[Wikipedia:Ranking de ediciones]]<br/>Actualizado a las {{subst:CURRENTTIME}} (UTC) del  {{subst:CURRENTDAY}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}} por [[Usuario:BOTijo|BOTijo]] \n|}<noinclude>{{uso de plantilla}}</noinclude>"
