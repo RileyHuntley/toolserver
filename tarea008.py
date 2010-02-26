@@ -51,7 +51,8 @@ tras1={
 	u"vi": u"Danh sách thành viên Wikipedia theo số lần sửa trang",
 	},
 'wiktionary': {
-	u"es": u"Ranking de ediciones", 
+	u"es": u"Ranking de ediciones", 	
+	u"simple": u"List of Wiktionarians by number of changes",
 	},
 'wikinews': {
 	u"es": u"Ranking de ediciones", 
@@ -179,7 +180,7 @@ for family, langs in projects.items():
 for family, langs in projects.items():
 	for lang in langs:
 		#la lista de bots debe ir dentro del bucle
-		bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot', u'EmxBot', u'YurikBot', u'H-Bot', u'Paulatz bot', u'TekBot', u'Alfiobot', u'RoboRex', u'Agtbot', u'Felixbot', u'Pixibot', u'Sz-iwbot', u'Timbot (Gutza)', u'Ginosbot', u'GrinBot', u'.anacondabot', u'Omdirigeringsrättaren', u'Rubinbot', u'HasharBot', u'NetBot', u"D'ohBot", u'Byrialbot', u'Broadbot', u'Guanabot', u'Chris G Bot 2', u'CCyeZBot', u'Soulbot', u'MSBOT', u'GnawnBot', u'Chris G Bot 3', u'Huzzlet the bot', u'JCbot', u'DodekBot', u'John Bot II', u'CyeZBot', u'Beefbot', u'Louperibot', u'SOTNBot', u'DirlBot', u'Obersachsebot', u'WikiDreamer Bot', u'YonaBot', u'Chlewbot', u'PixelBot', u'ToePeu.bot', u'HujiBot', u'Le Pied-bot', u'Ugur Basak Bot', u'NigelJBot', u'CommonsTicker', u'Tangobot', u'SeanBot', u'Corrector de redirecciones', u'HermesBot', u'Darkicebot', u'RedBot', u'HerculeBot', u'PatruBOT', u'RobotGMwikt', u'MonoBot', u'WikimediaNotifier', u'', u'', u'', u'', u'', u'', u'', u'',]
+		bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot', u'EmxBot', u'YurikBot', u'H-Bot', u'Paulatz bot', u'TekBot', u'Alfiobot', u'RoboRex', u'Agtbot', u'Felixbot', u'Pixibot', u'Sz-iwbot', u'Timbot (Gutza)', u'Ginosbot', u'GrinBot', u'.anacondabot', u'Omdirigeringsrättaren', u'Rubinbot', u'HasharBot', u'NetBot', u"D'ohBot", u'Byrialbot', u'Broadbot', u'Guanabot', u'Chris G Bot 2', u'CCyeZBot', u'Soulbot', u'MSBOT', u'GnawnBot', u'Chris G Bot 3', u'Huzzlet the bot', u'JCbot', u'DodekBot', u'John Bot II', u'CyeZBot', u'Beefbot', u'Louperibot', u'SOTNBot', u'DirlBot', u'Obersachsebot', u'WikiDreamer Bot', u'YonaBot', u'Chlewbot', u'PixelBot', u'ToePeu.bot', u'HujiBot', u'Le Pied-bot', u'Ugur Basak Bot', u'NigelJBot', u'CommonsTicker', u'Tangobot', u'SeanBot', u'Corrector de redirecciones', u'HermesBot', u'Darkicebot', u'RedBot', u'HerculeBot', u'PatruBOT', u'RobotGMwikt', u'MonoBot', u'WikimediaNotifier', u'SBot39', u'DSisyphBot', u'GriffinBot1', u'WeggeBot', u'EhJBot3', u'Gerakibot', u'Picochip08', u'MondalorBot', u'Redirect fixer', u'', u'', u'', u'', u'', u'',]
 		site=wikipedia.Site(lang, family)
 		
 		data=site.getUrl("/w/index.php?title=Special:Listusers&limit=5000&group=bot")
