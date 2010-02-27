@@ -5,14 +5,16 @@ import datetime
 import sys
 import os
 import MySQLdb
+import re
 
 path="/home/emijrp/public_html/wikimediacounter"
 f=open('%s/wpcounter.log' % path, 'r')
 raw=f.read().splitlines()[0]
-[timestamp_old, total_old]=raw.split(';')
+[timestamp_old, total_old, round_number_old]=raw.split(';')
 timestamp_old=int(timestamp_old)
 total_old=int(total_old)
-print "timestamp_old =", timestamp_old, "total_old =", total_old
+round_number_old=int(round_number_old)
+print "timestamp_old =", timestamp_old, "total_old =", total_old, "round_number_old =", round_number_old
 f.close()
 
 timestamp=int(datetime.datetime.now().strftime('%s'))*1000
@@ -98,6 +100,7 @@ p#followus, p#translateit {
 	position:absolute;
 	margin:0;border:0;padding:0;
 	top:10;
+	text-align:left;
 }
 p#followus {
 	left:10;
@@ -133,9 +136,12 @@ p#f11 {
 <div id='wrapper'>
 <div id='content'>
 
-<p id="followus"><a href="http://www.facebook.com/group.php?gid=287466429242">Facebook group</a></p>
+<p id="followus">
+<a href="http://www.facebook.com/group.php?gid=287466429242">Facebook group</a><br/>
+<a href="http://twitter.com/wmcounter">Twitter</a>
+</p>
 
-<p id="translateit"><a href="http://en.wikipedia.org/wiki/User:Emijrp/Wikimedia_counter">Translate it!</a></p>
+<p id="translateit"><a href="http://en.wikipedia.org/wiki/User:Emijrp/Wikimedia_projects_edits_counter">Translate it!</a></p>
 
 <span id="header">Total edits in <a href="http://www.wikimedia.org">Wikimedia projects</a>:</span>
 
@@ -199,8 +205,8 @@ switch(lang){
 		f11='للشاشة الكاملة اضغط F11';
 		author='من تطوير <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (ملهمة من <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
-	case "be-tarask":
-		header='Агулам правак у <a href="http://www.wikimedia.org">праектах Вікімэдыі</a>:';
+	case "be":
+		header='Агулам правак у <a href="http://www.wikimedia.org">праектах Фундацыі «Вікімэдыя»</a>:';
 		spliter='&nbsp;';
 		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Ахвяруйце Фундацыі Вікімэдыя</a>';
 		f11='Націсьніце F11 для поўнаэкраннага прагляду';
@@ -264,17 +270,10 @@ switch(lang){
 		break;
 	case "de":
 		header='Gesamtzahl der Bearbeitungen in <a href="http://www.wikimedia.org">den Wikimedia-Projekten</a>:';
-		spliter='.';
+		spliter='&#8239;';
 		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Spende an die Wikimedia Foundation</a>';
 		f11='Drücken Sie F11 für Vollbild-Anzeige';
 		author='Entwickelt von <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Inspiriert durch <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
-		break;
-	case "eo":
-		header='Totala nombro de redaktoj en <a href="http://www.wikimedia.org">Vikimediaj projektoj</a>:';
-		spliter='.';
-		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Donaci al Fondaĵo Vikimedio</a>';
-		f11='Premu F11 por plenekrana modo';
-		author='Kreita de <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Inspirita de <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
 	case "el":
 		header='Συνολικές επεξεργασίες στα <a href="http://www.wikimedia.org">εγχειρήματα του Wikimedia</a>:';
@@ -282,6 +281,13 @@ switch(lang){
 		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Κάντε δωρεά στο Ίδρυμα Wikimedia</a>';
 		f11='Πατήστε F11 για πλήρη οθόνη';
 		author='Αναπτύχθηκε από τον <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Εμπνευσμένο από το <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
+		break;
+	case "eo":
+		header='Totala nombro de redaktoj en <a href="http://www.wikimedia.org">Vikimediaj projektoj</a>:';
+		spliter='.';
+		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Donaci al Fondaĵo Vikimedio</a>';
+		f11='Premu F11 por plenekrana modo';
+		author='Kreita de <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Inspirita de <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
 	case "es":
 		header='Ediciones entre todos los <a href="http://www.wikimedia.org">proyectos Wikimedia</a>:';
@@ -309,7 +315,7 @@ switch(lang){
 		spliter=',';
 		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">کمک مالی به بنیاد ویکی‏مدیا</a>';
 		f11='را برای نمایش تمام صفحه فشار دهید F11کلید';
-		author='گسترش یافته بوسیله <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (الهام شده بوسیله <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
+		author='گسترش‌یافته بوسیله <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (با الهام از <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
 	case "fr":
 		header="Nombre total d'éditions dans les <a href='http://www.wikimedia.org'>projets Wikimedia</a>:"; // be careful with d'éditions
@@ -325,6 +331,13 @@ switch(lang){
 		f11='Teljes képernyős mód: F11';
 		author='Készítette: <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (<a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a> ötlete alapján)';
 		break;
+	case "id":
+		header='Jumlah suntingan di <a href="http://www.wikimedia.org">proyek Wikimedia</a>:';
+		spliter='.';
+		donate='<a href="http://wikimediafoundation.org/wiki/Penggalangan_dana">Menyumbang untuk Yayasan Wikimedia</a>';
+		f11='Tekan F11 untuk tampilan layar penuh';
+		author='Dikembangkan oleh <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Terinspirasi dari <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
+		break;
 	case "it":
 		header='Modifiche totali nei <a href="http://www.wikimedia.org">progetti Wikimedia</a>:';
 		spliter='.';
@@ -332,12 +345,26 @@ switch(lang){
 		f11='Premi F11 per visualizzare a schermo intero';
 		author='Sviluppato da <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Ispirato da <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
+	case "ja":
+		header='<a href="http://www.wikimedia.org">ウィキメディア・プロジェクト</a>の総編集回数';
+		spliter=',';
+		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">ウィキメディア財団に寄付</a>';
+		f11='F11キーでフルスクリーン表示';
+		author='開発：<a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (原案：<a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
+		break;
 	case "kl":
 		header='Tamakkiisumik amerlassutsit aaqqissuussinerni <a href="http://www.wikimedia.org">Wikimedia suliniutaani</a>:';
 		spliter='.';
 		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Wikimedia suliniutaani tunissuteqarit</a>';
 		f11='F11 tooruk tamaat saqqummissagukku';
 		author='Siuarsaasuuvoq <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Peqatigalugu <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
+		break;
+	case "ko":
+		header='<a href="http://www.wikimedia.org">위키미디어 재단에서 운영하는 프로젝트</a>의 총 편집 횟수:';
+		spliter=',';
+		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">위키미디어 재단에 기부하기</a>';
+		f11='F11 키를 누르면 전체 화면 모드로 전환합니다';
+		author='<a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a>이 만듬 (<a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>에서 영감을 얻음)';
 		break;
 	case "nl":
 		header='Totaal aantal bewerkingen in <a href="http://www.wikimedia.org">Wikimediaprojecten</a>:';
@@ -447,10 +474,28 @@ if total>total_old:
 	f=open("%s/index.php" % path, 'w')
 	f.write(output.encode("utf-8"))
 	f.close()
-
+	
+	round_number=total-(total % 1000000)
 	f=open('%s/wpcounter.log' % path, 'w')
-	f.write("%d;%.0f" % (timestamp, total))
+	f.write("%d;%.0f;%d" % (timestamp, total, round_number))
 	f.close()
+
+	if round_number>round_number_old:
+		username="wmcounter"
+		password=""
+		f=open("/home/emijrp/.my.cnf2", "r")
+		raw=f.read()
+		f.close()
+		m=re.findall(ur'%s = *"(.*)"' % username, raw)
+		password=m[0]
+		round_number_text=str(round_number)
+		if round_number<1000000000:
+			round_number_text=u"%s,%s,%s" % (round_number_text[:3], round_number_text[3:6], round_number_text[6:9])
+		else:
+			round_number_text=u"%s,%s,%s,%s" % (round_number_text[:1], round_number_text[1:4], round_number_text[4:7], round_number_text[7:10])
+		msg=u"%s edits - Check the counter! http://toolserver.org/~emijrp/wikimediacounter/ #wikipedia #wikimedia #wikis" % round_number_text
+		orden='curl -u %s:%s -d status="%s" http://twitter.com/statuses/update.json' % (username, password, msg.encode("utf-8"))
+		os.system(orden)
 
 cursor.close()
 conn.close()
