@@ -513,7 +513,7 @@ for pr, cats in categories.items():
 	tablaclasificacion+=u'! colspan=4 | Clasificación !! rowspan=2 | Total '
 	tablaclasificacion+=u'\n|-\n! [[Wikipedia:Artículos destacados|Destacado]] [[Imagen:Cscr-featured.svg|14px|Artículo destacado]] !! [[Wikipedia:Artículos buenos|Bueno]] [[Imagen:Artículo bueno.svg|14px|Artículo bueno]] !! [[Wikipedia:Página de desambiguación|Desambiguación]] !! Desconocido'
 	tablaclasificacion+=u'\n|-\n| [[Wikipedia:Contenido por wikiproyecto/%s#Artículos destacados|%d]] || [[Wikipedia:Contenido por wikiproyecto/%s#Artículos buenos|%d]] || %d || %d || %d ' % (pr, resumen['destacado'], pr, resumen['bueno'], resumen['desambig'], resumen['desconocida'], lenartstitles)
-	tablaclasificacion+=u'\n|-\n| %.1f%s || %.1f%s || %.1f%s || %.1f%s || 100%s' % ((resumen['destacado']/(lenartstitles/100.0)), u'%', (resumen['bueno']/(lenartstitles/100.0)), u'%', (resumen['desambig']/(lenartstitles/100.0)), u'%', (resumen['desconocida']/(lenartstitles/100.0)), u'%', u'%')
+	tablaclasificacion+=u'\n|-\n| %.1f%% || %.1f%% || %.1f%% || %.1f%% || 100%%' % ((resumen['destacado']/(lenartstitles/100.0)), (resumen['bueno']/(lenartstitles/100.0)), (resumen['desambig']/(lenartstitles/100.0)), (resumen['desconocida']/(lenartstitles/100.0)))
 	tablaclasificacion+=u'\n|}</onlyinclude>\n'
 	
 	wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Resumen/Clasificación' % pr) #resumen
@@ -525,7 +525,7 @@ for pr, cats in categories.items():
 	tablatamanos+=u'! colspan=6 | Tamaño !! rowspan=2 | Total '
 	tablatamanos+=u'\n|-\n! > 10 KB !! > 5 KB !! > 2 KB !! > 1 KB !! < 1 KB !! < 2 KB '
 	tablatamanos+=u'\n|-\n| %d || %d || %d || %d || %d || %d || %d ' % (resumen['>10'], resumen['>5'], resumen['>2'], resumen['>1'], resumen['<1'], resumen['<2'], lenartstitles)
-	tablatamanos+=u'\n|-\n| %.1f%s || %.1f%s || %.1f%s || %.1f%s || %.1f%s || %.1f%s || 100%s' % ((resumen['>10']/(lenartstitles/100.0)), u'%', (resumen['>5']/(lenartstitles/100.0)), u'%', (resumen['>2']/(lenartstitles/100.0)), u'%', (resumen['>1']/(lenartstitles/100.0)), u'%', (resumen['<1']/(lenartstitles/100.0)), u'%', (resumen['<2']/(lenartstitles/100.0)), u'%', u'%')
+	tablatamanos+=u'\n|-\n| %.1f%% || %.1f%% || %.1f%% || %.1f%% || %.1f%% || %.1f%% || 100%%' % ((resumen['>10']/(lenartstitles/100.0)), (resumen['>5']/(lenartstitles/100.0)), (resumen['>2']/(lenartstitles/100.0)), (resumen['>1']/(lenartstitles/100.0)), (resumen['<1']/(lenartstitles/100.0)), (resumen['<2']/(lenartstitles/100.0)))
 	tablatamanos+=u'\n|}</onlyinclude>\n'
 	
 	wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Resumen/Tamaños' % pr) #resumen
@@ -548,17 +548,17 @@ for pr, cats in categories.items():
 	tablamantenimiento=avisotoolserver
 	tablamantenimiento+=u'<onlyinclude>{| class="wikitable" style="text-align: center;clear: {{{1|}}};float: {{{1|}}};"\n'
 	tablamantenimiento+=u'! colspan=3 | Mantenimiento '
-	tablamantenimiento+=u'\n|-\n! Fusionar \n| [[Wikipedia:Contenido por wikiproyecto/%s#Fusionar|%d]] \n| %.1f%s ' % (pr, qfusionar, (qfusionar/(qmantenimiento/100.0)), u'%')
-	tablamantenimiento+=u'\n|-\n! Contextualizar \n| [[Wikipedia:Contenido por wikiproyecto/%s#Contextualizar|%d]] \n| %.1f%s ' % (pr, qcontextualizar, (qcontextualizar/(qmantenimiento/100.0)), u'%')
-	tablamantenimiento+=u'\n|-\n! Sin relevancia \n| [[Wikipedia:Contenido por wikiproyecto/%s#Sin relevancia|%d]] \n| %.1f%s ' % (pr, qsinrelevancia, (qsinrelevancia/(qmantenimiento/100.0)), u'%')
-	tablamantenimiento+=u'\n|-\n! Wikificar \n| [[Wikipedia:Contenido por wikiproyecto/%s#Wikificar|%d]] \n| %.1f%s ' % (pr, qwikificar, (qwikificar/(qmantenimiento/100.0)), u'%')
-	tablamantenimiento+=u'\n|-\n! Copyedit \n| [[Wikipedia:Contenido por wikiproyecto/%s#Copyedit|%d]] \n| %.1f%s ' % (pr, qcopyedit, (qcopyedit/(qmantenimiento/100.0)), u'%')
-	tablamantenimiento+=u'\n|-\n! Sin referencias \n| [[Wikipedia:Contenido por wikiproyecto/%s#Sin referencias|%d]] \n| %.1f%s ' % (pr, qsinreferencias, (qsinreferencias/(qmantenimiento/100.0)), u'%')
-	tablamantenimiento+=u'\n|-\n! En obras \n| [[Wikipedia:Contenido por wikiproyecto/%s#En obras|%d]] \n| %.1f%s ' % (pr, qenobras, (qenobras/(qmantenimiento/100.0)), u'%')
-	tablamantenimiento+=u'\n|-\n! No neutral \n| [[Wikipedia:Contenido por wikiproyecto/%s#No neutral|%d]] \n| %.1f%s ' % (pr, qnoneutral, (qnoneutral/(qmantenimiento/100.0)), u'%')
-	tablamantenimiento+=u'\n|-\n! En traducción \n| [[Wikipedia:Contenido por wikiproyecto/%s#En traducción|%d]] \n| %.1f%s ' % (pr, qentraduccion, (qentraduccion/(qmantenimiento/100.0)), u'%')
-	tablamantenimiento+=u'\n|-\n! Veracidad discutida \n| [[Wikipedia:Contenido por wikiproyecto/%s#Veracidad discutida|%d]] \n| %.1f%s ' % (pr, qveracidaddiscutida, (qveracidaddiscutida/(qmantenimiento/100.0)), u'%')
-	tablamantenimiento+=u'\n|-\n| Total \n| %d \n| 100%s ' % (qmantenimiento, u'%')
+	tablamantenimiento+=u'\n|-\n! Fusionar \n| [[Wikipedia:Contenido por wikiproyecto/%s#Fusionar|%d]] \n| %.1f%% ' % (pr, qfusionar, (qfusionar/(qmantenimiento/100.0)))
+	tablamantenimiento+=u'\n|-\n! Contextualizar \n| [[Wikipedia:Contenido por wikiproyecto/%s#Contextualizar|%d]] \n| %.1f%% ' % (pr, qcontextualizar, (qcontextualizar/(qmantenimiento/100.0)))
+	tablamantenimiento+=u'\n|-\n! Sin relevancia \n| [[Wikipedia:Contenido por wikiproyecto/%s#Sin relevancia|%d]] \n| %.1f%% ' % (pr, qsinrelevancia, (qsinrelevancia/(qmantenimiento/100.0)))
+	tablamantenimiento+=u'\n|-\n! Wikificar \n| [[Wikipedia:Contenido por wikiproyecto/%s#Wikificar|%d]] \n| %.1f%% ' % (pr, qwikificar, (qwikificar/(qmantenimiento/100.0)))
+	tablamantenimiento+=u'\n|-\n! Copyedit \n| [[Wikipedia:Contenido por wikiproyecto/%s#Copyedit|%d]] \n| %.1f%% ' % (pr, qcopyedit, (qcopyedit/(qmantenimiento/100.0)))
+	tablamantenimiento+=u'\n|-\n! Sin referencias \n| [[Wikipedia:Contenido por wikiproyecto/%s#Sin referencias|%d]] \n| %.1f%% ' % (pr, qsinreferencias, (qsinreferencias/(qmantenimiento/100.0)))
+	tablamantenimiento+=u'\n|-\n! En obras \n| [[Wikipedia:Contenido por wikiproyecto/%s#En obras|%d]] \n| %.1f%% ' % (pr, qenobras, (qenobras/(qmantenimiento/100.0)))
+	tablamantenimiento+=u'\n|-\n! No neutral \n| [[Wikipedia:Contenido por wikiproyecto/%s#No neutral|%d]] \n| %.1f%% ' % (pr, qnoneutral, (qnoneutral/(qmantenimiento/100.0)))
+	tablamantenimiento+=u'\n|-\n! En traducción \n| [[Wikipedia:Contenido por wikiproyecto/%s#En traducción|%d]] \n| %.1f%% ' % (pr, qentraduccion, (qentraduccion/(qmantenimiento/100.0)))
+	tablamantenimiento+=u'\n|-\n! Veracidad discutida \n| [[Wikipedia:Contenido por wikiproyecto/%s#Veracidad discutida|%d]] \n| %.1f%% ' % (pr, qveracidaddiscutida, (qveracidaddiscutida/(qmantenimiento/100.0)))
+	tablamantenimiento+=u'\n|-\n| Total \n| %d \n| 100%% ' % (qmantenimiento)
 	tablamantenimiento+=u'\n|}</onlyinclude>\n'
 	
 	wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Resumen/Mantenimiento' % pr) #resumen
