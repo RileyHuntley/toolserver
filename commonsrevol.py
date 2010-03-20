@@ -32,17 +32,19 @@ def getAllInterwikis(wtext):
 	return iws
 
 def getEnglishInterwiki(wtext):
-	m=re.compile(ur"(?i)\[\[ *en *\: *([^\]\|]+) *\]\]").finditer(wtext)
-	for i in m:
-		return i.group(1)
+	iws=getAllInterwikis(wtext)
+	if iws.has_key("en"):
+		return iws["en"]
+	else:
+		return ""
 
 def getImageTitles(wtitle, site):
 	images=[]
 	
 	raw=site.getUrl("/w/api.php?action=query&prop=images&titles=%s&imlimit=500&format=xml" % urllib.quote(re.sub(" ", "_", wtitle).encode('utf-8')))
-	m=re.compile(ur"title=\"File\:(.+?)\" \/\>").finditer(raw)
+	m=re.compile(ur"title=\"File\:(?P<filename>.+?)\" \/\>").finditer(raw)
 	for i in m:
-		images.append(i.group(1))
+		images.append(i.group("filename"))
 	
 	return images
 
@@ -55,6 +57,8 @@ gen=pagegenerators.AllpagesPageGenerator(start = st, namespace = 0, includeredir
 pre=pagegenerators.PreloadingGenerator(gen, pageNumber=50, lookahead=50)
 
 for page in pre:
+	if page.isRedirectPage():
+		continue
 	wtitle=page.title()
 	wtext=newtext=page.get()
 	summary="BOT -"
@@ -68,7 +72,7 @@ for page in pre:
 			commonsimages=getImageTitles(wtitle, commonssite)
 			enimages=getImageTitles(wtitle, ensite)
 			for image in enimages:
-				if commonsimages.count(image)!=0:
+				if commonsimages.count(image)!=0: #con que una imagen coincida, ya vale
 					eniws=enpage.interwiki()
 					eniws.append(enpage)
 					eniws.sort()
@@ -78,13 +82,14 @@ for page in pre:
 					page.put(u"%s\n\n%s" % (wtext, iws_), u"BOT - Adding %d interwiki(s) from [[:en:%s]]" % (len(eniws), enpage.title()))
 					break
 			continue
-	#wikipedia.output("La galería tiene interwikis")
+	else:
+		wikipedia.output("La galería tiene interwikis")
 	
 	
-	#preparamos datos usados frecuentemente
+	"""#preparamos datos usados frecuentemente
 	commonsimages=getImageTitles(wtitle, commonssite)
 	#fin datos
-	
+	"""
 	#'''wtitle'''->'''[[:lang:title|title]]'''
 	"""http://commons.wikimedia.org/w/index.php?title=User_talk:Emijrp&diff=cur#Paulus_Moreelse
 	if len(wtitle)>3: #por seguridad
@@ -140,7 +145,7 @@ for page in pre:
 	"""
 	
 	#ampliar descripciones
-	difftext=newtext
+	"""difftext=newtext
 	r_desc=ur"(?im)^\{\{ *en *\| *\'{0,3} *\[{0,2}(\:en\:)? *%s( *\| *%s)? *\]{0,2} *\'{0,3} *\}\}" % (eniw, eniw)
 	if re.search(r_desc, newtext):
 		eniwpage=wikipedia.Page(wikipedia.Site('en', 'wikipedia'), eniw)
@@ -185,7 +190,7 @@ for page in pre:
 				red.put(redtext, u"BOT - Creating (%s:) redirect to [[%s]]" % (redirectscandidatesdic[red.title()], wtitle))
 			except:
 				pass
-	
+	"""
 	if wtext!=newtext:
 		#[[Category:wtitle| ]]
 		r_catsort=ur"\[\[ *Category *\: *%s *(\| *[\!\*] *)? *\]\]" % wtitle

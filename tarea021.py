@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import wikipedia,re,sys,os,gzip,time
+import MySQLdb
 
 def percent(c):
 	if c % 100000 == 0:
@@ -27,43 +28,42 @@ namespaces={104:u'Anexo'}
 namespaces_={104:u'Anexo:'}
 limitenuevos=2000
 categories={}
-proyects=[]
-proyectsall=[]
+projects=[]
+projectsall=[]
 avisotoolserver=u'<noinclude>{{aviso|Esta plantilla es actualizada automáticamente. No hagas cambios aquí. Si hay errores avisa a {{u|emijrp}}.}}</noinclude>\n'
 nohay=u':No hay contenido con estas características.'
 
-wikipedia.output(u'Cargando proyectos')
+#Loading projects names
+wikipedia.output(u'Loading projects names')
 site=wikipedia.Site('es', 'wikipedia')
 wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/Wikiproyectos')
 if wii.exists() and not wii.isRedirectPage():
-	text=wii.get()
-	trozos=text.split('\n')
-	for trozo in trozos:
-		trozo=re.sub(ur'(?im)^ *(.*?) *$', ur'\1', trozo)
-		trozo=re.sub(ur'(?i)(Wikiproyecto|Wikiproject):', ur'', trozo)
+	for trozo in wii.get().splitlines():
+		trozo=re.sub(ur'(?im)^ *([^\n\r]*?) *$', ur'\1', trozo)
+		trozo=re.sub(ur'(?i) *(Wikiproyecto|Wikiproject) *: *', ur'', trozo)
 		trozo=re.sub('_', ' ', trozo)
-		proyectsall.append(trozo)
+		trozo=trozo.strip()
+		projectsall.append(trozo)
 		if trozo[0]=='#':
 			continue
 		wikipedia.output(u'PR:%s' % trozo)
-		if proyects.count(trozo)==0:
-			proyects.append(trozo)
-	proyectsall.sort()
-	salida='\n'.join(proyectsall)
+		if projects.count(trozo)==0:
+			projects.append(trozo)
+	projectsall.sort()
+	salida='\n'.join(projectsall)
 	wii.put(salida, u'BOT - Ordenado lista de wikiproyectos y quitando repeticiones si las hay')
 
 #hacer que carguen las categorias desde una pagina, que quite category: etc, y compruebe que existen
-for pr in proyects:
-	wikipedia.output(u'Cargando categorias de %s' % pr)
+for pr in projects:
+	wikipedia.output(u'Loading categories for %s project' % pr)
 	wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Categorías' % pr)
 	if wii.exists() and not wii.isRedirectPage():
-		text=wii.get()
 		categories[pr]={}
-		trozos=text.split('\n')
+		trozos=wii.get().splitlines()
 		categoriesall=[]
 		for trozo in trozos:
-			trozo=re.sub(ur'(?im)^ *(.*?) *$', ur'\1', trozo)
-			trozo=re.sub(ur'(?i)(Categoría|Category):', ur'', trozo)
+			trozo=re.sub(ur'(?im)^ *([^\n\r]*?) *$', ur'\1', trozo)
+			trozo=re.sub(ur'(?i) *(Categoría|Category) *: *', ur'', trozo)
 			trozo=re.sub('_', ' ', trozo)
 			if trozo[0]=='#':
 				continue
@@ -92,23 +92,18 @@ for newpage in newpagesgen:
 		nuevos_list.append(newpagetitle) #para conservar orden cronologico usando el indice de la list[]
 
 #page_id, page_title, page_length
-os.system('mysql -h eswiki-p.db.toolserver.org -e "use eswiki_p;select page_id, page_title, page_len, page_namespace from page where (page_namespace=0 or page_namespace=104) and page_is_redirect=0;" > /home/emijrp/temporal/eswikipage.txt')
-f=open('/home/emijrp/temporal/eswikipage.txt', 'r')
+conn = MySQLdb.connect(host='sql-s3', db='eswiki_p', read_default_file='~/.my.cnf', use_unicode=True)
+cursor = conn.cursor()
+cursor.execute("SELECT page_id, page_title, page_len, page_namespace from page where (page_namespace=0 or page_namespace=104) and page_is_redirect=0;")
+result=cursor.fetchall()
 c=0
-print 'Cargando paginas de eswiki'
-for line in f:
-	if c==0: #saltamos la primera linea q es el describe de sql
-		c+=1
-		continue
-	line=unicode(line, 'utf-8')
-	line=line[:len(line)-1] #evitamos \n
-	line=re.sub('_', ' ', line)
-	trozos=line.split('	')
-	if len(trozos)==4:
-		page_id=int(trozos[0])
-		page_title=trozos[1]
-		page_len=int(trozos[2])
-		page_nm=int(trozos[3])
+print 'Loading pages from eswiki'
+for row in result:
+	if len(row)==4:
+		page_id=int(row[0])
+		page_title=re.sub('_', ' ', row[1])
+		page_len=int(row[2])
+		page_nm=int(row[3])
 		page_new=False
 		if nuevos_dic.has_key(page_title):
 			page_new=True
@@ -116,49 +111,32 @@ for line in f:
 		percent(c)
 		pagetitle2pageid[page_title]=page_id
 		page[page_id]={'t':page_title, 'l':page_len, 'nm':page_nm, 'i':0, 'c':0, 'cat':0, 'iws':0, 'im':0, 'en':0, 'f':False, 'con':False, 'rel':False, 'wik':False, 'edit':False, 'ref':False, 'obras':False, 'neutral':False, 'trad':False, 'discutido':False, 'nuevo':page_new}
-print 'Cargadas %d paginas en eswiki' % c
-f.close()
-
+print 'Loaded %d pages from eswiki' % c
 
 #cargamos page_id y page_title para plantillas
 templates={} #nos va a hacer falta luego para las imagenes inservibles
-os.system('mysql -h eswiki-p.db.toolserver.org -e "use eswiki_p;select page_id, page_title from page where page_namespace=10;" > /home/emijrp/temporal/eswikitemplates.txt')
-f=open('/home/emijrp/temporal/eswikitemplates.txt', 'r')
+cursor.execute("SELECT page_id, page_title from page where page_namespace=10;")
+result=cursor.fetchall()
 c=0
-for line in f:
-	if c==0: #saltamos la primera linea q es el describe de sql
-		c+=1
-		continue
-	line=unicode(line, 'utf-8')
-	line=line[:len(line)-1] #evitamos \n
-	line=re.sub('_', ' ', line)
-	trozos=line.split('	')
-	if len(trozos)==2:
-		page_id=int(trozos[0])
-		page_title=trozos[1]
+for row in result:
+	if len(row)==2:
+		page_id=int(row[0])
+		page_title=re.sub('_', ' ', row[1])
 		c+=1
 		percent(c)
 		templates[page_id]=page_title
 print 'Cargadas %d templates en eswiki' % c
-f.close()
 
 #esto debe ser lo primero, elegir las paginas para los proyectos, y su numero de categorias
 #bajamos tabla de categorylinks
 exclusioncat_pattern=re.compile(ur'(?i)Wikipedia:')
-os.system('mysql -h eswiki-p.db.toolserver.org -e "use eswiki_p;select cl_from, cl_to from categorylinks;" > /home/emijrp/temporal/eswikicategorylinks.txt')
-f=open('/home/emijrp/temporal/eswikicategorylinks.txt', 'r')
+cursor.execute("SELECT cl_from, cl_to from categorylinks;")
+result=cursor.fetchall()
 c=0
-for line in f:
-	if c==0: #saltamos la primera linea q es el describe de sql
-		c+=1
-		continue
-	line=unicode(line, 'utf-8')
-	line=line[:len(line)-1] #evitamos \n
-	line=re.sub('_', ' ', line)
-	trozos=line.split('	')
-	if len(trozos)==2:
-		cl_from=int(trozos[0])
-		cl_to=trozos[1]
+for row in result:
+	if len(row)==2:
+		cl_from=int(row[0])
+		cl_to=re.sub('_', ' ', row[1])
 		for k, v in categories.items():
 			if categories[k].has_key(cl_to) and categories[k][cl_to].count(cl_from)==0:
 				categories[k][cl_to].append(cl_from)
@@ -169,7 +147,6 @@ for line in f:
 			#print page[cl_from]
 			page[cl_from]['cat']+=1
 print 'Categorizados %d veces' % (c)
-f.close()
 
 #comprobamos clasificacion
 miniesbozo_pattern=re.compile(ur'(?im)^mini ?esbozo')
@@ -187,22 +164,15 @@ enobras_pattern=re.compile(ur'(?im)^(En ?obras|En ?desarrollo)$')
 noneutral_pattern=re.compile(ur'(?im)^(NN|No ?neutral|NPOV|No ?neutralidad)$')
 traduccion_pattern=re.compile(ur'(?im)^Traducción$')
 discutido_pattern=re.compile(ur'(?im)^Discutido$')
-os.system('mysql -h eswiki-p.db.toolserver.org -e "use eswiki_p;select tl_from, tl_title from templatelinks;" > /home/emijrp/temporal/eswikitemplatelinks.txt')
-f=open('/home/emijrp/temporal/eswikitemplatelinks.txt', 'r')
+cursor.execute("SELECT tl_from, tl_title from templatelinks;")
+result=cursor.fetchall()
 c=0
-for line in f:
-	if c==0: #saltamos la primera linea q es el describe de sql
-		c+=1
-		continue
-	line=unicode(line, 'utf-8')
-	line=line[:len(line)-1] #evitamos \n
-	line=re.sub('_', ' ', line)
-	trozos=line.split('	')
-	if len(trozos)==2:
+for row in result:
+	if len(row)==2:
 		c+=1
 		percent(c)
-		tl_from=int(trozos[0])
-		tl_title=trozos[1]
+		tl_from=int(row [0])
+		tl_title=re.sub('_', ' ', row [1])
 		if page.has_key(tl_from):
 			if re.search(destacado_pattern, tl_title):
 				page[tl_from]['c']=1
@@ -237,76 +207,48 @@ for line in f:
 			if re.search(discutido_pattern, tl_title):
 				page[tl_from]['discutido']=True
 print '%d templatelinks' % (c)
-f.close()
 
 #generamos lista de imagenes inservibles
 imagenesnegras={}
-os.system('mysql -h eswiki-p.db.toolserver.org -e "use eswiki_p;select il_from, il_to from imagelinks;" > /home/emijrp/temporal/eswikiimagelinks.txt')
-f=open('/home/emijrp/temporal/eswikiimagelinks.txt', 'r')
+cursor.execute("SELECT il_from, il_to from imagelinks;")
+result=cursor.fetchall()
 c=0
 c2=0
-for line in f:
-	if c==0: #saltamos la primera linea q es el describe de sql
-		c+=1
-		continue
-	try: #a veces falla al leer nombres de imagen raros
-		line=unicode(line, 'utf-8')
-	except:
-		continue
-	line=line[:len(line)-1] #evitamos \n
+for row in result:
 	line=re.sub('_', ' ', line)
-	trozos=line.split('	')
-	if len(trozos)==2:
+	if len(row)==2:
 		c+=1
 		percent(c)
-		il_from=int(trozos[0])
-		il_to=trozos[1]
+		il_from=int(row[0])
+		il_to=re.sub('_', ' ', row[1])
 		if templates.has_key(il_from):
 			imagenesnegras[il_to]=False #ahorrar
 			c2+=1
 print '%d imagelinks, %d imagenes negras' % (c, c2)
-f.close()
 
 #ahora contamos imagenes, sin contar inservibles, usamos el mismo fichero q antes
-f=open('/home/emijrp/temporal/eswikiimagelinks.txt', 'r')
+cursor.execute("SELECT il_from, il_to from imagelinks;")
+result=cursor.fetchall()
 c=0
-for line in f:
-	if c==0: #saltamos la primera linea q es el describe de sql
-		c+=1
-		continue
-	try: #a veces falla al leer nombres de imagen raros
-		line=unicode(line, 'utf-8')
-	except:
-		continue
-	line=line[:len(line)-1] #evitamos \n
-	line=re.sub('_', ' ', line)
-	trozos=line.split('	')
-	if len(trozos)==2:
-		il_from=int(trozos[0])
-		il_to=trozos[1]
+for row in result:
+	if len(row)==2:
+		il_from=int(row[0])
+		il_to=re.sub('_', ' ', row[1])
 		if page.has_key(il_from) and not imagenesnegras.has_key(il_to):
 			page[il_from]['i']+=1
 			c+=1
 print '%d imagenes usadas' % (c)
-f.close()
 
 #contamos interwikis
-os.system('mysql -h eswiki-p.db.toolserver.org -e "use eswiki_p;select ll_from, ll_lang from langlinks;" > /home/emijrp/temporal/eswikilanglinks.txt')
-f=open('/home/emijrp/temporal/eswikilanglinks.txt', 'r')
+cursor.execute("SELECT ll_from, ll_lang from langlinks;")
+result=cursor.fetchall()
 c=0
-for line in f:
-	if c==0: #saltamos la primera linea q es el describe de sql
-		c+=1
-		continue
-	line=unicode(line, 'utf-8')
-	line=line[:len(line)-1] #evitamos \n
-	line=re.sub('_', ' ', line)
-	trozos=line.split('	')
-	if len(trozos)==2:
+for row in result:
+	if len(row)==2:
 		c+=1
 		percent(c)
-		ll_from=int(trozos[0])
-		ll_lang=trozos[1]
+		ll_from=int(row[0])
+		ll_lang=re.sub('_', ' ', row[1])
 		if page.has_key(ll_from):
 			page[ll_from]['iws']+=1
 print '%d langlinks' % (c)
@@ -315,10 +257,10 @@ f.close()
 #contamos enlaces entrantes
 #bajamos el dump, es mas eficiente
 try:
-	f=gzip.open('/home/emijrp/temporal/eswiki-latest-pagelinks.sql.gz', 'r')
+	f=gzip.open('/mnt/user-store/eswiki-latest-pagelinks.sql.gz', 'r')
 except:
-	os.system('wget http://download.wikimedia.org/eswiki/latest/eswiki-latest-pagelinks.sql.gz -O /home/emijrp/temporal/eswiki-latest-pagelinks.sql.gz') #entorno a 150MB
-	f=gzip.open('/home/emijrp/temporal/eswiki-latest-pagelinks.sql.gz', 'r')
+	os.system('wget http://download.wikimedia.org/eswiki/latest/eswiki-latest-pagelinks.sql.gz -O /mnt/user-store/eswiki-latest-pagelinks.sql.gz') #entorno a 150MB
+	f=gzip.open('/mnt/user-store/eswiki-latest-pagelinks.sql.gz', 'r')
 c=0
 pagelinks_pattern=re.compile(ur'(?i)\((\d+)\,(0|104)\,\'([^\']*?)\'\)') #104 anexo:
 for line in f:
@@ -708,178 +650,41 @@ for pr, cats in categories.items():
 			nuevos+=u'# [[%s%s]] (Creado el %s por [[Usuario:%s|%s]])\n' % (artnm_, arttitle, re.sub(ur'\d\d\:\d\d ', ur'', nuevos_dic[arttitle]['date']), nuevos_dic[arttitle]['user'], nuevos_dic[arttitle]['user'])
 	
 	salida=u'== Calidad ==\n'
-	if destacados:
-		if destacados==avisotoolserver:
-			destacados+=nohay
-		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Artículos destacados' % pr)
-		wii.put(destacados, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
-		salida+=u'=== Artículos destacados [[Imagen:Cscr-featured.svg|14px|Artículo destacado]] ===\n'
-		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/Artículos destacados|R}}<=%d*1024\n' % (pr, limkblist)
-		salida+=u'|:\'\'Esta lista proviene de <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Artículos destacados]]<nowiki>}}</nowiki>\'\'.\n' % (pr)
-		salida+=u'{{Wikipedia:Contenido por wikiproyecto/%s/Artículos destacados}}\n' % (pr)
-		salida+=u'|:\'\'Esta lista excede los %d KB y no se mostrará. Se puede consultar directamente en <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Artículos destacados]]<nowiki>}}</nowiki>\'\'.\n' % (limkblist, pr)
-		salida+=u'}}\n\n'
-	if buenos:
-		if buenos==avisotoolserver:
-			buenos+=nohay
-		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Artículos buenos' % pr)
-		wii.put(buenos, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
-		salida+=u'=== Artículos buenos [[Imagen:Artículo bueno.svg|14px|Artículo bueno]] ===\n'
-		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/Artículos buenos|R}}<=%d*1024\n' % (pr, limkblist)
-		salida+=u'|:\'\'Esta lista proviene de <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Artículos buenos]]<nowiki>}}</nowiki>\'\'.\n' % (pr)
-		salida+=u'{{Wikipedia:Contenido por wikiproyecto/%s/Artículos buenos}}\n' % (pr)
-		salida+=u'|:\'\'Esta lista excede los %d KB y no se mostrará. Se puede consultar directamente en <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Artículos buenos]]<nowiki>}}</nowiki>\'\'.\n' % (limkblist, pr)
-		salida+=u'}}\n\n'
-	salida+=u'== Importancia ==\n'
-	if clasea:
-		if clasea==avisotoolserver:
-			clasea+=nohay
-		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Importancia Clase-A' % pr)
-		wii.put(clasea, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
-		salida+=u'=== Clase-A ===\n'
-		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/Importancia Clase-A|R}}<=%d*1024\n' % (pr, limkblist)
-		salida+=u'|:\'\'Esta lista proviene de <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Importancia Clase-A]]<nowiki>}}</nowiki>\'\'.\n' % (pr)
-		salida+=u'{{Wikipedia:Contenido por wikiproyecto/%s/Importancia Clase-A}}\n' % (pr)
-		salida+=u'|:\'\'Esta lista excede los %d KB y no se mostrará. Se puede consultar directamente en <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Importancia Clase-A]]<nowiki>}}</nowiki>\'\'.\n' % (limkblist, pr)
-		salida+=u'}}\n\n'
-	if claseb:
-		if claseb==avisotoolserver:
-			claseb+=nohay
-		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Importancia Clase-B' % pr)
-		wii.put(claseb, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
-		salida+=u'=== Clase-B ===\n'
-		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/Importancia Clase-B|R}}<=%d*1024\n' % (pr, limkblist)
-		salida+=u'|:\'\'Esta lista proviene de <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Importancia Clase-B]]<nowiki>}}</nowiki>\'\'.\n' % (pr)
-		salida+=u'{{Wikipedia:Contenido por wikiproyecto/%s/Importancia Clase-B}}\n' % (pr)
-		salida+=u'|:\'\'Esta lista excede los %d KB y no se mostrará. Se puede consultar directamente en <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Importancia Clase-B]]<nowiki>}}</nowiki>\'\'.\n' % (limkblist, pr)
-		salida+=u'}}\n\n'
-	salida+=u'== Mantenimiento ==\n'
-	if fusionar:
-		if fusionar==avisotoolserver:
-			fusionar+=nohay
-		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Fusionar' % pr)
-		wii.put(fusionar, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
-		salida+=u'=== Fusionar ===\n'
-		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/Fusionar|R}}<=%d*1024\n' % (pr, limkblist)
-		salida+=u'|:\'\'Esta lista proviene de <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Fusionar]]<nowiki>}}</nowiki>\'\'.\n' % (pr)
-		salida+=u'{{Wikipedia:Contenido por wikiproyecto/%s/Fusionar}}\n' % (pr)
-		salida+=u'|:\'\'Esta lista excede los %d KB y no se mostrará. Se puede consultar directamente en <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Fusionar]]<nowiki>}}</nowiki>\'\'.\n' % (limkblist, pr)
-		salida+=u'}}\n\n'
-	if contextualizar:
-		if contextualizar==avisotoolserver:
-			contextualizar+=nohay
-		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Contextualizar' % pr)
-		wii.put(contextualizar, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
-		salida+=u'=== Contextualizar ===\n'
-		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/Contextualizar|R}}<=%d*1024\n' % (pr, limkblist)
-		salida+=u'|:\'\'Esta lista proviene de <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Contextualizar]]<nowiki>}}</nowiki>\'\'.\n' % (pr)
-		salida+=u'{{Wikipedia:Contenido por wikiproyecto/%s/Contextualizar}}\n' % (pr)
-		salida+=u'|:\'\'Esta lista excede los %d KB y no se mostrará. Se puede consultar directamente en <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Contextualizar]]<nowiki>}}</nowiki>\'\'.\n' % (limkblist, pr)
-		salida+=u'}}\n\n'
-	if sinrelevancia:
-		if sinrelevancia==avisotoolserver:
-			sinrelevancia+=nohay
-		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Sin relevancia' % pr)
-		wii.put(sinrelevancia, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
-		salida+=u'=== Sin relevancia ===\n'
-		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/Sin relevancia|R}}<=%d*1024\n' % (pr, limkblist)
-		salida+=u'|:\'\'Esta lista proviene de <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Sin relevancia]]<nowiki>}}</nowiki>\'\'.\n' % (pr)
-		salida+=u'{{Wikipedia:Contenido por wikiproyecto/%s/Sin relevancia}}\n' % (pr)
-		salida+=u'|:\'\'Esta lista excede los %d KB y no se mostrará. Se puede consultar directamente en <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Sin relevancia]]<nowiki>}}</nowiki>\'\'.\n' % (limkblist, pr)
-		salida+=u'}}\n\n'
-	if wikificar:
-		if wikificar==avisotoolserver:
-			wikificar+=nohay
-		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Wikificar' % pr)
-		wii.put(wikificar, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
-		salida+=u'=== Wikificar ===\n'
-		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/Wikificar|R}}<=%d*1024\n' % (pr, limkblist)
-		salida+=u'|:\'\'Esta lista proviene de <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Wikificar]]<nowiki>}}</nowiki>\'\'.\n' % (pr)
-		salida+=u'{{Wikipedia:Contenido por wikiproyecto/%s/Wikificar}}\n' % (pr)
-		salida+=u'|:\'\'Esta lista excede los %d KB y no se mostrará. Se puede consultar directamente en <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Wikificar]]<nowiki>}}</nowiki>\'\'.\n' % (limkblist, pr)
-		salida+=u'}}\n\n'
-	if copyedit:
-		if copyedit==avisotoolserver:
-			copyedit+=nohay
-		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Copyedit' % pr)
-		wii.put(copyedit, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
-		salida+=u'=== Copyedit ===\n'
-		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/Copyedit|R}}<=%d*1024\n' % (pr, limkblist)
-		salida+=u'|:\'\'Esta lista proviene de <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Copyedit]]<nowiki>}}</nowiki>\'\'.\n' % (pr)
-		salida+=u'{{Wikipedia:Contenido por wikiproyecto/%s/Copyedit}}\n' % (pr)
-		salida+=u'|:\'\'Esta lista excede los %d KB y no se mostrará. Se puede consultar directamente en <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Copyedit]]<nowiki>}}</nowiki>\'\'.\n' % (limkblist, pr)
-		salida+=u'}}\n\n'
-	if sinreferencias:
-		if sinreferencias==avisotoolserver:
-			sinreferencias+=nohay
-		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Sin referencias' % pr)
-		wii.put(sinreferencias, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
-		salida+=u'=== Sin referencias ===\n'
-		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/Sin referencias|R}}<=%d*1024\n' % (pr, limkblist)
-		salida+=u'|:\'\'Esta lista proviene de <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Sin referencias]]<nowiki>}}</nowiki>\'\'.\n' % (pr)
-		salida+=u'{{Wikipedia:Contenido por wikiproyecto/%s/Sin referencias}}\n' % (pr)
-		salida+=u'|:\'\'Esta lista excede los %d KB y no se mostrará. Se puede consultar directamente en <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Sin referencias]]<nowiki>}}</nowiki>\'\'.\n' % (limkblist, pr)
-		salida+=u'}}\n\n'
-	if enobras:
-		if enobras==avisotoolserver:
-			enobras+=nohay
-		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/En obras' % pr)
-		wii.put(enobras, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
-		salida+=u'=== En obras ===\n'
-		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/En obras|R}}<=%d*1024\n' % (pr, limkblist)
-		salida+=u'|:\'\'Esta lista proviene de <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/En obras]]<nowiki>}}</nowiki>\'\'.\n' % (pr)
-		salida+=u'{{Wikipedia:Contenido por wikiproyecto/%s/En obras}}\n' % (pr)
-		salida+=u'|:\'\'Esta lista excede los %d KB y no se mostrará. Se puede consultar directamente en <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/En obras]]<nowiki>}}</nowiki>\'\'.\n' % (limkblist, pr)
-		salida+=u'}}\n\n'
-	if noneutral:
-		if noneutral==avisotoolserver:
-			noneutral+=nohay
-		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/No neutral' % pr)
-		wii.put(noneutral, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
-		salida+=u'=== No neutral ===\n'
-		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/No neutral|R}}<=%d*1024\n' % (pr, limkblist)
-		salida+=u'|:\'\'Esta lista proviene de <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/No neutral]]<nowiki>}}</nowiki>\'\'.\n' % (pr)
-		salida+=u'{{Wikipedia:Contenido por wikiproyecto/%s/No neutral}}\n' % (pr)
-		salida+=u'|:\'\'Esta lista excede los %d KB y no se mostrará. Se puede consultar directamente en <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/No neutral]]<nowiki>}}</nowiki>\'\'.\n' % (limkblist, pr)
-		salida+=u'}}\n\n'
-	if traduccion:
-		if traduccion==avisotoolserver:
-			traduccion+=nohay
-		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/En traducción' % pr)
-		wii.put(traduccion, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
-		salida+=u'=== En traducción ===\n'
-		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/En traducción|R}}<=%d*1024\n' % (pr, limkblist)
-		salida+=u'|:\'\'Esta lista proviene de <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/En traducción]]<nowiki>}}</nowiki>\'\'.\n' % (pr)
-		salida+=u'{{Wikipedia:Contenido por wikiproyecto/%s/En traducción}}\n' % (pr)
-		salida+=u'|:\'\'Esta lista excede los %d KB y no se mostrará. Se puede consultar directamente en <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/En traducción]]<nowiki>}}</nowiki>\'\'.\n' % (limkblist, pr)
-		salida+=u'}}\n\n'
-	if discutido:
-		if discutido==avisotoolserver:
-			discutido+=nohay
-		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Veracidad discutida' % pr)
-		wii.put(discutido, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
-		salida+=u'=== Veracidad discutida ===\n'
-		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/Veracidad discutida|R}}<=%d*1024\n' % (pr, limkblist)
-		salida+=u'|:\'\'Esta lista proviene de <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Veracidad discutida]]<nowiki>}}</nowiki>\'\'.\n' % (pr)
-		salida+=u'{{Wikipedia:Contenido por wikiproyecto/%s/Veracidad discutida}}\n' % (pr)
-		salida+=u'|:\'\'Esta lista excede los %d KB y no se mostrará. Se puede consultar directamente en <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Veracidad discutida]]<nowiki>}}</nowiki>\'\'.\n' % (limkblist, pr)
-		salida+=u'}}\n\n'
-	
-	if nuevos:
-		if nuevos==avisotoolserver:
-			nuevos+=nohay
-		wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Nuevos' % pr)
-		wii.put(nuevos, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
-		salida+=u'== Nuevos ==\n'
-		salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/Nuevos|R}}<=%d*1024\n' % (pr, limkblist)
-		salida+=u'|:\'\'Esta lista proviene de <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Nuevos]]<nowiki>}}</nowiki>\'\'.\n' % (pr)
-		salida+=u'{{Wikipedia:Contenido por wikiproyecto/%s/Nuevos}}\n' % (pr)
-		salida+=u'|:\'\'Esta lista excede los %d KB y no se mostrará. Se puede consultar directamente en <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Nuevos]]<nowiki>}}</nowiki>\'\'.\n' % (limkblist, pr)
-		salida+=u'}}\n\n'
+	subpages=[
+		[destacados, u'Artículos destacados', u'[[Imagen:Cscr-featured.svg|14px|Artículo destacado]]'],
+		[buenos, u'Artículos buenos', u'[[Imagen:Artículo bueno.svg|14px|Artículo bueno]]'],
+		[clasea, u'Importancia Clase-A', u''],
+		[claseb, u'Importancia Clase-B', u''],
+		[fusionar, u'Fusionar', u''],
+		[contextualizar, u'Contextualizar', u''],
+		[sinrelevancia, u'Sin relevancia', u''],
+		[wikificar, u'Wikificar', u''],
+		[copyedit, u'Copyedit', u''],
+		[sinreferencias, u'Sin referencias', u''],
+		[enobras, u'En obras', u''],
+		[noneutral, u'No neutral', u''],
+		[traduccion, u'En traducción', u''],
+		[discutido, u'Veracidad discutida', u''],
+		[nuevos, u'Nuevos', u''],		
+	]
+	c=0
+	for output, subpage, image in subpages:
+		if output:
+			if output==avisotoolserver:
+				output+=nohay
+			wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/%s' % (pr, subpage))
+			wii.put(destacados, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
+			salida+=u'=== %s %s ===\n' % (subpage, image)
+			salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/%s|R}}<=%d*1024\n' % (pr, subpage, limkblist)
+			salida+=u'|:\'\'Esta lista proviene de <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/%s]]<nowiki>}}</nowiki>\'\'.\n' % (pr, subpage)
+			salida+=u'{{Wikipedia:Contenido por wikiproyecto/%s/%s}}\n' % (pr, subpage)
+			salida+=u'|:\'\'Esta lista excede los %d KB y no se mostrará. Se puede consultar directamente en <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/%s]]<nowiki>}}</nowiki>\'\'.\n' % (limkblist, pr, subpage)
+			salida+=u'}}\n\n'
+		if c==3:
+			salida+=u'== Mantenimiento ==\n'
 	
 	wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Detalles' % pr) #detalles
 	wii.put(salida, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
-	
 	
 	#pagina del pr
 	#salida=u'{{Wikipedia:Contenido por wikiproyecto/Iconos|%s}}\nAnálisis del contenido en el ámbito de [[Wikiproyecto:%s]]. Para añadir páginas debes modificar la <span class="plainlinks">[http://es.wikipedia.org/w/index.php?title=Wikipedia:Contenido_por_wikiproyecto/%s/Categorías&action=edit lista de categorías]</span>.\n\n== Índice ==\n{{Wikipedia:Contenido por wikiproyecto/%s/Índice}}\n\n== Resumen ==\n{{Wikipedia:Contenido por wikiproyecto/%s/Resumen}}\n\n{{Wikipedia:Contenido por wikiproyecto/%s/Detalles}}\n\n[[Categoría:Wikipedia:Contenido por wikiproyecto|%s]]\n[[Categoría:Wikipedia:Contenido por wikiproyecto/%s| ]]' % (pr, pr, re.sub(u' ', u'_', pr), pr, pr, pr, pr, pr)
@@ -887,4 +692,3 @@ for pr, cats in categories.items():
 	wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s' % pr) #principal
 	wii.put(salida, u'BOT - Actualizando página de [[Wikiproyecto:%s]]' % pr)
 	
-
