@@ -72,6 +72,7 @@ if wii.exists() and not wii.isRedirectPage():
 
 #hacer que carguen las categorias desde una pagina, que quite category: etc, y compruebe que existen
 for pr in projects:
+	continue
 	wikipedia.output(u'Loading categories for %s project' % pr)
 	wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Categorías' % pr)
 	if wii.exists() and not wii.isRedirectPage():
@@ -128,6 +129,7 @@ for row in result:
 		percent(c)
 		dbroot['pagetitle2pageid'][page_title]=page_id
 		dbroot['page'][page_id]={'t':page_title, 'l':page_len, 'nm':page_nm, 'i':0, 'c':0, 'cat':0, 'iws':0, 'im':0, 'en':0, 'f':False, 'con':False, 'rel':False, 'wik':False, 'edit':False, 'ref':False, 'obras':False, 'neutral':False, 'trad':False, 'discutido':False, 'nuevo':page_new}
+		transaction.commit()
 print 'Loaded %d pages from eswiki' % c
 
 #cargamos page_id y page_title para plantillas
