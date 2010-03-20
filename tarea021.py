@@ -673,7 +673,7 @@ for pr, cats in categories.items():
 			if output==avisotoolserver:
 				output+=nohay
 			wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/%s' % (pr, subpage))
-			wii.put(destacados, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
+			wii.put(output, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
 			salida+=u'=== %s %s ===\n' % (subpage, image)
 			salida+=u'{{#ifexpr:{{PAGESIZE:Wikipedia:Contenido por wikiproyecto/%s/%s|R}}<=%d*1024\n' % (pr, subpage, limkblist)
 			salida+=u'|:\'\'Esta lista proviene de <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/%s]]<nowiki>}}</nowiki>\'\'.\n' % (pr, subpage)
