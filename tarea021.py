@@ -160,9 +160,8 @@ print 'Cargadas %d templates en %swiki' % (c, lang)
 exclusioncat_pattern=re.compile(ur'(?i)Wikipedia:')
 cursor.execute("SELECT cl_from, cl_to from categorylinks where cl_from in (select page_id from page where (page_namespace=0 or page_namespace=104) and page_is_redirect=0);") #subconsulta extraida de la priemra ocnsulta
 result=cursor.fetchall()
+print len(result)
 c=0
-for k in page.keys():
-	page[k]=0
 for row in result:
 	if len(row)==2:
 		cl_from=int(row[0])
@@ -262,7 +261,6 @@ result=cursor.fetchall()
 c=0
 c2=0
 for row in result:
-	line=re.sub('_', ' ', line)
 	if len(row)==2:
 		c+=1
 		percent(c)
@@ -327,10 +325,11 @@ for line in f:
 			pl_title=unicode(i[2], 'utf-8')
 		except:
 			continue
-		if page.has_key(pl_from) and pagetitle2pageid.has_key(pl_title): #si el enlace proviene del nm=0 y va hacia un nm=0
-			page_id=pagetitle2pageid[pl_title]
-			if page.has_key(page_id):
-				page[page_id]['en']+=1 #+1 entrante, im es importancia
+		#if page.has_key(pl_from) and pagetitle2pageid.has_key(pl_title): #si el enlace proviene del nm=0 y va hacia un nm=0
+		#	page_id=pagetitle2pageid[pl_title]
+		#	if page.has_key(page_id):
+		#		page[page_id]['en']+=1 #+1 entrante, im es importancia
+		cursor2.execute("update page set en=en+1 where id=%s" % pl_from)
 print '%d pagelinks' % (c)
 f.close()
 
@@ -742,4 +741,7 @@ for pr, cats in categories.items():
 	wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s' % pr) #principal
 	wii.put(salida, u'BOT - Actualizando página de [[Wikiproyecto:%s]]' % pr)
 
-db.close()
+cursor.close()
+conn.close()
+cursor2.close()
+conn2.close()
