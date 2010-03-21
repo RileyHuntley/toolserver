@@ -82,7 +82,7 @@ div#wrapper{
 }
 div#content{
 	display:table-cell;vertical-align:middle;
-	background-image: url('wplogo.png');
+	background-image: url('wplogoreduced.jpg');
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 	background-position: center center;
@@ -137,11 +137,11 @@ p#f11 {
 <div id='content'>
 
 <p id="followus">
-<a href="http://www.facebook.com/group.php?gid=287466429242">Facebook group</a><br/>
-<a href="http://twitter.com/wmcounter">Twitter</a>
+Join us on <a href="http://www.facebook.com/group.php?gid=287466429242">Facebook</a> and follow us on <a href="http://twitter.com/wmcounter">Twitter</a>!<br/>
+Chat with us at <a href="http://webchat.freenode.net/?randomnick=1&channels=wikimediacounter">Freenode</a>
 </p>
 
-<p id="translateit"><a href="http://en.wikipedia.org/wiki/User:Emijrp/Wikimedia_projects_edits_counter">Translate it!</a></p>
+<p id="translateit"><a href="http://en.wikipedia.org/wiki/User:Emijrp/Wikimedia_projects_edits_counter">Translate it</a>!</p>
 
 <span id="header">Total edits in <a href="http://www.wikimedia.org">Wikimedia projects</a>:</span>
 
@@ -205,6 +205,13 @@ switch(lang){
 		f11='للشاشة الكاملة اضغط F11';
 		author='من تطوير <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (ملهمة من <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
+	case "az":
+		header='<a href="http://www.wikimedia.org">Wikimedia layihəsində </a> redaktələrin ümumi sayı:';
+		spliter=',';
+		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Wikimedia Foundation təşkilatına ianələrin göndərilməsi</a>';
+		f11='Ekranın tam açılması üçün F11 düyməsini basın';
+		author='<a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> tərəfindən (<a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a> dəstəyi ilə) işlənmişdir';
+		break;
 	case "be":
 		header='Агулам правак у <a href="http://www.wikimedia.org">праектах Фундацыі «Вікімэдыя»</a>:';
 		spliter='&nbsp;';
@@ -246,6 +253,13 @@ switch(lang){
 		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Dona a la Fundació Wikimedia</a>';
 		f11='Pantalla completa pulsant F11';
 		author='Desarrollat per <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Inspirat en <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
+		break;
+	case "ceb":
+		header='Mga tibuok kausaban sa <a href="http://www.wikimedia.org">mga proyekto sa Wikimedya</a>:';
+		spliter=',';
+		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Idonar sa Wikimedia Foundation</a>';
+		f11='Tuploka ang F11 aron mapuno sa tabil';
+		author='Gipalambo ni <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Nadasig sa <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
 	case "cs":
 		header='Celkový počet editací v <a href="http://www.wikimedia.org">projektech nadace Wikimedia</a>:';
@@ -388,7 +402,7 @@ switch(lang){
 		author='Desenvolvido por <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Inspirado em <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
 	case "ru":
-		header='Всего правок в <a href="http://www.wikimedia.org">проектах Wikimedia</a>:';
+		header='Всего правок в <a href="http://www.wikimedia.org">проектах Викимедиа</a>:';
 		spliter='&nbsp;';
 		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Пожертвовать Фонду Wikimedia</a>';
 		f11='Нажмите F11 для полноэкранного просмотра';
