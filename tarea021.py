@@ -18,8 +18,12 @@ import wikipedia,re,sys,os,gzip,time
 import MySQLdb
 
 def percent(c):
-	if c % 10000 == 0:
+	if c % 1000 == 0:
 		wikipedia.output(u'Llevamos %d' % c)
+
+lang="as"
+if len(sys.argv)>1:
+	lang=sys.argv[1]
 
 clasificacion={0:u'·',1:u'Destacado',2:u'Bueno',3:u'Esbozo',4:u'Miniesbozo',5:u'Desambiguación'}
 #calidad={0:u'·',1:u'Bueno ([[Imagen:Artículo bueno.svg|14px|Artículo bueno]])',2:u'Destacado ([[Imagen:Cscr-featured.svg|14px|Artículo destacado]])'}
@@ -93,17 +97,17 @@ for newpage in newpagesgen:
 		nuevos_list.append(newpagetitle) #para conservar orden cronologico usando el indice de la list[]
 
 #page_id, page_title, page_length
-conn = MySQLdb.connect(host='sql-s3', db='eswiki_p', read_default_file='~/.my.cnf', use_unicode=True)
+conn = MySQLdb.connect(host='sql-s3', db='%swiki_p' % lang, read_default_file='~/.my.cnf', use_unicode=True)
 cursor = conn.cursor()
 cursor.execute("SELECT page_id, page_title, page_len, page_namespace from page where (page_namespace=0 or page_namespace=104) and page_is_redirect=0;")
 result=cursor.fetchall()
 c=0
-print 'Loading pages from eswiki'
+print 'Loading pages from %swiki' % (lang)
 
-conn2 = MySQLdb.connect(host='sql', db='u_emijrp_tarea021', read_default_file='~/.my.cnf', use_unicode=True)
+conn2 = MySQLdb.connect(host='sql', db='u_emijrp_tarea021_p', read_default_file='~/.my.cnf', use_unicode=True)
 cursor2 = conn2.cursor()
 cursor2.execute("drop table page")
-cursor2.execute("create table page (`id` int, `t` varchar(300), `l` int, `nm` int, `i` int, `c` int, `cat` int, `iws` int, `im` int, `en` int, `f` bool, `con` bool, `rel` bool, `wik` bool, `edit` bool, `ref` bool, `obras` bool, `neutral` bool, `trad` bool, `discutido` bool, `nuevo` bool)")
+cursor2.execute("create table page (id int, t varchar(300), l int, nm int, i int, c int, cat int, iws int, im int, en int, f bool, con bool, rel bool, wik bool, edit bool, ref bool, obras bool, neutral bool, trad bool, discutido bool, nuevo bool)")
 
 for row in result:
 	if len(row)==4:
@@ -117,7 +121,7 @@ for row in result:
 		c+=1
 		percent(c)
 		pagetitle2pageid[page_title]=page_id
-		page[page_id]=0
+		#page[page_id]=0
 		#page[page_id]={'t':page_title, 'l':page_len, 'nm':page_nm, 'i':0, 'c':0, 'cat':0, 'iws':0, 'im':0, 'en':0, 'f':False, 'con':False, 'rel':False, 'wik':False, 'edit':False, 'ref':False, 'obras':False, 'neutral':False, 'trad':False, 'discutido':False, 'nuevo':page_new}
 		#insert
 		#print page_title
@@ -127,8 +131,14 @@ for row in result:
 		#result2=cursor2.fetchall()
 		#print result2[0]		
 
-print 'Loaded %d pages from eswiki' % c
+print 'Loaded %d pages from %swiki' % (c, lang)
 
+"""
+for i in range(100000):
+	if i % 10000 == 0:
+		print i
+	cursor2.execute("update page set cat=cat+1 where id=244295598")
+"""
 #sys.exit()
 
 #cargamos page_id y page_title para plantillas
@@ -143,14 +153,16 @@ for row in result:
 		c+=1
 		percent(c)
 		templates[page_id]=page_title
-print 'Cargadas %d templates en eswiki' % c
+print 'Cargadas %d templates en %swiki' % (c, lang)
 
 #esto debe ser lo primero, elegir las paginas para los proyectos, y su numero de categorias
 #bajamos tabla de categorylinks
 exclusioncat_pattern=re.compile(ur'(?i)Wikipedia:')
-cursor.execute("SELECT cl_from, cl_to from categorylinks;")
+cursor.execute("SELECT cl_from, cl_to from categorylinks where cl_from in (select page_id from page where (page_namespace=0 or page_namespace=104) and page_is_redirect=0);") #subconsulta extraida de la priemra ocnsulta
 result=cursor.fetchall()
 c=0
+for k in page.keys():
+	page[k]=0
 for row in result:
 	if len(row)==2:
 		cl_from=int(row[0])
@@ -159,12 +171,13 @@ for row in result:
 			if categories[k].has_key(cl_to) and categories[k][cl_to].count(cl_from)==0:
 				categories[k][cl_to].append(cl_from)
 				c+=1
+				percent(c)
 		#sumamos 1 cat
-		if page.has_key(cl_from) and not re.search(exclusioncat_pattern, cl_to):
+		if not re.search(exclusioncat_pattern, cl_to):
 			#print '->%s<-' % cl_from
 			#print page[cl_from]
-			#page[cl_from]['cat']+=1
-			cursor2.execute("update page set cat=cat+1 where id=%s" % cl_from)
+			#page[cl_from]+=1
+			cursor2.execute("update page set cat=cat+1 where id=%s" % cl_from) #no importa que se haya creado un artículo nuevo en los últimos segundos, no veríamos error en mysql
 print 'Categorizados %d veces' % (c)
 
 #comprobamos clasificacion
@@ -194,37 +207,52 @@ for row in result:
 		tl_title=re.sub('_', ' ', row [1])
 		if page.has_key(tl_from):
 			if re.search(destacado_pattern, tl_title):
-				page[tl_from]['c']=1
+				#page[tl_from]['c']=1
+				cursor2.execute("update page set c=1 where id=%s" % tl_from)
 			elif re.search(bueno_pattern, tl_title):
-				page[tl_from]['c']=2
+				#page[tl_from]['c']=2
+				cursor2.execute("update page set c=2 where id=%s" % tl_from)
 			elif re.search(esbozo_pattern, tl_title):
-				page[tl_from]['c']=3
+				#page[tl_from]['c']=3
+				cursor2.execute("update page set c=3 where id=%s" % tl_from)
 			elif re.search(miniesbozo_pattern, tl_title):
-				page[tl_from]['c']=4
+				#page[tl_from]['c']=4
+				cursor2.execute("update page set c=4 where id=%s" % tl_from)
 			elif re.search(desamb_pattern, tl_title):
-				page[tl_from]['c']=5
+				#page[tl_from]['c']=5
+				cursor2.execute("update page set c=5 where id=%s" % tl_from)
 			#sino es ninguna de las 5 cosas, se queda el 0 que significa desconocida
 			
 			if re.search(fusionar_pattern, tl_title):
-				page[tl_from]['f']=True
+				#page[tl_from]['f']=True
+				cursor2.execute("update page set f=True where id=%s" % tl_from)
 			if re.search(contextualizar_pattern, tl_title):
-				page[tl_from]['con']=True
+				#page[tl_from]['con']=True
+				cursor2.execute("update page set con=True where id=%s" % tl_from)
 			if re.search(sinrelevancia_pattern, tl_title):
-				page[tl_from]['rel']=True
+				#page[tl_from]['rel']=True
+				cursor2.execute("update page set rel=True where id=%s" % tl_from)
 			if re.search(wikificar_pattern, tl_title):
-				page[tl_from]['wik']=True
+				#page[tl_from]['wik']=True
+				cursor2.execute("update page set wik=True where id=%s" % tl_from)
 			if re.search(copyedit_pattern, tl_title):
-				page[tl_from]['edit']=True
+				#page[tl_from]['edit']=True
+				cursor2.execute("update page set edit=True where id=%s" % tl_from)
 			if re.search(sinreferencias_pattern, tl_title):
-				page[tl_from]['ref']=True
+				#page[tl_from]['ref']=True
+				cursor2.execute("update page set ref=True where id=%s" % tl_from)
 			if re.search(enobras_pattern, tl_title):
-				page[tl_from]['obras']=True
+				#page[tl_from]['obras']=True
+				cursor2.execute("update page set obras=True where id=%s" % tl_from)
 			if re.search(noneutral_pattern, tl_title):
-				page[tl_from]['neutral']=True
+				#page[tl_from]['neutral']=True
+				cursor2.execute("update page set neutral=True where id=%s" % tl_from)
 			if re.search(traduccion_pattern, tl_title):
-				page[tl_from]['trad']=True
+				#page[tl_from]['trad']=True
+				cursor2.execute("update page set trad=True where id=%s" % tl_from)
 			if re.search(discutido_pattern, tl_title):
-				page[tl_from]['discutido']=True
+				#page[tl_from]['discutido']=True
+				cursor2.execute("update page set discutido=True where id=%s" % tl_from)
 print '%d templatelinks' % (c)
 
 #generamos lista de imagenes inservibles
@@ -246,20 +274,22 @@ for row in result:
 print '%d imagelinks, %d imagenes negras' % (c, c2)
 
 #ahora contamos imagenes, sin contar inservibles, usamos el mismo fichero q antes
-cursor.execute("SELECT il_from, il_to from imagelinks;")
+cursor.execute("SELECT il_from, il_to from imagelinks where il_from in (select page_id from page where (page_namespace=0 or page_namespace=104) and page_is_redirect=0);")
 result=cursor.fetchall()
 c=0
 for row in result:
 	if len(row)==2:
 		il_from=int(row[0])
 		il_to=re.sub('_', ' ', row[1])
-		if page.has_key(il_from) and not imagenesnegras.has_key(il_to):
-			page[il_from]['i']+=1
+		if not imagenesnegras.has_key(il_to):
+			#page[il_from]['i']+=1
+			cursor2.execute("update page set i=i+1 where id=%s" % il_from)
 			c+=1
+			percent(c)
 print '%d imagenes usadas' % (c)
 
 #contamos interwikis
-cursor.execute("SELECT ll_from, ll_lang from langlinks;")
+cursor.execute("SELECT ll_from, ll_lang from langlinks where ll_from in (select page_id from page where (page_namespace=0 or page_namespace=104) and page_is_redirect=0);")
 result=cursor.fetchall()
 c=0
 for row in result:
@@ -268,18 +298,19 @@ for row in result:
 		percent(c)
 		ll_from=int(row[0])
 		ll_lang=re.sub('_', ' ', row[1])
-		if page.has_key(ll_from):
-			page[ll_from]['iws']+=1
+		#if page.has_key(ll_from):
+		#	page[ll_from]['iws']+=1
+		cursor2.execute("update page set iws=iws+1 where id=%s" % ll_from)
 print '%d langlinks' % (c)
 f.close()
 
 #contamos enlaces entrantes
 #bajamos el dump, es mas eficiente
 try:
-	f=gzip.open('/mnt/user-store/eswiki-latest-pagelinks.sql.gz', 'r')
+	f=gzip.open('/mnt/user-store/%swiki-latest-pagelinks.sql.gz' % lang, 'r')
 except:
-	os.system('wget http://download.wikimedia.org/eswiki/latest/eswiki-latest-pagelinks.sql.gz -O /mnt/user-store/eswiki-latest-pagelinks.sql.gz') #entorno a 150MB
-	f=gzip.open('/mnt/user-store/eswiki-latest-pagelinks.sql.gz', 'r')
+	os.system('wget http://download.wikimedia.org/%swiki/latest/%swiki-latest-pagelinks.sql.gz -O /mnt/user-store/%swiki-latest-pagelinks.sql.gz' % (lang, lang, lang)) #entorno a 150MB
+	f=gzip.open('/mnt/user-store/%swiki-latest-pagelinks.sql.gz' % lang, 'r')
 c=0
 pagelinks_pattern=re.compile(ur'(?i)\((\d+)\,(0|104)\,\'([^\']*?)\'\)') #104 anexo:
 for line in f:
