@@ -99,6 +99,12 @@ cursor.execute("SELECT page_id, page_title, page_len, page_namespace from page w
 result=cursor.fetchall()
 c=0
 print 'Loading pages from eswiki'
+
+conn2 = MySQLdb.connect(host='sql', db='u_emijrp_tarea021', read_default_file='~/.my.cnf', use_unicode=True)
+cursor2 = conn2.cursor()
+cursor2.execute("drop table page")
+cursor2.execute("create table page (`id` int, `t` varchar(300), `l` int, `nm` int, `i` int, `c` int, `cat` int, `iws` int, `im` int, `en` int, `f` bool, `con` bool, `rel` bool, `wik` bool, `edit` bool, `ref` bool, `obras` bool, `neutral` bool, `trad` bool, `discutido` bool, `nuevo` bool)")
+
 for row in result:
 	if len(row)==4:
 		page_id=int(row[0])
@@ -111,9 +117,19 @@ for row in result:
 		c+=1
 		percent(c)
 		pagetitle2pageid[page_title]=page_id
-		page[page_id]={'t':page_title, 'l':page_len, 'nm':page_nm, 'i':0, 'c':0, 'cat':0, 'iws':0, 'im':0, 'en':0, 'f':False, 'con':False, 'rel':False, 'wik':False, 'edit':False, 'ref':False, 'obras':False, 'neutral':False, 'trad':False, 'discutido':False, 'nuevo':page_new}
+		page[page_id]=0
+		#page[page_id]={'t':page_title, 'l':page_len, 'nm':page_nm, 'i':0, 'c':0, 'cat':0, 'iws':0, 'im':0, 'en':0, 'f':False, 'con':False, 'rel':False, 'wik':False, 'edit':False, 'ref':False, 'obras':False, 'neutral':False, 'trad':False, 'discutido':False, 'nuevo':page_new}
+		#insert
+		#print page_title
+		cursor2.execute("insert into page (`id`, `t`, `l`, `nm`, `i`, `c`, `cat`, `iws`, `im`, `en`, `f`, `con`, `rel`, `wik`, `edit`, `ref`, `obras`, `neutral`, `trad`, `discutido`, `nuevo`) values (%s, '%s', %s, %s, 0, 0, 0, 0, 0, 0, False, False, False, False, False, False, False, False, False, False, False)" % (page_id, MySQLdb.escape_string(page_title), page_len, page_nm))
+		#print "insert into page (`id`, `t`, `l`, `nm`, `i`, `c`, `cat`, `iws`, `im`, `en`, `f`, `con`, `rel`, `wik`, `edit`, `ref`, `obras`, `neutral`, `trad`, `discutido`, `nuevo`) values (%s, '%s', %s, %s, 0, 0, 0, 0, 0, 0, False, False, False, False, False, False, False, False, False, False, False)" % (page_id, MySQLdb.escape_string(page_title), page_len, page_nm)
+		#cursor2.execute("SELECT count(*) from page where 1")
+		#result2=cursor2.fetchall()
+		#print result2[0]		
 
 print 'Loaded %d pages from eswiki' % c
+
+#sys.exit()
 
 #cargamos page_id y page_title para plantillas
 templates={} #nos va a hacer falta luego para las imagenes inservibles
@@ -147,7 +163,8 @@ for row in result:
 		if page.has_key(cl_from) and not re.search(exclusioncat_pattern, cl_to):
 			#print '->%s<-' % cl_from
 			#print page[cl_from]
-			page[cl_from]['cat']+=1
+			#page[cl_from]['cat']+=1
+			cursor2.execute("update page set cat=cat+1 where id=%s" % cl_from)
 print 'Categorizados %d veces' % (c)
 
 #comprobamos clasificacion
