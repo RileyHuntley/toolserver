@@ -16,29 +16,10 @@
 
 import wikipedia,re,sys,os,gzip,time
 import MySQLdb
-from ZODB import FileStorage, DB
-import transaction
-
-class MyZODB(object):
-	def __init__(self, path):
-		self.storage = FileStorage.FileStorage(path)
-		self.db = DB(self.storage)
-		self.connection = self.db.open()
-		self.dbroot = self.connection.root()
-        
-	def close(self):
-		self.connection.close()
-		self.db.close()
-		self.storage.close()
 
 def percent(c):
 	if c % 10000 == 0:
 		wikipedia.output(u'Llevamos %d' % c)
-		transaction.commit()
-
-os.system('rm ./Data.fs')
-db = MyZODB('./Data.fs')
-dbroot = db.dbroot
 
 clasificacion={0:u'·',1:u'Destacado',2:u'Bueno',3:u'Esbozo',4:u'Miniesbozo',5:u'Desambiguación'}
 #calidad={0:u'·',1:u'Bueno ([[Imagen:Artículo bueno.svg|14px|Artículo bueno]])',2:u'Destacado ([[Imagen:Cscr-featured.svg|14px|Artículo destacado]])'}
@@ -95,7 +76,7 @@ for pr in projects:
 		salida='\n'.join(categoriesall)
 		wii.put(salida, u'BOT - Ordenado lista de categorías y quitando repeticiones si las hay')
 
-#dbroot={}
+page={}
 pagetitle2pageid={}
 
 #bajamos los ultimos articulos nuevos y los metemos en un diccionario
@@ -130,7 +111,7 @@ for row in result:
 		c+=1
 		percent(c)
 		pagetitle2pageid[page_title]=page_id
-		dbroot[page_id]={'t':page_title, 'l':page_len, 'nm':page_nm, 'i':0, 'c':0, 'cat':0, 'iws':0, 'im':0, 'en':0, 'f':False, 'con':False, 'rel':False, 'wik':False, 'edit':False, 'ref':False, 'obras':False, 'neutral':False, 'trad':False, 'discutido':False, 'nuevo':page_new}
+		page[page_id]={'t':page_title, 'l':page_len, 'nm':page_nm, 'i':0, 'c':0, 'cat':0, 'iws':0, 'im':0, 'en':0, 'f':False, 'con':False, 'rel':False, 'wik':False, 'edit':False, 'ref':False, 'obras':False, 'neutral':False, 'trad':False, 'discutido':False, 'nuevo':page_new}
 
 print 'Loaded %d pages from eswiki' % c
 
@@ -165,8 +146,8 @@ for row in result:
 		#sumamos 1 cat
 		if page.has_key(cl_from) and not re.search(exclusioncat_pattern, cl_to):
 			#print '->%s<-' % cl_from
-			#print dbroot[cl_from]
-			dbroot[cl_from]['cat']+=1
+			#print page[cl_from]
+			page[cl_from]['cat']+=1
 print 'Categorizados %d veces' % (c)
 
 #comprobamos clasificacion
@@ -196,37 +177,37 @@ for row in result:
 		tl_title=re.sub('_', ' ', row [1])
 		if page.has_key(tl_from):
 			if re.search(destacado_pattern, tl_title):
-				dbroot[tl_from]['c']=1
+				page[tl_from]['c']=1
 			elif re.search(bueno_pattern, tl_title):
-				dbroot[tl_from]['c']=2
+				page[tl_from]['c']=2
 			elif re.search(esbozo_pattern, tl_title):
-				dbroot[tl_from]['c']=3
+				page[tl_from]['c']=3
 			elif re.search(miniesbozo_pattern, tl_title):
-				dbroot[tl_from]['c']=4
+				page[tl_from]['c']=4
 			elif re.search(desamb_pattern, tl_title):
-				dbroot[tl_from]['c']=5
+				page[tl_from]['c']=5
 			#sino es ninguna de las 5 cosas, se queda el 0 que significa desconocida
 			
 			if re.search(fusionar_pattern, tl_title):
-				dbroot[tl_from]['f']=True
+				page[tl_from]['f']=True
 			if re.search(contextualizar_pattern, tl_title):
-				dbroot[tl_from]['con']=True
+				page[tl_from]['con']=True
 			if re.search(sinrelevancia_pattern, tl_title):
-				dbroot[tl_from]['rel']=True
+				page[tl_from]['rel']=True
 			if re.search(wikificar_pattern, tl_title):
-				dbroot[tl_from]['wik']=True
+				page[tl_from]['wik']=True
 			if re.search(copyedit_pattern, tl_title):
-				dbroot[tl_from]['edit']=True
+				page[tl_from]['edit']=True
 			if re.search(sinreferencias_pattern, tl_title):
-				dbroot[tl_from]['ref']=True
+				page[tl_from]['ref']=True
 			if re.search(enobras_pattern, tl_title):
-				dbroot[tl_from]['obras']=True
+				page[tl_from]['obras']=True
 			if re.search(noneutral_pattern, tl_title):
-				dbroot[tl_from]['neutral']=True
+				page[tl_from]['neutral']=True
 			if re.search(traduccion_pattern, tl_title):
-				dbroot[tl_from]['trad']=True
+				page[tl_from]['trad']=True
 			if re.search(discutido_pattern, tl_title):
-				dbroot[tl_from]['discutido']=True
+				page[tl_from]['discutido']=True
 print '%d templatelinks' % (c)
 
 #generamos lista de imagenes inservibles
@@ -256,7 +237,7 @@ for row in result:
 		il_from=int(row[0])
 		il_to=re.sub('_', ' ', row[1])
 		if page.has_key(il_from) and not imagenesnegras.has_key(il_to):
-			dbroot[il_from]['i']+=1
+			page[il_from]['i']+=1
 			c+=1
 print '%d imagenes usadas' % (c)
 
@@ -271,7 +252,7 @@ for row in result:
 		ll_from=int(row[0])
 		ll_lang=re.sub('_', ' ', row[1])
 		if page.has_key(ll_from):
-			dbroot[ll_from]['iws']+=1
+			page[ll_from]['iws']+=1
 print '%d langlinks' % (c)
 f.close()
 
@@ -301,7 +282,7 @@ for line in f:
 		if page.has_key(pl_from) and pagetitle2pageid.has_key(pl_title): #si el enlace proviene del nm=0 y va hacia un nm=0
 			page_id=pagetitle2pageid[pl_title]
 			if page.has_key(page_id):
-				dbroot[page_id]['en']+=1 #+1 entrante, im es importancia
+				page[page_id]['en']+=1 #+1 entrante, im es importancia
 print '%d pagelinks' % (c)
 f.close()
 
@@ -326,8 +307,8 @@ for pr, cats in categories.items():
 		for artid in arts:
 			if page.has_key(artid) and nodupes.count(artid)==0:
 				nodupes.append(artid)
-				artstitles.append([dbroot[artid]['t'], artid])
-				artstitles2.append([dbroot[artid]['en'], dbroot[artid]['t'], artid])
+				artstitles.append([page[artid]['t'], artid])
+				artstitles2.append([page[artid]['en'], page[artid]['t'], artid])
 	
 	#ordenamos alfabeticamente
 	artstitles.sort()
@@ -347,17 +328,17 @@ for pr, cats in categories.items():
 	i=0
 	for artentrantes, arttitle, artid in artstitles2:
 		if i<qclasea:
-			dbroot[artid]['im']=1
+			page[artid]['im']=1
 			if listqclasea.count(arttitle)==0:
 				listqclasea.append([artentrantes, arttitle])
 		elif i<qclasea+qclaseb:
-			dbroot[artid]['im']=2
+			page[artid]['im']=2
 			if listqclaseb.count(arttitle)==0:
 				listqclaseb.append([artentrantes, arttitle])
 		elif i<qclasea+qclaseb+qclasec:
-			dbroot[artid]['im']=3
+			page[artid]['im']=3
 		else:
-			dbroot[artid]['im']=4
+			page[artid]['im']=4
 		i+=1
 	
 	#blanqueamos para ahorrar memoria
@@ -387,114 +368,114 @@ for pr, cats in categories.items():
 	relatedchanges=u''
 	for arttitle, pageid in artstitles:
 		#resumen tamanios
-		if dbroot[pageid]['l']>=10*1024:
+		if page[pageid]['l']>=10*1024:
 			resumen['>10']+=1
-		if dbroot[pageid]['l']>=5*1024:
+		if page[pageid]['l']>=5*1024:
 			resumen['>5']+=1
-		if dbroot[pageid]['l']>=2*1024:
+		if page[pageid]['l']>=2*1024:
 			resumen['>2']+=1
-		if dbroot[pageid]['l']>=1*1024:
+		if page[pageid]['l']>=1*1024:
 			resumen['>1']+=1
-		if dbroot[pageid]['l']<1*1024:
+		if page[pageid]['l']<1*1024:
 			resumen['<1']+=1
-		if dbroot[pageid]['l']<2*1024:
+		if page[pageid]['l']<2*1024:
 			resumen['<2']+=1
 		
 		#resumen calidad
-		if dbroot[pageid]['c']==1:
+		if page[pageid]['c']==1:
 			resumen['destacado']+=1
-		elif dbroot[pageid]['c']==2:
+		elif page[pageid]['c']==2:
 			resumen['bueno']+=1
-		elif dbroot[pageid]['c']==3:
+		elif page[pageid]['c']==3:
 			resumen['esbozo']+=1
-		elif dbroot[pageid]['c']==4:
+		elif page[pageid]['c']==4:
 			resumen['miniesbozo']+=1
-		elif dbroot[pageid]['c']==5:
+		elif page[pageid]['c']==5:
 			resumen['desambig']+=1
 		else:
 			resumen['desconocida']+=1
 		
 		c+=1
 		otros=u''
-		if dbroot[pageid]['f']:
+		if page[pageid]['f']:
 			qfusionar+=1
 			if otros:
 				otros+=u', '
 			otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Fusionar|fusionar]]' % pr
-		if dbroot[pageid]['con']:
+		if page[pageid]['con']:
 			qcontextualizar+=1
 			if otros:
 				otros+=u', '
 			otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Contextualizar|contextualizar]]' % pr
-		if dbroot[pageid]['rel']:
+		if page[pageid]['rel']:
 			qsinrelevancia+=1
 			if otros:
 				otros+=u', '
 			otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Sin relevancia|sin relevancia]]' % pr
-		if dbroot[pageid]['wik']:
+		if page[pageid]['wik']:
 			qwikificar+=1
 			if otros:
 				otros+=u', '
 			otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Wikificar|wikificar]]' % pr
-		if dbroot[pageid]['edit']:
+		if page[pageid]['edit']:
 			qcopyedit+=1
 			if otros:
 				otros+=u', '
 			otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Copyedit|copyedit]]' % pr
-		if dbroot[pageid]['ref']:
+		if page[pageid]['ref']:
 			qsinreferencias+=1
 			if otros:
 				otros+=u', '
 			otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Sin referencias|sin referencias]]' % pr
-		if dbroot[pageid]['obras']:
+		if page[pageid]['obras']:
 			qenobras+=1
 			if otros:
 				otros+=u', '
 			otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#En obras|en obras]]' % pr
-		if dbroot[pageid]['neutral']:
+		if page[pageid]['neutral']:
 			qnoneutral+=1
 			if otros:
 				otros+=u', '
 			otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#No neutral|no neutral]]' % pr
-		if dbroot[pageid]['trad']:
+		if page[pageid]['trad']:
 			qentraduccion+=1
 			if otros:
 				otros+=u', '
 			otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#En traducción|en traducción]]' % pr
-		if dbroot[pageid]['discutido']:
+		if page[pageid]['discutido']:
 			qveracidaddiscutida+=1
 			if otros:
 				otros+=u', '
 			otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Veracidad discutida|discutido]]' % pr
-		if dbroot[pageid]['nuevo']:
+		if page[pageid]['nuevo']:
 			if otros:
 				otros+=u', '
 			otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Nuevos|nuevo]]' % pr
 		
 		clasificacionplana=u''
-		if dbroot[pageid]['c']==1: #1 destacado
+		if page[pageid]['c']==1: #1 destacado
 			clasificacionplana=u'[[Wikipedia:Contenido por wikiproyecto/%s#Artículos destacados|Destacado]]' % pr
-		elif dbroot[pageid]['c']==2: #2 es bueno, 
+		elif page[pageid]['c']==2: #2 es bueno, 
 			clasificacionplana=u'[[Wikipedia:Contenido por wikiproyecto/%s#Artículos buenos|Bueno]]' % pr
 		else: #resto: esbozo, miniesbozo, desambig, ·
-			clasificacionplana=clasificacion[dbroot[pageid]['c']]
+			clasificacionplana=clasificacion[page[pageid]['c']]
 		
 		importanciaplana=u''
-		if dbroot[pageid]['im']==1:
+		if page[pageid]['im']==1:
 			importanciaplana=u'[[Wikipedia:Contenido por wikiproyecto/%s#Clase-A|Clase-A]]' % pr
-		elif dbroot[pageid]['im']==2:
+		elif page[pageid]['im']==2:
 			importanciaplana=u'[[Wikipedia:Contenido por wikiproyecto/%s#Clase-B|Clase-B]]' % pr
 		else:
-			importanciaplana=importancia[dbroot[pageid]['im']]
+			importanciaplana=importancia[page[pageid]['im']]
 		
 		artnm=u''
 		artnm_=u''
-		if dbroot[pageid]['nm']!=0:
-			artnm=namespaces[dbroot[pageid]['nm']]
+		if page[pageid]['nm']!=0:
+			artnm=namespaces[page[pageid]['nm']]
 			artnm+=u' ' # http://es.wikipedia.org/w/index.php?title=Wikipedia:Contenido_por_wikiproyecto/Aviaci%C3%B3n/4&curid=1996845&diff=21475084&oldid=21403165
-			artnm_=namespaces_[dbroot[pageid]['nm']]
+			artnm_=namespaces_[page[pageid]['nm']]
 		
-		salida+=u'\n|-\n| %d || [[%s%s]] || [[%sDiscusión:%s|Disc]] || %d || %s || %s || %d || %d || %d || %d || %s ' % (c, artnm_, arttitle, artnm, arttitle, dbroot[pageid]['l'], clasificacionplana, importanciaplana, dbroot[pageid]['en'], dbroot[pageid]['cat'], dbroot[pageid]['i'], dbroot[pageid]['iws'], otros)
+		salida+=u'\n|-\n| %d || [[%s%s]] || [[%sDiscusión:%s|Disc]] || %d || %s || %s || %d || %d || %d || %d || %s ' % (c, artnm_, arttitle, artnm, arttitle, page[pageid]['l'], clasificacionplana, importanciaplana, page[pageid]['en'], page[pageid]['cat'], page[pageid]['i'], page[pageid]['iws'], otros)
 		relatedchanges+=u'# [[%s%s]]\n' % (artnm_, arttitle) #pagina 0
 		#if c % limcabecera == 0:
 		#	salida+=cabeceratabla
@@ -636,34 +617,34 @@ for pr, cats in categories.items():
 	for arttitle, pageid in artstitles:
 		artnm=u''
 		artnm_=u''
-		if dbroot[pageid]['nm']!=0:
-			artnm=namespaces[dbroot[pageid]['nm']]
-			artnm_=namespaces_[dbroot[pageid]['nm']]
-		if dbroot[pageid]['c']==2:
+		if page[pageid]['nm']!=0:
+			artnm=namespaces[page[pageid]['nm']]
+			artnm_=namespaces_[page[pageid]['nm']]
+		if page[pageid]['c']==2:
 			buenos+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-		if dbroot[pageid]['c']==1:
+		if page[pageid]['c']==1:
 			destacados+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-		if dbroot[pageid]['f']:
+		if page[pageid]['f']:
 			fusionar+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-		if dbroot[pageid]['con']:
+		if page[pageid]['con']:
 			contextualizar+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-		if dbroot[pageid]['rel']:
+		if page[pageid]['rel']:
 			sinrelevancia+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-		if dbroot[pageid]['wik']:
+		if page[pageid]['wik']:
 			wikificar+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-		if dbroot[pageid]['edit']:
+		if page[pageid]['edit']:
 			copyedit+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-		if dbroot[pageid]['ref']:
+		if page[pageid]['ref']:
 			sinreferencias+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-		if dbroot[pageid]['obras']:
+		if page[pageid]['obras']:
 			enobras+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-		if dbroot[pageid]['neutral']:
+		if page[pageid]['neutral']:
 			noneutral+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-		if dbroot[pageid]['trad']:
+		if page[pageid]['trad']:
 			traduccion+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-		if dbroot[pageid]['discutido']:
+		if page[pageid]['discutido']:
 			discutido+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-		if dbroot[pageid]['nuevo']:
+		if page[pageid]['nuevo']:
 			nuevos_temp.append(arttitle) #los almacenamos para despues ordenarlos cronologicamente
 	
 	for arttitle in nuevos_list:
