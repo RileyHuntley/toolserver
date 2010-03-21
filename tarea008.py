@@ -95,6 +95,7 @@ projects={
 		'es': {'rankingusers':True, 'rankingbots':True, 'limit':100},
 		},
 	'wikipedia': {
+		'ca': {'rankingusers':True, 'rankingbots':True, 'limit':500},
 		'es': {'rankingusers':True, 'rankingbots':True, 'limit':500},
 		'hr': {'rankingusers':True, 'rankingbots':True, 'limit':500},
 		'ro': {'rankingusers':True, 'rankingbots':True, 'limit':500},
