@@ -43,7 +43,7 @@ def distancia(punto1, punto2):
 	if a!=0 and b!=0:
 		return math.sqrt(a**2+b**2)
 	else:
-		return 99999999
+		return 999999
 	
 
 lang="es"
@@ -66,6 +66,7 @@ for line in objspage.get().splitlines():
 		objs[objname]={'lat': objlat, 'lon': objlon}
 l.sort()
 objspage.put("\n".join(l), u"BOT - Ordenando alfabéticamente")
+print objs
 
 candidatos={}
 #page_id, page_title, page_length
@@ -80,18 +81,17 @@ for row in result:
 		gc_lat=float(row[1])
 		gc_lon=float(row[2])
 		
-		d=0
+		min=999999
 		objeleg=""
-		for obj in objs.keys():
-			min=9999999
-			d=distancia(objs[obj], {'lat': gc_lat, 'lon': gc_lon})
+		for obj, coord in objs.items():
+			d=distancia(coord, {'lat': gc_lat, 'lon': gc_lon})
 			if d<min:
 				min=d
 				objeleg=obj
 
-		if d<limit:
+		if min<limit:
 			print page_title, "esta cerca de", objeleg
-			l=u"| [[%s]] || %.2f " % (page_title, d)
+			l=u"| [[%s]] || %.2f || {{Coord|%s|%s}} " % (page_title, min, gc_lat, gc_lon)
 			if candidatos.has_key(objeleg):
 				candidatos[objeleg].append(l)
 			else:
@@ -105,8 +105,14 @@ conn.close()
 
 output=u"{{/begin|%s}}" % limit
 c=0
+candidatos_l=[]
 for zona, l in candidatos.items():
-	output+=u"\n\n== [[%s]] ==\n{| class='wikitable sortable' style='text-align: center;' \n! Artículo !! Distancia (km) \n|-\n%s \n|}" % (zona, "\n|-\n".join(l))
+	candidatos_l.append([zona, l])
+candidatos_l.sort()
+
+for zona, l in candidatos_l:
+	l.sort()
+	output+=u"\n\n== [[%s]] ==\n<center>\n{| class='wikitable sortable' style='text-align: center;' \n! Artículo !! Distancia (km) !! Coordenadas \n|-\n%s \n|}\n</center>" % (zona, "\n|-\n".join(l))
 	c+=len(l)
 
 output+=u"{{/end}}"
