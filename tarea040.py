@@ -75,9 +75,14 @@ cursor = conn.cursor()
 cursor.execute("SELECT distinct page_title, gc_lat, gc_lon from u_dispenser_p.coord_eswiki join page on page_id=gc_from where page_namespace=0 and gc_from not in (select distinct il_from from imagelinks);")
 result=cursor.fetchall()
 limit=25 #km
+nodupes=[]
 for row in result:
 	if len(row)==3:
 		page_title=re.sub('_', ' ', unicode(row[0], "utf-8"))
+		if nodupes.count(page_title)==0:
+			nodupes.append(page_title)
+		else:
+			continue
 		gc_lat=float(row[1])
 		gc_lon=float(row[2])
 		
