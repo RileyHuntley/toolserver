@@ -66,7 +66,6 @@ for line in objspage.get().splitlines():
 		objs[objname]={'lat': objlat, 'lon': objlon}
 l.sort()
 objspage.put("\n".join(l), u"BOT - Ordenando alfabéticamente")
-print objs
 
 candidatos={}
 #page_id, page_title, page_length
@@ -122,6 +121,6 @@ for zona, l in candidatos_l:
 
 output+=u"{{/end}}"
 outputpage=wikipedia.Page(site, u"User:Emijrp/Imágenes requeridas por zona")
-outputpage.put(output, u"BOT - Actualizando, se necesitan %s imágenes" % c)
+outputpage.put(output, u"BOT - Actualizando, se necesitan imágenes en %s artículospr" % c)
 
 
