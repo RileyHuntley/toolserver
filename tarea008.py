@@ -26,6 +26,10 @@ end=u"|}\n</center>\n\n''Please, put here a category similar to <nowiki>[[Catego
 
 end2=end
 
+noflagrequired=[
+	['ca', 'wikipedia'],
+]
+
 tras1={
 'wikipedia': {
 	u"ar": u"قائمة الويكيبيديين حسب عدد التعديلات",
@@ -97,6 +101,7 @@ projects={
 	'wikipedia': {
 		'ca': {'rankingusers':True, 'rankingbots':True, 'limit':500},
 		'es': {'rankingusers':True, 'rankingbots':True, 'limit':500},
+		'et': {'rankingusers':True, 'rankingbots':True, 'limit':500},
 		'hr': {'rankingusers':True, 'rankingbots':True, 'limit':500},
 		'ro': {'rankingusers':True, 'rankingbots':True, 'limit':500},
 		'simple': {'rankingusers':True, 'rankingbots':True, 'limit':500},
@@ -180,7 +185,8 @@ for family, langs in projects.items():
 
 for family, langs in projects.items():
 	for lang in langs:
-		#la lista de bots debe ir dentro del bucle
+		title=u''
+		#la lista de bots debe ir dentro del bucle, ya que se llena con más bots de cada caso
 		bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot', u'EmxBot', u'YurikBot', u'H-Bot', u'Paulatz bot', u'TekBot', u'Alfiobot', u'RoboRex', u'Agtbot', u'Felixbot', u'Pixibot', u'Sz-iwbot', u'Timbot (Gutza)', u'Ginosbot', u'GrinBot', u'.anacondabot', u'Omdirigeringsrättaren', u'Rubinbot', u'HasharBot', u'NetBot', u"D'ohBot", u'Byrialbot', u'Broadbot', u'Guanabot', u'Chris G Bot 2', u'CCyeZBot', u'Soulbot', u'MSBOT', u'GnawnBot', u'Chris G Bot 3', u'Huzzlet the bot', u'JCbot', u'DodekBot', u'John Bot II', u'CyeZBot', u'Beefbot', u'Louperibot', u'SOTNBot', u'DirlBot', u'Obersachsebot', u'WikiDreamer Bot', u'YonaBot', u'Chlewbot', u'PixelBot', u'ToePeu.bot', u'HujiBot', u'Le Pied-bot', u'Ugur Basak Bot', u'NigelJBot', u'CommonsTicker', u'Tangobot', u'SeanBot', u'Corrector de redirecciones', u'HermesBot', u'Darkicebot', u'RedBot', u'HerculeBot', u'PatruBOT', u'RobotGMwikt', u'MonoBot', u'WikimediaNotifier', u'SBot39', u'DSisyphBot', u'GriffinBot1', u'WeggeBot', u'EhJBot3', u'Gerakibot', u'Picochip08', u'MondalorBot', u'Redirect fixer', u'', u'', u'', u'', u'', u'',]
 		site=wikipedia.Site(lang, family)
 		
@@ -262,7 +268,7 @@ for family, langs in projects.items():
 		planti+=u"|-\n| colspan=3 | Véase también [[Wikipedia:Ranking de ediciones]]<br/>Actualizado a las {{subst:CURRENTTIME}} (UTC) del  {{subst:CURRENTDAY}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}} por [[Usuario:BOTijo|BOTijo]] \n|}<noinclude>{{uso de plantilla}}</noinclude>"
 		
 		resume=u""
-		if bots.count(u"BOTijo"):
+		if bots.count(u"BOTijo") or noflagrequired.count([lang, family]):
 			resume=u"BOT - Updating ranking"
 		else:
 			resume=u"BOT - Updating ranking (Testing bot, please don't panic, I'm going to request flag soon)"
@@ -280,12 +286,13 @@ for family, langs in projects.items():
 				page.put(s, resume)
 		
 		#begin & end
-		page=wikipedia.Page(site, u"%s/begin" % title)
-		if projects[family][lang]['rankingusers'] and not page.exists():
-			page.put(begin, resume)
-		page=wikipedia.Page(site, u"%s/end" % title)
-		if projects[family][lang]['rankingusers'] and not page.exists():
-			page.put(end, resume)
+		if title:
+			page=wikipedia.Page(site, u"%s/begin" % title)
+			if projects[family][lang]['rankingusers'] and not page.exists():
+				page.put(begin, resume)
+			page=wikipedia.Page(site, u"%s/end" % title)
+			if projects[family][lang]['rankingusers'] and not page.exists():
+				page.put(end, resume)
 		
 		#second ranking
 		if len(sbots)>1000 and (family!='wiktionary' and lang!='simple'): #evitando errores de db replication
@@ -299,12 +306,13 @@ for family, langs in projects.items():
 				page.put(sbots, resume)
 		
 		#begin & end
-		page=wikipedia.Page(site, u"%s/begin" % title)
-		if projects[family][lang]['rankingbots'] and not page.exists():
-			page.put(begin2, resume)
-		page=wikipedia.Page(site, u"%s/end" % title)
-		if projects[family][lang]['rankingbots'] and not page.exists():
-			page.put(end2, resume)
+		if title:
+			page=wikipedia.Page(site, u"%s/begin" % title)
+			if projects[family][lang]['rankingbots'] and not page.exists():
+				page.put(begin2, resume)
+			page=wikipedia.Page(site, u"%s/end" % title)
+			if projects[family][lang]['rankingbots'] and not page.exists():
+				page.put(end2, resume)
 		
 		#otras plantillas
 		if lang=='es':

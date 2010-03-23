@@ -31,7 +31,7 @@ for l in f:
 	wtitle=l.split("	")[0]
 	page=wikipedia.Page(eswiki, wtitle)"""
 
-st=u"Estadio Sheikh"
+st=u"!"
 if (len(sys.argv)>=2):
 	st=sys.argv[1]
 gen=pagegenerators.AllpagesPageGenerator(start = st, namespace = 0, includeredirects = False, site = eswiki)
@@ -71,7 +71,7 @@ for page in pre:
 			coord=i.group("coord")
 			if not re.search(ur"(?i)title", coord): #evitamos coordenadas que estén por el medio del texto y no salgan arriba a la derecha
 				break
-			print enwtitle, coord
+			wikipedia.output(u"%s - %s" % (enwtitle, coord))
 			coord=re.sub(ur"display *\=[^\|\}]+([\|\}])", ur"display=title\1", coord) #dejamos display title solo
 			
 			eswtext=page.get()
