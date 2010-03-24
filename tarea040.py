@@ -109,22 +109,29 @@ for row in result:
 cursor.close()
 conn.close()
 
-output=u"{{/begin|%s}}" % limit
+output=u"{{/begin|%s}}\n{{TOCright}}" % limit
 c=0
 candidatos_l=[]
+temp=[]
 for zona, l in candidatos.items():
 	candidatos_l.append([zona, l])
+	temp.append(zona)
 candidatos_l.sort()
 
+for obj in objs.keys():
+	if temp.count(obj)==0:
+		candidatos_l.append([obj, []])
+
 for zona, l in candidatos_l:
-	l.sort()
-	output+=u"\n\n== [[%s|]], %s ==\n:''Esta tabla proviene de <nowiki>{{</nowiki>[[Usuario:Emijrp/Imágenes requeridas por zona/%s/%s]]<nowiki>}}</nowiki>.\n{{Usuario:Emijrp/Imágenes requeridas por zona/%s/%s}}" % (paises[zona], zona, paises[zona], zona, paises[zona], zona)
+	if l:
+		l.sort()
+		output+=u"\n\n== [[%s|]] ==\n:''Esta tabla proviene de <nowiki>{{</nowiki>[[Usuario:Emijrp/Imágenes requeridas por zona/%s/%s]]<nowiki>}}</nowiki>.\n{{Usuario:Emijrp/Imágenes requeridas por zona/%s/%s}}" % (zona, paises[zona], zona, paises[zona], zona)
 	wii=wikipedia.Page(site, u"Usuario:Emijrp/Imágenes requeridas por zona/%s/%s" % (paises[zona], zona))
-	wii.put(u"<noinclude>{{aviso|No modificar esta página a mano. Se actualiza automáticamente. Si hay algún error, avisar a {{u|emijrp}}}}</noinclude><center>\n{| class='wikitable sortable' style='text-align: center;' \n! Artículo !! Distancia (km) !! Coordenadas \n|-\n%s \n|}\n</center>" % ("\n|-\n".join(l)), u"BOT - Actualizando lista, se necesitan imágenes en %s artículos" % len(l))
+	wii.put(u"<noinclude>{{aviso|No modificar esta página a mano. Se actualiza automáticamente. Si hay algún error, avisar a {{u|emijrp}}}}</noinclude>{{#ifeq:{{NAMESPACE}}|Wikiproyecto|{{Usuario:Emijrp/Imágenes requeridas por zona/wikiproyectos}}}}\n<center>\n{| class='wikitable sortable' style='text-align: center;' \n! Artículo !! Distancia (km) !! Coordenadas \n|-\n%s \n|}\n</center>" % ("\n|-\n".join(l)), u"BOT - Actualizando lista, se necesitan imágenes en %s artículos" % len(l))
 	c+=len(l)
 
 output+=u"{{/end}}"
 outputpage=wikipedia.Page(site, u"User:Emijrp/Imágenes requeridas por zona")
-outputpage.put(output, u"BOT - Actualizando, se necesitan imágenes en %s artículospr" % c)
+outputpage.put(output, u"BOT - Actualizando, se necesitan imágenes en %s artículos" % c)
 
 
