@@ -78,7 +78,10 @@ for page in pre:
 			esnewtext=re.sub(ur"(?i)(\[\[ *Categor(y|ía) *\:)", ur"%s\n\n\1" % coord, eswtext, 1) #solo insertamos 1 vez
 			if eswtext!=esnewtext:
 				wikipedia.showDiff(eswtext, esnewtext)
-				page.put(esnewtext, u"BOT - Insertando coordenadas %s desde [[:en:%s]]" % (coord, enwtitle))
+				try:
+					page.put(esnewtext, u"BOT - Insertando coordenadas %s desde [[:en:%s]]" % (coord, enwtitle))
+				except:	
+					pass
 			break
 	
 #f.close()

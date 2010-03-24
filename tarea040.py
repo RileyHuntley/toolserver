@@ -52,17 +52,19 @@ if len(sys.argv)>1:
 
 
 objs={}
-
+paises={}
 site=wikipedia.Site("es", "wikipedia")
 objspage=wikipedia.Page(site, u"User:Emijrp/Imágenes requeridas por zona/Objetivos conocidos")
 l=[]
 for line in objspage.get().splitlines():
 	l.append(line)	
 	t=line.strip().split(";")
-	if len(t)==3:
+	if len(t)==4:
 		objname=t[0].strip()
-		objlat=float(t[1].strip())
-		objlon=float(t[2].strip())
+		objcountry=t[1].strip()
+		paises[objname]=objcountry
+		objlat=float(t[2].strip())
+		objlon=float(t[3].strip())
 		objs[objname]={'lat': objlat, 'lon': objlon}
 l.sort()
 objspage.put("\n".join(l), u"BOT - Ordenando alfabéticamente")
@@ -116,7 +118,9 @@ candidatos_l.sort()
 
 for zona, l in candidatos_l:
 	l.sort()
-	output+=u"\n\n== [[%s]] ==\n<center>\n{| class='wikitable sortable' style='text-align: center;' \n! Artículo !! Distancia (km) !! Coordenadas \n|-\n%s \n|}\n</center>" % (zona, "\n|-\n".join(l))
+	output+=u"\n\n== [[%s|]], %s ==\n:''Esta tabla proviene de <nowiki>{{</nowiki>[[Usuario:Emijrp/Imágenes requeridas por zona/%s/%s]]<nowiki>}}</nowiki>.\n{{Usuario:Emijrp/Imágenes requeridas por zona/%s/%s}}" % (paises[zona], zona, paises[zona], zona, paises[zona], zona)
+	wii=wikipedia.Page(site, u"Usuario:Emijrp/Imágenes requeridas por zona/%s/%s" % (paises[zona], zona))
+	wii.put(u"<noinclude>{{aviso|No modificar esta página a mano. Se actualiza automáticamente. Si hay algún error, avisar a {{u|emijrp}}}}</noinclude><center>\n{| class='wikitable sortable' style='text-align: center;' \n! Artículo !! Distancia (km) !! Coordenadas \n|-\n%s \n|}\n</center>" % ("\n|-\n".join(l)), u"BOT - Actualizando lista, se necesitan imágenes en %s artículos" % len(l))
 	c+=len(l)
 
 output+=u"{{/end}}"
