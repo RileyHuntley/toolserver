@@ -44,7 +44,7 @@ for page in pre:
 	if page.isDisambig():
 		continue
 	eswtext=page.get()
-	if re.search(ur"(?i)(\{\{ *coord *\||coor|latitude? *\=|longitude? *\=|nacidos en|fallecidos en|\{\{ *BD *\|)", eswtext):
+	if re.search(ur"(?i)(\{\{ *coord *\||coor|(latitude?|latd?) *\=|(longitude?|long?d?) *\=|nacidos en|fallecidos en|\{\{ *BD *\|)", eswtext):
 		continue
 	#if not re.search(ur"(?i)\{\{ *ficha de localidad", eswtext):
 	#	continue
