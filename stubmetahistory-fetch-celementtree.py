@@ -4,26 +4,31 @@ import time, re
 from xml.etree.cElementTree import iterparse
 import bz2, sys, md5, os
 
-#llamado con 7za e -so eowiki-20091128-pages-meta-history.xml.7z | python stubmetahistory-fetch-celementtree.py 
+#llamado con 7za e -so eowiki-20091128-pages-meta-history.xml.7z | python stubmetahistory-fetch-celementtree.py eo
 
-#source=open("zuwiki-latest-pages-meta-history.xml", 'r')
+lang='es' #idioma que será analizado
+if len(sys.argv)>=2:
+	lang=sys.argv[1]
+
 source=sys.stdin
-outputfile="/mnt/user-store/dump/eswiki-fetched.txt"
-g=open(outputfile, "w")
+outputfile="/mnt/user-store/dump/%swiki-fetched.txt.bz" % (lang)
+g=bz2.BZ2File(outputfile, "w")
 
 context = iterparse(source, events=("start", "end"))
 context = iter(context)
 
-r_newlines=re.compile(ur"(?im)[\n\r\s]")
-r_links=re.compile(ur"\[\[ *[^\]]+? *[\]\|]")
-r_categories=re.compile(ur"\[\[ *Category *\: *[^\]\|]+ *[\]\|]")
-r_sections=re.compile(ur"(?im)^(\=+)[^\=]+\1")
+r_newlines=re.compile(ur"(?im)[\n\r\t\s]")
+r_redirect=re.compile(ur"(?i)^\s*#\s*(REDIRECCIÓN|REDIRECT)\s*\[\[[^\]]+?\]\]")
+r_disambig=re.compile(ur"(?i)\{\{\s*(disambig|desambiguación|des|desamb)\s*[\|\}]")
+r_links=re.compile(ur"\[\[\s*[^\]]+?\s*[\]\|]")
+r_categories=re.compile(ur"(?i)\[\[\s*(category|categoría)\s*\:\s*[^\]\|]+\s*[\]\|]")
+r_sections=re.compile(ur"(?im)^(\=+)[^\=]+?\1")
 r_templates=""
-r_interwikis=""
+r_interwikis="\[\[\s*[a-z]{2,3}(-[a-z]{2,3})?\s*\:"
 r_externallinks=""
 r_bold=""
 r_italic=""
-r_images="(?i)\[\[ *(image|file) *\:"
+r_images="(?i)\[\[\s*(image|file|archivo|imagen)\s*\:"
 #evolucion de la complejidad de la sintaxis: cada vez más <ref> {{code}} 
 r_htmltags=""
 r_htmltables="" #ha ido declinando en favor de {|
@@ -100,7 +105,13 @@ for event, elem in context:
 		rev_links=len(re.findall(r_links, rev_text))
 		rev_sections=len(re.findall(r_sections, rev_text))
 		rev_images=len(re.findall(r_images, rev_text))
-		output='%s	%s	%s	%s	%s	%s	%s	%s	%s	%s	%s\n' % (page_title, page_id, rev_id, rev_timestamp, rev_author, rev_comment, md5_, rev_len, rev_links, rev_sections, rev_images)
+		rev_interwikis=len(re.findall(r_interwikis, rev_text))
+		rev_type=0
+		if re.search(r_redirect, rev_text):
+			rev_type=1
+		elif re.search(r_disambig, rev_text):
+			rev_type=2
+		output='%s	%s	%s	%s	%s	%s	%s	%s	%s	%s	%s	%s	%s\n' % (page_title, page_id, rev_id, rev_timestamp, rev_author, rev_comment, md5_, rev_len, rev_type, rev_links, rev_sections, rev_images, rev_interwikis)
 		g.write(output.encode('utf-8'))
 		#print page_title, page_id, rev_id, rev_timestamp, len(rev_text)
 		#limpiamos
