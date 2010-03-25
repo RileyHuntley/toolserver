@@ -1,31 +1,33 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (C) 2009 emijrp
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# 
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# 
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-import time
+import time, re
 from xml.etree.cElementTree import iterparse
-import bz2, sys
+import bz2, sys, md5, os
 
 #llamado con 7za e -so eowiki-20091128-pages-meta-history.xml.7z | python stubmetahistory-fetch-celementtree.py 
 
 #source=open("zuwiki-latest-pages-meta-history.xml", 'r')
 source=sys.stdin
-g=open("zzzfetched.txt", "w")
+outputfile="/mnt/user-store/dump/eswiki-fetched.txt"
+g=open(outputfile, "w")
 
 context = iterparse(source, events=("start", "end"))
 context = iter(context)
+
+r_newlines=re.compile(ur"(?im)[\n\r\s]")
+r_links=re.compile(ur"\[\[ *[^\]]+? *[\]\|]")
+r_categories=re.compile(ur"\[\[ *Category *\: *[^\]\|]+ *[\]\|]")
+r_sections=re.compile(ur"(?im)^(\=+)[^\=]+\1")
+r_templates=""
+r_interwikis=""
+r_externallinks=""
+r_bold=""
+r_italic=""
+r_images="(?i)\[\[ *(image|file) *\:"
+#evolucion de la complejidad de la sintaxis: cada vez más <ref> {{code}} 
+r_htmltags=""
+r_htmltables="" #ha ido declinando en favor de {|
+#media del thumb en px de las imagenes colocadas
 
 page_title=''
 page_id=''
@@ -39,6 +41,8 @@ lock_revision_id=False
 t1=time.time()
 limit=1000
 cpages=crevisions=0.0
+md5s=[]
+md5sd={}
 for event, elem in context:
 	tag=elem.tag.split("}")[1]	
 	
@@ -64,13 +68,17 @@ for event, elem in context:
 		rev_author=elem.text
 	
 	if tag=="comment":
-		rev_comment=elem.text
+		if elem.text:
+			rev_comment=elem.text
+		else:
+			rev_comment=''
 
 	if tag=="text":
 		if elem.text:
 			rev_text=elem.text
 		else:
 			rev_text=''
+	
 	if event=="end" and tag=="page":
 		cpages+=1
 		elem.clear()
@@ -79,10 +87,20 @@ for event, elem in context:
 		crevisions+=1
 		elem.clear()
 		if crevisions % limit == 0:
-			print u'Pages: %d | Revisions: %d | Rev/pag = %.2f | %.2f pags/s | %.2f revs/s' % (cpages, crevisions, (crevisions/cpages), cpages/(time.time()-t1), (crevisions/(time.time()-t1)))		
+			try:
+				eta=((35000000.0-crevisions)/(crevisions/(time.time()-t1)))/3600
+				print u'Pages: %d | Revisions: %d | Rev/pag = %.2f | %.2f pags/s | %.2f revs/s | ETA %.2f hours' % (cpages, crevisions, (crevisions/cpages), cpages/(time.time()-t1), (crevisions/(time.time()-t1)), eta)
+			except:
+				pass
 		#output rev
-		#output='%s	%s	%s	%s	%s	%s	%s\n' % (page_title, page_id, rev_id, rev_timestamp, rev_author, rev_comment, len(rev_text))
-		output='%s	%s	%s	%s	%s	%s	%s\n' % (page_title, page_id, rev_id, rev_timestamp, rev_author)
+		md5_=md5.new(rev_text.encode("utf-8")).hexdigest() #digest hexadecimal
+		rev_comment=re.sub(r_newlines, " ", rev_comment) #eliminamos saltos de linea, curiosamente algunos comentarios tienen \n en el dump y causan problemas
+		
+		rev_len=len(rev_text)
+		rev_links=len(re.findall(r_links, rev_text))
+		rev_sections=len(re.findall(r_sections, rev_text))
+		rev_images=len(re.findall(r_images, rev_text))
+		output='%s	%s	%s	%s	%s	%s	%s	%s	%s	%s	%s\n' % (page_title, page_id, rev_id, rev_timestamp, rev_author, rev_comment, md5_, rev_len, rev_links, rev_sections, rev_images)
 		g.write(output.encode('utf-8'))
 		#print page_title, page_id, rev_id, rev_timestamp, len(rev_text)
 		#limpiamos
@@ -95,6 +113,96 @@ for event, elem in context:
 source.close()
 g.close()
 
+def unique(list):
+	dict={}
+	for row in list:
+		dict[row]=False
+	list=[]
+	for k, v in dict.items():
+		list.append(k)
+	return list
 
+"""
+#evolución de la media del tamaño de los artículos
+#hay que tener en cuenta el estado de todos los artículos en el mes o día dado, no vale con contar solo las edicions de ese dia o mes
+g=open(outputfile, 'r')
+for l in g:
+	l=unicode(l[:len(l)-1], "utf-8")
+	t=l.split("	")
+	rev_len=t[7]
+	
+g.close()
+"""
+
+"""
+#usuarios con mas reversiones
+os.system("sort +0 -1 %s > zzzsorted.txt" % outputfile) #
+g=open("zzzsorted.txt", "r")
+page_title=""
+page_title_old=""
+revs=[]
+ranking={}
+for l in g:
+	l=unicode(l[:len(l)-1], "utf-8")
+	t=l.split("	")
+	#print t
+	page_title=t[0]
+	rev_timestamp=t[3]
+	rev_author=t[4]
+	md5_=t[6]
+	if page_title_old==page_title:
+		revs.append([rev_timestamp, rev_author, md5_])
+	else: #evitamos primer caso vacio
+		revs.sort()
+		#print revs
+		unique_md5=[]
+		for rev in revs:
+			#print rev
+			if rev[2] in unique_md5:
+				if ranking.has_key(rev[1]):
+					ranking[rev[1]]+=1
+				else:
+					ranking[rev[1]]=1
+			else:
+				unique_md5.append(rev[2])
+		page_title_old=page_title
+		revs=[[rev_timestamp, rev_author, md5_]]
+ranking_=[]
+for k, v in ranking.items():
+	ranking_.append([v, k])
+ranking_.sort()
+for k, v in ranking_:
+	print k, v
+g.close()
+"""
+
+"""
+#paginas con mas reversiones
+
+os.system("sort +0 -1 %s > zzzsorted.txt" % outputfile) #ordenamos por pagetitle
+g=open("zzzsorted.txt", "r")
+page_title=""
+page_title_old=""
+md5s=[]
+ranking=[]
+for l in g:
+	l=unicode(l[:len(l)-1], "utf-8")
+	t=l.split("	")
+	#print t
+	page_title=t[0]
+	md5_=t[6]
+	if page_title_old==page_title:
+		md5s.append(md5_)
+	else: #evitamos primer caso vacio
+		ranking.append([len(md5s)-len(unique(md5s)), page_title_old])
+		page_title_old=page_title
+		md5s=[md5_]
+	#el ultimo caso, que no coge un page_title nuevo tb hay que controlarlo
+ranking.sort()
+for k, v in ranking:
+	print k, v
+g.close()
+
+"""
 
 
