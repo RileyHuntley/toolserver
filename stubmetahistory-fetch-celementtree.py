@@ -3,12 +3,18 @@
 import time, re
 from xml.etree.cElementTree import iterparse
 import bz2, sys, md5, os
+import wikipedia
 
 #llamado con 7za e -so eowiki-20091128-pages-meta-history.xml.7z | python stubmetahistory-fetch-celementtree.py eo
 
 lang='es' #idioma que será analizado
 if len(sys.argv)>=2:
 	lang=sys.argv[1]
+
+rawtotalrevisions=0.0
+site=wikipedia.Site(lang, 'wikipedia')
+data=site.getUrl("/wiki/Special:Statistics?action=raw")
+rawtotalrevisions+=float(data.split("edits=")[1].split(";")[0])
 
 source=sys.stdin
 outputfile="/mnt/user-store/dump/%swiki-fetched.txt.bz" % (lang)
@@ -44,8 +50,9 @@ rev_text=''
 lock_page_id=False
 lock_revision_id=False
 t1=time.time()
+t2=time.time()
 limit=1000
-cpages=crevisions=0.0
+cpages=crevisions=cpagesprev=crevisionsprev=0.0
 md5s=[]
 md5sd={}
 for event, elem in context:
@@ -93,10 +100,13 @@ for event, elem in context:
 		elem.clear()
 		if crevisions % limit == 0:
 			try:
-				eta=((35000000.0-crevisions)/(crevisions/(time.time()-t1)))/3600
-				print u'Pages: %d | Revisions: %d | Rev/pag = %.2f | %.2f pags/s | %.2f revs/s | ETA %.2f hours' % (cpages, crevisions, (crevisions/cpages), cpages/(time.time()-t1), (crevisions/(time.time()-t1)), eta)
+				eta=((rawtotalrevisions-crevisions)/(crevisions/(time.time()-t1)))/3600
+				pagesspeed=(cpages-cpagesprev)/(time.time()-t2)
+				revisionsspeed=(crevisions-crevisionsprev)/(time.time()-t2)
+				print u'Pages: %d | Revisions: %d | Rev/pag = %.2f | %.2f pags/s | %.2f revs/s | ETA %.0f minutes' % (cpages, crevisions, (crevisions/cpages), pagesspeed, revisionsspeed, ((rawtotalrevisions-crevisions)/revisionsspeed)/60.0)
 			except:
 				pass
+			t2=time.time()
 		#output rev
 		md5_=md5.new(rev_text.encode("utf-8")).hexdigest() #digest hexadecimal
 		rev_comment=re.sub(r_newlines, " ", rev_comment) #eliminamos saltos de linea, curiosamente algunos comentarios tienen \n en el dump y causan problemas
