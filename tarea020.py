@@ -20,6 +20,7 @@ import sys
 import wikipedia
 import time, os
 import bz2
+import tarea000
 
 #llamado con 7za e -so eswiki-latest-pages-meta-history.xml.7z | python tarea020.py es 500
 
@@ -34,46 +35,54 @@ if len(sys.argv)>=3:
 site=wikipedia.Site(lang, 'wikipedia')
 
 translation={
+'en': u'Wikipedia:List of Wikipedians by created pages',
 'es': u'Wikipedia:Ranking de creaciones',
 #'fr': u"Wikipédia:Liste des Wikipédiens par nombre d'articles créés",
 #'sl': u'Wikipedija:Seznam Wikipedistov po ustvarjenih člankih',
 }
 
-titletrans=u'Wikipedia:List of Wikipedians by created pages'
-if lang!='en' and translation.has_key(lang):
+titletrans=u'User:Emijrp/List of Wikipedians by page count'
+if translation.has_key(lang):
 	titletrans=translation[lang]
 
 data=site.getUrl("/w/index.php?title=Special:RecentChanges&limit=0")
 data=data.split('<select id="namespace" name="namespace" class="namespaceselector">')[1].split('</select>')[0]
 namespaces=re.findall(ur'<option value="[1-9]\d*">(.*?)</option>', data)
 no_pattern = re.compile(ur'(%s)\:' % '|'.join(namespaces))
-print namespaces
+
+bots=[]
+data=site.getUrl("/w/index.php?title=Special:Listusers&limit=5000&group=bot")
+data=data.split('<!-- start content -->')
+data=data[1].split('<!-- end content -->')[0]
+m=re.compile(ur' title=".*?:(.*?)">').finditer(data)
+for i in m:
+	bots.append(i.group(1))
+
 
 f=bz2.BZ2File("/mnt/user-store/dump/%swiki-fetched.txt.bz" % lang, "r")
 prev_title=""
 revs=[]
 user_creations={}
 for l in f.readlines():
-	#l=unicode(l, "utf-8")
+	l=unicode(l, "utf-8")
 	t=l.strip().split("	")
 	if len(t)>9:
 		[page_title, page_id, rev_id, rev_timestamp, rev_author, rev_comment, md5_, rev_len, rev_type]=t[0:9]
-	if page_title=="Piccio":
-		print t
 
 	if not re.search(no_pattern, page_title):
+		item=[rev_timestamp, rev_author, rev_type]
 		if page_title!=prev_title and revs:
-			revs.sort()
+			revs.sort()			
 			[rev_timestamp, rev_author, rev_type]=revs[0][0:3]
-			item=[page_title, rev_type]
+			item2=[prev_title, rev_type]
 			if user_creations.has_key(rev_author):
-				user_creations[rev_author].append(item)
+				user_creations[rev_author].append(item2)
 			else:
-				user_creations[rev_author] = item
-			revs=[]
+				user_creations[rev_author] = [item2]
+			revs=[item]
 			prev_title=page_title
 		else:
-			revs.append([rev_timestamp, rev_author, rev_type])
+			revs.append(item)
 
 d={}
 for user, creations in user_creations.items():
@@ -88,27 +97,42 @@ for user, number in l[0:10]:
 	print user, number
 	print user_creations[user][:10]
 
-"""
+
+limite=100
 limite2=1000 #paginas por lista
 c=1
-salida=u''
+salida=u'{| class="wikitable sortable" style="text-align: center;"\n! # !! User !! Pages \n'
 for user, number in l:
 	if (c<=limite and number>=50) or c<=15:
 		if len(user)<1:
 			continue
-		salida+=u'|-\n| %d || [[User:%s|%s]] || %d\n' % (c, user, user, number)
+		salida+=u'|-\n| %d || [[User:%s|%s]] || %d \n' % (c, user, user, number)
 		#salida+=u'|-\n| %d || [[User:%s|%s]] || [[/%s/1|%d]]\n' % (c, user, user, user, number)
 		c+=1
 	else:
 		break
 	
-salida=u'{{/begin|%s}}\n%s{{/end|%s}}\n' % (c-1, salida, c-1)
+#salida=u'{{/begin|%s}}\n%s{{/end|%s}}\n' % (c-1, salida, c-1)
+salida+=u"|}"
 
 wikipedia.output(salida)
 wiii=wikipedia.Page(site, titletrans)
-wiii.put(salida, u'BOT - Updating ranking')
+msg=u""
+if bots.count("BOTijo")==0:
+	msg+=u"(This bot only edits user subpages. If flag if needed for this, please, send a message to [[:es:User talk:Emijrp]].)"
+wiii.put(salida, u'BOT - Updating ranking %s' % msg)
 
-"""
+bot=wikipedia.Page(site, u"User:BOTijo")
+if not bot.exists():
+	bot.put(u"{{/info}}", u"BOT - Creating bot userpage")
+elif not re.search(ur"{{/info}}", bot.get()):
+	bot.put(u"{{/info}}\n%s" % bot.get(), u"BOT - Adding info")
+botinfo=wikipedia.Page(site, u"User:BOTijo/info")
+botinfo.put(tarea000.botinfo(), u"BOT - Bot info page")
+bottalk=bot.toggleTalkPage()
+if not bottalk.exists():
+	bottalk.put(u"#REDIRECT [[User:BOTijo]]", u"BOT - Redirect")
+
 """
 #ranking de creaciones sin redirecciones
 #revisar
