@@ -15,6 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import bz2, wikipedia, re, sys
+import sets
+import MySQLdb
 
 def percent(c):
 	if c % 100000 == 0:
@@ -30,8 +32,19 @@ if len(sys.argv)>=3:
 
 site=wikipedia.Site(lang, 'wikipedia')
 
+
+conn = MySQLdb.connect(host='sql-s3', db='%swiki_p' % lang, read_default_file='~/.my.cnf', use_unicode=True)
+cursor = conn.cursor()
+minimo=25
+cursor.execute("SELECT user_name from user where user_editcount>%s;" % minimo)
+result=cursor.fetchall()
+nicks=sets.Set()
+for row in result:
+	if len(row)==1:
+		nicks.add(unicode(row[0], "utf-8"))
+wikipedia.output(u"%s usuarios con mas de %s ediciones " % (len(nicks), minimo))
+
 days={}
-nicks={}
 c=0
 f=bz2.BZ2File("/mnt/user-store/dump/%swiki-fetched.txt.bz" % lang, "r")
 for l in f.xreadlines():
@@ -40,21 +53,21 @@ for l in f.xreadlines():
 	l=unicode(l, "utf-8").strip()
 	t=l.strip().split("	")
 	if len(t)>5:
-		nick=t[3]
-		if nicks.has_key(nick):
-			nicks[nick]+=1
-		else:
-			nicks[nick]=1
-		date=t[4]
-		day=date[:8]
-		if days.has_key(day):
-			if days[day].count(nick)==0:
-				days[day].append(nick)
-		else:
-			days[day]=[nick]
+		nick=t[4]
+		if nick in nicks:
+			date=t[3]
+			day=date[:10]
+			if days.has_key(day):
+				if nick not in days[day]:
+					days[day].add(nick)
+					#print len(days[day]), day
+			else:
+				days[day]=sets.Set()
+				days[day].add(nick)
+
 f.close()
 
-print '%d nicks distintos' % len(nicks.items())
+print '%d nicks distintos' % len(nicks)
 
 #ordenamos los dias
 dayslist=[]
@@ -63,15 +76,17 @@ for k, v in days.items():
 dayslist.sort()
 
 records={}
-for nick, edits in nicks.items():
-	if edits<50: #quitar?
-		continue
+c=0
+for nick in nicks:
+	c+=1
+	if c % 1000 == 0:
+		print c, "de", len(nicks)	
 	acumulado=0
 	continuo=False
 	origen=''
 	final=''
 	for day in dayslist:
-		if days[day].has_key(nick): #editó ese dia
+		if nick in days[day]: #editó ese dia
 			if not continuo:
 				continuo=True
 				origen=day
@@ -83,28 +98,17 @@ for nick, edits in nicks.items():
 			
 			if records.has_key(nick):
 				if records[nick]['acumulado']<acumulado:
-					records[nick]={'origen':origen,'final':final,'acumulado':acumulado,'ediciones':edits}
-					#linea= '%s - %d dias seguidos - inicio: %s - fin: %s' % (nick, acumulado, origen, final)
-					#if acumulado>3:
-					#	print linea.encode('utf-8')
+					records[nick]={'origen':origen,'final':final,'acumulado':acumulado}
 			else:
-				records[nick]={'origen':origen,'final':final,'acumulado':acumulado,'ediciones':edits}
+				records[nick]={'origen':origen,'final':final,'acumulado':acumulado}
 			acumulado=0 #reseteamos
 
 recordslist=[]
 for k, v in records.items():
-	recordslist.append([v['acumulado'], k, v['origen'], v['final'], v['ediciones']])
+	recordslist.append([v['acumulado'], k, v['origen'], v['final']])
 
 recordslist.sort()
 recordslist.reverse()
-
-c=0
-for i in recordslist:
-	c+=1
-	if c<=10:
-		print i
-	else:
-		break
 
 salida=u'{{begin/%s}}\n' % limit
 c=0
@@ -116,9 +120,7 @@ for i in recordslist:
 	dias=i[0]
 	nick=i[1]
 	inicio=i[2]
-	inicio='%s-%s-%s' % (inicio[:4], inicio[4:6], inicio[6:])
 	fin=i[3]
-	fin='%s-%s-%s' % (fin[:4], fin[4:6], fin[6:])
 	salida+=u'|-\n| %d || [[User:%s|%s]] || %s || %s || %s \n' % (c, nick, nick, inicio, fin, dias)
 salida+=u'{{/end}}'
 
