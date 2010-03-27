@@ -127,7 +127,7 @@ if bots.count("BOTijo")==0:
 	msg+=u"(This bot only edits user subpages. If flag if needed for this, please, send a message to [[:es:User talk:Emijrp]].)"
 wiii.put(salida, u'BOT - Updating ranking %s' % msg)
 
-tarea000.insertBOTijoInfo()
+tarea000.insertBOTijoInfo(site)
 
 """
 #ranking de creaciones sin redirecciones
