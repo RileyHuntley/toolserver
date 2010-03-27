@@ -25,7 +25,7 @@ context = iter(context)
 
 r_newlines=re.compile(ur"(?im)[\n\r\t\s]")
 r_redirect=re.compile(ur"(?i)^\s*#\s*(REDIRECCIÓN|REDIRECT)\s*\[\[[^\]]+?\]\]")
-r_disambig=re.compile(ur"(?i)\{\{\s*(disambig|desambiguación|des|desamb)\s*[\|\}]")
+r_disambig=re.compile(ur"(?i)\{\{\s*(d[ei]sambig|desambiguaci[oó]n|des|desamb)\s*[\|\}]")
 r_links=re.compile(ur"\[\[\s*[^\]]+?\s*[\]\|]")
 r_categories=re.compile(ur"(?i)\[\[\s*(category|categoría)\s*\:\s*[^\]\|]+\s*[\]\|]")
 r_sections=re.compile(ur"(?im)^(\=+)[^\=]+?\1")
