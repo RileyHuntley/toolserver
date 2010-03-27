@@ -26,7 +26,7 @@ lang="es"
 if len(sys.argv)>1:
 	lang=sys.argv[1]
 
-limit=100
+limit=500
 if len(sys.argv)>=3:
 	limit=int(sys.argv[2])
 
@@ -110,17 +110,20 @@ for k, v in records.items():
 recordslist.sort()
 recordslist.reverse()
 
-salida=u'{{begin/%s}}\n' % limit
+salida=u'{{/begin|%s}}\n' % limit
 c=0
 for i in recordslist:
 	c+=1
-	if c<=10:
-		print i
-	
 	dias=i[0]
 	nick=i[1]
 	inicio=i[2]
 	fin=i[3]
+	
+	if c<=10:
+		print i
+	if c>limit or dias<30:
+		break
+	
 	salida+=u'|-\n| %d || [[User:%s|%s]] || %s || %s || %s \n' % (c, nick, nick, inicio, fin, dias)
 salida+=u'{{/end}}'
 
