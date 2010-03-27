@@ -127,16 +127,7 @@ if bots.count("BOTijo")==0:
 	msg+=u"(This bot only edits user subpages. If flag if needed for this, please, send a message to [[:es:User talk:Emijrp]].)"
 wiii.put(salida, u'BOT - Updating ranking %s' % msg)
 
-bot=wikipedia.Page(site, u"User:BOTijo")
-if not bot.exists():
-	bot.put(u"{{/info}}", u"BOT - Creating bot userpage")
-elif not re.search(ur"{{/info}}", bot.get()):
-	bot.put(u"{{/info}}\n%s" % bot.get(), u"BOT - Adding info")
-botinfo=wikipedia.Page(site, u"User:BOTijo/info")
-botinfo.put(tarea000.botinfo(), u"BOT - Bot info page")
-bottalk=bot.toggleTalkPage()
-if not bottalk.exists():
-	bottalk.put(u"#REDIRECT [[User:BOTijo]]", u"BOT - Redirect")
+tarea000.insertBOTijoInfo()
 
 """
 #ranking de creaciones sin redirecciones

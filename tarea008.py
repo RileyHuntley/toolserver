@@ -16,10 +16,13 @@
 
 import datetime
 import os, re, wikipedia, sys
+import tarea000
 
-begin=u"''Please, translate this into your language and delete the english text'': This table shows '''first {{{1}}} users with more edits''' in this Wikipedia. Bots are not included.\n\n''If you want to change page title, contact to [[:es:User talk:Emijrp]]. Thanks.''\n\n<center>\n{| class='wikitable sortable' style='text-align:center;'\n! #\n! User\n! Edits\n"
-begin2=u"''Please, translate this into your language and delete the english text'': This table shows '''first {{{1}}} users with more edits''' in this Wikipedia. Bots are included.\n\n''If you want to change page title, contact to [[:es:User talk:Emijrp]]. Thanks.''\n\n<center>\n{| class='wikitable sortable' style='text-align:center;'\n! #\n! User\n! Edits\n"
-end=u"|}\n</center>\n\n''Please, put here a category similar to <nowiki>[[Category:Wikipedia statistics]]</nowiki>.''"
+table_header=u"{| class='wikitable sortable' style='text-align:center;'\n! #\n! User\n! Edits\n"
+table_footer=u"|}"
+begin=u"''Please, translate this into your language and delete the english text'': This table shows '''first {{{1}}} users with more edits''' in this Wikipedia. Bots are not included.\n\n''If you want to change page title, contact to [[:es:User talk:Emijrp]]. Thanks.''\n\n<center>\n%s" % table_header
+begin2=u"''Please, translate this into your language and delete the english text'': This table shows '''first {{{1}}} users with more edits''' in this Wikipedia. Bots are included.\n\n''If you want to change page title, contact to [[:es:User talk:Emijrp]]. Thanks.''\n\n<center>\n%s" % table_header
+end=u"%s\n</center>\n\n''Please, put here a category similar to <nowiki>[[Category:Wikipedia statistics]]</nowiki>.''" % table_footer
 
 """\n\n[[cs:Wikipedie:Nejaktivnější wikipedisté]]\n[[de:Wikipedia:Beitragszahlen]]\n[[es:Wikipedia:Lista de wikipedistas por número de ediciones]]\n[[fr:Wikipédia:Liste des Wikipédiens par nombre d'éditions]]\n[[zh-classical:維基大典:編輯次數]]\n[[id:Wikipedia:Daftar pengguna menurut jumlah suntingan]]\n[[is:Wikipedia:Notendur eftir breytingafjölda]]\n[[he:ויקיפדיה:נתונים סטטיסטיים/משתמשים/1-100]]\n[[jv:Wikipedia:Daftar panganggo miturut cacahé suntingan]]\n[[ka:ვიკიპედია:ვიკიპედიელები აქტიურობის მიხედვით]]\n[[lt:Vikipedija:Naudotojai pagal keitimų skaičių]]\n[[hu:Wikipédia:Szerkesztők listája szerkesztésszám szerint]]\n[[ja:Wikipedia:編集回数の多いウィキペディアンの一覧]]\n[[pl:Wikipedia:Najaktywniejsi wikipedyści]]\n[[pt:Wikipedia:Lista de wikipedistas por número de edições]]\n[[sq:Wikipedia:Lista e Wikipedianëve sipas redaktimeve]]\n[[uk:Вікіпедія:Найактивніші]]\n[[bat-smg:Vikipedėjė:Nauduotuojē palē keitėmu skaitliu]]\n[[zh:Wikipedia:最多贡献的用户]]"
 """
@@ -94,28 +97,42 @@ tras2={
 
 #do not want: nl, simple 
 # fix: hr
+tt100={'rankingusers':True, 'rankingbots':True, 'limit':100}
+tt500={'rankingusers':True, 'rankingbots':True, 'limit':500}
 projects={
-	'wikinews': {
-		'es': {'rankingusers':True, 'rankingbots':True, 'limit':100},
-		},
-	'wikipedia': {
-		'ca': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'es': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'et': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'hr': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'ro': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'simple': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'th': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'tr': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'vi': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'da': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'eo': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'ar': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		},
-	'wiktionary': {
-		'es': {'rankingusers':True, 'rankingbots':True, 'limit':100},
-		'simple': {'rankingusers':True, 'rankingbots':False, 'limit':100},
-		},
+        'wikinews': {
+                'es': tt100,
+                },
+        'wikipedia': {
+		'af': tt100,
+                'ar': tt500,
+		'bg': tt100,
+                'ca': tt500,
+                'da': tt500,
+		'el': tt100,
+                'eo': tt500,
+                'es': tt500,
+                'et': tt500,
+		'eu': tt100,
+		'fa': tt100,
+		'gl': tt100,
+		'hi': tt100,
+                'hr': tt500,
+		'ht': tt100,
+		'ms': tt100,
+		'new': tt100,
+		'nn': tt100,
+                'ro': tt500,
+                'simple': tt500,
+		'sl': tt100,
+                'th': tt500,
+                'tr': tt500,
+                'vi': tt500,
+                },
+        'wiktionary': {
+                'es': tt100,
+                'simple': {'rankingusers':True, 'rankingbots':False, 'limit':100},
+                },
 }
 
 """'wikipedia': {
@@ -185,17 +202,13 @@ for family, langs in projects.items():
 
 for family, langs in projects.items():
 	for lang in langs:
+		print family, lang
 		title=u''
 		#la lista de bots debe ir dentro del bucle, ya que se llena con más bots de cada caso
 		bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot', u'EmxBot', u'YurikBot', u'H-Bot', u'Paulatz bot', u'TekBot', u'Alfiobot', u'RoboRex', u'Agtbot', u'Felixbot', u'Pixibot', u'Sz-iwbot', u'Timbot (Gutza)', u'Ginosbot', u'GrinBot', u'.anacondabot', u'Omdirigeringsrättaren', u'Rubinbot', u'HasharBot', u'NetBot', u"D'ohBot", u'Byrialbot', u'Broadbot', u'Guanabot', u'Chris G Bot 2', u'CCyeZBot', u'Soulbot', u'MSBOT', u'GnawnBot', u'Chris G Bot 3', u'Huzzlet the bot', u'JCbot', u'DodekBot', u'John Bot II', u'CyeZBot', u'Beefbot', u'Louperibot', u'SOTNBot', u'DirlBot', u'Obersachsebot', u'WikiDreamer Bot', u'YonaBot', u'Chlewbot', u'PixelBot', u'ToePeu.bot', u'HujiBot', u'Le Pied-bot', u'Ugur Basak Bot', u'NigelJBot', u'CommonsTicker', u'Tangobot', u'SeanBot', u'Corrector de redirecciones', u'HermesBot', u'Darkicebot', u'RedBot', u'HerculeBot', u'PatruBOT', u'RobotGMwikt', u'MonoBot', u'WikimediaNotifier', u'SBot39', u'DSisyphBot', u'GriffinBot1', u'WeggeBot', u'EhJBot3', u'Gerakibot', u'Picochip08', u'MondalorBot', u'Redirect fixer', u'', u'', u'', u'', u'', u'',]
 		site=wikipedia.Site(lang, family)
 		
-		data=site.getUrl("/w/index.php?title=Special:Listusers&limit=5000&group=bot")
-		data=data.split('<!-- start content -->')
-		data=data[1].split('<!-- end content -->')[0]
-		m=re.compile(ur" title=\".*?:(.*?)\">").finditer(data)
-		for i in m:
-			bots.append(i.group(1))
+		bots+=tarea000.botList(site)
 		
 		admins=[]
 		data=site.getUrl("/w/index.php?title=Special:Listusers&limit=5000&group=sysop")
@@ -228,12 +241,12 @@ for family, langs in projects.items():
 		f.close()
 		m=re.compile(ur"(.+)	(\d+)").finditer(sql)
 		
+		s=u""
+		sbots=u""
 		c=1
 		cbots=1
 		cplanti2=1
 		cuantos=projects[family][lang]['limit']
-		s=u"{{/begin|%d}}\n" % cuantos
-		sbots=u"{{/begin|%d}}\n" % cuantos
 		planti2=u"{{#switch:{{{1|User}}}\n"
 		planti=u"{| class='wikitable sortable' style='font-size: 90%;text-align: center;float: right;'\n! #\n! Usuario\n! Ediciones\n"
 		for i in m:
@@ -260,10 +273,8 @@ for family, langs in projects.items():
 		
 		s+=u"%s\n" % ("\n".join(iws1[family]))
 		s=re.sub(ur"(?im)\[\[%s:.*?\]\]\n" % lang, ur"", s)
-		s+=u"{{/end}}"
 		sbots+=u"%s\n" % ("\n".join(iws2[family]))
 		sbots=re.sub(ur"(?im)\[\[%s:.*?\]\]\n" % lang, ur"", sbots)
-		sbots+=u"{{/end}}"
 		planti2+=u"|USUARIO DESCONOCIDO\n}}<noinclude>{{uso de plantilla}}</noinclude>"
 		planti+=u"|-\n| colspan=3 | Véase también [[Wikipedia:Ranking de ediciones]]<br/>Actualizado a las {{subst:CURRENTTIME}} (UTC) del  {{subst:CURRENTDAY}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}} por [[Usuario:BOTijo|BOTijo]] \n|}<noinclude>{{uso de plantilla}}</noinclude>"
 		
@@ -271,48 +282,46 @@ for family, langs in projects.items():
 		if bots.count(u"BOTijo") or noflagrequired.count([lang, family]):
 			resume=u"BOT - Updating ranking"
 		else:
-			resume=u"BOT - Updating ranking (Testing bot, please don't panic, I'm going to request flag soon)"
+			resume=u"BOT - Updating ranking (This bot only makes a few edits in user subpages. Please, don't block. Contact to [[:w:es:User talk:Emijrp]])"
 		
 		
 		#first ranking
 		if len(s)>1000: #evitando errores de db replication
 			title=u''
-			if tras1[family].has_key(lang):
+			if tras1[family].has_key(lang) and tras1[family][lang]:
 				title=u"%s:%s" % (wikipedianm, tras1[family][lang])
-			else:
-				title=u"%s:List of Wikipedians by number of edits" % wikipedianm
+				page=wikipedia.Page(site, u"%s/begin" % title)
+				if projects[family][lang]['rankingusers'] and not page.exists():
+					page.put(begin, resume)
+				page=wikipedia.Page(site, u"%s/end" % title)
+				if projects[family][lang]['rankingusers'] and not page.exists():
+					page.put(end, resume)
+				s=u"{{/begin|%d}}\n%s{{/end}}" % (cuantos, s)
+			else: #by defect
+				title=u"User:Emijrp/List of Wikipedians by number of edits"
+				s=u"%s%s%s" % (table_header, s, table_footer)
 			page=wikipedia.Page(site, title)
-			if projects[family][lang]['rankingusers'] and not page.isRedirectPage() and not page.isDisambig():
-				page.put(s, resume)
-		
-		#begin & end
-		if title:
-			page=wikipedia.Page(site, u"%s/begin" % title)
-			if projects[family][lang]['rankingusers'] and not page.exists():
-				page.put(begin, resume)
-			page=wikipedia.Page(site, u"%s/end" % title)
-			if projects[family][lang]['rankingusers'] and not page.exists():
-				page.put(end, resume)
+			if projects[family][lang]['rankingusers'] and ((not page.exists()) or (not page.isRedirectPage() and not page.isDisambig() and page.get()!=s)):
+				pass#page.put(s, resume)
 		
 		#second ranking
 		if len(sbots)>1000 and (family!='wiktionary' and lang!='simple'): #evitando errores de db replication
 			title=u''
-			if tras2[family].has_key(lang):
+			if tras2[family].has_key(lang) and tras2[family][lang]:
 				title=u"%s:%s" % (wikipedianm, tras2[family][lang])
-			else:
-				title=u"%s:List of Wikipedians by number of edits (bots included)" % wikipedianm
+				page=wikipedia.Page(site, u"%s/begin" % title)
+				if projects[family][lang]['rankingbots'] and not page.exists():
+					page.put(begin2, resume)
+				page=wikipedia.Page(site, u"%s/end" % title)
+				if projects[family][lang]['rankingbots'] and not page.exists():
+					page.put(end2, resume)
+				sbots=u"{{/begin|%d}}\n%s{{/end}}" % (cuantos, sbots)
+			else: #by defect
+				title=u"User:Emijrp/List of Wikipedians by number of edits (bots included)"
+				sbots=u"%s%s%s" % (table_header, sbots, table_footer)
 			page=wikipedia.Page(site, title)
-			if projects[family][lang]['rankingbots'] and not page.isRedirectPage() and not page.isDisambig():
-				page.put(sbots, resume)
-		
-		#begin & end
-		if title:
-			page=wikipedia.Page(site, u"%s/begin" % title)
-			if projects[family][lang]['rankingbots'] and not page.exists():
-				page.put(begin2, resume)
-			page=wikipedia.Page(site, u"%s/end" % title)
-			if projects[family][lang]['rankingbots'] and not page.exists():
-				page.put(end2, resume)
+			if projects[family][lang]['rankingbots'] and ((not page.exists()) or (not page.isRedirectPage() and not page.isDisambig() and page.get()!=sbots)):
+				pass#page.put(sbots, resume)
 		
 		#otras plantillas
 		if lang=='es':
@@ -322,11 +331,6 @@ for family, langs in projects.items():
 			page=wikipedia.Page(site, u"Template:Ediciones")
 			page.put(planti2, resume)
 		
-		#userpages
-		if lang!='es':
-			up=u"This user is a bot. It won't understand you. Comments to [[:es:User talk:Emijrp]]. Thanks.\n\nThis bot is executed from [[meta:Toolserver]], so, if it is necessary, block it by nick. Other users can use the same IP address."
-			page=wikipedia.Page(site, u"User:BOTijo")
-			if not page.exists():
-				page.put(up, u"BOT")
-
+		#userpage bot
+		tarea000.insertBOTijoInfo(site)
 
