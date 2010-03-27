@@ -34,9 +34,12 @@ page=wikipedia.Page(site, u"Wikiproyecto:Portales/Lista")
 output=u"Portales que existen en [[Wikipedia en español]]:"
 for portal in portales:
 	output+=u"\n# [[Portal:%s|%s]]" % (portal, portal)
-page.put(output, u"BOT - Actualizando lista de portales [%s]" % len(portales))
+if output!=page.get():
+	page.put(output, u"BOT - Actualizando lista de portales [%s]" % len(portales))
 page=wikipedia.Page(site, u"Wikiproyecto:Portales/Número")
-page.put(u"%s" % len(portales), u"BOT - Actualizando número de portales [%s]" % len(portales))
+output=u"%s" % len(portales)
+if output!=page.get():
+	page.put(output, u"BOT - Actualizando número de portales [%s]" % len(portales))
 
 cursor.close()
 conn.close()
