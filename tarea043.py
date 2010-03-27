@@ -112,25 +112,27 @@ for year, d in anyos.items():
 			salidasub+=u"\n* [[%s]] (%s)" % (article, edits)
 		cc+=1
 	salidasub+=u"\n|}\n{{../end2}}"
+	salidamain+=u"\n|}"
 	salidasmain.append([year, salidamain])
+	wikipedia.output(salidamain)
 	wiii=wikipedia.Page(site, u"%s/%s" % (wtitle, year))
 	msg=u""
 	if bots.count("BOTijo")==0:
 		msg+=u"(This bot only edits user subpages. If flag if needed for this, please, send a message to [[:es:User talk:Emijrp]].)"	
 	wiii.put(salidasub, u'BOT - Updating ranking %s' % msg)
 salidasmain.sort()
+salidasmain.reverse()
+print len(salidasmain)
 salidasmain2=[]
 for year, salida in salidasmain:
 	salidasmain2.append(salida)
-salidamain=u'{{/begin}}'
-salidamain+='\n\n'.join(salidasmain2)
-salidamain+=u"{{/end}}"
+salidamain=u"{{/begin}}\n%s{{/end}}" % ("\n\n".join(salidasmain2))
 
 wiii=wikipedia.Page(site, wtitle)
 msg=u""
 if bots.count("BOTijo")==0:
 	msg+=u"(This bot only edits user subpages. If flag if needed for this, please, send a message to [[:es:User talk:Emijrp]].)"
-wiii.put(salida, u'BOT - Updating ranking %s' % msg)
+wiii.put(salidamain, u'BOT - Updating ranking %s' % msg)
 
 tarea000.insertBOTijoInfo(site)
 
