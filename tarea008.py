@@ -17,6 +17,7 @@
 import datetime, time
 import os, re, wikipedia, sys
 import tarea000
+import MySQLdb
 
 delay=5
 minimumedits=100 #edits to appear in the ranking
@@ -37,6 +38,7 @@ noflagrequired=[
 
 tras1={
 'wikipedia': {
+	u"default": u"User:Emijrp/List of Wikipedians by number of edits",
 	u"ar": u"قائمة الويكيبيديين حسب عدد التعديلات",
 	u"ca": u"Llista de viquipedistes per nombre d'edicions",
 	u"da": u"Wikipedianere efter antal redigeringer",
@@ -70,6 +72,7 @@ tras1={
 
 tras2={
 'wikipedia': {
+	u"default": u"User:Emijrp/List of Wikipedians by number of edits (bots included)",
 	u"ar": u"قائمة الويكيبيديين حسب عدد التعديلات (متضمنة البوتات)",
 	u"ca": u"Llista de viquipedistes per nombre d'edicions (bots inclosos)",
 	u"da": u"Wikipedianere efter antal redigeringer (bots inkluderet)",
@@ -102,39 +105,30 @@ tras2={
 tt100={'rankingusers':True, 'rankingbots':True, 'limit':100}
 tt500={'rankingusers':True, 'rankingbots':True, 'limit':500}
 projects={
-        'wikinews': {
-                'es': tt100,
-                },
-        'wikipedia': {
-		'af': tt100,
-                'ar': tt500,
-		'bg': tt100,
-                'ca': tt500,
-                'da': tt500,
-		'el': tt100,
-                'eo': tt500,
-                'es': tt500,
-                'et': tt500,
-		'eu': tt100,
-		'fa': tt100,
+	'wikinews': {
+		'es': tt100,
+		},
+	'wikipedia': {
+		'ar': tt500,
+		'ca': tt500,
+		'da': tt500,
+		'eo': tt500,
+		'es': tt500,
 		'gl': tt100,
-		'hi': tt100,
-                'hr': tt500,
+		'hr': tt500,
 		'ht': tt100,
-		'ms': tt100,
-		'new': tt100,
-		'nn': tt100,
-                'ro': tt500,
-                'simple': tt500,
+		'ro': tt500,
+		'simple': tt500,
 		'sl': tt100,
-                'th': tt500,
-                'tr': tt500,
-                'vi': tt500,
-                },
-        'wiktionary': {
-                'es': tt100,
-                'simple': {'rankingusers':True, 'rankingbots':False, 'limit':100},
-                },
+		'th': tt500,
+		'tr': tt500,
+		'vi': tt500,
+		},
+	'wiktionary': {
+		'es': tt100,
+		'simple': {'rankingusers':True, 'rankingbots':False, 'limit':100},
+		},
+
 }
 
 """'wikipedia': {
@@ -184,24 +178,21 @@ for family, langs in projects.items():
 	iws1[family]=[]
 	iws2[family]=[]
 	for lang, v in langs.items():
-		site=wikipedia.Site(lang, family)
-		data=site.getUrl("/w/index.php?title=Special:RecentChanges&limit=0")
-		data=data.split('<select id="namespace" name="namespace" class="namespaceselector">')[1].split('</select>')[0]
-		m=re.compile(ur'<option value="([1-9]\d*)">(.*?)</option>').finditer(data)
-		wikipedianm=u''
-		for i in m:
-			number=i.group(1)
-			name=i.group(2)
-			if number=='4':
-				wikipedianm+=name
-		traslation1="List of Wikipedians by number of edits"
-		if tras1[family].has_key(lang):
-			traslation1=tras1[family][lang]
-		iws1[family].append(u"[[%s:%s:%s]]" % (lang, wikipedianm, traslation1))
-		traslation2="List of Wikipedians by number of edits (bots included)"
-		if tras2[family].has_key(lang):
-			traslation2=tras2[family][lang]
-		iws2[family].append(u"[[%s:%s:%s]]" % (lang, wikipedianm, traslation2))
+		wikipedianm=tarea000.getNamespaceName(lang, family, 4)
+		if projects[family][lang]['rankingusers']:
+			traslation1=""
+			if tras1[family].has_key(lang):
+				traslation1=u"%s:%s" % (wikipedianm, tras1[family][lang])
+			else:
+				traslation1=tras1[family]['default']
+			iws1[family].append(u"[[%s:%s]]" % (lang, traslation1))
+		if projects[family][lang]['rankingbots']:
+			traslation2=""
+			if tras2[family].has_key(lang):
+				traslation2=u"%s:%s" % (wikipedianm, tras2[family][lang])
+			else:
+				traslation2=tras2[family]['default']
+			iws2[family].append(u"[[%s:%s]]" % (lang, traslation2))
 	iws1[family].sort()
 	iws2[family].sort()
 
@@ -223,15 +214,7 @@ for family, langs in projects.items():
 		for i in m:
 			admins.append(i.group(1))
 		
-		data=site.getUrl("/w/index.php?title=Special:RecentChanges&limit=0")
-		data=data.split('<select id="namespace" name="namespace" class="namespaceselector">')[1].split('</select>')[0]
-		m=re.compile(ur'<option value="([1-9]\d*)">(.*?)</option>').finditer(data)
-		wikipedianm=u''
-		for i in m:
-			number=i.group(1)
-			name=i.group(2)
-			if number=='4':
-				wikipedianm+=name
+		wikipedianm=tarea000.getNamespaceName(lang, family, 4)
 		
 		family2='wiki'
 		if family=='wikinews':
@@ -278,9 +261,9 @@ for family, langs in projects.items():
 				planti2+=u"|%s=%s\n" % (nick,ed)
 				cplanti2+=1
 		
-		s+=u"%s\n" % ("\n".join(iws1[family]))
+		s+=u"%s\n%s\n" % (table_footer, "\n".join(iws1[family]))
 		s=re.sub(ur"(?im)\[\[%s:.*?\]\]\n" % lang, ur"", s)
-		sbots+=u"%s\n" % ("\n".join(iws2[family]))
+		sbots+=u"%s\n%s\n" % (table_footer, "\n".join(iws2[family]))
 		sbots=re.sub(ur"(?im)\[\[%s:.*?\]\]\n" % lang, ur"", sbots)
 		planti2+=u"|USUARIO DESCONOCIDO\n}}<noinclude>{{uso de plantilla}}</noinclude>"
 		planti+=u"|-\n| colspan=3 | Véase también [[Wikipedia:Ranking de ediciones]]<br/>Actualizado a las {{subst:CURRENTTIME}} (UTC) del  {{subst:CURRENTDAY}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}} por [[Usuario:BOTijo|BOTijo]] \n|}<noinclude>{{uso de plantilla}}</noinclude>"
@@ -306,9 +289,9 @@ for family, langs in projects.items():
 					page.put(end, resume)
 					time.sleep(delay)
 				s=u"{{/begin|%d}}\n%s{{/end}}" % (cuantos, s)
-			else: #by defect
-				title=u"User:Emijrp/List of Wikipedians by number of edits"
-				s=u"For a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n%s%s%s" % (table_header, s, table_footer)
+			else: #by default
+				title=tras1[family]['default']
+				s=u"For a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n%s%s" % (table_header, s)
 			page=wikipedia.Page(site, title)
 			if projects[family][lang]['rankingusers'] and ((not page.exists()) or (not page.isRedirectPage() and not page.isDisambig() and page.get()!=s)):
 				page.put(s, resume)
@@ -329,8 +312,8 @@ for family, langs in projects.items():
 					time.sleep(delay)
 				sbots=u"{{/begin|%d}}\n%s{{/end}}" % (cuantos, sbots)
 			else: #by defect
-				title=u"User:Emijrp/List of Wikipedians by number of edits (bots included)"
-				sbots=u"For a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n%s%s%s" % (table_header, sbots, table_footer)
+				title=tras2[family]['default']
+				sbots=u"For a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n%s%s" % (table_header, sbots)
 			page=wikipedia.Page(site, title)
 			if projects[family][lang]['rankingbots'] and ((not page.exists()) or (not page.isRedirectPage() and not page.isDisambig() and page.get()!=sbots)):
 				page.put(sbots, resume)

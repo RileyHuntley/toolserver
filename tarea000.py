@@ -17,6 +17,7 @@
 
 import wikipedia, re
 import time
+import MySQLdb
 
 def latestDump(family, lang, date):
 	return
@@ -26,9 +27,20 @@ def botList(site):
 	data=site.getUrl("/w/index.php?title=Special:Listusers&limit=5000&group=bot")
 	data=data.split('<!-- start content -->')
 	data=data[1].split('<!-- end content -->')[0]
-	m=re.compile(ur' title=".*?:(?P<botname>.*?)">').finditer(data)
+	m=re.compile(ur' title="[^\:]+?:(?P<botname>.*?)">\g<botname>').finditer(data)
 	for i in m:
 		bots.append(i.group("botname"))
+	
+	#get global bots too
+	data=wikipedia.Site('meta', 'meta').getUrl("/w/index.php?title=Special:GlobalUsers&limit=5000&group=Global_bot")
+	data=data.split('<!-- start content -->')
+	data=data[1].split('<!-- end content -->')[0]
+	m=re.compile(ur'<li>(?P<botname>.*?) ‎(\(<a href|\(unattached)').finditer(data)
+	for i in m:
+		bots.append(i.group("botname"))
+	
+	print bots
+	time.sleep(10)
 	return bots
 
 def insertBOTijoInfo(site):
@@ -77,4 +89,17 @@ def getLangsByFamily(family):
 	conn.close()
 	return langs
 
+def getNamespaceName(lang, family, nsnumber):
+	conn = MySQLdb.connect(host='sql', db='toolserver', read_default_file='~/.my.cnf', use_unicode=True)
+	cursor = conn.cursor()
+	cursor.execute("SELECT ns_name from namespace where domain='%s.%s.org' and ns_id=%s;" % (lang, family, nsnumber))
+	result=cursor.fetchall()
+	nsname=""
+	for row in result:
+		if len(row)==1:
+			nsname=unicode(row[0], "utf-8")
+
+	cursor.close()
+	conn.close()
+	return nsname
 
