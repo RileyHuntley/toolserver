@@ -61,8 +61,6 @@ c=0
 for l in f.xreadlines():
 	c+=1
 	percent(c)
-	if c % 1000000 == 0:
-		break
 	l=unicode(l, "utf-8")
 	t=l.strip().split("	")
 	if len(t)>9:
@@ -92,8 +90,9 @@ limitmain=30
 salidasmain=[]
 for year, d in anyos.items():
 	l=[]
-	for k, v in d.items():
-		l.append([v, k])
+	for page_title, edits in d.items():
+		if edits>1: #quitamos peso a la lista
+			l.append([edits, page_title])
 	l.sort()
 	l.reverse()
 	salidamain=u"== %s ==\n{{AP|Wikipedia:Artículos más editados/%s}}\n{| width=100%% style=\"background-color: transparent;\" " % (year, year)
@@ -126,7 +125,7 @@ print len(salidasmain)
 salidasmain2=[]
 for year, salida in salidasmain:
 	salidasmain2.append(salida)
-salidamain=u"{{/begin}}\n%s{{/end}}" % ("\n\n".join(salidasmain2))
+salidamain=u"{{/begin}}\n%s\n{{/end}}" % ("\n\n".join(salidasmain2))
 
 wiii=wikipedia.Page(site, wtitle)
 msg=u""
