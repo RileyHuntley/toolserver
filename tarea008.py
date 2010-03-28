@@ -301,7 +301,7 @@ for family, langs in projects.items():
 				s=u"{{/begin|%d}}\n%s{{/end}}" % (cuantos, s)
 			else: #by defect
 				title=u"User:Emijrp/List of Wikipedians by number of edits"
-				s=u"%s%s%s" % (table_header, s, table_footer)
+				s=u"For a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n%s%s%s" % (table_header, s, table_footer)
 			page=wikipedia.Page(site, title)
 			if projects[family][lang]['rankingusers'] and ((not page.exists()) or (not page.isRedirectPage() and not page.isDisambig() and page.get()!=s)):
 				page.put(s, resume)
@@ -323,7 +323,7 @@ for family, langs in projects.items():
 				sbots=u"{{/begin|%d}}\n%s{{/end}}" % (cuantos, sbots)
 			else: #by defect
 				title=u"User:Emijrp/List of Wikipedians by number of edits (bots included)"
-				sbots=u"%s%s%s" % (table_header, sbots, table_footer)
+				sbots=u"For a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n%s%s%s" % (table_header, sbots, table_footer)
 			page=wikipedia.Page(site, title)
 			if projects[family][lang]['rankingbots'] and ((not page.exists()) or (not page.isRedirectPage() and not page.isDisambig() and page.get()!=sbots)):
 				page.put(sbots, resume)

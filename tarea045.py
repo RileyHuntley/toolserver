@@ -21,12 +21,25 @@ import time, os
 import tarea000
 import MySQLdb
 
+wtitle=u"User:Emijrp/List of Wikimedians by number of edits"
+site=wikipedia.Site('meta', 'meta')
 limit=1000
 conn = MySQLdb.connect(host='sql', db='toolserver', read_default_file='~/.my.cnf', use_unicode=True)
 cursor = conn.cursor()
 cursor.execute("SELECT dbname, domain, server, lang, family from wiki where is_closed=0 and (family='commons' or family='wikibooks' or family='wikinews' or family='wikipedia' or family='wikiquote' or family='wikisource' or family='wikispecies' or family='wikiversity' or family='wiktionary');")
 result=cursor.fetchall()
 users=[]
+bots=[]
+botssubpage=wikipedia.Page(site, u"%s/Unflagged bots" % wtitle)
+if botssubpage.exists():
+	for l in botssubpage.get().splitlines():
+		t=l.split(";")
+		if len(t)==3:
+			bots.append([t[0], t[1], t[2]])
+	output=botssubpage.get().splitlines()
+	output.sort()
+	botssubpage.put("\n".join(output), u"BOT - Sorting list")
+
 for row in result:
 	#break
 	if len(row)==5:
@@ -46,26 +59,66 @@ for row in result:
 			print domain, time.time()-t1, "seconds"
 		
 			for row2 in result2:
-				user_name=row2[0]
+				user_name=unicode(row2[0], "utf-8")
 				user_editcount=row2[1]
 				users.append([user_editcount, user_name, domain, lang, family])
 			cursor2.close()
 			conn2.close()
+			
+			try:
+				bots2=tarea000.botList(wikipedia.Site(lang, family))
+				for bot in bots2:
+					bots.append([lang, family, bot])
+			except:
+				print "Error while recovering bot list"
 		except:
 			print "Error", dbname, domain
 
 users.sort()
 users.reverse()
-site=wikipedia.Site('meta', 'meta')
-wiii=wikipedia.Page(site, u"User:Emijrp/List of Wikimedians by number of edits")
-output=u"{{/begin|%s}}\n{| class='wikitable sortable' \n! # !! User !! Project !! Edits" % limit
-c=0
+
+#hide users
+hidepage=wikipedia.Page(site, u"%s/Anonymous" % wtitle)
+m=re.compile(ur"(?i)\[\[\s*User\s*:\s*(?P<user>[^\]\|]+?)\s*[\|\]]").finditer(hidepage.get())
+hidden=[]
+for i in m:
+	hidden.append(i.group("user"))
+
+print len(hidden), "usuarios ocultos"
+
+output=u"{{/begin|%s}}\n<center>\n{| class='wikitable sortable' style='text-align: center;' \n! # !! User !! Project !! Edits" % limit
+outputbot=u"{{/begin|%s}}\n<center>\n{| class='wikitable sortable' style='text-align: center;' \n! # !! User !! Project !! Edits" % limit
+c=1
+cbots=1
 for user_editcount, user_name, domain, lang, family in users:
-	c+=1
-	output+=u"\n|-\n| %d || [[%s:%s:User:%s|%s]] || %s || [[%s:%s:Special:Contributions/%s|%d]] " % (c, family, lang, user_name, user_name, domain, family, lang, user_name, user_editcount)
-	if c == limit:
+	prefix=u""
+	if family in ["commons", "wikispecies"]:
+		prefix=family
+	else:
+		prefix=u"%s:%s" % (family, lang)
+	if hidden.count(user_name):
+		if bots.count([lang, family, user_name])==0:
+			if c<=limit:
+				output=u"{{/begin|%s}}\n<center>\n{| class='wikitable sortable' style='text-align: center;' \n! # !! User !! Project !! Edits" % limit
+				c+=1
+		if cbots<=limit:
+			outputbot+=u"\n|-\n| %d || [Placeholder] || %s || %d " % (c, domain, user_editcount)
+			cbots+=1
+	else:
+		if bots.count([lang, family, user_name])==0:
+			if c<=limit:
+				output+=u"\n|-\n| %d || [[%s:User:%s|%s]] || %s || [[%s:Special:Contributions/%s|%d]] " % (c, prefix, user_name, user_name, domain, prefix, user_name, user_editcount)
+				c+=1
+		outputbot+=u"\n|-\n| %d || [[%s:User:%s|%s]] || %s || [[%s:Special:Contributions/%s|%d]] " % (c, prefix, user_name, user_name, domain, prefix, user_name, user_editcount)
+		if cbots<=limit:
+			cbots+=1
+	if c>limit and cbots>limit:
 		break
-output+=u"\n|}\n{{/end}}"
+output+=u"\n|}\n</center>\n{{/end}}"
+outputbot+=u"\n|}\n</center>\n{{/end}}"
+wiii=wikipedia.Page(site, wtitle)
+wiii.put(output, u"BOT - Updating ranking")
+wiii=wikipedia.Page(site, u"%s (bots included)" % wtitle)
 wiii.put(output, u"BOT - Updating ranking")
 
 cursor.close()
