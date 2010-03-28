@@ -37,8 +37,10 @@ def insertBOTijoInfo(site):
 		bot=wikipedia.Page(site, u"User:BOTijo")
 		if not bot.exists():
 			bot.put(u"{{/info}}", u"BOT - Creating bot userpage")
+			time.sleep(delay)
 		elif not re.search(ur"{{/info}}", bot.get()):
 			bot.put(u"{{/info}}\n%s" % bot.get(), u"BOT - Adding info")
+			time.sleep(delay)
 		botinfo=wikipedia.Page(site, u"User:BOTijo/info")
 		info=u"""<center>
 {| class="wikitable" width=600px

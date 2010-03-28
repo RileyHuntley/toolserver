@@ -18,6 +18,7 @@ import datetime, time
 import os, re, wikipedia, sys
 import tarea000
 
+delay=5
 table_header=u"{| class='wikitable sortable' style='text-align:center;'\n! #\n! User\n! Edits\n"
 table_footer=u"|}"
 begin=u"''Please, translate this into your language and delete the english text'': This table shows '''first {{{1}}} users with more edits''' in this Wikipedia. Bots are not included.\n\n''If you want to change page title, contact to [[:es:User talk:Emijrp]]. Thanks.''\n\n<center>\n%s" % table_header
@@ -282,7 +283,7 @@ for family, langs in projects.items():
 		if bots.count(u"BOTijo") or noflagrequired.count([lang, family]):
 			resume=u"BOT - Updating ranking"
 		else:
-			resume=u"BOT - Updating ranking (This bot only makes a few edits in user subpages. Please, don't block. Contact to [[:w:es:User talk:Emijrp]])"
+			resume=u"BOT - Updating ranking (This bot [[User:BOTijo|only makes a few edits in user subpages]]. Please, don't block. Contact to [[w:es:User talk:Emijrp]])"
 		
 		
 		#first ranking
@@ -293,11 +294,11 @@ for family, langs in projects.items():
 				page=wikipedia.Page(site, u"%s/begin" % title)
 				if projects[family][lang]['rankingusers'] and not page.exists():
 					page.put(begin, resume)
-					time.sleep(5)
+					time.sleep(delay)
 				page=wikipedia.Page(site, u"%s/end" % title)
 				if projects[family][lang]['rankingusers'] and not page.exists():
 					page.put(end, resume)
-					time.sleep(5)
+					time.sleep(delay)
 				s=u"{{/begin|%d}}\n%s{{/end}}" % (cuantos, s)
 			else: #by defect
 				title=u"User:Emijrp/List of Wikipedians by number of edits"
@@ -305,7 +306,7 @@ for family, langs in projects.items():
 			page=wikipedia.Page(site, title)
 			if projects[family][lang]['rankingusers'] and ((not page.exists()) or (not page.isRedirectPage() and not page.isDisambig() and page.get()!=s)):
 				page.put(s, resume)
-				time.sleep(5)
+				time.sleep(delay)
 		
 		#second ranking
 		if len(sbots)>1000 and (family!='wiktionary' and lang!='simple'): #evitando errores de db replication
@@ -315,11 +316,11 @@ for family, langs in projects.items():
 				page=wikipedia.Page(site, u"%s/begin" % title)
 				if projects[family][lang]['rankingbots'] and not page.exists():
 					page.put(begin2, resume)
-					time.sleep(5)
+					time.sleep(delay)
 				page=wikipedia.Page(site, u"%s/end" % title)
 				if projects[family][lang]['rankingbots'] and not page.exists():
 					page.put(end2, resume)
-					time.sleep(5)
+					time.sleep(delay)
 				sbots=u"{{/begin|%d}}\n%s{{/end}}" % (cuantos, sbots)
 			else: #by defect
 				title=u"User:Emijrp/List of Wikipedians by number of edits (bots included)"
@@ -327,7 +328,7 @@ for family, langs in projects.items():
 			page=wikipedia.Page(site, title)
 			if projects[family][lang]['rankingbots'] and ((not page.exists()) or (not page.isRedirectPage() and not page.isDisambig() and page.get()!=sbots)):
 				page.put(sbots, resume)
-				time.sleep(5)
+				time.sleep(delay)
 		
 		#otras plantillas
 		if lang=='es':

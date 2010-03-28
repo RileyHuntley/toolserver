@@ -70,7 +70,7 @@ for row in result:
 				for bot in bots2:
 					bots.append([lang, family, bot])
 			except:
-				print "Error while recovering bot list"
+				print "Error while recovering bot list", domain
 		except:
 			print "Error", dbname, domain
 
@@ -99,7 +99,7 @@ for user_editcount, user_name, domain, lang, family in users:
 	if hidden.count(user_name):
 		if bots.count([lang, family, user_name])==0:
 			if c<=limit:
-				output=u"{{/begin|%s}}\n<center>\n{| class='wikitable sortable' style='text-align: center;' \n! # !! User !! Project !! Edits" % limit
+				output+=u"\n|-\n| %d || [Placeholder] || %s || %d " % (c, domain, user_editcount)
 				c+=1
 		if cbots<=limit:
 			outputbot+=u"\n|-\n| %d || [Placeholder] || %s || %d " % (c, domain, user_editcount)
@@ -119,7 +119,7 @@ outputbot+=u"\n|}\n</center>\n{{/end}}"
 wiii=wikipedia.Page(site, wtitle)
 wiii.put(output, u"BOT - Updating ranking")
 wiii=wikipedia.Page(site, u"%s (bots included)" % wtitle)
-wiii.put(output, u"BOT - Updating ranking")
+wiii.put(outputbot, u"BOT - Updating ranking")
 
 cursor.close()
 conn.close()	
