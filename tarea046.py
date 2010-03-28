@@ -16,6 +16,26 @@
 
 import wikipedia
 import urllib, re
+import htmlentitydefs
+
+def convertentity(m):
+	"""Convert a HTML entity into normal string (ISO-8859-1)"""
+	print m.group(2)
+	if m.group(1)=='#':
+		try:
+			return chr(int(m.group(2)))
+		except ValueError:
+			return '&#%s;' % m.group(2)
+	try:
+		return htmlentitydefs.entitydefs[m.group(2)]
+	except KeyError:
+		return '&%s;' % m.group(2)
+
+def unquotehtml(s):
+    """Convert a HTML quoted string into normal string (ISO-8859-1).
+
+    Works with &#XX; and with &nbsp; &gt; etc."""
+    return re.sub(r'&(#?)(.+?);',convertentity,s) 
 
 site=wikipedia.Site('meta', 'meta')
 tables=[
@@ -29,8 +49,17 @@ tables=[
 ]
 for table, url in tables:
 	wii=wikipedia.Page(site, table)
-	output=unicode(urllib.urlopen(url).read(), "utf-8")
-	output=re.sub(ur"(<pre>\n|\n</pre>)", ur"", output)
+	output=urllib.urlopen(url).read()
+	output="{|"+("{|".join(output.split("{|")[1:]))
+	output=re.sub(ur"(?im)(<pre>\n?|\n?</pre>|</?[^>]+?>)", ur"", output)
+	output.strip()
+	output=unquotehtml(output)
+	if table=="List of Wikipedias/Table":
+		output="=== 1 000 000+ articles ===\n"+output
 	if wii.get()!=output:
 		wii.put(output, u"BOT - Updating page")
+
+
+
+
 
