@@ -67,18 +67,23 @@ for l in f.xreadlines():
 		[page_title, page_id, rev_id, rev_timestamp, rev_author, rev_comment, md5_, rev_len, rev_type]=t[0:9]
 	else:
 		continue
+	try:
+		page_id=int(page_id)
+	except:
+		print t
+		#sys.exit()
 	if not re.search(no_pattern, page_title):
 		year=rev_timestamp[0:4]
 		if anyos.has_key(year):
-			if anyos[year].has_key(page_title):
-				anyos[year][page_title]+=1
-				anyos['Total'][page_title]+=1
+			if anyos[year].has_key(page_id):
+				anyos[year][page_id]+=1
+				anyos['Total'][page_id]+=1
 			else:
-				anyos[year][page_title]=1
-				anyos['Total'][page_title]=1
+				anyos[year][page_id]=1
+				anyos['Total'][page_id]=1
 		else:
-			anyos[year]={page_title:1}
-			anyos['Total'][page_title]=1
+			anyos[year]={page_id:1}
+			anyos['Total'][page_id]=1
 f.close()
 
 wtitle="User:Emijrp/List of pages by edit count"
@@ -91,8 +96,8 @@ salidasmain=[]
 for year, d in anyos.items():
 	l=[]
 	for page_title, edits in d.items():
-		if edits>1: #quitamos peso a la lista
-			l.append([edits, page_title])
+		#if edits>1: #quitamos peso a la lista
+		l.append([edits, page_title])
 	l.sort()
 	l.reverse()
 	salidamain=u"== %s ==\n{{AP|Wikipedia:Artículos más editados/%s}}\n{| width=100%% style=\"background-color: transparent;\" " % (year, year)
