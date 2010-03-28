@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import datetime
+import datetime, time
 import os, re, wikipedia, sys
 import tarea000
 
@@ -293,16 +293,19 @@ for family, langs in projects.items():
 				page=wikipedia.Page(site, u"%s/begin" % title)
 				if projects[family][lang]['rankingusers'] and not page.exists():
 					page.put(begin, resume)
+					time.sleep(5)
 				page=wikipedia.Page(site, u"%s/end" % title)
 				if projects[family][lang]['rankingusers'] and not page.exists():
 					page.put(end, resume)
+					time.sleep(5)
 				s=u"{{/begin|%d}}\n%s{{/end}}" % (cuantos, s)
 			else: #by defect
 				title=u"User:Emijrp/List of Wikipedians by number of edits"
 				s=u"%s%s%s" % (table_header, s, table_footer)
 			page=wikipedia.Page(site, title)
 			if projects[family][lang]['rankingusers'] and ((not page.exists()) or (not page.isRedirectPage() and not page.isDisambig() and page.get()!=s)):
-				pass#page.put(s, resume)
+				page.put(s, resume)
+				time.sleep(5)
 		
 		#second ranking
 		if len(sbots)>1000 and (family!='wiktionary' and lang!='simple'): #evitando errores de db replication
@@ -312,16 +315,19 @@ for family, langs in projects.items():
 				page=wikipedia.Page(site, u"%s/begin" % title)
 				if projects[family][lang]['rankingbots'] and not page.exists():
 					page.put(begin2, resume)
+					time.sleep(5)
 				page=wikipedia.Page(site, u"%s/end" % title)
 				if projects[family][lang]['rankingbots'] and not page.exists():
 					page.put(end2, resume)
+					time.sleep(5)
 				sbots=u"{{/begin|%d}}\n%s{{/end}}" % (cuantos, sbots)
 			else: #by defect
 				title=u"User:Emijrp/List of Wikipedians by number of edits (bots included)"
 				sbots=u"%s%s%s" % (table_header, sbots, table_footer)
 			page=wikipedia.Page(site, title)
 			if projects[family][lang]['rankingbots'] and ((not page.exists()) or (not page.isRedirectPage() and not page.isDisambig() and page.get()!=sbots)):
-				pass#page.put(sbots, resume)
+				page.put(sbots, resume)
+				time.sleep(5)
 		
 		#otras plantillas
 		if lang=='es':

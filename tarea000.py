@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import wikipedia, re
+import time
 
 def latestDump(family, lang, date):
 	return
@@ -31,7 +32,8 @@ def botList(site):
 	return bots
 
 def insertBOTijoInfo(site):
-	if botList(site).count(u"BOTijo")==0:
+	delay=10
+	if botList(site).count(u"BOTijo")==0: #no tiene flag
 		bot=wikipedia.Page(site, u"User:BOTijo")
 		if not bot.exists():
 			bot.put(u"{{/info}}", u"BOT - Creating bot userpage")
@@ -40,9 +42,10 @@ def insertBOTijoInfo(site):
 		botinfo=wikipedia.Page(site, u"User:BOTijo/info")
 		info=u"""<center>
 {| class="wikitable" width=600px
-| This is a '''bot account''' operated by [[w:es:User:Emijrp|emijrp]] from [[w:es:Mainpage|Spanish Wikipedia]]. It updates some global rankings, like:
-* [[User:Emijrp/List of Wikipedians by number of edits]]
+| This is a '''bot account''' operated by [[w:es:User:Emijrp|emijrp]] from [[w:es:Mainpage|Spanish Wikipedia]]. It updates some global rankings, like ([[Special:Contributions/BOTijo|see edits]]):
+* [[User:Emijrp/List of Wikipedians by number of edits]] ([[User:Emijrp/List of Wikipedians by number of edits (bots included)|bots included]])
 * [[User:Emijrp/List of Wikipedians by page count]]
+* [[meta:User:Emijrp/List of Wikimedians by number of edits]]
 This bot edits at a '''very low rate''' (only a few edits per day), and '''only user subpages'''. If a flag is required for this, I will request it. Please, [[:es:User talk:Emijrp|notice me]], thanks : ). ([http://toolserver.org/~vvv/sulutil.php?user=BOTijo Flag was granted in largest Wikipedias]).
 |-
 | '''This [[w:en:Wikipedia:Bot policy|bot]] runs on the [[meta:Toolserver|Wikimedia Toolserver]].''' <br /><small>''Administrators: If this bot needs to be blocked due to a malfunction, please remember to disable autoblocks so that other Toolserver bots are not affected.''
@@ -50,7 +53,21 @@ This bot edits at a '''very low rate''' (only a few edits per day), and '''only 
 </center>"""
 		if not botinfo.exists() or botinfo.get()!=info:
 			botinfo.put(info, u"BOT - Bot info page")
+			time.sleep(delay)
 		bottalk=bot.toggleTalkPage()
 		if not bottalk.exists():
 			bottalk.put(u"#REDIRECT [[User:BOTijo]]", u"BOT - Redirect")
+			time.sleep(delay)
+	else: #tiene flag
+		bot=wikipedia.Page(site, u"User:BOTijo")
+		if not bot.exists():
+			bot.put(u"This is a bot account operated by [[w:es:User:Emijrp|emijrp]] from [[w:es:Mainpage|Spanish Wikipedia]].\n\n'''This [[w:en:Wikipedia:Bot policy|bot]] runs on the [[meta:Toolserver|Wikimedia Toolserver]].''' <br /><small>''Administrators: If this bot needs to be blocked due to a malfunction, please remember to disable autoblocks so that other Toolserver bots are not affected.''", u"BOT - Creating bot userpage")
+			time.sleep(delay)
+		else:
+			bot.put(re.sub(ur"(?i)\{\{\s*/info\s*\}\}", ur"", bot.get()), u"BOT - Flag granted")
+			time.sleep(delay)
+		bottalk=bot.toggleTalkPage()
+		if not bottalk.exists():
+			bottalk.put(u"#REDIRECT [[User:BOTijo]]", u"BOT - Redirect")
+			time.sleep(delay)
 

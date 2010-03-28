@@ -44,6 +44,9 @@ for row in result:
 		nicks.add(unicode(row[0], "utf-8"))
 wikipedia.output(u"%s usuarios con mas de %s ediciones " % (len(nicks), minimo))
 
+cursor.close()
+conn.close()
+
 days={}
 c=0
 f=bz2.BZ2File("/mnt/user-store/dump/%swiki-fetched.txt.bz" % lang, "r")
