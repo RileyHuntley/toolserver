@@ -36,32 +36,36 @@ for row in result:
 		lang=row[3]
 		family=row[4]
 		
-		t1=time.time()
-		conn2 = MySQLdb.connect(host='sql-s%s' % server, db=dbname, read_default_file='~/.my.cnf', use_unicode=True)
-		cursor2 = conn2.cursor()
-		cursor2.execute("select user_name, user_editcount from user where user_editcount!=0 order by user_editcount desc limit %s;" % limit)
-		result2=cursor2.fetchall()
-		print domain, time.time()-t1, "seconds"
 		
-		for row2 in result2:
-			user_name=row2[0]
-			user_editcount=row2[1]
-			users.append([user_editcount, user_name, domain, lang, family])
-		cursor2.close()
-		conn2.close()
+		try:
+			t1=time.time()
+			conn2 = MySQLdb.connect(host='sql-s%s' % server, db=dbname, read_default_file='~/.my.cnf', use_unicode=True)
+			cursor2 = conn2.cursor()
+			cursor2.execute("select user_name, user_editcount from user where user_editcount!=0 order by user_editcount desc limit %s;" % limit)
+			result2=cursor2.fetchall()
+			print domain, time.time()-t1, "seconds"
+		
+			for row2 in result2:
+				user_name=row2[0]
+				user_editcount=row2[1]
+				users.append([user_editcount, user_name, domain, lang, family])
+			cursor2.close()
+			conn2.close()
+		except:
+			print "Error", dbname, domain
 
 users.sort()
 users.reverse()
 site=wikipedia.Site('meta', 'meta')
 wiii=wikipedia.Page(site, u"User:Emijrp/List of Wikimedians by number of edits")
-output=u"{| class='wikitable sortable' \n! # !! User !! Project !! Edits"
+output=u"{{/begin|%s}}\n{| class='wikitable sortable' \n! # !! User !! Project !! Edits" % limit
 c=0
 for user_editcount, user_name, domain, lang, family in users:
 	c+=1
 	output+=u"\n|-\n| %d || [[%s:%s:User:%s|%s]] || %s || [[%s:%s:Special:Contributions/%s|%d]] " % (c, family, lang, user_name, user_name, domain, family, lang, user_name, user_editcount)
 	if c == limit:
 		break
-output+=u"\n|}"
+output+=u"\n|}\n{{/end}}"
 wiii.put(output, u"BOT - Updating ranking")
 
 cursor.close()
