@@ -42,17 +42,7 @@ def insertBOTijoInfo(site):
 			bot.put(u"{{/info}}\n%s" % bot.get(), u"BOT - Adding info")
 			time.sleep(delay)
 		botinfo=wikipedia.Page(site, u"User:BOTijo/info")
-		info=u"""<center>
-{| class="wikitable" width=600px
-| This is a '''bot account''' operated by [[w:es:User:Emijrp|emijrp]] from [[w:es:Mainpage|Spanish Wikipedia]]. It updates some global rankings, like ([[Special:Contributions/BOTijo|see edits]]):
-* [[User:Emijrp/List of Wikipedians by number of edits]] ([[User:Emijrp/List of Wikipedians by number of edits (bots included)|bots included]])
-* [[User:Emijrp/List of Wikipedians by page count]]
-* [[meta:User:Emijrp/List of Wikimedians by number of edits]]
-This bot edits at a '''very low rate''' (only a few edits per day), and '''only user subpages'''. If a flag is required for this, I will request it. Please, [[:es:User talk:Emijrp|notice me]], thanks : ). ([http://toolserver.org/~vvv/sulutil.php?user=BOTijo Flag was granted in largest Wikipedias]).
-|-
-| '''This [[w:en:Wikipedia:Bot policy|bot]] runs on the [[meta:Toolserver|Wikimedia Toolserver]].''' <br /><small>''Administrators: If this bot needs to be blocked due to a malfunction, please remember to disable autoblocks so that other Toolserver bots are not affected.''
-|}
-</center>"""
+		info=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u"User:Emijrp/BOTijoInfo.css").get()
 		if not botinfo.exists() or botinfo.get()!=info:
 			botinfo.put(info, u"BOT - Bot info page")
 			time.sleep(delay)
