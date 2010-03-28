@@ -19,6 +19,7 @@ import os, re, wikipedia, sys
 import tarea000
 
 delay=5
+minimumedits=100 #edits to appear in the ranking
 table_header=u"{| class='wikitable sortable' style='text-align:center;'\n! #\n! User\n! Edits\n"
 table_footer=u"|}"
 begin=u"''Please, translate this into your language and delete the english text'': This table shows '''first {{{1}}} users with more edits''' in this Wikipedia. Bots are not included.\n\n''If you want to change page title, contact to [[:es:User talk:Emijrp]]. Thanks.''\n\n<center>\n%s" % table_header
@@ -170,8 +171,11 @@ projects={
 		'he': {'rankingusers':True, 'rankingbots':True, 'limit':500},
 		},"""
 
-#if len(sys.argv)>1:
-#	lll=[sys.argv[1]]
+#meter el resto de idiomas
+
+for lang in tarea000.getLangsByFamily('wikipedia'):
+	if not projects['wikipedia'].has_key(lang):
+		projects['wikipedia'][lang]=tt100
 
 #generating interwikis
 iws1={}
@@ -252,6 +256,8 @@ for family, langs in projects.items():
 		planti=u"{| class='wikitable sortable' style='font-size: 90%;text-align: center;float: right;'\n! #\n! Usuario\n! Ediciones\n"
 		for i in m:
 			ed=str(i.group(2))
+			if ed<minimumedits:
+				continue
 			nick=i.group(1)
 			if c<=cuantos:
 				if bots.count(nick)==0:
@@ -337,7 +343,4 @@ for family, langs in projects.items():
 			
 			page=wikipedia.Page(site, u"Template:Ediciones")
 			page.put(planti2, resume)
-		
-		#userpage bot
-		tarea000.insertBOTijoInfo(site)
 

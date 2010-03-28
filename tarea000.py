@@ -63,3 +63,18 @@ def insertBOTijoInfo(site):
 			bottalk.put(u"#REDIRECT [[User:BOTijo]]", u"BOT - Redirect")
 			time.sleep(delay)
 
+def getLangsByFamily(family):
+	conn = MySQLdb.connect(host='sql', db='toolserver', read_default_file='~/.my.cnf', use_unicode=True)
+	cursor = conn.cursor()
+	cursor.execute("SELECT lang from wiki where family='%s' and is_closed=0;" % family)
+	result=cursor.fetchall()
+	langs=[]
+	for row in result:
+		if len(row)==1:
+			langs.append(row[0])		
+
+	cursor.close()
+	conn.close()
+	return langs
+
+
