@@ -238,7 +238,7 @@ for family, langs in projects.items():
 		planti2=u"{{#switch:{{{1|User}}}\n"
 		planti=u"{| class='wikitable sortable' style='font-size: 90%;text-align: center;float: right;'\n! #\n! Usuario\n! Ediciones\n"
 		for i in m:
-			ed=str(i.group(2))
+			ed=int(i.group(2))
 			if ed<minimumedits:
 				continue
 			nick=i.group(1)
