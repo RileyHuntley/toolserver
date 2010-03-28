@@ -100,13 +100,14 @@ for event, elem in context:
 		elem.clear()
 		if crevisions % limit == 0:
 			try:
-				eta=((rawtotalrevisions-crevisions)/(crevisions/(time.time()-t1)))/3600
 				pagesspeed=(cpages-cpagesprev)/(time.time()-t2)
 				revisionsspeed=(crevisions-crevisionsprev)/(time.time()-t2)
 				print u'Pages: %d | Revisions: %d | Rev/pag = %.2f | %.2f pags/s | %.2f revs/s | ETA %.0f minutes' % (cpages, crevisions, (crevisions/cpages), pagesspeed, revisionsspeed, ((rawtotalrevisions-crevisions)/revisionsspeed)/60.0)
 			except:
 				pass
 			t2=time.time()
+			crevisionsprev=crevisions
+			cpagesprev=cpages
 		#output rev
 		md5_=md5.new(rev_text.encode("utf-8")).hexdigest() #digest hexadecimal
 		rev_comment=re.sub(r_newlines, " ", rev_comment) #eliminamos saltos de linea, curiosamente algunos comentarios tienen \n en el dump y causan problemas
