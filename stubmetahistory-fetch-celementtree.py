@@ -49,88 +49,118 @@ rev_comment=''
 rev_text=''
 lock_page_id=False
 lock_revision_id=False
+lock_username_id=False
 t1=time.time()
 t2=time.time()
 limit=1000
 cpages=crevisions=cpagesprev=crevisionsprev=0.0
 md5s=[]
 md5sd={}
+test=[1,2]
+c=10
+u=False
 for event, elem in context:
 	tag=elem.tag.split("}")[1]	
-	
-	if event=="start" and tag=="page":
-		lock_page_id=True
-	if event=="start" and tag=="revision":
-		lock_revision_id=True
-	
-	if tag=="id":
-		if lock_page_id:
-			page_id=elem.text
-			lock_page_id=False
-		if lock_revision_id:
-			rev_id=elem.text
-			lock_revision_id=False
-	if tag=="title":
-		page_title=elem.text
-	
-	if tag=="timestamp":
-		rev_timestamp=elem.text
-	
-	if tag=="username" or tag=="ip":
-		rev_author=elem.text
-	
-	if tag=="comment":
-		if elem.text:
-			rev_comment=elem.text
-		else:
-			rev_comment=''
 
-	if tag=="text":
-		if elem.text:
-			rev_text=elem.text
-		else:
-			rev_text=''
+	"""if u:  testing code for nones, vars test=[1,2] and c=10 and u=False required
+		c-=1
+	if c==0:
+		test=test[-20:]
+		test.append([event, tag, elem.text])
+		print test
+		time.sleep(3)
+		c=10
+		u=False
+	if tag=='id' and elem.text==None:
+		u=True
+		if elem.text and len(elem.text)>40:
+			elem.text=elem.text[:39]
+		test.append([event, tag, elem.text])
+	else:
+		if elem.text and len(elem.text)>40:
+			elem.text=elem.text[:39]
+		test.append([event, tag, elem.text])"""
 	
-	if event=="end" and tag=="page":
-		cpages+=1
-		elem.clear()
+	if event=="start":
+		#switch ordenado por frecuencia de aparición
+		if tag=="revision":
+			lock_revision_id=True
+		elif tag=="username":
+			lock_username_id=True
+		elif tag=="page":
+			lock_page_id=True
+	elif event=="end":
+		if tag=="id": #captura de ids		
+			if lock_revision_id:
+				if elem.text:
+					rev_id=int(elem.text)
+					lock_revision_id=False
+				else:
+					print "Dump error:", page_id
+					sys.exit()
+			elif lock_username_id:
+				if elem.text:
+					rev_author_id=int(elem.text)
+					lock_username_id=False
+				else:
+					print "Dump error:", page_id
+					sys.exit()
+			elif lock_page_id:
+				if elem.text:
+					page_id=int(elem.text)
+					lock_page_id=False
+				else:
+					print "Dump error:", page_id
+					sys.exit()
+		elif tag=="revision":
+			elem.clear()
+			crevisions+=1
+			if crevisions % limit == 0:
+				try:
+					pagesspeed=(cpages-cpagesprev)/(time.time()-t2)
+					revisionsspeed=(crevisions-crevisionsprev)/(time.time()-t2)
+					print u'Pages: %d | Revisions: %d | Rev/pag = %.2f | %.2f pags/s | %.2f revs/s | ETA %.0f minutes' % (cpages, crevisions, (crevisions/cpages), pagesspeed, revisionsspeed, ((rawtotalrevisions-crevisions)/revisionsspeed)/60.0)
+				except:
+					pass
+				t2=time.time()
+				crevisionsprev=crevisions
+				cpagesprev=cpages
+			#output rev
+			md5_=md5.new(rev_text.encode("utf-8")).hexdigest() #digest hexadecimal
+			rev_comment=re.sub(r_newlines, " ", rev_comment) #eliminamos saltos de linea, curiosamente algunos comentarios tienen \n en el dump y causan problemas
 		
-	if event=="end" and tag=="revision":
-		crevisions+=1
-		elem.clear()
-		if crevisions % limit == 0:
-			try:
-				pagesspeed=(cpages-cpagesprev)/(time.time()-t2)
-				revisionsspeed=(crevisions-crevisionsprev)/(time.time()-t2)
-				print u'Pages: %d | Revisions: %d | Rev/pag = %.2f | %.2f pags/s | %.2f revs/s | ETA %.0f minutes' % (cpages, crevisions, (crevisions/cpages), pagesspeed, revisionsspeed, ((rawtotalrevisions-crevisions)/revisionsspeed)/60.0)
-			except:
-				pass
-			t2=time.time()
-			crevisionsprev=crevisions
-			cpagesprev=cpages
-		#output rev
-		md5_=md5.new(rev_text.encode("utf-8")).hexdigest() #digest hexadecimal
-		rev_comment=re.sub(r_newlines, " ", rev_comment) #eliminamos saltos de linea, curiosamente algunos comentarios tienen \n en el dump y causan problemas
-		
-		rev_len=len(rev_text)
-		rev_links=len(re.findall(r_links, rev_text))
-		rev_sections=len(re.findall(r_sections, rev_text))
-		rev_images=len(re.findall(r_images, rev_text))
-		rev_interwikis=len(re.findall(r_interwikis, rev_text))
-		rev_type=0
-		if re.search(r_redirect, rev_text):
-			rev_type=1
-		elif re.search(r_disambig, rev_text):
-			rev_type=2
-		output='%s	%s	%s	%s	%s	%s	%s	%s	%s	%s	%s	%s	%s\n' % (page_title, page_id, rev_id, rev_timestamp, rev_author, rev_comment, md5_, rev_len, rev_type, rev_links, rev_sections, rev_images, rev_interwikis)
-		g.write(output.encode('utf-8'))
-		#print page_title, page_id, rev_id, rev_timestamp, len(rev_text)
-		#limpiamos
-		rev_id=''
-		rev_timestamp=''
-		rev_author=''
-		rev_comment=''
-		rev_text=''
+			rev_len=len(rev_text)
+			rev_links=len(re.findall(r_links, rev_text))
+			rev_sections=len(re.findall(r_sections, rev_text))
+			rev_images=len(re.findall(r_images, rev_text))
+			rev_interwikis=len(re.findall(r_interwikis, rev_text))
+			rev_type=0
+			if re.search(r_redirect, rev_text):
+				rev_type=1
+			elif re.search(r_disambig, rev_text):
+				rev_type=2
+			output='%s	%s	%s	%s	%s	%s	%s	%s	%s	%s	%s	%s	%s\n' % (page_title, page_id, rev_id, rev_timestamp, rev_author, rev_comment, md5_, rev_len, rev_type, rev_links, rev_sections, rev_images, rev_interwikis)
+			g.write(output.encode('utf-8'))
+			#print page_title, page_id, rev_id, rev_timestamp, len(rev_text)
+			#limpiamos
+			rev_id=''
+			rev_timestamp=''
+			rev_author=''
+			rev_comment=''
+			rev_text=''
+		elif tag=="title":
+			page_title=elem.text
+		elif tag=="timestamp":
+			rev_timestamp=elem.text
+		elif tag=="ip":
+			rev_author=elem.text
+			rev_author_id=0
+		elif tag=="comment":
+			rev_comment=elem.text if elem.text else ''
+		elif tag=="text":
+			rev_text=elem.text if elem.text else ''
+		elif tag=="page":
+			cpages+=1
 
 source.close()
 g.close()
