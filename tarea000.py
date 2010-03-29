@@ -22,25 +22,35 @@ import MySQLdb
 def latestDump(family, lang, date):
 	return
 
+def userList(site, group):
+	users=[]
+	aufrom="!"
+	while aufrom:
+		query=wikipedia.query.GetData({'action':'query', 'list':'allusers', 'augroup':group, 'aulimit':'500', 'aufrom':aufrom},site=site,useAPI=True)
+		for allusers in query['query']['allusers']:
+			users.append(allusers['name'])
+		if query.has_key('query-continue'):
+			aufrom=query.has_key('query-continue')
+		else:
+			aufrom=""
+	return users
+
+def adminList(site):
+	return userList(site, 'sysop')
+
 def botList(site):
-	bots=[]
-	data=site.getUrl("/w/index.php?title=Special:Listusers&limit=5000&group=bot")
-	data=data.split('<!-- start content -->')
-	data=data[1].split('<!-- end content -->')[0]
-	m=re.compile(ur' title="[^\:]+?:(?P<botname>.*?)">\g<botname>').finditer(data)
-	for i in m:
-		bots.append(i.group("botname"))
-	
-	#get global bots too
-	data=wikipedia.Site('meta', 'meta').getUrl("/w/index.php?title=Special:GlobalUsers&limit=5000&group=Global_bot")
-	data=data.split('<!-- start content -->')
-	data=data[1].split('<!-- end content -->')[0]
-	m=re.compile(ur'<li>(?P<botname>.*?) ‎(\(<a href|\(unattached)').finditer(data)
-	for i in m:
-		bots.append(i.group("botname"))
-	
-	print bots
-	time.sleep(10)
+	bots=userList(site, 'bot')
+	#also meta bots
+	aufrom="!"
+	while aufrom:
+		query=wikipedia.query.GetData({'action':'query', 'list':'allusers', 'augroup':'bot', 'aulimit':'500', 'aufrom':aufrom},site=wikipedia.Site("meta", "meta"),useAPI=True)
+		for allusers in query['query']['allusers']:
+			bots.append(allusers['name'])
+		if query.has_key('query-continue'):
+			aufrom=query.has_key('query-continue')
+		else:
+			aufrom=""
+	bots.sort()
 	return bots
 
 def insertBOTijoInfo(site):
@@ -102,4 +112,32 @@ def getNamespaceName(lang, family, nsnumber):
 	cursor.close()
 	conn.close()
 	return nsname
+
+def getDbname(lang, family):
+	conn = MySQLdb.connect(host='sql', db='toolserver', read_default_file='~/.my.cnf', use_unicode=True)
+	cursor = conn.cursor()
+	cursor.execute("SELECT dbname from wiki where family='%s' and lang='%s';" % (family, lang))
+	result=cursor.fetchall()
+	dbname=""
+	for row in result:
+		if len(row)==1:
+			dbname=row[0]
+
+	cursor.close()
+	conn.close()
+	return dbname
+
+def getServer(lang, family):
+	conn = MySQLdb.connect(host='sql', db='toolserver', read_default_file='~/.my.cnf', use_unicode=True)
+	cursor = conn.cursor()
+	cursor.execute("SELECT server from wiki where family='%s' and lang='%s';" % (family, lang))
+	result=cursor.fetchall()
+	server=""
+	for row in result:
+		if len(row)==1:
+			server=row[0]
+
+	cursor.close()
+	conn.close()
+	return server
 

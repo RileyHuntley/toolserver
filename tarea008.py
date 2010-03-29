@@ -105,6 +105,14 @@ tras2={
 tt100={'rankingusers':True, 'rankingbots':True, 'limit':100}
 tt500={'rankingusers':True, 'rankingbots':True, 'limit':500}
 projects={
+	'wikipedia': {
+
+		'es': tt500,
+
+		},
+}
+
+"""
 	'wikinews': {
 		'es': tt100,
 		},
@@ -129,7 +137,7 @@ projects={
 		'simple': {'rankingusers':True, 'rankingbots':False, 'limit':100},
 		},
 
-}
+"""
 
 """'wikipedia': {
 		'es': {'rankingusers':True, 'rankingbots':True, 'limit':500},
@@ -166,7 +174,6 @@ projects={
 		},"""
 
 #meter el resto de idiomas
-
 for lang in tarea000.getLangsByFamily('wikipedia'):
 	if not projects['wikipedia'].has_key(lang):
 		projects['wikipedia'][lang]=tt100
@@ -201,19 +208,13 @@ for family, langs in projects.items():
 		print family, lang
 		title=u''
 		#la lista de bots debe ir dentro del bucle, ya que se llena con más bots de cada caso
-		bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot', u'EmxBot', u'YurikBot', u'H-Bot', u'Paulatz bot', u'TekBot', u'Alfiobot', u'RoboRex', u'Agtbot', u'Felixbot', u'Pixibot', u'Sz-iwbot', u'Timbot (Gutza)', u'Ginosbot', u'GrinBot', u'.anacondabot', u'Omdirigeringsrättaren', u'Rubinbot', u'HasharBot', u'NetBot', u"D'ohBot", u'Byrialbot', u'Broadbot', u'Guanabot', u'Chris G Bot 2', u'CCyeZBot', u'Soulbot', u'MSBOT', u'GnawnBot', u'Chris G Bot 3', u'Huzzlet the bot', u'JCbot', u'DodekBot', u'John Bot II', u'CyeZBot', u'Beefbot', u'Louperibot', u'SOTNBot', u'DirlBot', u'Obersachsebot', u'WikiDreamer Bot', u'YonaBot', u'Chlewbot', u'PixelBot', u'ToePeu.bot', u'HujiBot', u'Le Pied-bot', u'Ugur Basak Bot', u'NigelJBot', u'CommonsTicker', u'Tangobot', u'SeanBot', u'Corrector de redirecciones', u'HermesBot', u'Darkicebot', u'RedBot', u'HerculeBot', u'PatruBOT', u'RobotGMwikt', u'MonoBot', u'WikimediaNotifier', u'SBot39', u'DSisyphBot', u'GriffinBot1', u'WeggeBot', u'EhJBot3', u'Gerakibot', u'Picochip08', u'MondalorBot', u'Redirect fixer', u'', u'', u'', u'', u'', u'',]
+		bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot', u'EmxBot', u'YurikBot', u'H-Bot', u'Paulatz bot', u'TekBot', u'Alfiobot', u'RoboRex', u'Agtbot', u'Felixbot', u'Pixibot', u'Sz-iwbot', u'Timbot (Gutza)', u'Ginosbot', u'GrinBot', u'.anacondabot', u'Omdirigeringsrättaren', u'Rubinbot', u'HasharBot', u'NetBot', u"D'ohBot", u'Byrialbot', u'Broadbot', u'Guanabot', u'Chris G Bot 2', u'CCyeZBot', u'Soulbot', u'MSBOT', u'GnawnBot', u'Chris G Bot 3', u'Huzzlet the bot', u'JCbot', u'DodekBot', u'John Bot II', u'CyeZBot', u'Beefbot', u'Louperibot', u'SOTNBot', u'DirlBot', u'Obersachsebot', u'WikiDreamer Bot', u'YonaBot', u'Chlewbot', u'PixelBot', u'ToePeu.bot', u'HujiBot', u'Le Pied-bot', u'Ugur Basak Bot', u'NigelJBot', u'CommonsTicker', u'Tangobot', u'SeanBot', u'Corrector de redirecciones', u'HermesBot', u'Darkicebot', u'RedBot', u'HerculeBot', u'PatruBOT', u'RobotGMwikt', u'MonoBot', u'WikimediaNotifier', u'SBot39', u'DSisyphBot', u'GriffinBot1', u'WeggeBot', u'EhJBot3', u'Gerakibot', u'Picochip08', u'MondalorBot', u'Redirect fixer',]
+		#global bots a mano
+		bots+=[u'AHbot', u'Aibot', u'AkhtaBot', u'Albambot', u'Alecs.bot', u'Alexbot', u'AlleborgoBot', u'Almabot', u'AlnoktaBOT', u'Amirobot', u'AnankeBot', u'ArthurBot', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', ]
 		site=wikipedia.Site(lang, family)
 		
 		bots+=tarea000.botList(site)
-		
-		admins=[]
-		data=site.getUrl("/w/index.php?title=Special:Listusers&limit=5000&group=sysop")
-		data=data.split('<!-- start content -->')
-		data=data[1].split('<!-- end content -->')[0]
-		m=re.compile(ur" title=\".*?:(.*?)\">").finditer(data)
-		for i in m:
-			admins.append(i.group(1))
-		
+		admins=tarea000.adminList(site)
 		wikipedianm=tarea000.getNamespaceName(lang, family, 4)
 		
 		family2='wiki'
@@ -222,12 +223,12 @@ for family, langs in projects.items():
 		elif family=='wiktionary':
 			family2='wiktionary'
 		
-		os.system('mysql -h %s%s-p.db.toolserver.org -e "use %s%s_p;select user_name, user_editcount from user where user_editcount!=0 order by user_editcount desc limit 5000;" > /home/emijrp/temporal/tarea008.data' % (lang, family2, lang, family2))
-		
-		f=open('/home/emijrp/temporal/tarea008.data', 'r')
-		sql=unicode(f.read(), 'utf-8')
-		f.close()
-		m=re.compile(ur"(.+)	(\d+)").finditer(sql)
+		dbname=tarea000.getDbname(lang, family)
+		server=tarea000.getServer(lang, family)
+		conn = MySQLdb.connect(host='sql-s%s' % server, db=dbname, read_default_file='~/.my.cnf', use_unicode=True)
+		cursor = conn.cursor()
+		cursor.execute("select user_name, user_editcount from user where user_editcount!=0 order by user_editcount desc limit 5000;")
+		result=cursor.fetchall()
 		
 		s=u""
 		sbots=u""
@@ -237,25 +238,25 @@ for family, langs in projects.items():
 		cuantos=projects[family][lang]['limit']
 		planti2=u"{{#switch:{{{1|User}}}\n"
 		planti=u"{| class='wikitable sortable' style='font-size: 90%;text-align: center;float: right;'\n! #\n! Usuario\n! Ediciones\n"
-		for i in m:
-			ed=int(i.group(2))
+		for row in result:
+			nick=unicode(row[0], 'utf-8')
+			ed=int(row[1])
 			if ed<minimumedits:
 				continue
-			nick=i.group(1)
 			if c<=cuantos:
 				if bots.count(nick)==0:
 					if admins.count(nick):
-						s+=u"|-\n| %s || [[User:%s|%s]] (Admin) || [[Special:Contributions/%s|%s]] \n" % (str(c),nick,nick,nick,ed)
+						s+=u"|-\n| %d || [[User:%s|%s]] (Admin) || [[Special:Contributions/%s|%s]] \n" % (c,nick,nick,nick,ed)
 					else:
-						s+=u"|-\n| %s || [[User:%s|%s]] || [[Special:Contributions/%s|%s]] \n" % (str(c),nick,nick,nick,ed)
+						s+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%s]] \n" % (c,nick,nick,nick,ed)
 					if c<=10:
-						planti+=u"|-\n| %s || [[User:%s|%s]] || [[Special:Contributions/%s|%s]] \n" % (str(c),nick,nick,nick,ed)
+						planti+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%s]] \n" % (c,nick,nick,nick,ed)
 					c+=1
 			if cbots<=cuantos:
 				if bots.count(nick):
-					sbots+=u"|-\n| %s || [[User:%s|%s]] (Bot) || [[Special:Contributions/%s|%s]] \n" % (str(cbots),nick,nick,nick,ed)
+					sbots+=u"|-\n| %d || [[User:%s|%s]] (Bot) || [[Special:Contributions/%s|%s]] \n" % (cbots,nick,nick,nick,ed)
 				else:
-					sbots+=u"|-\n| %s || [[User:%s|%s]] || [[Special:Contributions/%s|%s]] \n" % (str(cbots),nick,nick,nick,ed)
+					sbots+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%s]] \n" % (cbots,nick,nick,nick,ed)
 				cbots+=1
 			if cplanti2<=2500:
 				planti2+=u"|%s=%s\n" % (nick,ed)
@@ -326,4 +327,7 @@ for family, langs in projects.items():
 			
 			page=wikipedia.Page(site, u"Template:Ediciones")
 			page.put(planti2, resume)
+		
+		cursor.close()
+		conn.close()
 
