@@ -81,16 +81,22 @@ for event, elem in context:
 			elem.text=elem.text[:39]
 		test.append([event, tag, elem.text])"""
 	
-	if event=="start":
-		#switch ordenado por frecuencia de aparición
-		if tag=="revision":
-			lock_revision_id=True
-		elif tag=="username":
-			lock_username_id=True
-		elif tag=="page":
-			lock_page_id=True
-	elif event=="end":
-		if tag=="id": #captura de ids		
+	#captura de ids
+	if tag=="id":
+		if event=="start":
+			if lock_revision_id:
+				if elem.text:
+					rev_id=int(elem.text)
+					lock_revision_id=False
+			elif lock_username_id:
+				if elem.text:
+					rev_author_id=int(elem.text)
+					lock_username_id=False
+			elif lock_page_id:
+				if elem.text:
+					page_id=int(elem.text)
+					lock_page_id=False
+		elif event=="end":
 			if lock_revision_id:
 				if elem.text:
 					rev_id=int(elem.text)
@@ -112,14 +118,49 @@ for event, elem in context:
 				else:
 					print "Dump error:", page_id
 					sys.exit()
+
+
+	if event=="start":
+		#switch ordenado por frecuencia de aparición
+		if tag=="revision":
+			lock_revision_id=True
+		elif tag=="title":
+			page_title=elem.text
+			#print page_title
+		elif tag=="timestamp":
+			rev_timestamp=elem.text
+		elif tag=="username":
+			lock_username_id=True
+			rev_author=elem.text
+		elif tag=="ip":
+			rev_author=elem.text
+			rev_author_id=0
+		elif tag=="comment":
+			if elem.text:#evitando none de blanqueos, o hay veces que no captura bien el texto?
+				rev_comment=elem.text
+			else:
+				rev_comment=''
+		elif tag=="text":
+			if elem.text:
+				rev_text=elem.text
+			else:
+				rev_text=''
+		elif tag=="page":
+			lock_page_id=True
+	elif event=="end":
+		if tag=="page":
+			cpages+=1
 		elif tag=="revision":
 			elem.clear()
 			crevisions+=1
+			if page_id==None or rev_id==None:
+				print page_title, page_id, rev_id, rev_timestamp, rev_author, rev_comment
 			if crevisions % limit == 0:
 				try:
 					pagesspeed=(cpages-cpagesprev)/(time.time()-t2)
 					revisionsspeed=(crevisions-crevisionsprev)/(time.time()-t2)
-					print u'Pages: %d | Revisions: %d | Rev/pag = %.2f | %.2f pags/s | %.2f revs/s | ETA %.0f minutes' % (cpages, crevisions, (crevisions/cpages), pagesspeed, revisionsspeed, ((rawtotalrevisions-crevisions)/revisionsspeed)/60.0)
+					secondsleft=((rawtotalrevisions-crevisions)/revisionsspeed)
+					print u'Pages: %d | Revisions: %d | Rev/pag = %.2f | %.2f pags/s | %.2f revs/s | ETA %.0f minutes (%.2f hours, %.2f days)' % (cpages, crevisions, (crevisions/cpages), pagesspeed, revisionsspeed, secondsleft/60.0, secondsleft/3600.0, secondsleft/86400)
 				except:
 					pass
 				t2=time.time()
@@ -140,6 +181,7 @@ for event, elem in context:
 			elif re.search(r_disambig, rev_text):
 				rev_type=2
 			output='%s	%s	%s	%s	%s	%s	%s	%s	%s	%s	%s	%s	%s\n' % (page_title, page_id, rev_id, rev_timestamp, rev_author, rev_comment, md5_, rev_len, rev_type, rev_links, rev_sections, rev_images, rev_interwikis)
+			#print output
 			g.write(output.encode('utf-8'))
 			#print page_title, page_id, rev_id, rev_timestamp, len(rev_text)
 			#limpiamos
@@ -148,19 +190,6 @@ for event, elem in context:
 			rev_author=''
 			rev_comment=''
 			rev_text=''
-		elif tag=="title":
-			page_title=elem.text
-		elif tag=="timestamp":
-			rev_timestamp=elem.text
-		elif tag=="ip":
-			rev_author=elem.text
-			rev_author_id=0
-		elif tag=="comment":
-			rev_comment=elem.text if elem.text else ''
-		elif tag=="text":
-			rev_text=elem.text if elem.text else ''
-		elif tag=="page":
-			cpages+=1
 
 source.close()
 g.close()
