@@ -30,11 +30,11 @@ r_links=re.compile(ur"\[\[\s*[^\]]+?\s*[\]\|]")
 r_categories=re.compile(ur"(?i)\[\[\s*(category|categoría)\s*\:\s*[^\]\|]+\s*[\]\|]")
 r_sections=re.compile(ur"(?im)^(\=+)[^\=]+?\1")
 r_templates=""
-r_interwikis="\[\[\s*[a-z]{2,3}(-[a-z]{2,3})?\s*\:"
-r_externallinks=""
+r_interwikis=re.compile(ur"(?i)\[\[\s*[a-z]{2,3}(-[a-z]{2,3})?\s*\:")
+r_externallinks=re.compile(ur"://")
 r_bold=""
 r_italic=""
-r_images="(?i)\[\[\s*(image|file|archivo|imagen)\s*\:"
+r_images=re.compile("(?i)\[\[\s*(image|file|archivo|imagen)\s*\:")
 #evolucion de la complejidad de la sintaxis: cada vez más <ref> {{code}} 
 r_htmltags=""
 r_htmltables="" #ha ido declinando en favor de {|
@@ -124,9 +124,6 @@ for event, elem in context:
 		#switch ordenado por frecuencia de aparición
 		if tag=="revision":
 			lock_revision_id=True
-		elif tag=="title":
-			page_title=elem.text
-			#print page_title
 		elif tag=="timestamp":
 			rev_timestamp=elem.text
 		elif tag=="username":
@@ -145,16 +142,21 @@ for event, elem in context:
 				rev_text=elem.text
 			else:
 				rev_text=''
+		elif tag=="title":
+			page_title=elem.text
+			#print page_title
 		elif tag=="page":
 			lock_page_id=True
 	elif event=="end":
 		if tag=="page":
 			cpages+=1
+			elem.clear()
 		elif tag=="revision":
 			elem.clear()
 			crevisions+=1
 			if page_id==None or rev_id==None:
 				print page_title, page_id, rev_id, rev_timestamp, rev_author, rev_comment
+				sys.exit()
 			if crevisions % limit == 0:
 				try:
 					pagesspeed=(cpages-cpagesprev)/(time.time()-t2)
@@ -169,18 +171,18 @@ for event, elem in context:
 			#output rev
 			md5_=md5.new(rev_text.encode("utf-8")).hexdigest() #digest hexadecimal
 			rev_comment=re.sub(r_newlines, " ", rev_comment) #eliminamos saltos de linea, curiosamente algunos comentarios tienen \n en el dump y causan problemas
-		
 			rev_len=len(rev_text)
 			rev_links=len(re.findall(r_links, rev_text))
 			rev_sections=len(re.findall(r_sections, rev_text))
 			rev_images=len(re.findall(r_images, rev_text))
 			rev_interwikis=len(re.findall(r_interwikis, rev_text))
+			rev_externallinks=len(re.findall(r_externallinks, rev_text))
 			rev_type=0
 			if re.search(r_redirect, rev_text):
 				rev_type=1
 			elif re.search(r_disambig, rev_text):
 				rev_type=2
-			output='%s	%s	%s	%s	%s	%s	%s	%s	%s	%s	%s	%s	%s\n' % (page_title, page_id, rev_id, rev_timestamp, rev_author, rev_comment, md5_, rev_len, rev_type, rev_links, rev_sections, rev_images, rev_interwikis)
+			output='%s	%s	%s	%s	%s	%s	%s	%s	%s	%s	%s	%s	%s	%s\n' % (page_title, page_id, rev_id, rev_timestamp, rev_author, rev_comment, md5_, rev_len, rev_type, rev_links, rev_sections, rev_images, rev_interwikis, rev_externallinks)
 			#print output
 			g.write(output.encode('utf-8'))
 			#print page_title, page_id, rev_id, rev_timestamp, len(rev_text)

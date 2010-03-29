@@ -41,7 +41,8 @@ def adminList(site):
 def botList(site):
 	bots=userList(site, 'bot')
 	#also meta bots
-	aufrom="!"
+	bots+=[u'AHbot', u'Aibot', u'AkhtaBot', u'Albambot', u'Alecs.bot', u'Alexbot', u'AlleborgoBot', u'Almabot', u'AlnoktaBOT', u'Amirobot', u'AnankeBot', u'ArthurBot', u'BOT-Superzerocool', u'BodhisattvaBot', u'BokimBot', u'BotMultichill', u'Broadbot', u'ButkoBot', u'CarsracBot', u'CarsracBot', u'ChtitBot', u"D'ohBot", u'DSisyphBot', u'Darkicebot', u'Dinamik-bot', u'DirlBot', u'DorganBot', u'DragonBot', u'Drinibot', u'DumZiBoT', u'EivindBot', u'Escarbot', u'Estirabot', u'FiriBot', u'FoxBot', u'Gerakibot', u'GhalyBot', u'GnawnBot', u'GrouchoBot', u'HerculeBot', u'Idioma-bot', u'Interwicket', u'JAnDbot', u'Jotterbot', u'KhanBot', u'Kwjbot', u'LaaknorBot', u'Louperibot', u'Loveless', u'Luckas-bot', u'MSBOT', u'MagnusA.Bot', u'Maksim-bot', u'MalafayaBot', u'MastiBot', u'MelancholieBot', u'MenoBot', u'MondalorBot', u'Muro Bot', u'MystBot', u'Nallimbot', u'OKBot', u'Obersachsebot', u'Ptbotgourou', u'RedBot', u'Robbot', u'RobotQuistnix', u'RoggBot', u'Rubinbot', u'SassoBot', u'SieBot', u'SilvonenBot', u'Soulbot', u'SpBot', u'SpaceBirdyBot', u'SpillingBot', u'StigBot', u'Synthebot', u'Sz-iwbot', u'TXiKiBoT', u'Tanhabot', u'Thijs!bot', u'TinucherianBot II', u'TuvicBot', u'VVVBot', u'Ver-bot', u'VolkovBot', u'WeggeBot', u'Xqbot', u'Zorrobot', u'Zxabot']
+	"""aufrom="!"
 	while aufrom:
 		query=wikipedia.query.GetData({'action':'query', 'list':'allusers', 'augroup':'bot', 'aulimit':'500', 'aufrom':aufrom},site=wikipedia.Site("meta", "meta"),useAPI=True)
 		for allusers in query['query']['allusers']:
@@ -50,6 +51,7 @@ def botList(site):
 			aufrom=query.has_key('query-continue')
 		else:
 			aufrom=""
+	"""
 	bots.sort()
 	return bots
 
