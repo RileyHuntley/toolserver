@@ -129,11 +129,14 @@ for zona, l in candidatos_l:
 		l.sort()
 		output+=u"\n\n== [[%s|]] ==\n:''Consulta la tabla en <nowiki>{{</nowiki>[[Wikipedia:Imágenes requeridas por zona/%s/%s]]<nowiki>}}</nowiki>.\n<!--{{Wikipedia:Imágenes requeridas por zona/%s/%s}}-->" % (zona, paises[zona], zona, paises[zona], zona)
 	wii=wikipedia.Page(site, u"Wikipedia:Imágenes requeridas por zona/%s/%s" % (paises[zona], zona))
-	wii.put(u"<noinclude>{{aviso|No modificar esta página a mano. Se actualiza automáticamente. Si hay algún error, avisar a {{u|emijrp}}}}</noinclude>{{#ifeq:{{NAMESPACE}}|Wikiproyecto|{{Wikipedia:Imágenes requeridas por zona/wikiproyectos}}}}\n<center>\n{| class='wikitable sortable' style='text-align: center;' \n! Artículo !! Distancia (km) !! Coordenadas \n|-\n%s \n|}\n</center>" % ("\n|-\n".join(l)), u"BOT - Actualizando lista, se necesitan imágenes en %s artículos" % len(l))
+	output2=u"<noinclude>{{aviso|No modificar esta página a mano. Se actualiza automáticamente. Si hay algún error, avisar a {{u|emijrp}}}}</noinclude>{{#ifeq:{{NAMESPACE}}|Wikiproyecto|{{Wikipedia:Imágenes requeridas por zona/wikiproyectos}}}}\n<center>\n{| class='wikitable sortable' style='text-align: center;' \n! Artículo !! Distancia (km) !! Coordenadas \n|-\n%s \n|}\n</center>" % ("\n|-\n".join(l))
+	if not wii.exists() or output2!=wii.get():
+		wii.put(output2, u"BOT - Actualizando lista, se necesitan imágenes en %s artículos" % len(l))
 	c+=len(l)
 
 output+=u"{{/end}}"
 outputpage=wikipedia.Page(site, u"Wikipedia:Imágenes requeridas por zona")
-outputpage.put(output, u"BOT - Actualizando, se necesitan imágenes en %s artículos" % c)
+if not outputpage.exists() or output!=outputpage.get():
+	outputpage.put(output, u"BOT - Actualizando, se necesitan imágenes en %s artículos" % c)
 
 
