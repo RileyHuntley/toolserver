@@ -148,7 +148,31 @@ for event, elem in context:
 		elif tag=="page":
 			lock_page_id=True
 	elif event=="end":
-		if tag=="page":
+		if tag=="timestamp":
+			if rev_timestamp==None:
+				rev_timestamp=elem.text
+		elif tag=="username":
+			if rev_author==None:
+				rev_author=elem.text
+		elif tag=="ip":
+			if rev_author==None:
+				rev_author=elem.text
+		elif tag=="comment":
+			if rev_comment==None:
+				if elem.text:#evitando none de blanqueos, o hay veces que no captura bien el texto?
+					rev_comment=elem.text
+				else:
+					rev_comment=''
+		elif tag=="text":
+			if rev_text==None:
+				if elem.text:
+					rev_text=elem.text
+				else:
+					rev_text=''
+		elif tag=="title":
+			if page_title==None:
+				page_title=elem.text
+		elif tag=="page":
 			cpages+=1
 			elem.clear()
 		elif tag=="revision":
