@@ -15,46 +15,20 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import wikipedia,re,sys,os,gzip,time, datetime
+import tarea000
 
 def percent(c):
 	if c % 1000 == 0:
 		wikipedia.output(u'Llevamos %d' % c)
 
-		
 site=wikipedia.Site('es', 'wikipedia')
 
-bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot', u'PatruBOT']
-data=site.getUrl("/w/index.php?title=Special:Listusers&limit=5000&group=bot")
-data=data.split('<!-- start content -->')
-data=data[1].split('<!-- end content -->')[0]
-m=re.compile(ur" title=\".*?:(.*?)\">").finditer(data)
-for i in m:
-	bots.append(i.group(1))
-
-admins=[]
-data=site.getUrl("/w/index.php?title=Special:Listusers&limit=5000&group=sysop")
-data=data.split('<!-- start content -->')
-data=data[1].split('<!-- end content -->')[0]
-m=re.compile(ur" title=\".*?:(.*?)\">").finditer(data)
-for i in m:
-	admins.append(i.group(1))
-	
-	
+bots=tarea000.botList(site)
+admins=tarea000.adminList(site)
 users={}
-
 limite=7
-timestamp=datetime.datetime.today()-datetime.timedelta(days=limite)
-month=timestamp.month
-day=timestamp.day
-if int(month)<10:
-	month='0%s' % month
-if int(day)<10:
-	day='0%s' % day
-timestamplimite=u'%s%s%s000000' % (timestamp.year, month, day)
 
-print timestamplimite
-
-os.system('mysql -h eswiki-p.db.toolserver.org -e "use eswiki_p;select rc_user_text from recentchanges where (rc_namespace=0 or rc_namespace=104) and rc_type=0 and rc_bot=0 and rc_timestamp>=%s;" > /home/emijrp/temporal/ultimasedicionesrc.txt' % timestamplimite)
+os.system('mysql -h eswiki-p.db.toolserver.org -e "use eswiki_p;select rc_user_text from recentchanges where (rc_namespace=0 or rc_namespace=104) and rc_type=0 and rc_bot=0 and rc_timestamp>=date_add(now(), interval -%d day);" > /home/emijrp/temporal/ultimasedicionesrc.txt' % limite)
 f=open('/home/emijrp/temporal/ultimasedicionesrc.txt', 'r')
 c=0
 print 'Cargando ediciones de cambios recientes'
@@ -83,7 +57,6 @@ users_list.sort()
 users_list.reverse()
 users_list = [(k, v) for v, k in users_list]
 
-
 c=0
 multiplicador=10
 s=u"{{/begin|%s|%s}}\n" % (limite, multiplicador)
@@ -100,9 +73,6 @@ s+=u"{{/end}}"
 page=wikipedia.Page(site, u'Wikipedia:Usuarios muy activos')
 page.put(s, "BOT - Actualizando lista de usuarios muy activos [%d]" % c)
 
-
-
-
 c=0
 multiplicador=2
 s=u"{{/begin|%s|%s}}\n" % (limite, multiplicador)
@@ -118,8 +88,3 @@ for user, edits in users_list:
 s+=u"{{/end}}"
 page=wikipedia.Page(site, u'Wikipedia:Usuarios activos')
 page.put(s, "BOT - Actualizando lista de usuarios activos [%d]" % c)
-
-
-
-
-
