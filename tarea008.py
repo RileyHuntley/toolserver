@@ -193,6 +193,8 @@ projects={
 
 #meter el resto de idiomas
 for lang in tarea000.getLangsByFamily('wikipedia'):
+	if lang=='en-simple':
+		lang='simple'
 	if not projects['wikipedia'].has_key(lang):
 		projects['wikipedia'][lang]=tt100
 
@@ -237,13 +239,6 @@ for family, langs in projects.items():
 		bots+=tarea000.botList(site)
 		admins=tarea000.adminList(site)
 		wikipedianm=tarea000.getNamespaceName(lang, family, 4)
-		
-		family2='wiki'
-		if family=='wikinews':
-			family2='wikinews'
-		elif family=='wiktionary':
-			family2='wiktionary'
-		
 		dbname=tarea000.getDbname(lang, family)
 		server=tarea000.getServer(lang, family)
 		conn = MySQLdb.connect(host='sql-s%s' % server, db=dbname, read_default_file='~/.my.cnf', use_unicode=True)

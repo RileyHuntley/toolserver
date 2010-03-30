@@ -77,7 +77,7 @@ for l in f.xreadlines():
 		continue
 	if not re.search(no_pattern, page_title):
 		item=[rev_timestamp, rev_author, rev_type]
-		if page_title!=prev_title and revs:
+		if page_title!=prev_title and revs:#fix funciona si el dump muestra todas las revisiones de una misma pagina juntas, hacerlo independiente de esto
 			revs.sort()			
 			[rev_timestamp, rev_author, rev_type]=revs[0][0:3]
 			#item2=[prev_title, rev_type]
@@ -94,7 +94,7 @@ f.close()
 
 d={}
 for user, creations in user_creations.items():
-	d[user]=creations['0']+creations['1']+creations['2']
+	d[user]=creations['0']
 
 #ordenamos
 l = [(v, k) for k, v in d.items()]
@@ -107,11 +107,12 @@ for user, number in l[0:10]:
 limite2=1000 #paginas por lista
 c=1
 salida=u'{{/begin|%s}}\n' % (toplimit)
-for user, number in l:
+for user, numberofarticles in l:
 	if (c<=toplimit and number>=50) or c<=15:
 		if len(user)<1:
 			continue
-		salida+=u'|-\n| %d || [[User:%s|%s]] || %d || %d || %d || %d \n' % (c, user, user, user_creations[user]['0'], user_creations[user]['1'], user_creations[user]['2'], number)
+		add=user_creations[user]['0']+user_creations[user]['1']+user_creations[user]['2']
+		salida+=u'|-\n| %d || [[User:%s|%s]] || %d || %d || %d || %d \n' % (c, user, user, user_creations[user]['0'], user_creations[user]['1'], user_creations[user]['2'], add)
 		#salida+=u'|-\n| %d || [[User:%s|%s]] || [[/%s/1|%d]]\n' % (c, user, user, user, number)
 		c+=1
 	else:
@@ -126,8 +127,6 @@ msg=u""
 if bots.count("BOTijo")==0:
 	msg+=u"(This bot only edits user subpages. If flag if needed for this, please, send a message to [[:es:User talk:Emijrp]].)"
 wiii.put(salida, u'BOT - Updating ranking %s' % msg)
-
-tarea000.insertBOTijoInfo(site)
 
 """
 #ranking de creaciones sin redirecciones
