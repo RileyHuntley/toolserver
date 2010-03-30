@@ -36,10 +36,10 @@ m=re.findall(ur'(?i)\[\[ *file *: *%s *\| *[^\|]+? *\| *(.*?) *\{\{ *\# *if *:' 
 imagedesc=m[0]
 imagedesc=re.sub(ur'(?i)\[\[([^\|]*?)\|(?P<label>[^\]]*?)\]\]', ur'\g<label>', imagedesc)
 imagedesc=re.sub(ur'(?i)[\[\]]', ur'', imagedesc)
-if len(imagedesc)>60:
-	imagedesc=u'%s...' % (imagedesc[:60])
+if len(imagedesc)>40:
+	imagedesc=u'%s...' % (imagedesc[:40])
 imagename_=re.sub(" ", "_", imagename)
-msg=u'%s → http://en.wikipedia.org/wiki/File:%s' % (imagedesc, imagename_)
+msg=u'%s → http://en.wikipedia.org/wiki/File:%s #wikipedia #photos' % (imagedesc, imagename_)
 
 orden='curl -u %s:%s -d status="%s" http://twitter.com/statuses/update.json' % (username, password, msg.encode("utf-8"))
 os.system(orden)

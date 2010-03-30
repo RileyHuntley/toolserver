@@ -69,11 +69,7 @@ for l in f.xreadlines():
 		[page_title, page_id, rev_id, rev_timestamp, rev_author, rev_comment, md5_, rev_len, rev_type]=t[0:9]
 	else:
 		continue
-	try:
-		page_id=int(page_id)
-	except:
-		print t
-		#sys.exit()
+	page_id=int(page_id)
 	if not re.search(no_pattern, page_title):
 		year=rev_timestamp[0:4]
 		if anyos.has_key(year):

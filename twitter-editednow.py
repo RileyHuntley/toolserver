@@ -45,7 +45,7 @@ for lang in ["en", "es"]:
 		page_title=re.sub("_", " ", page_title_)
 		if page_title_[-1]==')':
 			page_title_+="_"
-		msg=u"%s (%s edits) → http://%s.wikipedia.org/wiki/%s" % (page_title, edits, lang, page_title_)
+		msg=u"%s (%s edits) → http://%s.wikipedia.org/wiki/%s #wikipedia" % (page_title, edits, lang, page_title_)
 		orden='curl -u %s:%s -d status="%s" http://twitter.com/statuses/update.json' % (username, password, msg.encode("utf-8"))
 		os.system(orden)
 	except:
