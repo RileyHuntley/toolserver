@@ -24,7 +24,7 @@ import tarea000
 
 # Este script necesita un dump pre-procesado con stubmetahistory-fetch-celementtree.py. Este código está en el repositorio también
 
-#fix: el page_id de algunos artículos sale 'None', está mal el dumo o mi parseador?
+#fix: el page_id de algunos artículos sale 'None', está mal el dump o mi parseador?
 
 def percent(c):
 	if c % 100000 == 0:
