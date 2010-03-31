@@ -278,10 +278,6 @@ for family, langs in projects.items():
 				planti2+=u"|%s=%s\n" % (nick,ed)
 				cplanti2+=1
 		
-		s+=u"%s\n%s\n" % (table_footer, "\n".join(iws1[family]))
-		s=re.sub(ur"(?im)\[\[%s:.*?\]\]\n" % lang, ur"", s)
-		sbots+=u"%s\n%s\n" % (table_footer, "\n".join(iws2[family]))
-		sbots=re.sub(ur"(?im)\[\[%s:.*?\]\]\n" % lang, ur"", sbots)
 		planti2+=u"|USUARIO DESCONOCIDO\n}}<noinclude>{{uso de plantilla}}</noinclude>"
 		planti+=u"|-\n| colspan=3 | Véase también [[Wikipedia:Ranking de ediciones]]<br/>Actualizado a las {{subst:CURRENTTIME}} (UTC) del  {{subst:CURRENTDAY}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}} por [[Usuario:BOTijo|BOTijo]] \n|}<noinclude>{{uso de plantilla}}</noinclude>"
 		
@@ -305,10 +301,12 @@ for family, langs in projects.items():
 				if projects[family][lang]['rankingusers'] and not page.exists():
 					page.put(end, resume)
 					time.sleep(delay)
-				s=u"{{/begin|%d}}\n%s{{/end}}" % (cuantos, s)
+				s=u"{{/begin|%d}}\n%s{{/end}}\n%s" % (cuantos, s, "\n".join(iws1[family])
 			else: #by default
 				title=tras1[family]['default']
-				s=u"For a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n%s%s" % (table_header, s)
+				s=u"For a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n%s%s%s\n%s" % (table_header, s, table_footer, "\n".join(iws1[family])
+			#eliminamos autointerwiki
+			s=re.sub(ur"(?im)\[\[%s:.*?\]\]\n" % lang, ur"", s)
 			page=wikipedia.Page(site, title)
 			if projects[family][lang]['rankingusers'] and ((not page.exists()) or (not page.isRedirectPage() and not page.isDisambig() and page.get()!=s)):
 				page.put(s, resume)
@@ -327,10 +325,12 @@ for family, langs in projects.items():
 				if projects[family][lang]['rankingbots'] and not page.exists():
 					page.put(end2, resume)
 					time.sleep(delay)
-				sbots=u"{{/begin|%d}}\n%s{{/end}}" % (cuantos, sbots)
+				sbots=u"{{/begin|%d}}\n%s{{/end}}\n%s" % (cuantos, sbots, "\n".join(iws2[family])
 			else: #by defect
 				title=tras2[family]['default']
-				sbots=u"For a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n%s%s" % (table_header, sbots)
+				sbots=u"For a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n%s%s%s\n%s" % (table_header, sbots, table_footer, "\n".join(iws2[family])
+			#eliminamos autointerwiki
+			sbots=re.sub(ur"(?im)\[\[%s:.*?\]\]\n" % lang, ur"", sbots)
 			page=wikipedia.Page(site, title)
 			if projects[family][lang]['rankingbots'] and ((not page.exists()) or (not page.isRedirectPage() and not page.isDisambig() and page.get()!=sbots)):
 				page.put(sbots, resume)
