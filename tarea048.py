@@ -26,7 +26,7 @@ def percent(c):
 limit=14
 conn = MySQLdb.connect(host='sql-s3', db='eswiki_p', read_default_file='~/.my.cnf', use_unicode=True)
 cursor = conn.cursor()
-cursor.execute("SELECT rc_timestamp from recentchanges where rc_user_text='AVBOT' and rc_namespace=0 and rc_timestamp>=date_add(now(), interval -%d day);" % limit)
+cursor.execute("SELECT rc_timestamp from recentchanges where rc_user_text='AVBOT' and rc_namespace=0 and rc_deleted=0 and rc_timestamp>=date_add(now(), interval -%d day);" % limit)
 result=cursor.fetchall()
 days={}
 c=0
