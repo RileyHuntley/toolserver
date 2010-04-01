@@ -40,6 +40,7 @@ tras1={
 'wikipedia': {
 	u"default": u"User:Emijrp/List of Wikipedians by number of edits",
 	u"ar": u"قائمة الويكيبيديين حسب عدد التعديلات",
+	u"arz": u"List of Wikipedians by number of edits",
 	u"ca": u"Llista de viquipedistes per nombre d'edicions",
 	u"da": u"Wikipedianere efter antal redigeringer",
 	u"eo": u"Listo de uzantoj laŭ redaktonombro",
@@ -74,6 +75,7 @@ tras2={
 'wikipedia': {
 	u"default": u"User:Emijrp/List of Wikipedians by number of edits (bots included)",
 	u"ar": u"قائمة الويكيبيديين حسب عدد التعديلات (متضمنة البوتات)",
+	u"arz": u"List of Wikipedians by number of edits (bots included)",
 	u"ca": u"Llista de viquipedistes per nombre d'edicions (bots inclosos)",
 	u"da": u"Wikipedianere efter antal redigeringer (bots inkluderet)",
 	u"eo": u"Listo de uzantoj laŭ redaktonombro (inkluzivante robotojn)",
@@ -110,6 +112,7 @@ projects={
 		},
 	'wikipedia': {
 		'ar': tt500,
+		'arz': tt100,
 		'ca': tt500,
 		'da': tt500,
 		'eo': tt500,
@@ -301,10 +304,10 @@ for family, langs in projects.items():
 				if projects[family][lang]['rankingusers'] and not page.exists():
 					page.put(end, resume)
 					time.sleep(delay)
-				s=u"{{/begin|%d}}\n%s{{/end}}\n%s" % (cuantos, s, "\n".join(iws1[family])
+				s=u"{{/begin|%d}}\n%s{{/end}}\n%s" % (cuantos, s, "\n".join(iws1[family]))
 			else: #by default
 				title=tras1[family]['default']
-				s=u"For a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n%s%s%s\n%s" % (table_header, s, table_footer, "\n".join(iws1[family])
+				s=u"For a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n%s%s%s\n%s" % (table_header, s, table_footer, "\n".join(iws1[family]))
 			#eliminamos autointerwiki
 			s=re.sub(ur"(?im)\[\[%s:.*?\]\]\n" % lang, ur"", s)
 			page=wikipedia.Page(site, title)
@@ -325,10 +328,10 @@ for family, langs in projects.items():
 				if projects[family][lang]['rankingbots'] and not page.exists():
 					page.put(end2, resume)
 					time.sleep(delay)
-				sbots=u"{{/begin|%d}}\n%s{{/end}}\n%s" % (cuantos, sbots, "\n".join(iws2[family])
+				sbots=u"{{/begin|%d}}\n%s{{/end}}\n%s" % (cuantos, sbots, "\n".join(iws2[family]))
 			else: #by defect
 				title=tras2[family]['default']
-				sbots=u"For a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n%s%s%s\n%s" % (table_header, sbots, table_footer, "\n".join(iws2[family])
+				sbots=u"For a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n%s%s%s\n%s" % (table_header, sbots, table_footer, "\n".join(iws2[family]))
 			#eliminamos autointerwiki
 			sbots=re.sub(ur"(?im)\[\[%s:.*?\]\]\n" % lang, ur"", sbots)
 			page=wikipedia.Page(site, title)
