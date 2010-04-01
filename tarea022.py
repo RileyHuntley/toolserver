@@ -24,6 +24,7 @@ def percent(c):
 site=wikipedia.Site('es', 'wikipedia')
 
 bots=tarea000.botList(site)
+bots+=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot', u'EmxBot', u'YurikBot', u'H-Bot', u'Paulatz bot', u'TekBot', u'Alfiobot', u'RoboRex', u'Agtbot', u'Felixbot', u'Pixibot', u'Sz-iwbot', u'Timbot (Gutza)', u'Ginosbot', u'GrinBot', u'.anacondabot', u'Omdirigeringsrättaren', u'Rubinbot', u'HasharBot', u'NetBot', u"D'ohBot", u'Byrialbot', u'Broadbot', u'Guanabot', u'Chris G Bot 2', u'CCyeZBot', u'Soulbot', u'MSBOT', u'GnawnBot', u'Chris G Bot 3', u'Huzzlet the bot', u'JCbot', u'DodekBot', u'John Bot II', u'CyeZBot', u'Beefbot', u'Louperibot', u'SOTNBot', u'DirlBot', u'Obersachsebot', u'WikiDreamer Bot', u'YonaBot', u'Chlewbot', u'PixelBot', u'ToePeu.bot', u'HujiBot', u'Le Pied-bot', u'Ugur Basak Bot', u'NigelJBot', u'CommonsTicker', u'Tangobot', u'SeanBot', u'Corrector de redirecciones', u'HermesBot', u'Darkicebot', u'RedBot', u'HerculeBot', u'PatruBOT', u'RobotGMwikt', u'MonoBot', u'WikimediaNotifier', u'SBot39', u'DSisyphBot', u'GriffinBot1', u'WeggeBot', u'EhJBot3', u'Gerakibot', u'Picochip08', u'MondalorBot', u'Redirect fixer',]
 admins=tarea000.adminList(site)
 users={}
 limite=7
@@ -65,9 +66,9 @@ for user, edits in users_list:
 		c+=1
 		#wikipedia.output(u'%d) %s - %d' % (c, user, edits))
 		if admins.count(user):
-			s+=u"|-\n| %s || [[User:%s|%s]] (Admin) || [[User talk:%s|Discusión]] || [[Special:Contributions/%s|Ver]] || %d \n" % (str(c),user,user,user,user,edits)
+			s+=u"|-\n| %s || [[User:%s|%s]] (Admin) || [[User talk:%s|Discusión]] || [[Special:Contributions/%s|%d]] \n" % (str(c),user,user,user,user,edits)
 		else:
-			s+=u"|-\n| %s || [[User:%s|%s]] || [[User talk:%s|Discusión]] || [[Special:Contributions/%s|Ver]] || %d \n" % (str(c),user,user,user,user,edits)
+			s+=u"|-\n| %s || [[User:%s|%s]] || [[User talk:%s|Discusión]] || [[Special:Contributions/%s|%d]] \n" % (str(c),user,user,user,user,edits)
 
 s+=u"{{/end}}"
 page=wikipedia.Page(site, u'Wikipedia:Usuarios muy activos')
@@ -81,9 +82,9 @@ for user, edits in users_list:
 		c+=1
 		#wikipedia.output(u'%d) %s - %d' % (c, user, edits))
 		if admins.count(user):
-			s+=u"|-\n| %s || [[User:%s|%s]] (Admin) || [[User talk:%s|Discusión]] || [[Special:Contributions/%s|Ver]] || %d \n" % (str(c),user,user,user,user,edits)
+			s+=u"|-\n| %s || [[User:%s|%s]] (Admin) || [[User talk:%s|Discusión]] || [[Special:Contributions/%s|%d]] \n" % (str(c),user,user,user,user,edits)
 		else:
-			s+=u"|-\n| %s || [[User:%s|%s]] || [[User talk:%s|Discusión]] || [[Special:Contributions/%s|Ver]] || %d \n" % (str(c),user,user,user,user,edits)
+			s+=u"|-\n| %s || [[User:%s|%s]] || [[User talk:%s|Discusión]] || [[Special:Contributions/%s|%d]] \n" % (str(c),user,user,user,user,edits)
 
 s+=u"{{/end}}"
 page=wikipedia.Page(site, u'Wikipedia:Usuarios activos')

@@ -21,6 +21,7 @@ import MySQLdb
 
 delay=5
 minimumedits=100 #edits to appear in the ranking
+minimumusers=10 #para evitar listas de 2 personas
 table_header=u"{| class='wikitable sortable' style='text-align:center;'\n! #\n! User\n! Edits\n"
 table_footer=u"|}"
 begin=u"''Please, translate this into your language and delete the english text'': This table shows '''first {{{1}}} users with more edits''' in this Wikipedia. Bots are not included.\n\n''If you want to change page title, contact to [[:es:User talk:Emijrp]]. Thanks.''\n\n<center>\n%s" % table_header
@@ -194,7 +195,7 @@ projects={
 		'he': {'rankingusers':True, 'rankingbots':True, 'limit':500},
 		},"""
 
-#meter el resto de idiomas
+#metemos el resto de idiomas
 for lang in tarea000.getLangsByFamily('wikipedia'):
 	if lang=='en-simple':
 		lang='simple'
@@ -208,6 +209,8 @@ for family, langs in projects.items():
 	iws1[family]=[]
 	iws2[family]=[]
 	for lang, v in langs.items():
+		if tarea000.isExcluded('tarea008', family, lang):
+			continue
 		wikipedianm=tarea000.getNamespaceName(lang, family, 4)
 		if projects[family][lang]['rankingusers']:
 			traslation1=""
@@ -229,6 +232,9 @@ for family, langs in projects.items():
 for family, langs in projects.items():
 	for lang in langs:
 		print family, lang
+		if tarea000.isExcluded('tarea008', family, lang):
+			continue
+		
 		title=u''
 		#la lista de bots debe ir dentro del bucle, ya que se llena con más bots de cada caso
 		bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot', u'EmxBot', u'YurikBot', u'H-Bot', u'Paulatz bot', u'TekBot', u'Alfiobot', u'RoboRex', u'Agtbot', u'Felixbot', u'Pixibot', u'Sz-iwbot', u'Timbot (Gutza)', u'Ginosbot', u'GrinBot', u'.anacondabot', u'Omdirigeringsrättaren', u'Rubinbot', u'HasharBot', u'NetBot', u"D'ohBot", u'Byrialbot', u'Broadbot', u'Guanabot', u'Chris G Bot 2', u'CCyeZBot', u'Soulbot', u'MSBOT', u'GnawnBot', u'Chris G Bot 3', u'Huzzlet the bot', u'JCbot', u'DodekBot', u'John Bot II', u'CyeZBot', u'Beefbot', u'Louperibot', u'SOTNBot', u'DirlBot', u'Obersachsebot', u'WikiDreamer Bot', u'YonaBot', u'Chlewbot', u'PixelBot', u'ToePeu.bot', u'HujiBot', u'Le Pied-bot', u'Ugur Basak Bot', u'NigelJBot', u'CommonsTicker', u'Tangobot', u'SeanBot', u'Corrector de redirecciones', u'HermesBot', u'Darkicebot', u'RedBot', u'HerculeBot', u'PatruBOT', u'RobotGMwikt', u'MonoBot', u'WikimediaNotifier', u'SBot39', u'DSisyphBot', u'GriffinBot1', u'WeggeBot', u'EhJBot3', u'Gerakibot', u'Picochip08', u'MondalorBot', u'Redirect fixer',]
@@ -260,7 +266,7 @@ for family, langs in projects.items():
 		for row in result:
 			nick=unicode(row[0], 'utf-8')
 			ed=int(row[1])
-			if ed<minimumedits:
+			if ed<minimumedits and c>minimumusers: #al menos minimumusers, aunque no tengan ni el minimumedits necesario
 				continue
 			if c<=cuantos:
 				if bots.count(nick)==0:

@@ -67,6 +67,9 @@ def insertBOTijoInfo(site):
 			time.sleep(delay)
 		botinfo=wikipedia.Page(site, u"User:BOTijo/info")
 		info=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u"User:Emijrp/BOTijoInfo.css").get()
+		
+		#con excludedprojects cambiar los enlaces a rankings que aparecen
+		
 		if not botinfo.exists() or botinfo.get()!=info:
 			botinfo.put(info, u"BOT - Bot info page")
 			time.sleep(delay)
@@ -77,7 +80,7 @@ def insertBOTijoInfo(site):
 	else: #tiene flag
 		bot=wikipedia.Page(site, u"User:BOTijo")
 		if not bot.exists():
-			bot.put(u"This is a bot account operated by [[w:es:User:Emijrp|emijrp]] from [[w:es:Mainpage|Spanish Wikipedia]].\n\n'''This [[w:en:Wikipedia:Bot policy|bot]] runs on the [[meta:Toolserver|Wikimedia Toolserver]].''' <br /><small>''Administrators: If this bot needs to be blocked due to a malfunction, please remember to disable autoblocks so that other Toolserver bots are not affected.''", u"BOT - Creating bot userpage")
+			bot.put(u"This is a bot account operated by [[w:es:User:Emijrp|emijrp]] ([[w:es:User talk:Emijrp|talk]]) from [[w:es:Mainpage|Spanish Wikipedia]].\n\n'''This [[w:en:Wikipedia:Bot policy|bot]] runs on the [[meta:Toolserver|Wikimedia Toolserver]].''' <br /><small>''Administrators: If this bot needs to be blocked due to a malfunction, please remember to disable autoblocks so that other Toolserver bots are not affected.''", u"BOT - Creating bot userpage")
 			time.sleep(delay)
 		else:
 			bot.put(re.sub(ur"(?i)\{\{\s*/info\s*\}\}", ur"", bot.get()), u"BOT - Flag granted")
@@ -148,4 +151,25 @@ def getServer(lang, family):
 	cursor.close()
 	conn.close()
 	return server
+
+def isExcluded(tarea, family, lang):
+	excludedprojects={
+		'tarea008': {
+			'wikipedia': ['ko', # http://es.wikipedia.org/w/index.php?title=Usuario_Discusi%C3%B3n:Emijrp&diff=35727924&oldid=35727631
+				'pl', #http://es.wikipedia.org/w/index.php?title=Usuario_Discusi%C3%B3n:Emijrp&diff=35726268&oldid=35726116
+				],
+			'wiktionary': [],
+			'wikinews': [],
+			'wikibooks': [],
+			'wikisource': [],
+			}
+		}
+
+	if excludedprojects.has_key(tarea):
+		if excludedprojects[tarea].has_key(family):
+			if excludedprojects[tarea][family].count(lang)>0:
+				return True
+	
+	return False
+
 
