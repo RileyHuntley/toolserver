@@ -401,12 +401,19 @@ switch(lang){
 		f11='Pressione F11 para tela cheia';
 		author='Desenvolvido por <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Inspirado em <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
+	case "ro":
+		header='Numărul total de modificări în <a href="http://www.wikimedia.org">proiectele Wikimedia</a>:';
+		spliter='.';
+		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Donaţi pentru Wikimedia</a>';
+		f11='Apăsați F11 pentru afișarea pe tot ecranul';
+		author='Dezvoltat de <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (inspirat de la <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
+		break;
 	case "ru":
 		header='Всего правок в <a href="http://www.wikimedia.org">проектах Викимедиа</a>:';
 		spliter='&nbsp;';
-		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Пожертвовать Фонду Wikimedia</a>';
-		f11='Нажмите F11 для полноэкранного просмотра';
-		author='Разработано <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (при поддержке<a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
+		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Пожертвуйте «Фонду Викимедиа»</a>';
+		f11='Нажмите F11 для показа на весь экран';
+		author='Разработал <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Основано на <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
 	case "sv":
 		header='Antal redigeringar i <a href="http://www.wikimedia.org">Wikimediaprojekten</a>:';
