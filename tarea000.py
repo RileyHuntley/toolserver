@@ -153,6 +153,8 @@ def getServer(lang, family):
 	return server
 
 def isExcluded(tarea, family, lang):
+	#ejemplo de que funciona http://dv.wikipedia.org/w/index.php?title=%DE%89%DE%AC%DE%89%DE%B0%DE%84%DE%A6%DE%83%DE%AA:Emijrp/List_of_Wikipedians_by_number_of_edits_%28bots_included%29&diff=prev&oldid=64351
+
 	excludedprojects={
 		'tarea008': {
 			'wikipedia': ['ko', #no les interesa http://es.wikipedia.org/w/index.php?title=Usuario_Discusi%C3%B3n:Emijrp&diff=35727924&oldid=35727631
