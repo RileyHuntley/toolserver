@@ -230,7 +230,7 @@ for family, langs in projects.items():
 	iws2[family].sort()
 
 for family, langs in projects.items():
-	for lang in langs:
+	for lang, v in langs:
 		print family, lang
 		if tarea000.isExcluded('tarea008', family, lang):
 			continue
@@ -249,11 +249,16 @@ for family, langs in projects.items():
 		admins=tarea000.adminList(site)
 		wikipedianm=tarea000.getNamespaceName(lang, family, 4)
 		dbname=tarea000.getDbname(lang, family)
+		time.sleep(0.5)
 		server=tarea000.getServer(lang, family)
+		time.sleep(0.5)
 		conn = MySQLdb.connect(host='sql-s%s' % server, db=dbname, read_default_file='~/.my.cnf', use_unicode=True)
 		cursor = conn.cursor()
 		cursor.execute("select user_name, user_editcount from user where user_editcount!=0 order by user_editcount desc limit 5000;")
 		result=cursor.fetchall()
+		cursor.close()
+		conn.close()
+		time.sleep(0.5)
 		
 		s=u""
 		sbots=u""
@@ -263,13 +268,14 @@ for family, langs in projects.items():
 		cuantos=projects[family][lang]['limit']
 		planti2=u"{{#switch:{{{1|User}}}\n"
 		planti=u"{| class='wikitable sortable' style='font-size: 90%;text-align: center;float: right;'\n! #\n! Usuario\n! Ediciones\n"
+		bot_r=re.compile(ur"(?m)(^([Bb]ot|BOT) | ([Bb]ot|BOT)$|[a-z0-9\. ](Bot|BOT)$|^BOT[a-z0-9\. ])")
 		for row in result:
 			nick=unicode(row[0], 'utf-8')
 			ed=int(row[1])
 			if ed<minimumedits and c>minimumusers: #al menos minimumusers, aunque no tengan ni el minimumedits necesario
 				continue
 			if c<=cuantos:
-				if bots.count(nick)==0:
+				if bots.count(nick)==0 and not re.search(bot_r, nick):
 					if admins.count(nick):
 						s+=u"|-\n| %d || [[User:%s|%s]] (Admin) || [[Special:Contributions/%s|%s]] \n" % (c,nick,nick,nick,ed)
 					else:
@@ -278,7 +284,7 @@ for family, langs in projects.items():
 						planti+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%s]] \n" % (c,nick,nick,nick,ed)
 					c+=1
 			if cbots<=cuantos:
-				if bots.count(nick):
+				if bots.count(nick)>0 or re.search(bot_r, nick):
 					sbots+=u"|-\n| %d || [[User:%s|%s]] (Bot) || [[Special:Contributions/%s|%s]] \n" % (cbots,nick,nick,nick,ed)
 				else:
 					sbots+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%s]] \n" % (cbots,nick,nick,nick,ed)
@@ -298,7 +304,7 @@ for family, langs in projects.items():
 		
 		
 		#first ranking
-		if len(s)>1000: #evitando errores de db replication
+		if projects[family][lang]['rankingusers']:
 			title=u''
 			if tras1[family].has_key(lang) and tras1[family][lang]:
 				title=u"%s:%s" % (wikipedianm, tras1[family][lang])
@@ -322,7 +328,7 @@ for family, langs in projects.items():
 				time.sleep(delay)
 		
 		#second ranking
-		if len(sbots)>1000 and (family!='wiktionary' and lang!='simple'): #evitando errores de db replication
+		if projects[family][lang]['rankingbots]:
 			title=u''
 			if tras2[family].has_key(lang) and tras2[family][lang]:
 				title=u"%s:%s" % (wikipedianm, tras2[family][lang])
@@ -352,7 +358,4 @@ for family, langs in projects.items():
 			
 			page=wikipedia.Page(site, u"Template:Ediciones")
 			page.put(planti2, resume)
-		
-		cursor.close()
-		conn.close()
 
