@@ -35,7 +35,7 @@ end=u"%s\n</center>\n\n''Please, put here a category similar to <nowiki>[[Catego
 end2=end
 
 noflagrequired=[
-	['ca', 'wikipedia'],
+	['ca', 'wikipedia'], #fix buscar diff donde diga que no hace falta flag
 ]
 
 tras1={
@@ -302,7 +302,7 @@ for family, langs in projects.items():
 		planti+=u"|-\n| colspan=3 | Véase también [[Wikipedia:Ranking de ediciones]]<br/>Actualizado a las {{subst:CURRENTTIME}} (UTC) del  {{subst:CURRENTDAY}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}} por [[Usuario:BOTijo|BOTijo]] \n|}<noinclude>{{uso de plantilla}}</noinclude>"
 		
 		resume=u""
-		if bots.count(u"BOTijo") or noflagrequired.count([lang, family]):
+		if bots.count(u"BOTijo") or noflagrequired.count([lang, family])>0:
 			resume=u"BOT - Updating ranking"
 		else:
 			resume=u"BOT - Updating ranking (This bot [[User:BOTijo|only makes a few edits in user subpages]]. Please, don't block. Contact to [[w:es:User talk:Emijrp]])"
