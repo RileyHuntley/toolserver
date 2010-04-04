@@ -24,6 +24,7 @@ minimumedits=100 #edits to appear in the ranking
 minimumusers=10 #para evitar listas de 2 personas
 table_header=u"{| class='wikitable sortable' style='text-align:center;'\n! #\n! User\n! Edits\n"
 table_footer=u"|}"
+optouttext=u"==Opting out==\nUsers who don't wish to be on this list can add themselves to this [[meta:User:Emijrp/List of Wikimedians by number of edits/Anonymous|anonymizing list]] for future versions."
 begin=u"''Please, translate this into your language and delete the english text'': This table shows '''first {{{1}}} users with more edits''' in this Wikipedia. Bots are not included.\n\n''If you want to change page title, contact to [[:es:User talk:Emijrp]]. Thanks.''\n\n<center>\n%s" % table_header
 begin2=u"''Please, translate this into your language and delete the english text'': This table shows '''first {{{1}}} users with more edits''' in this Wikipedia. Bots are included.\n\n''If you want to change page title, contact to [[:es:User talk:Emijrp]]. Thanks.''\n\n<center>\n%s" % table_header
 end=u"%s\n</center>\n\n''Please, put here a category similar to <nowiki>[[Category:Wikipedia statistics]]</nowiki>.''" % table_footer
@@ -116,7 +117,7 @@ projects={
 		'arz': tt100,
 		'ca': tt500,
 		'da': tt500,
-		'en': {'rankingusers':True, 'rankingbots':True, 'limit':500, 'optout':'Wikipedia:List of Wikipedians by number of edits/Anonymous'}
+		'en': {'rankingusers':True, 'rankingbots':True, 'limit':500, 'optout':'Wikipedia:List of Wikipedians by number of edits/Anonymous'},
 		'eo': tt500,
 		'es': tt500,
 		'gl': tt100,
@@ -204,7 +205,7 @@ for family, langs in projects.items():
 		
 		title=u''
 		#la lista de bots debe ir dentro del bucle, ya que se llena con más bots de cada caso
-		bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot', u'EmxBot', u'YurikBot', u'H-Bot', u'Paulatz bot', u'TekBot', u'Alfiobot', u'RoboRex', u'Agtbot', u'Felixbot', u'Pixibot', u'Sz-iwbot', u'Timbot (Gutza)', u'Ginosbot', u'GrinBot', u'.anacondabot', u'Omdirigeringsrättaren', u'Rubinbot', u'HasharBot', u'NetBot', u"D'ohBot", u'Byrialbot', u'Broadbot', u'Guanabot', u'Chris G Bot 2', u'CCyeZBot', u'Soulbot', u'MSBOT', u'GnawnBot', u'Chris G Bot 3', u'Huzzlet the bot', u'JCbot', u'DodekBot', u'John Bot II', u'CyeZBot', u'Beefbot', u'Louperibot', u'SOTNBot', u'DirlBot', u'Obersachsebot', u'WikiDreamer Bot', u'YonaBot', u'Chlewbot', u'PixelBot', u'ToePeu.bot', u'HujiBot', u'Le Pied-bot', u'Ugur Basak Bot', u'NigelJBot', u'CommonsTicker', u'Tangobot', u'SeanBot', u'Corrector de redirecciones', u'HermesBot', u'Darkicebot', u'RedBot', u'HerculeBot', u'PatruBOT', u'RobotGMwikt', u'MonoBot', u'WikimediaNotifier', u'SBot39', u'DSisyphBot', u'GriffinBot1', u'WeggeBot', u'EhJBot3', u'Gerakibot', u'Picochip08', u'MondalorBot', u'Redirect fixer', u'Skagedalobot']
+		bots=[u'BOTpolicia', u'AVBOT', u'CommonsDelinker', u'Eskimbot', u'EmxBot', u'YurikBot', u'H-Bot', u'Paulatz bot', u'TekBot', u'Alfiobot', u'RoboRex', u'Agtbot', u'Felixbot', u'Pixibot', u'Sz-iwbot', u'Timbot (Gutza)', u'Ginosbot', u'GrinBot', u'.anacondabot', u'Omdirigeringsrättaren', u'Rubinbot', u'HasharBot', u'NetBot', u"D'ohBot", u'Byrialbot', u'Broadbot', u'Guanabot', u'Chris G Bot 2', u'CCyeZBot', u'Soulbot', u'MSBOT', u'GnawnBot', u'Chris G Bot 3', u'Huzzlet the bot', u'JCbot', u'DodekBot', u'John Bot II', u'CyeZBot', u'Beefbot', u'Louperibot', u'SOTNBot', u'DirlBot', u'Obersachsebot', u'WikiDreamer Bot', u'YonaBot', u'Chlewbot', u'PixelBot', u'ToePeu.bot', u'HujiBot', u'Le Pied-bot', u'Ugur Basak Bot', u'NigelJBot', u'CommonsTicker', u'Tangobot', u'SeanBot', u'Corrector de redirecciones', u'HermesBot', u'Darkicebot', u'RedBot', u'HerculeBot', u'PatruBOT', u'RobotGMwikt', u'MonoBot', u'WikimediaNotifier', u'SBot39', u'DSisyphBot', u'GriffinBot1', u'WeggeBot', u'EhJBot3', u'Gerakibot', u'Picochip08', u'MondalorBot', u'Redirect fixer', u'Skagedalobot'] #no meter a BOTijo, sino el summary no funciona diferente para las wikis donde no tengo flag no va
 		
 		try:
 			site=wikipedia.Site(lang, family)
@@ -212,13 +213,15 @@ for family, langs in projects.items():
 			print "Error", lang, family
 			continue
 		
+		#usuarios que no quiere aparecer en los rankings
 		optouts=[]
-		if projects[family][lang]['optout']:
-			optoutpage=wikipedia.Page(site, projects[family][lang]['optout'])
-			if optoutpage.exists() and not optoutpage.isRedirectPage():
-				mm=re.compile(ur"\[\[ *[^\:]+? *\: *(?<useroptout>[^\]\|]+?) *[\]\|]").finditer(optoutpage.get())
-				for ii in mm:
-					optouts.append(ii.group("useroptout"))
+		for optoutsite, optoutpagetitle in {wikipedia.Site('meta', 'meta'): 'User:Emijrp/List of Wikimedians by number of edits/Anonymous', site: projects[family][lang]['optout'], }.items():
+			if optoutpagetitle!='':
+				optoutpage=wikipedia.Page(site, optoutpagetitle)
+				if optoutpage.exists() and not optoutpage.isRedirectPage():
+					mm=re.compile(ur"\[\[ *[^\:]+? *\: *(?P<useroptout>[^\]\|]+?) *[\]\|]").finditer(optoutpage.get())
+					for ii in mm:
+						optouts.append(ii.group("useroptout"))
 		
 		bots+=tarea000.botList(site)
 		admins=tarea000.adminList(site)
@@ -249,34 +252,48 @@ for family, langs in projects.items():
 			ed=int(row[1])
 			if ed<minimumedits and c>minimumusers: #al menos minimumusers, aunque no tengan ni el minimumedits necesario
 				continue
-			if c<=cuantos: #primer ranking
-				if bots.count(nick)==0 and not re.search(bot_r, nick):
-					if optouts.count(nick)==0:
-						if admins.count(nick):
-							s+=u"|-\n| %d || [[User:%s|%s]] (Admin) || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick,nick,ed)
-						else:
-							s+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick,nick,ed)
-					elif optouts.count(nick)>0:
-						s+=u"|-\n| %d || [Placeholder] || %d \n" % (c,ed)
+
+			if optouts.count(nick)==0:
+				if admins.count(nick)>0:
 					if c<=10:
-						if optouts.count(nick)==0:
-							planti+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick,nick,ed)
-						elif optouts.count(nick)>0:
-							planti+=u"|-\n| %d || [Placeholder] || %d \n" % (c,ed)
-					c+=1
-			if cbots<=cuantos: #segundo
-				if bots.count(nick)>0 or re.search(bot_r, nick):
-					if optouts.count(nick)==0:
+						planti+=u"|-\n| %d || [[User:%s|%s]] (Admin) || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick,nick,ed)
+						c+=1
+					if c<=cuantos:
+						s+=u"|-\n| %d || [[User:%s|%s]] (Admin) || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick,nick,ed)
+						c+=1
+					if cbots<=cuantos:
+						sbots+=u"|-\n| %d || [[User:%s|%s]] (Admin) || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick,nick,ed)
+						cbots+=1
+				elif bots.count(nick)>0 or re.search(bot_r, nick):
+					if c<=10:
+						pass #no bots in the top 10 template
+					if c<=cuantos:
+						pass #no bots in this ranking
+					if cbots<=cuantos:
 						sbots+=u"|-\n| %d || [[User:%s|%s]] (Bot) || [[Special:Contributions/%s|%d]] \n" % (cbots,nick,nick,nick,ed)
-					elif optouts.count(nick)>0:
-						sbots+=u"|-\n| %d || [Placeholder] || %d \n" % (cbots,ed)
+						cbots+=1
 				else:
-					if optouts.count(nick)==0:
-						sbots+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%d]] \n" % (cbots,nick,nick,nick,ed)
-					elif optouts.count(nick)>0:
-						sbots+=u"|-\n| %d || [Placeholder] || %d \n" % (cbots,ed)
-				cbots+=1
-			if cplanti2<=2500:
+					if c<=10:
+						planti+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick,nick,ed)
+						c+=1
+					if c<=cuantos:
+						s+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick,nick,ed)
+						c+=1
+					if cbots<=cuantos:
+						sbots+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick,nick,ed)
+						cbots+=1
+			elif optouts.count(nick)>0:
+				if c<=10:
+					planti+=u"|-\n| %d || [Placeholder] || %d \n" % (c,ed)
+					c+=1
+				if c<=cuantos:
+					s+=u"|-\n| %d || [Placeholder] || %d \n" % (c,ed)
+					c+=1
+				if cbots<=cuantos:
+					sbots+=u"|-\n| %d || [Placeholder] || %d \n" % (c,ed)
+					cbots+=1
+
+			if cplanti2<=2500: #plantilla ediciones
 				if optouts.count(nick)==0:	
 					planti2+=u"|%s=%s\n" % (nick,ed)
 					cplanti2+=1
@@ -307,7 +324,7 @@ for family, langs in projects.items():
 				s=u"{{/begin|%d}}\n%s{{/end}}\n%s" % (cuantos, s, "\n".join(iws1[family]))
 			else: #by default
 				title=tras1[family]['default']
-				s=u"For a list including bots, see [[%s]].\n\nFor a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n%s%s%s\n%s" % (tras2[family]['default'], table_header, s, table_footer, "\n".join(iws1[family]))
+				s=u"For a list including bots, see [[%s]].\n\nFor a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n%s\n%s%s%s\n%s" % (tras2[family]['default'], optouttext, table_header, s, table_footer, "\n".join(iws1[family]))
 			#eliminamos autointerwiki
 			s=re.sub(ur"(?im)\[\[%s:.*?\]\]\n" % lang, ur"", s)
 			page=wikipedia.Page(site, title)
@@ -331,7 +348,7 @@ for family, langs in projects.items():
 				sbots=u"{{/begin|%d}}\n%s{{/end}}\n%s" % (cuantos, sbots, "\n".join(iws2[family]))
 			else: #by defect
 				title=tras2[family]['default']
-				sbots=u"For a list excluding bots, see [[%s]].\n\nFor a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n%s%s%s\n%s" % (tras1[family]['default'], table_header, sbots, table_footer, "\n".join(iws2[family]))
+				sbots=u"For a list excluding bots, see [[%s]].\n\nFor a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n%s\n%s%s%s\n%s" % (tras1[family]['default'], optouttext, table_header, sbots, table_footer, "\n".join(iws2[family]))
 			#eliminamos autointerwiki
 			sbots=re.sub(ur"(?im)\[\[%s:.*?\]\]\n" % lang, ur"", sbots)
 			page=wikipedia.Page(site, title)
