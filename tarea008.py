@@ -105,8 +105,8 @@ tras2={
 
 #do not want: nl, simple 
 # fix: hr
-tt100={'rankingusers':True, 'rankingbots':True, 'limit':100}
-tt500={'rankingusers':True, 'rankingbots':True, 'limit':500}
+tt100={'rankingusers':True, 'rankingbots':True, 'limit':100, 'optout':''}
+tt500={'rankingusers':True, 'rankingbots':True, 'limit':500, 'optout':''}
 projects={
 	'wikinews': {
 		'es': tt100,
@@ -116,6 +116,7 @@ projects={
 		'arz': tt100,
 		'ca': tt500,
 		'da': tt500,
+		'en': {'rankingusers':True, 'rankingbots':True, 'limit':500, 'optout':'Wikipedia:List of Wikipedians by number of edits/Anonymous'}
 		'eo': tt500,
 		'es': tt500,
 		'gl': tt100,
@@ -130,7 +131,7 @@ projects={
 		},
 	'wiktionary': {
 		'es': tt100,
-		'simple': {'rankingusers':True, 'rankingbots':False, 'limit':100},
+		'simple': {'rankingusers':True, 'rankingbots':False, 'limit':100, 'optout':''},
 		},
 }
 
@@ -156,44 +157,10 @@ projects={
 		},
 	'wiktionary': {
 		'es': tt100,
-		'simple': {'rankingusers':True, 'rankingbots':False, 'limit':100},
+		'simple': {'rankingusers':True, 'rankingbots':False, 'limit':100, 'optout':''},
 		},
 
 """
-
-"""'wikipedia': {
-		'es': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'eo': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'hu': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'ca': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'tr': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'ro': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'vo': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'fi': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'it': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'nl': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'ru': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'sv': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'no': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'da': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'ar': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'ko': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'sr': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'sl': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'vi': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'bg': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'et': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'ht': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'fa': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'hr': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'new': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'nn': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'te': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'gl': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'th': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'simple': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		'he': {'rankingusers':True, 'rankingbots':True, 'limit':500},
-		},"""
 
 #metemos el resto de idiomas
 for lang in tarea000.getLangsByFamily('wikipedia'):
@@ -245,6 +212,14 @@ for family, langs in projects.items():
 			print "Error", lang, family
 			continue
 		
+		optouts=[]
+		if projects[family][lang]['optout']:
+			optoutpage=wikipedia.Page(site, projects[family][lang]['optout'])
+			if optoutpage.exists() and not optoutpage.isRedirectPage():
+				mm=re.compile(ur"\[\[ *[^\:]+? *\: *(?<useroptout>[^\]\|]+?) *[\]\|]").finditer(optoutpage.get())
+				for ii in mm:
+					optouts.append(ii.group("useroptout"))
+		
 		bots+=tarea000.botList(site)
 		admins=tarea000.adminList(site)
 		wikipedianm=tarea000.getNamespaceName(lang, family, 4)
@@ -274,24 +249,37 @@ for family, langs in projects.items():
 			ed=int(row[1])
 			if ed<minimumedits and c>minimumusers: #al menos minimumusers, aunque no tengan ni el minimumedits necesario
 				continue
-			if c<=cuantos:
+			if c<=cuantos: #primer ranking
 				if bots.count(nick)==0 and not re.search(bot_r, nick):
-					if admins.count(nick):
-						s+=u"|-\n| %d || [[User:%s|%s]] (Admin) || [[Special:Contributions/%s|%s]] \n" % (c,nick,nick,nick,ed)
-					else:
-						s+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%s]] \n" % (c,nick,nick,nick,ed)
+					if optouts.count(nick)==0:
+						if admins.count(nick):
+							s+=u"|-\n| %d || [[User:%s|%s]] (Admin) || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick,nick,ed)
+						else:
+							s+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick,nick,ed)
+					elif optouts.count(nick)>0:
+						s+=u"|-\n| %d || [Placeholder] || %d \n" % (c,ed)
 					if c<=10:
-						planti+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%s]] \n" % (c,nick,nick,nick,ed)
+						if optouts.count(nick)==0:
+							planti+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick,nick,ed)
+						elif optouts.count(nick)>0:
+							planti+=u"|-\n| %d || [Placeholder] || %d \n" % (c,ed)
 					c+=1
-			if cbots<=cuantos:
+			if cbots<=cuantos: #segundo
 				if bots.count(nick)>0 or re.search(bot_r, nick):
-					sbots+=u"|-\n| %d || [[User:%s|%s]] (Bot) || [[Special:Contributions/%s|%s]] \n" % (cbots,nick,nick,nick,ed)
+					if optouts.count(nick)==0:
+						sbots+=u"|-\n| %d || [[User:%s|%s]] (Bot) || [[Special:Contributions/%s|%d]] \n" % (cbots,nick,nick,nick,ed)
+					elif optouts.count(nick)>0:
+						sbots+=u"|-\n| %d || [Placeholder] || %d \n" % (cbots,ed)
 				else:
-					sbots+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%s]] \n" % (cbots,nick,nick,nick,ed)
+					if optouts.count(nick)==0:
+						sbots+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%d]] \n" % (cbots,nick,nick,nick,ed)
+					elif optouts.count(nick)>0:
+						sbots+=u"|-\n| %d || [Placeholder] || %d \n" % (cbots,ed)
 				cbots+=1
 			if cplanti2<=2500:
-				planti2+=u"|%s=%s\n" % (nick,ed)
-				cplanti2+=1
+				if optouts.count(nick)==0:	
+					planti2+=u"|%s=%s\n" % (nick,ed)
+					cplanti2+=1
 		
 		planti2+=u"|USUARIO DESCONOCIDO\n}}<noinclude>{{uso de plantilla}}</noinclude>"
 		planti+=u"|-\n| colspan=3 | Véase también [[Wikipedia:Ranking de ediciones]]<br/>Actualizado a las {{subst:CURRENTTIME}} (UTC) del  {{subst:CURRENTDAY}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}} por [[Usuario:BOTijo|BOTijo]] \n|}<noinclude>{{uso de plantilla}}</noinclude>"
@@ -323,7 +311,7 @@ for family, langs in projects.items():
 			#eliminamos autointerwiki
 			s=re.sub(ur"(?im)\[\[%s:.*?\]\]\n" % lang, ur"", s)
 			page=wikipedia.Page(site, title)
-			if projects[family][lang]['rankingusers'] and ((not page.exists()) or (not page.isRedirectPage() and not page.isDisambig() and page.get()!=s)):
+			if projects[family][lang]['rankingusers'] and ((not page.exists()) or (not page.isRedirectPage() and not page.isDisambig() and page.get()!=s and int(page.getVersionHistory(revCount=1)[0][1][8:10])!=datetime.datetime.now().day)):# [0][1] es el timestamp de la última versión del historial, [8:10] es el día del mes
 				page.put(s, resume)
 				time.sleep(delay)
 		
@@ -347,7 +335,7 @@ for family, langs in projects.items():
 			#eliminamos autointerwiki
 			sbots=re.sub(ur"(?im)\[\[%s:.*?\]\]\n" % lang, ur"", sbots)
 			page=wikipedia.Page(site, title)
-			if projects[family][lang]['rankingbots'] and ((not page.exists()) or (not page.isRedirectPage() and not page.isDisambig() and page.get()!=sbots)):
+			if projects[family][lang]['rankingbots'] and ((not page.exists()) or (not page.isRedirectPage() and not page.isDisambig() and page.get()!=sbots and int(page.getVersionHistory(revCount=1)[0][1][8:10])!=datetime.datetime.now().day)):
 				page.put(sbots, resume)
 				time.sleep(delay)
 		
