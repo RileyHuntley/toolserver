@@ -230,7 +230,7 @@ for family, langs in projects.items():
 	iws2[family].sort()
 
 for family, langs in projects.items():
-	for lang, v in langs:
+	for lang, v in langs.items():
 		print family, lang
 		if tarea000.isExcluded('tarea008', family, lang):
 			continue
@@ -328,7 +328,7 @@ for family, langs in projects.items():
 				time.sleep(delay)
 		
 		#second ranking
-		if projects[family][lang]['rankingbots]:
+		if projects[family][lang]['rankingbots']:
 			title=u''
 			if tras2[family].has_key(lang) and tras2[family][lang]:
 				title=u"%s:%s" % (wikipedianm, tras2[family][lang])
