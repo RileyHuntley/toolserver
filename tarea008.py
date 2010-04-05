@@ -257,12 +257,12 @@ for family, langs in projects.items():
 				if admins.count(nick)>0:
 					if c<=10:
 						planti+=u"|-\n| %d || [[User:%s|%s]] (Admin) || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick,nick,ed)
-						c+=1
+						#no poner c+=1 sino incrementa dos veces
 					if c<=cuantos:
 						s+=u"|-\n| %d || [[User:%s|%s]] (Admin) || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick,nick,ed)
 						c+=1
 					if cbots<=cuantos:
-						sbots+=u"|-\n| %d || [[User:%s|%s]] (Admin) || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick,nick,ed)
+						sbots+=u"|-\n| %d || [[User:%s|%s]] (Admin) || [[Special:Contributions/%s|%d]] \n" % (cbots,nick,nick,nick,ed)
 						cbots+=1
 				elif bots.count(nick)>0 or re.search(bot_r, nick):
 					if c<=10:
@@ -280,17 +280,17 @@ for family, langs in projects.items():
 						s+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick,nick,ed)
 						c+=1
 					if cbots<=cuantos:
-						sbots+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick,nick,ed)
+						sbots+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%d]] \n" % (cbots,nick,nick,nick,ed)
 						cbots+=1
 			elif optouts.count(nick)>0:
 				if c<=10:
 					planti+=u"|-\n| %d || [Placeholder] || %d \n" % (c,ed)
-					c+=1
+					#no poner c+=1 sino incrementa dos veces
 				if c<=cuantos:
 					s+=u"|-\n| %d || [Placeholder] || %d \n" % (c,ed)
 					c+=1
 				if cbots<=cuantos:
-					sbots+=u"|-\n| %d || [Placeholder] || %d \n" % (c,ed)
+					sbots+=u"|-\n| %d || [Placeholder] || %d \n" % (cbots,ed)
 					cbots+=1
 
 			if cplanti2<=2500: #plantilla ediciones
