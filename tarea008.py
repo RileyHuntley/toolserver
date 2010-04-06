@@ -275,7 +275,7 @@ for family, langs in projects.items():
 				else:
 					if c<=10:
 						planti+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick,nick,ed)
-						c+=1
+						#no poner c+=1 sino incrementa dos veces
 					if c<=cuantos:
 						s+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick,nick,ed)
 						c+=1
