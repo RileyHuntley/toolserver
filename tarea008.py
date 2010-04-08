@@ -164,11 +164,12 @@ projects={
 """
 
 #metemos el resto de idiomas
-for lang in tarea000.getLangsByFamily('wikipedia'):
-	if lang=='en-simple':
-		lang='simple'
-	if not projects['wikipedia'].has_key(lang):
-		projects['wikipedia'][lang]=tt100
+#descomentar cuando arregle el fallo de _mysql_exceptions.OperationalError: (1040, 'Too many connections')
+#for lang in tarea000.getLangsByFamily('wikipedia'):
+#	if lang=='en-simple':
+#		lang='simple'
+#	if not projects['wikipedia'].has_key(lang):
+#		projects['wikipedia'][lang]=tt100
 
 #generating interwikis
 iws1={}
@@ -246,7 +247,7 @@ for family, langs in projects.items():
 		cuantos=projects[family][lang]['limit']
 		planti2=u"{{#switch:{{{1|User}}}\n"
 		planti=u"{| class='wikitable sortable' style='font-size: 90%;text-align: center;float: right;'\n! #\n! Usuario\n! Ediciones\n"
-		bot_r=re.compile(ur"(?m)(^([Bb]ot|BOT) | ([Bb]ot|BOT)$|[a-z0-9\. ](Bot|BOT)$|^BOT[a-z0-9\. ])")
+		bot_r=re.compile(ur"(?m)(^([Rr][Oo])?[Bb][Oo][Tt] | ([Rr][Oo])?([Bb][Oo][Tt])$|[a-z0-9\.\- ]([Rr][Oo])?(Bot|BOT)$|^([Rr][Oo])?BOT[a-z0-9\.\- ])")
 		for row in result:
 			nick=unicode(row[0], 'utf-8')
 			ed=int(row[1])
@@ -324,7 +325,7 @@ for family, langs in projects.items():
 				s=u"{{/begin|%d}}\n%s{{/end}}\n%s" % (cuantos, s, "\n".join(iws1[family]))
 			else: #by default
 				title=tras1[family]['default']
-				s=u"For a list including bots, see [[%s]].\n\nFor a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n\n%s\n\n%s%s%s\n%s" % (tras2[family]['default'], optouttext, table_header, s, table_footer, "\n".join(iws1[family]))
+				s=u"For a list including bots, see [[%s]].\n\nFor a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n\n%s\n\nThis page was last updated in '''{{REVISIONMONTH}} {{REVISIONDAY}}, {{REVISIONYEAR}}'''.\n\n%s%s%s\n%s" % (tras2[family]['default'], optouttext, table_header, s, table_footer, "\n".join(iws1[family]))
 			#eliminamos autointerwiki
 			s=re.sub(ur"(?im)\[\[%s:.*?\]\]\n" % lang, ur"", s)
 			page=wikipedia.Page(site, title)
@@ -348,7 +349,7 @@ for family, langs in projects.items():
 				sbots=u"{{/begin|%d}}\n%s{{/end}}\n%s" % (cuantos, sbots, "\n".join(iws2[family]))
 			else: #by defect
 				title=tras2[family]['default']
-				sbots=u"For a list excluding bots, see [[%s]].\n\nFor a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n\n%s\n\n%s%s%s\n%s" % (tras1[family]['default'], optouttext, table_header, sbots, table_footer, "\n".join(iws2[family]))
+				sbots=u"For a list excluding bots, see [[%s]].\n\nFor a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n\n%s\n\nThis page was last updated in '''{{REVISIONMONTH}} {{REVISIONDAY}}, {{REVISIONYEAR}}'''.\n\n%s%s%s\n%s" % (tras1[family]['default'], optouttext, table_header, sbots, table_footer, "\n".join(iws2[family]))
 			#eliminamos autointerwiki
 			sbots=re.sub(ur"(?im)\[\[%s:.*?\]\]\n" % lang, ur"", sbots)
 			page=wikipedia.Page(site, title)
