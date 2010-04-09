@@ -327,7 +327,7 @@ for family, langs in projects.items():
 				title=tras1[family]['default']
 				s=u"For a list including bots, see [[%s]].\n\nFor a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n\n%s\n\nThis page was last updated in '''{{REVISIONMONTH}} {{REVISIONDAY}}, {{REVISIONYEAR}}'''.\n\n%s%s%s\n%s" % (tras2[family]['default'], optouttext, table_header, s, table_footer, "\n".join(iws1[family]))
 			#eliminamos autointerwiki
-			s=re.sub(ur"(?im)\[\[%s:.*?\]\]\n" % lang, ur"", s)
+			s=re.sub(ur"(?im)\[\[%s:.*?\]\](\n|$)" % lang, ur"", s)
 			page=wikipedia.Page(site, title)
 			if projects[family][lang]['rankingusers'] and ((not page.exists()) or (not page.isRedirectPage() and not page.isDisambig() and page.get()!=s and int(page.getVersionHistory(revCount=1)[0][1][8:10])!=datetime.datetime.now().day)):# [0][1] es el timestamp de la última versión del historial, [8:10] es el día del mes
 				page.put(s, resume)
