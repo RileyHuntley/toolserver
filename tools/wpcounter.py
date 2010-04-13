@@ -442,6 +442,12 @@ document.getElementById('donate').innerHTML=donate;
 document.getElementById('f11').innerHTML=f11;
 document.getElementById('author').innerHTML=author;
 
+// These values are updated every 5 minutes
+// using site_stats table from all wikis replicated in
+// Toolserver databases.
+// Families updated include ["wikibooks", "wikipedia", "wiktionary", "wikimedia", "wikiquote", "wikisource", "wikinews", "wikiversity", "commons", "wikispecies"]
+// More questions? emijrp AT gmail DOT com
+
 var editinit=%.0f;
 var timeinit=%d;
 var timenow=new Date().getTime();
