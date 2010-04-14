@@ -276,7 +276,7 @@ switch(lang){
 		author='Datblygwyd gan <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Ysbrydolwyd gan <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
 	case "da":
-		header='Totalt antal redigeringer i <a href="http://www.wikimedia.org">Wikimedias projekter</a>:';
+		header='Samlet antal rettelser på tværs af alle <a href="http://www.wikimedia.org">Wikimedia-projekter</a>:';
 		spliter='.';
 		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Giv et bidrag til Wikimedia Foundation</a>';
 		f11='Tryk F11 for fuldskærmsvisning';
@@ -338,6 +338,13 @@ switch(lang){
 		f11='Appuyez sur F11 pour passer en plein écran';
 		author='Développé par <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Inspiré par <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
+	case "hi":
+		header='<a href="http://www.wikimedia.org">विकिमीडिया परियोजना</a> में कुल संपादन:';
+		spliter='&nbsp;';
+		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">विकिमीडिया फ़ौंडेशन को दान करें। </a>';
+		f11='पूर्ण स्क्रीन के लिए ऍफ़११ [F11] दबाएँ।';
+		author='<a href="http://es.wikipedia.org/wiki/User:Emijrp">एमिजआरपी [emijrp]</a> द्वारा विकसित (<a href="http://www.7is7.com/software/firefox/partycounter.html">७इस७ [7is7]</a> द्वारा प्रेरित।)';
+		break;
 	case "hu":
 		header='<a href="http://www.wikimedia.org">A Wikimédia projektek</a> együttes szerkesztésszáma:';
 		spliter='&nbsp;';
@@ -355,9 +362,9 @@ switch(lang){
 	case "it":
 		header='Modifiche totali nei <a href="http://www.wikimedia.org">progetti Wikimedia</a>:';
 		spliter='.';
-		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Fai una donazione alla Wikimedia Foundation</a>';
-		f11='Premi F11 per visualizzare a schermo intero';
-		author='Sviluppato da <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Ispirato da <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
+		donate='<a href="http://wikimediafoundation.org/wiki/Donazioni">Fai una donazione a Wikimedia Foundation</a>';
+		f11='Premi F11 per passare a schermo intero';
+		author='Sviluppato da <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (ispirato a <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
 	case "ja":
 		header='<a href="http://www.wikimedia.org">ウィキメディア・プロジェクト</a>の総編集回数';
