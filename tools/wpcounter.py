@@ -187,28 +187,28 @@ switch(lang){
 	case "af":
 		header='Totale wysigings in alle <a href="http://www.wikimedia.org">Wikimedia-projekte</a>:';
 		spliter='&nbsp;';
-		donate="<a href='http://wikimediafoundation.org/wiki/Support_Wikipedia'>Skenk 'n donasie aan die Wikimedia-stigting</a>"; //be careful with 'n
+		donate="<a href='http://wikimediafoundation.org/wiki/Skenk'>Skenk 'n donasie aan die Wikimedia-stigting</a>"; //be careful with 'n
 		f11='Druk op F11 vir volskerm';
 		author='Ontwikkel deur <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (inspirasie deur <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
 	case "als":
 		header='Gsamtaazahl Bearbeitige uff de <a href="http://www.wikimedia.org">Wikimedia-Brojäkt:</a>';
 		spliter='&nbsp;';
-		donate="<a href='http://wikimediafoundation.org/wiki/Support_Wikipedia'>Understütz d'Wikimedia Foundation</a>"; //be careful with d'
+		donate="<a href='http://wikimediafoundation.org/wiki/Finanzielli_Hilf'>Understütz d'Wikimedia Foundation</a>"; //be careful with d'
 		f11='Vollbild: F11';
 		author='Gschribe vum <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (uff Basis vu <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
 	case "ar":
 		header='مجموع التعديلات في <a href="http://www.wikimedia.org">مشاريع ويكيميديا</a>:';
 		spliter=',';
-		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">تبرع لمؤسسة ويكيميديا</a>';
+		donate='<a href="http://wikimediafoundation.org/wiki/جمع_تبرعات">تبرع لمؤسسة ويكيميديا</a>';
 		f11='للشاشة الكاملة اضغط F11';
 		author='من تطوير <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (ملهمة من <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
 	case "az":
 		header='<a href="http://www.wikimedia.org">Wikimedia layihəsində </a> redaktələrin ümumi sayı:';
 		spliter=',';
-		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Wikimedia Foundation təşkilatına ianələrin göndərilməsi</a>';
+		donate='<a href="http://wikimediafoundation.org/wiki/Bağışlar">Wikimedia Foundation təşkilatına ianələrin göndərilməsi</a>';
 		f11='Ekranın tam açılması üçün F11 düyməsini basın';
 		author='<a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> tərəfindən (<a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a> dəstəyi ilə) işlənmişdir';
 		break;
@@ -250,7 +250,7 @@ switch(lang){
 	case "ca":
 		header='Edicions entre tots els <a href="http://www.wikimedia.org">projectes de Wikimedia</a>:';
 		spliter='.';
-		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Dona a la Fundació Wikimedia</a>';
+		donate='<a href="http://wikimediafoundation.org/wiki/Donatius">Dona a la Fundació Wikimedia</a>';
 		f11='Pantalla completa pulsant F11';
 		author='Desarrollat per <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Inspirat en <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
@@ -264,7 +264,7 @@ switch(lang){
 	case "cs":
 		header='Celkový počet editací v <a href="http://www.wikimedia.org">projektech nadace Wikimedia</a>:';
 		spliter='&nbsp;';
-		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Podpořte Wikimedia Foundation</a>';
+		donate='<a href="http://wikimediafoundation.org/wiki/Sponzorství">Podpořte Wikimedia Foundation</a>';
 		f11='Stisknutím klávesy F11 zobrazíte stránku na celou obrazovku';
 		author='Vyvinul <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (inspirováno stránkami <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
@@ -278,14 +278,14 @@ switch(lang){
 	case "da":
 		header='Samlet antal rettelser på tværs af alle <a href="http://www.wikimedia.org">Wikimedia-projekter</a>:';
 		spliter='.';
-		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Giv et bidrag til Wikimedia Foundation</a>';
+		donate='<a href="http://wikimediafoundation.org/wiki/Indsamling">Giv et bidrag til Wikimedia Foundation</a>';
 		f11='Tryk F11 for fuldskærmsvisning';
 		author='Udviklet af <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Inspireret af <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
 	case "de":
 		header='Gesamtzahl der Bearbeitungen in <a href="http://www.wikimedia.org">den Wikimedia-Projekten</a>:';
 		spliter='&#8239;';
-		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Spende an die Wikimedia Foundation</a>';
+		donate='<a href="http://wikimediafoundation.org/wiki/Spenden">Spende an die Wikimedia Foundation</a>';
 		f11='Drücken Sie F11 für Vollbild-Anzeige';
 		author='Entwickelt von <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Inspiriert durch <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
@@ -299,14 +299,14 @@ switch(lang){
 	case "eo":
 		header='Totala nombro de redaktoj en <a href="http://www.wikimedia.org">Vikimediaj projektoj</a>:';
 		spliter='.';
-		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Donaci al Fondaĵo Vikimedio</a>';
+		donate='<a href="http://wikimediafoundation.org/wiki/Monkolektado">Donaci al Fondaĵo Vikimedio</a>';
 		f11='Premu F11 por plenekrana modo';
 		author='Kreita de <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Inspirita de <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
 	case "es":
 		header='Ediciones entre todos los <a href="http://www.wikimedia.org">proyectos Wikimedia</a>:';
 		spliter='.';
-		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Dona a la Fundación Wikimedia</a>';
+		donate='<a href="http://wikimediafoundation.org/wiki/Donaciones">Dona a la Fundación Wikimedia</a>';
 		f11='Pantalla completa pulsando F11';
 		author='Desarrollado por <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Inspirado en <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
@@ -320,7 +320,7 @@ switch(lang){
 	case "eu":
 		header='<a href="http://www.wikimedia.org">Wikimedia proiektuetan</a> egindako eguneraketak guztira:';
 		spliter='.';
-		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Wikimedia Foundazioari dohaintza egin</a>';
+		donate='<a href="http://wikimediafoundation.org/wiki/Dohaintzak">Wikimedia Foundazioari dohaintza egin</a>';
 		f11='F11 sakatu pantaila osoan erakusteko';
 		author='<a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a>-ek garatua (<a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>-ek inspiratuta)';
 		break;
@@ -334,21 +334,21 @@ switch(lang){
 	case "fr":
 		header="Nombre total d'éditions dans les <a href='http://www.wikimedia.org'>projets Wikimedia</a>:"; // be careful with d'éditions
 		spliter='&nbsp;';
-		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Donner à la Wikimedia Foundation</a>';
+		donate='<a href="http://wikimediafoundation.org/wiki/Faire_un_don">Donner à la Wikimedia Foundation</a>';
 		f11='Appuyez sur F11 pour passer en plein écran';
 		author='Développé par <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Inspiré par <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
 	case "hi":
 		header='<a href="http://www.wikimedia.org">विकिमीडिया परियोजना</a> में कुल संपादन:';
 		spliter='&nbsp;';
-		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">विकिमीडिया फ़ौंडेशन को दान करें। </a>';
+		donate='<a href="http://wikimediafoundation.org/wiki/Donate/hi">विकिमीडिया फ़ौंडेशन को दान करें। </a>';
 		f11='पूर्ण स्क्रीन के लिए ऍफ़११ [F11] दबाएँ।';
 		author='<a href="http://es.wikipedia.org/wiki/User:Emijrp">एमिजआरपी [emijrp]</a> द्वारा विकसित (<a href="http://www.7is7.com/software/firefox/partycounter.html">७इस७ [7is7]</a> द्वारा प्रेरित।)';
 		break;
 	case "hu":
 		header='<a href="http://www.wikimedia.org">A Wikimédia projektek</a> együttes szerkesztésszáma:';
 		spliter='&nbsp;';
-		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Támogasd a Wikimédia Alapítványt</a>';
+		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia/hu">Támogasd a Wikimédia Alapítványt</a>';
 		f11='Teljes képernyős mód: F11';
 		author='Készítette: <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (<a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a> ötlete alapján)';
 		break;
@@ -397,35 +397,35 @@ switch(lang){
 	case "pl":
 		header='Ogólna liczba edycji w <a href="http://www.wikimedia.org">projektach Wikimedia</a>:';
 		spliter='&nbsp;';
-		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Wesprzyj Wikimedia Foundation</a>';
+		donate='<a href="http://wikimediafoundation.org/wiki/Dary_pieniężne">Wesprzyj Wikimedia Foundation</a>';
 		f11='Naciśnij F11, aby włączyć tryb pełnoekranowy';
 		author='Stworzony przez <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (zainspirowany przez <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
 	case "pt":
 		header='Total de edições nos <a href="http://www.wikimedia.org">projetos Wikimedia</a>:';
 		spliter='.';
-		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Doe para a Fundação Wikimedia</a>';
+		donate='<a href="http://wikimediafoundation.org/wiki/Coleta_de_fundos">Doe para a Fundação Wikimedia</a>';
 		f11='Pressione F11 para tela cheia';
 		author='Desenvolvido por <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Inspirado em <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
 	case "ro":
 		header='Numărul total de modificări în <a href="http://www.wikimedia.org">proiectele Wikimedia</a>:';
 		spliter='.';
-		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Donaţi pentru Wikimedia</a>';
+		donate='<a href="http://wikimediafoundation.org/wiki/Donaţii">Donaţi pentru Wikimedia</a>';
 		f11='Apăsați F11 pentru afișarea pe tot ecranul';
 		author='Dezvoltat de <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (inspirat de la <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
 	case "ru":
 		header='Всего правок в <a href="http://www.wikimedia.org">проектах Викимедиа</a>:';
 		spliter='&nbsp;';
-		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Пожертвуйте «Фонду Викимедиа»</a>';
+		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia/ru">Пожертвуйте «Фонду Викимедиа»</a>';
 		f11='Нажмите F11 для показа на весь экран';
 		author='Разработал <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Основано на <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
 	case "sv":
 		header='Antal redigeringar i <a href="http://www.wikimedia.org">Wikimediaprojekten</a>:';
 		spliter='&nbsp;';
-		donate='<a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Donera till Wikimedia Foundation</a>';
+		donate='<a href="http://wikimediafoundation.org/wiki/Insamling">Donera till Wikimedia Foundation</a>';
 		f11='Tryck F11 för helskärm';
 		author='Utvecklad av <a href="http://es.wikipedia.org/wiki/User:Emijrp">emijrp</a> (Inspirerad av <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
 		break;
