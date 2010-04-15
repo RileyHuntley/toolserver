@@ -529,7 +529,7 @@ if total>total_old:
 			round_number_text=u"%s,%s,%s" % (round_number_text[:3], round_number_text[3:6], round_number_text[6:9])
 		else:
 			round_number_text=u"%s,%s,%s,%s" % (round_number_text[:1], round_number_text[1:4], round_number_text[4:7], round_number_text[7:10])
-		msg=u"%s edits - Check the counter! http://toolserver.org/~emijrp/wikimediacounter/ #wikipedia #wikimedia #wikis" % round_number_text
+		msg=u"%s edits - Check the counter! http://toolserver.org/~emijrp/wikimediacounter/ #wikipedia #wikimedia #wikis #wmcon" % round_number_text
 		orden='curl -u %s:%s -d status="%s" http://twitter.com/statuses/update.json' % (username, password, msg.encode("utf-8"))
 		os.system(orden)
 
