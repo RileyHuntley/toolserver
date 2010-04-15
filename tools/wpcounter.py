@@ -465,7 +465,7 @@ var editnow=editinit+((timenow-timeinit)/period)*editrate;
 id=window.setTimeout("update();",period);
 function update() {
    timenow2=new Date().getTime();
-   if (Math.round((timenow2-editinit)/1000)%%300==0) { window.setTimeout("window.location.reload();", 1100); } //refresh
+   //if (editnow<1000000000 && Math.round((timenow2-timenow)/1000)%%300==0) { window.setTimeout("window.location.reload();", 1100); } //refresh
    editnow+=editrate;
    editnowtext=""+Math.round(editnow)
    for(var i=3; i<editnowtext.length; i+=3) {
@@ -511,7 +511,7 @@ if total>total_old:
 	f.write(output.encode("utf-8"))
 	f.close()
 	
-	round_number=total-(total % 1000000)
+	round_number=total-(total % 100000)  #100k cuando nos aproximamos
 	f=open('%s/wpcounter.log' % path, 'w')
 	f.write("%d;%.0f;%d" % (timestamp, total, round_number))
 	f.close()
