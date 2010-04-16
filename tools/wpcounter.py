@@ -138,7 +138,8 @@ p#f11 {
 
 <p id="followus">
 Join us on <a href="http://www.facebook.com/group.php?gid=287466429242">Facebook</a> and follow us on <a href="http://twitter.com/wmcounter">Twitter</a>!<br/>
-Chat with us at <a href="http://webchat.freenode.net/?randomnick=1&channels=wikimediacounter">Freenode</a>
+Chat with us at <a href="http://webchat.freenode.net/?randomnick=1&channels=wikimediacounter">Freenode</a><br/>
+1 Billionth edit <a href="onebillion.png">screenshot</a>!
 </p>
 
 <p id="translateit"><a href="http://en.wikipedia.org/wiki/User:Emijrp/Wikimedia_projects_edits_counter">Translate it</a>!</p>
