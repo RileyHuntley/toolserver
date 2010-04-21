@@ -20,9 +20,13 @@ import sys
 import os
 import md5
 import time
+import wikipedia
+import MySQLdb
+import tarea000
 
 lenguajeobjetivo=sys.argv[1] # de momento probar con 1 solo a la vez
 lenguajefuente='en' # mirar nota1 si meto una lista en vez de individual
+family='wikipedia'
 
 def percent(c):
 	if c % 1000 == 0:
@@ -31,258 +35,166 @@ def percent(c):
 
 pagetitle2pageid={}
 pageid2pagetitle={}
-imagelinks={}
-imagelinks_pattern=re.compile(ur'\((\d+)\,\'([^\']*?)\'\)')
-exclusion_pattern=re.compile(ur'(?i)(\.(gif|mid|ogg|pne?g|svg)|bandera|escudo|herb|coa|blas[oó]n|icon|flag|coat|shield|wiki|logo|barnstar|dot|map|cover|tomb|tumb|grave|50 ?cent|hitler|abu|gadd?afi)') # los ' y " los filtramos al final
-
-#cargamos templates para descartar imagenes inutiles
-templates=set()
-print '-'*70
-print 'Cargando plantillas de %s:' % (lenguajefuente)
-#nota1 templates[lenguajefuente]=[]
-filename='/home/emijrp/temporal/%swikitemplatepageid.txt' % lenguajefuente
-os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_id from page where page_namespace=10;" > %s' % (lenguajefuente, lenguajefuente, filename)) # hay que  permitir las redireccinoes? no, seria raro que una imagen estuviera en 1 red
-f=open(filename, 'r')
-c=0
-for line in f:
-	line=unicode(line, 'utf-8')
-	line=line[:len(line)-1] #evitamos \n
-	#line=re.sub('_', ' ', line)
-	trozos=line.split('	')
-	if len(trozos)==1:
-		pageid=trozos[0]
-		#pagetitle=trozos[1] #page_title no sirve de momento
-		c+=1
-		percent(c)
-		templates.add(pageid)
-print '\nCargadas %d plantillas de %s:' % (c, lenguajefuente)
-f.close()
+pageid2pagetitle2={}
+pagetitle2pageid2={}
+sinimagenes=set()
+interwikis={}
+imagescommons=set()
+imagelinks_pattern=re.compile(ur"\((\d+)\,\'([^\']+?)\'\)")
+ex=ur'(?i)(%s)' % ('|'.join(wikipedia.Page(wikipedia.Site("en", "wikipedia"), u"User:Emijrp/Images for biographies/Exclusions").get().splitlines()))
+exclusion_pattern=re.compile(ex) # los ' y " los filtramos al final
+print "Excluyendo", ex
 
 #cargamos pageid/pagetitles para lenguajes objetivos
 print '-'*70
 print 'Cargando pageid/pagetitles para %s:' % (lenguajeobjetivo)
-filename='/home/emijrp/temporal/%swikipageid.txt' % lenguajeobjetivo
-os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_id, page_title from page where page_namespace=0 and page_is_redirect=0;" > %s' % (lenguajeobjetivo, lenguajeobjetivo, filename))
-f=open(filename, 'r')
+dbname=tarea000.getDbname(lenguajeobjetivo, family)
+server=tarea000.getServer(lenguajeobjetivo, family)
+conn = MySQLdb.connect(host='sql-s%s' % server, db=dbname, read_default_file='~/.my.cnf', use_unicode=True)
+cursor = conn.cursor()
+cursor.execute("select page_id, page_title from page where page_namespace=0 and page_is_redirect=0;")
+row=cursor.fetchone()
 c=0
-for line in f:
-	line=unicode(line, 'utf-8')
-	line=line[:len(line)-1] #evitamos \n
-	line=re.sub('_', ' ', line)
-	trozos=line.split('	')
-	if len(trozos)==2:
-		pageid=trozos[0]
-		pagetitle=trozos[1]
-		c+=1
-		percent(c)
-		pageid2pagetitle[pageid]=pagetitle
-		pagetitle2pageid[pagetitle]=pageid
+while row:
+	pageid=int(row[0])
+	pagetitle=re.sub('_', ' ', row[1])
+	c+=1
+	percent(c)
+	pageid2pagetitle[pageid]=pagetitle
+	pagetitle2pageid[pagetitle]=pageid
+	row=cursor.fetchone()
+cursor.close()
+conn.close()
 print '\nCargados %d pageid/pagetitle para %s:' % (c, lenguajeobjetivo)
-f.close()
 
-if c==0:
+if c==0: #f
 	sys.exit()
 
-#cargamos imagelinks para lenguajes objetivos
+#ahora rellenamos sinimagenes con page_ids que no tengan ningún imagelink
 print '-'*70
 print 'Cargando imagelinks de %s:' % (lenguajeobjetivo)
-imagelinks=set()
-filename='/home/emijrp/temporal/%swikiimagelinks.txt' % lenguajeobjetivo
-os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select il_from, il_to from imagelinks inner join page on il_from=page_id where page_namespace=0 and page_is_redirect=0;" > %s' % (lenguajeobjetivo, lenguajeobjetivo, filename))
-f=open(filename, 'r')
+dbname=tarea000.getDbname(lenguajeobjetivo, family)
+server=tarea000.getServer(lenguajeobjetivo, family)
+conn = MySQLdb.connect(host='sql-s%s' % server, db=dbname, read_default_file='~/.my.cnf', use_unicode=True)
+cursor = conn.cursor()
+cursor.execute("select page_id from page where page_namespace=0 and page_is_redirect=0 and page_id not in (select distinct il_from from imagelinks inner join page on il_from=page_id where page_namespace=0 and page_is_redirect=0);")
+row=cursor.fetchone()
 c=0
-for line in f:
-	try:
-		line=unicode(line, 'utf-8')
-	except:
-		continue
-	line=line[:len(line)-1] #evitamos \n
-	line=re.sub('_', ' ', line)
-	trozos=line.split('	')
-	if len(trozos)==2:
-		pageid=trozos[0]
-		image=trozos[1]
-		
-		#filtro
-		if re.search(exclusion_pattern, image):
-			continue
-		
-		c+=1
-		percent(c)
-		if not pageid in imagelinks:
-			imagelinks.add(pageid)
-
-print '\nCargados %d imagelinks de %s:, quitando excluidas e imagenes enlazadas desde nm!=0' % (c, lenguajeobjetivo)
-f.close()
-
-#en imagelinks estan todos los pageid que contienen alguna imagen
-#ahora rellenamos sinimagenes con pageids que no aparezcan en imagelinks
-sinimagenes=set()
-c=0
-for pageid, pagetitle in pageid2pagetitle.items():
-	if not pageid in imagelinks:
-		sinimagenes.add(pageid)
-		c+=1
-print '\nSe encontraron %d articulos "sin imagenes utiles" en %s:' % (c, lenguajeobjetivo)
-
-print 'Vaciamos imagelinks'
-imagelinks.clear() # no sirve?
+while row:
+	pageid=int(row[0])
+	c+=1
+	percent(c)
+	sinimagenes.add(pageid)
+	row=cursor.fetchone()
+cursor.close()
+conn.close()
+print '\nSe encontraron %d articulos sin imagenes en %s:' % (c, lenguajeobjetivo) #sin ninguna, hasta las que tienen commons.svg se excluyen ?
 
 #cargamos interwikis a articulos de lenguajeobjetivo carentes de imagenes
 print '-'*70
 print 'Cargando interwikis de %s: hacia %s:' % (lenguajefuente, lenguajeobjetivo)
-interwikis={}
-filename='/home/emijrp/temporal/%swikiinterwikis-to-%s.txt' % (lenguajefuente, lenguajeobjetivo)
-os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select ll_from, ll_title from langlinks where ll_lang=\'%s\';" > %s' % (lenguajefuente, lenguajefuente, lenguajeobjetivo, filename))
-f=open(filename, 'r')
+dbname=tarea000.getDbname(lenguajefuente, family)
+server=tarea000.getServer(lenguajefuente, family)
+conn = MySQLdb.connect(host='sql-s%s' % server, db=dbname, read_default_file='~/.my.cnf', use_unicode=True)
+cursor = conn.cursor()
+cursor.execute("select ll_from, page_title, ll_title from langlinks inner join page on ll_from=page_id where ll_lang=\'%s\';" % lenguajeobjetivo)
+row=cursor.fetchone()
 c=0
-for line in f:
-	try:
-		line=unicode(line, 'utf-8')
-	except:
-		continue
-	line=line[:len(line)-1] #evitamos \n
-	line=re.sub('_', ' ', line)
-	trozos=line.split('	')
-	if len(trozos)==2:
-		pageid=trozos[0]
-		interwiki=trozos[1]
-		
-		c+=1
-		percent(c)
-		if pagetitle2pageid.has_key(interwiki) and pagetitle2pageid[interwiki] in sinimagenes:
-			interwikis[pageid]=interwiki
-print '\nCargados %d interwikis desde %s: hacia %s:' % (c, lenguajefuente, lenguajeobjetivo)
-f.close()
-
-#nota1
-#cargamos pageid y pagetitles solo para aquellos articulos que tienen interwiki a lang:
-print '-'*70
-print 'Cargando pageid/pagetitles de %swiki que tengan iw hacia articulos de %s: sin imagenes' % (lenguajefuente, lenguajeobjetivo)
-pageid2pagetitle2={}
-pagetitle2pageid2={}
-filename='/home/emijrp/temporal/%swikipageid-to-%s.txt' % (lenguajefuente, lenguajeobjetivo)
-os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_id, page_title from page inner join langlinks on ll_from=page_id where page_namespace=0 and page_is_redirect=0 and ll_lang=\'%s\';" > %s' % (lenguajefuente, lenguajefuente, lenguajeobjetivo, filename))
-#os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_id, page_title from page where page_namespace=0 and page_is_redirect=0 and page_id in (select ll_from from langlinks where ll_lang=\'%s\');" > %s' % (lenguajefuente, lenguajefuente, lenguajeobjetivo, filename))
-f=open(filename, 'r')
-c=0
-for line in f:
-	try:
-		line=unicode(line, 'utf-8')
-	except:
-		continue
-	line=line[:len(line)-1] #evitamos \n
-	line=re.sub('_', ' ', line)
-	trozos=line.split('	')
-	if len(trozos)==2:
-		pageid=trozos[0]
-		pagetitle=trozos[1]
-		if interwikis.has_key(pageid):
-			c+=1
-			percent(c)
-			pageid2pagetitle2[pageid]=pagetitle
+while row:
+	pageid=int(row[0])
+	pagetitle=row[1]
+	interwiki=re.sub('_', ' ', row[2])
+	c+=1
+	percent(c)
+	if pagetitle2pageid.has_key(interwiki) and pagetitle2pageid[interwiki] in sinimagenes:
+		#si la pagina a la que apunta el iw existe en el lenguajeobjetivo, y no tiene imagenes...
+		interwikis[pageid]=interwiki
+		pageid2pagetitle2[pageid]=pagetitle
 			#pagetitle2pageid2[pagetitle]=pageid
-print '\nCargados %d pageid/pagetitle de %swiki que tienen iw hacia articulos de %s: sin imagenes' % (c, lenguajefuente, lenguajeobjetivo)
-f.close()
+	row=cursor.fetchone()
+cursor.close()
+conn.close()
+print '\nCargados %d pageid/pagetitle (y su interwiki a %s:) de %swiki que tienen iw hacia articulos de %s: sin imagenes' % (c, lenguajeobjetivo, lenguajefuente, lenguajeobjetivo)
 
-#cargamos imagenes subidas a la inglesa y que cumplan los filtros
+#cargamos imágenes subidas a la inglesa y que cumplan los filtros
 print '-'*70
-print 'Cargando imagenes de %s:' % lenguajefuente
+print 'Cargando imagenes locales de %s:' % lenguajefuente
 images=set()
-filename='/home/emijrp/temporal/%swiki-images.txt' % lenguajefuente
-try:
-	f=open(filename, 'r')
-except:
-	os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select img_name from image;" > %s' % (lenguajefuente, lenguajefuente, filename)) #no poner img_width<img_height, ya que hay que tenerlas para descartarlas
-	f=open(filename, 'r')
+dbname=tarea000.getDbname(lenguajefuente, family)
+server=tarea000.getServer(lenguajefuente, family)
+conn = MySQLdb.connect(host='sql-s%s' % server, db=dbname, read_default_file='~/.my.cnf', use_unicode=True)
+cursor = conn.cursor()
+cursor.execute("select img_name from image;") #no poner img_width<img_height, ya que hay que tenerlas para descartarlas
+row=cursor.fetchone()
 c=0
-for line in f:
-	try:
-		line=unicode(line, 'utf-8')
-	except:
+while row:
+	image=re.sub('_', ' ', row[0])
+	#filtro
+	if re.search(exclusion_pattern, image):
 		continue
-	line=line[:len(line)-1] #evitamos \n
-	line=re.sub('_', ' ', line)
-	trozos=line.split('	')
-	if len(trozos)==1:
-		image=trozos[0]
-		#filtro
-		if re.search(exclusion_pattern, image):
-			continue
-		c+=1
-		percent(c)
-		images.add(image)
-		#print image.encode('utf-8')
-print '\nCargadas %d images de %swiki (descartando iconos, escudos... )' % (c, lenguajefuente)
-f.close()
+	c+=1
+	percent(c)
+	images.add(image)
+	#print image.encode('utf-8')
+	row=cursor.fetchone()
+cursor.close()
+conn.close()
+print '\nCargadas %d imagenes locales de %swiki (descartando iconos, escudos... )' % (c, lenguajefuente)
 
 #cargamos las imagenes que se usan (y no estan subidas en la inglesa (están en Commons)) y en que articulos se usan
 print '-'*70
-print 'Cargamos imagenes que se usan en %s: y en que articulos' % lenguajefuente
+print 'Cargamos imagenes que se usan en %s: y en que articulos' % lenguajefuente #pesado
 candidatas={}
 listanegra=set()
-filename='/home/emijrp/temporal/%swikiimagelinks.txt' % lenguajefuente
-try:
-	f=open(filename, 'r')
-except:
-	os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select il_from, il_to from imagelinks inner join page on il_from=page_id where (page_namespace=0 or page_namespace=10) and page_is_redirect=0;" > %s' % (lenguajefuente, lenguajefuente, filename)) #el nm 10 hace falta para descartar las imagenes de las plantillas stub, etc, y meterlas en  listanegra
-	#os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select il_from, il_to from imagelinks where il_from in (select page_id from page where (page_namespace=0 or page_namespace=10) and page_is_redirect=0);" > %s' % (lenguajefuente, lenguajefuente, filename)) #el nm 10 hace falta para descartar las imagenes de las plantillas stub, etc, y meterlas en  listanegra
-	f=open(filename, 'r')
+dbname=tarea000.getDbname(lenguajefuente, family)
+server=tarea000.getServer(lenguajefuente, family)
+conn = MySQLdb.connect(host='sql-s%s' % server, db=dbname, read_default_file='~/.my.cnf', use_unicode=True)
+cursor = conn.cursor()
+cursor.execute("select il_from, il_to, page_namespace from imagelinks inner join page on il_from=page_id where (page_namespace=0 or page_namespace=10) and page_is_redirect=0;") #el nm 10 hace falta para descartar las imagenes de las plantillas stub, etc, y meterlas en listanegra
+row=cursor.fetchone()
 c=0
-for line in f:
-	try:
-		line=unicode(line, 'utf-8')
-	except:
+while row:
+	pageid=int(row[0])
+	image=re.sub('_', ' ', row[1])
+	pagenamespace=int(row[2])
+	
+	if image in listanegra: #debe estar lo primero
 		continue
-	line=line[:len(line)-1] #evitamos \n
-	line=re.sub('_', ' ', line)
-	trozos=line.split('	')
-	if len(trozos)==2:
-		pageid=trozos[0]
-		image=trozos[1]
-		
-		if image in listanegra: #debe estar lo primero
-			continue
-		if pageid in templates:
-			listanegra.add(image)
-			continue
-		
-		#filtro
-		if re.search(exclusion_pattern, image):
-			continue
-			
-		#print image.encode('utf-8')
-		if image in images: #comprobamos si esta subida a la inglesa
-			listanegra.add(image)
-			continue
-		
-		if not pageid2pagetitle2.has_key(pageid):
-			continue
-		if not pagetitle2pageid[interwikis[pageid]] in sinimagenes:
-			continue
-		
-		
-		c+=1
-		percent(c)
-		#if c % 100 == 0:
-		#	print c
-		#	linea='[[%s]] -> [[Image:%s]]' % (interwikis[pageid], image)
-		#	print linea.encode('utf-8')
-		if candidatas.has_key(pageid):
-			candidatas[pageid].append(image)
-		else:
-			candidatas[pageid]=[image]
-f.close()
+	if pagenamespace==10:
+		listanegra.add(image)
+		continue
+	#filtro
+	if re.search(exclusion_pattern, image):
+		continue
+	#print image.encode('utf-8')
+	if image in images: #comprobamos si esta subida a la inglesa
+		listanegra.add(image)
+		continue
+	if not pageid2pagetitle2.has_key(pageid): #si no existe tal pagina en la inglesa, hace falta?
+		continue
+	if pagetitle2pageid[interwikis[pageid]] not in sinimagenes: #si ya tiene imagen no hace falta seguir
+		continue
+	c+=1
+	percent(c)
+	#if c % 100 == 0:
+	#	print c
+	#	linea='[[%s]] -> [[Image:%s]]' % (interwikis[pageid], image)
+	#	print linea.encode('utf-8')
+	if candidatas.has_key(pageid):
+		candidatas[pageid].append(image)
+	else:
+		candidatas[pageid]=[image]
+	row=cursor.fetchone()
+cursor.close()
+conn.close()
 print '\nCargadas %d imagenes que se usan en articulos de %s: y nos pueden servir quizas (candidatas)' % (c, lenguajefuente)
-print 'Vaciamos templates'
-templates.clear()
-
 
 #cargamos categorylinks de la inglesa que lleven a una categoria births o deaths, para cribar biografias
 categories=set()
-categories_pattern=re.compile(ur"\((\d+)\,\'\d+ (births|deaths)\'\,\'[^\']*?\'\,\d+\)") #no hace falta (?i)
+categories_pattern=re.compile(ur"\((?P<pageid>\d+)\,\'\d+ (births|deaths)\'\,\'[^\']*?\'\,\d+\)") #no hace falta (?i)
 # (1031,'1950 births','Blabla, Antonio',20080805144158)
 filename='/mnt/user-store/%swiki-latest-categorylinks.sql.gz' % lenguajefuente
+f=""
 try:
 	f=gzip.open(filename, 'r')
 except:
@@ -293,19 +205,14 @@ for line in f:
 	line=re.sub('_', ' ', line)
 	m=re.findall(categories_pattern, line)
 	for i in m:
-		pageid=str(i[0])
-		if pageid in categories:
-			continue
+		pageid=int(i.group("pageid"))
 		c+=1
 		percent(c)
 		categories.add(pageid)
 print '\nCargadas %d categorylinks desde biografias para %swiki' % (c, lenguajefuente)
 f.close()
 
-
 #cargamos imagenes subidas a commons y que cumplan los filtros
-images.clear()
-imagescommons=set()
 filename='/home/emijrp/temporal/commonswiki-images.txt'
 try:
 	f=open(filename, 'r')
@@ -333,35 +240,34 @@ for line in f:
 print '\nCargadas %d images de commons (descartando iconos, escudos... y width>height)' % (c)
 f.close()
 
-
 c=0
 cc=0
 f=open('/home/emijrp/temporal/candidatas-%s.txt' % lenguajeobjetivo, 'w')
 g=open('/home/emijrp/temporal/candidatas-%s.sql' % lenguajeobjetivo, 'w')
-for pageid, v in candidatas.items():
-	article=pageid2pagetitle2[pageid]
-	if not pageid in categories: #no es biografia?
+for pageid, imagenescandidatas in candidatas.items():
+	if pageid not in categories: #no es biografia?
 		continue
+	article=pageid2pagetitle2[pageid]
 	c+=1
-	for image in v:
+	for image in imagenescandidatas:
 		iw=interwikis[pageid]
-		if re.search(ur"(?i)(abu|nidal|gadd?afi|cent)", iw):  #evitamos imagenes y articulos que no sirven o erroneas que ya se han comprobado en otras actualizacione
+		if re.search(exclusion_pattern, iw):#evitamos imagenes y articulos que no sirven o erroneas que ya se han comprobado en otras actualizacione
 			continue
-		trocear=u'%s %s' % (iw, article) #para aquellos idiomas como ar: con alfabetos distintos
-		trocear=re.sub(ur'[\(\)]', ur'', trocear)
-		trozos=trocear.split(' ')
+		trocear=' '.join([iw, article]) #para aquellos idiomas como ar: con alfabetos distintos incluimos el nombre en inglés también
+		trozos=re.sub(ur'[\(\)]', ur'', trocear).split(' ')
 		trozos2=[]
 		for t in trozos:
+			t=t.strip()
 			if len(t)>=3:
 				trozos2.append(t)
 		temp="|".join(trozos2)
 		
-		if len(temp)>=3:
-			if not image in listanegra:
+		if re.findall(ur'\|', temp)>=1: #al menos dos palabras para buscar (una|otra)
+			if image not in listanegra:
 				if image in imagescommons:
 					if not re.search(exclusion_pattern, image): #evitamos imagenes que no sirven o erroneas que ya se han comprobado en otras actualizaciones
-						if not re.search(ur'([\'\"]|[^\d]0\d\d[^\d])', u'%s %s' % (iw, image)): #?
-							if re.search(ur"(?i)(%s)" % temp, image):
+						if not re.search(ur'([\'\"]|[^\d]0\d\d[^\d])', ' '.join([iw, image])): #?
+							if len(re.findall(ur"(?i)(%s)" % temp, image))>=2: #al menos dos ocurrencias en el nombre del fich
 								cc+=1
 								image_=re.sub(' ', '_', image)
 								md5_=md5.new(image_.encode('utf-8')).hexdigest()
@@ -374,9 +280,6 @@ for pageid, v in candidatas.items():
 								
 								try:
 									f.write(salida)
-								except:
-									pass
-								try:
 									g.write(salida2)
 								except:
 									pass
