@@ -20,12 +20,28 @@ import time
 import pagegenerators
 
 import tareas
+import tarea000
+
+#TODO
+#que no cuente las talks
+#y las totales a wikimedia?
 
 limite=100
-if len(sys.argv)>1:
-	limite=int(sys.argv[1])
-
 langs=['es']
+hourly=False
+minimum=5 #visitas minimas para ser contabilizada la pagina
+if len(sys.argv)>1:
+	if sys.argv[1]=='daily':
+		langs=['it', 'ja', 'pl', 'nl', 'ru', 'sv', 'zh', 'no', 'ca', 'fi', 'uk', 'cs', 'ko'] #ir metiendo de mas articulos a menos http://meta.wikimedia.org/wiki/List_of_Wikipedias
+	elif sys.argv[1]=='hourly':
+		langs=['es', 'en', 'de', 'fr', 'pt', 'da', 'eo', 'hu', 'hr', 'ro', 'sl', 'th', 'tr'] #donde tenga flag
+		hourly=True
+	else:
+		langs=[sys.argv[1]]
+if len(sys.argv)>2:
+	limite=int(sys.argv[2])
+
+commonexitpage=u'User:Emijrp/Popular articles'
 exitpages={
 'es': u'Plantilla:Artículos populares',
 }
@@ -60,7 +76,7 @@ for lang in langs:
 	namespaceslists[lang]=tareas.getNamespacesList(wikipedia.Site(lang, 'wikipedia'))
 	exceptions[lang]={}
 	exceptions[lang]['raw']='|'.join(namespaceslists[lang])
-	exceptions[lang]['compiled']=re.compile(r'(?i)(%s)\:' % exceptions[lang]['raw'])
+	exceptions[lang]['compiled']=re.compile(ur'(?i)(%s)\:' % exceptions[lang]['raw'])
 
 wikipedia.output("Se van a analizar los idiomas: %s" % ', '.join(langs))
 for lang in langs:
@@ -115,6 +131,9 @@ for gz in gzs:
 			times=int(i.group('times'))
 			other=int(i.group('other'))
 			
+			if hourly and times<minimum:#si hago el diario, no descartar nada...
+				continue
+			
 			#lang
 			if not pagesdic.has_key(pagelang):
 				pagesdic[pagelang]={}
@@ -125,7 +144,6 @@ for gz in gzs:
 			else:
 				pagesdic[pagelang][page]=times
 				analized+=1
-	break
 	f.close()
 
 #ordenamos de mas visitas a menos, cada idioma
@@ -165,11 +183,17 @@ for lang, list in pageselection.items():
 	if exitpages.has_key(lang):
 		exitpage=exitpages[lang]
 	else:
-		exitpage=u'Template:Popular articles'
+		exitpage=commonexitpage
 	
 	projsite=wikipedia.Site(lang, 'wikipedia')
-	salida=u"<noinclude>{{%s/begin|{{subst:CURRENTHOUR}}}}</noinclude>\n{| class=\"wikitable sortable\" style=\"text-align: center;\" width=350px \n|+ [[Plantilla:Artículos populares|Artículos populares]] en la última hora \n! # !! Artículo !! Visitas " % exitpage
-	
+	if lang=='es':
+		salida=u"<noinclude>{{%s/begin|{{subst:CURRENTHOUR}}}}</noinclude>\n{| class=\"wikitable sortable\" style=\"text-align: center;\" width=350px \n|+ [[Plantilla:Artículos populares|Artículos populares]] en la última hora \n! # !! Artículo !! Visitas " % exitpage
+	else:
+		if hourly:
+			salida=u"Popular articles in the last hour ([http://dammit.lt/wikistats/%s %s]).\n\nTotal hits to this project: %d.\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (gz, gz, totalvisits[lang])
+		else:
+			salida=u"Popular articles in the last day (using [http://dammit.lt/wikistats/ {{subst:CURRENTYEAR}}{{subst:CURRENTMONTH}}{{subst:CURRENTDAY2}}]).\n\nTotal hits to this project: %d.\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (totalvisits[lang])
+
 	list2=[]
 	for quotedpage, visits in list:
 		quotedpage=re.sub("%20", " ", quotedpage).strip()
@@ -187,9 +211,10 @@ for lang, list in pageselection.items():
 			wtitle=page.title()
 			
 			if page.isRedirectPage():
-				detalles+=u'(#REDIRECT [[%s]]) ' % (page.getRedirectTarget().title())
+				detalles+=u' (#REDIRECT [[%s]]) ' % (page.getRedirectTarget().title())
 			elif page.isDisambig():
-				detalles+=u'(Desambiguación) '
+				#detalles+=u'(Desambiguación) '
+				pass #para evitar no ponerlo en el idioma loal
 			else:
 				pass
 				"""tmpget=page.get()
@@ -202,17 +227,19 @@ for lang, list in pageselection.items():
 				if re.search(ur'(?i)\{\{ *(Protegida|Protegido|Pp-template)', tmpget):
 					detalles+='[[Image:Padlock.svg|20px|Protegida]]'"""
 			
-			wikipedia.output('%s - %d - %s' % (wtitle, visits, detalles))
+			#wikipedia.output('%s - %d - %s' % (wtitle, visits, detalles))
 			#continue
 			
 			if page.namespace() in [6, 14]:
 				wtitle=u':%s' % wtitle
 			c+=1
-			if c-1 in [3,5,10,15,20]:
-				salida+=u"\n{{#ifexpr:{{{top|15}}} > %d|" % (c-1)
-				d+=1
-			salida+=u"\n{{!}}-\n{{!}} %d {{!}}{{!}} [[%s]]{{#if:{{{novistas|}}}||{{!}}{{!}} %s}} " % (c, wtitle, list[ind][1])
-			
+			if lang=='es':
+				if c-1 in [3,5,10,15,20]:
+					salida+=u"\n{{#ifexpr:{{{top|15}}} > %d|" % (c-1)
+					d+=1
+				salida+=u"\n{{!}}-\n{{!}} %d {{!}}{{!}} [[%s]]%s{{#if:{{{novistas|}}}||{{!}}{{!}} %s}} " % (c, wtitle, detalles, list[ind][1])
+			else:
+				salida+=u"\n|-\n| %d || [[%s]]%s || %s " % (c, wtitle, detalles, list[ind][1])
 			sum+=int(list[ind][1])
 			
 			if c>=limite:
@@ -223,9 +250,15 @@ for lang, list in pageselection.items():
 	iws=u''
 	for iw in langs:
 		if iw!=lang:
-			iws+=u'[[%s:%s]]\n' % (iw, exitpage)
+			if exitpages.has_key(iw):
+				iws+=u'[[%s:%s]]\n' % (iw, exitpages[iw])
+			else:
+				iws+=u'[[%s:%s]]\n' % (iw, commonexitpage)
 	#salida+="\n{{/end}}\n%s" % (iws)
-	salida+=u"\n%s\n{{%s/end|%d|%d|top={{{top|15}}}|fecha={{subst:CURRENTTIME}} ([[UTC]]) del {{subst:CURRENTDAY2}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}}}}\n|}\n<noinclude>{{documentación de plantilla}}\n%s</noinclude>" % ("}} "*d, exitpage, sum, totalvisits[lang], iws)
+	if lang=='es':
+		salida+=u"\n%s\n{{%s/end|%d|%d|top={{{top|15}}}|fecha={{subst:CURRENTTIME}} ([[UTC]]) del {{subst:CURRENTDAY2}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}}}}\n|}\n<noinclude>{{documentación de plantilla}}\n%s</noinclude>" % ("}} "*d, exitpage, sum, totalvisits[lang], iws)
+	else:
+		salida+=u"\n|}\n\n%s" % (iws)
 	wikipedia.output(salida)
 	wiii=wikipedia.Page(projsite, exitpage)
 	wiii.put(salida, u'BOT - Updating list')

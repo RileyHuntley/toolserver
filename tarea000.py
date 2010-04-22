@@ -77,6 +77,8 @@ def insertBOTijoInfo(site):
 		if not bottalk.exists():
 			bottalk.put(u"#REDIRECT [[User:BOTijo]]", u"BOT - Redirect")
 			time.sleep(delay)
+		elif not bottalk.isRedirectPage():
+			bottalk.put(u"#REDIRECT [[User:BOTijo]]\n\n%s" % bottalk.get(), u"BOT - Redirect")
 	else: #tiene flag
 		bot=wikipedia.Page(site, u"User:BOTijo")
 		if not bot.exists():
@@ -90,10 +92,10 @@ def insertBOTijoInfo(site):
 			bottalk.put(u"#REDIRECT [[User:BOTijo]]", u"BOT - Redirect")
 			time.sleep(delay)
 
-def getLangsByFamily(family):
+def getLangsByFamily(family, min=0, max=999999999):
 	conn = MySQLdb.connect(host='sql', db='toolserver', read_default_file='~/.my.cnf', use_unicode=True)
 	cursor = conn.cursor()
-	cursor.execute("SELECT lang from wiki where family='%s' and is_closed=0;" % family)
+	cursor.execute("SELECT lang from wiki where family='%s' and is_closed=0 and size>%s and size<%s;" % (family, min, max))
 	result=cursor.fetchall()
 	langs=[]
 	for row in result:
