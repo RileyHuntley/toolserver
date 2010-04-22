@@ -60,12 +60,13 @@ while row:
 	pagetitle=re.sub('_', ' ', row[1])
 	c+=1
 	percent(c)
-	pageid2pagetitle[pageid]=pagetitle
+	#pageid2pagetitle[pageid]=pagetitle
 	pagetitle2pageid[pagetitle]=pageid
 	row=cursor.fetchone()
 cursor.close()
 conn.close()
 print '\nCargados %d pageid/pagetitle para %s:' % (c, lenguajeobjetivo)
+time.sleep(7)
 
 if c==0: #f
 	sys.exit()
@@ -89,6 +90,7 @@ while row:
 cursor.close()
 conn.close()
 print '\nSe encontraron %d articulos sin imagenes en %s:' % (c, lenguajeobjetivo) #sin ninguna, hasta las que tienen commons.svg se excluyen ?
+time.sleep(7)
 
 #cargamos interwikis a articulos de lenguajeobjetivo carentes de imagenes
 print '-'*70
@@ -110,11 +112,12 @@ while row:
 		#si la pagina a la que apunta el iw existe en el lenguajeobjetivo, y no tiene imagenes...
 		interwikis[pageid]=interwiki
 		pageid2pagetitle2[pageid]=pagetitle
-			#pagetitle2pageid2[pagetitle]=pageid
+		#pagetitle2pageid2[pagetitle]=pageid
 	row=cursor.fetchone()
 cursor.close()
 conn.close()
 print '\nCargados %d pageid/pagetitle (y su interwiki a %s:) de %swiki que tienen iw hacia articulos de %s: sin imagenes' % (c, lenguajeobjetivo, lenguajefuente, lenguajeobjetivo)
+time.sleep(7)
 
 #cargamos imágenes subidas a la inglesa y que cumplan los filtros
 print '-'*70
