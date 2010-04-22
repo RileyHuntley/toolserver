@@ -178,6 +178,8 @@ for lang, pages in pageslist.items():
 			break
 
 for lang, list in pageselection.items():
+	if tarea000.isExcluded('tarea037', 'wikipedia', lang):
+		continue
 	exitpage=u""
 	if exitpages.has_key(lang):
 		exitpage=exitpages[lang]

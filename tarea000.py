@@ -149,12 +149,26 @@ def getServer(lang, family):
 	result=cursor.fetchall()
 	server=""
 	for row in result:
-		if len(row)==1:
-			server=row[0]
+		if len(row)==1: #por si no existe ese idioma
+			server="sql-s%s" % row[0]
+			break
 
 	cursor.close()
 	conn.close()
 	return server
+
+def getServers():
+	conn = MySQLdb.connect(host='sql', db='toolserver', read_default_file='~/.my.cnf', use_unicode=True)
+	cursor = conn.cursor()
+	cursor.execute("SELECT distinct server from wiki;")
+	result=cursor.fetchall()
+	servers=[]
+	for row in result:
+		servers.append("sql-s%s" % row[0])
+
+	cursor.close()
+	conn.close()
+	return servers
 
 def isExcluded(tarea, family, lang):
 	#ejemplo de que funciona http://dv.wikipedia.org/w/index.php?title=%DE%89%DE%AC%DE%89%DE%B0%DE%84%DE%A6%DE%83%DE%AA:Emijrp/List_of_Wikipedians_by_number_of_edits_%28bots_included%29&diff=prev&oldid=64351

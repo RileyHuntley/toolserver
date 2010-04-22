@@ -165,11 +165,11 @@ projects={
 
 #metemos el resto de idiomas
 #descomentar cuando arregle el fallo de _mysql_exceptions.OperationalError: (1040, 'Too many connections')
-#for lang in tarea000.getLangsByFamily('wikipedia'):
-#	if lang=='en-simple':
-#		lang='simple'
-#	if not projects['wikipedia'].has_key(lang):
-#		projects['wikipedia'][lang]=tt100
+for lang in tarea000.getLangsByFamily('wikipedia'):
+	if lang=='en-simple':
+		lang='simple'
+	if not projects['wikipedia'].has_key(lang):
+		projects['wikipedia'][lang]=tt100
 
 #generating interwikis
 iws1={}
@@ -197,6 +197,10 @@ for family, langs in projects.items():
 			iws2[family].append(u"[[%s:%s]]" % (lang, traslation2))
 	iws1[family].sort()
 	iws2[family].sort()
+
+conns={}
+for server in tarea000.getServers():
+	conns[server]=MySQLdb.connect(host=server, read_default_file='~/.my.cnf', use_unicode=True)
 
 for family, langs in projects.items():
 	for lang, v in langs.items():
@@ -231,12 +235,12 @@ for family, langs in projects.items():
 		time.sleep(0.5)
 		server=tarea000.getServer(lang, family)
 		time.sleep(0.5)
-		conn = MySQLdb.connect(host='sql-s%s' % server, db=dbname, read_default_file='~/.my.cnf', use_unicode=True)
-		cursor = conn.cursor()
-		cursor.execute("select user_name, user_editcount from user where user_editcount!=0 order by user_editcount desc limit 5000;")
+		#conn = MySQLdb.connect(host='sql-s%s' % server, read_default_file='~/.my.cnf', use_unicode=True)
+		cursor = conns[server].cursor()
+		cursor.execute("use %s;select user_name, user_editcount from user where user_editcount!=0 order by user_editcount desc limit 5000;" % dbname)
 		result=cursor.fetchall()
 		cursor.close()
-		conn.close()
+		#conn.close()
 		time.sleep(0.5)
 		
 		s=u""
@@ -364,4 +368,8 @@ for family, langs in projects.items():
 			
 			page=wikipedia.Page(site, u"Template:Ediciones")
 			page.put(planti2, resume)
+
+for server, conn in conns.items():
+	print "Cerrando conexion con", server
+	conn.close()
 
