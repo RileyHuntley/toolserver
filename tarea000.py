@@ -57,39 +57,41 @@ def botList(site):
 
 def insertBOTijoInfo(site):
 	delay=10
+	
+	#/info page
+	botinfo=wikipedia.Page(site, u"User:BOTijo/info")
+	info=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u"User:Emijrp/BOTijoInfo.css").get()
+	
+	#todo: con excludedprojects cambiar los enlaces a rankings que aparecen
+	
+	if not botinfo.exists() or botinfo.get()!=info:
+		botinfo.put(info, u"BOT - Bot info page")
+		time.sleep(delay)
+
+	#talk
+	bot=wikipedia.Page(site, u"User:BOTijo")
+	bottalk=bot.toggleTalkPage()
+	if not bottalk.exists():
+		bottalk.put(u"#REDIRECT [[User:BOTijo]]", u"BOT - Redirect")
+		time.sleep(delay)
+	elif not bottalk.isRedirectPage():
+		bottalk.put(u"#REDIRECT [[User:BOTijo]]\n\n%s" % bottalk.get(), u"BOT - Redirect")
+	
+	#bot userpage
 	if botList(site).count(u"BOTijo")==0: #no tiene flag
-		bot=wikipedia.Page(site, u"User:BOTijo")
 		if not bot.exists():
 			bot.put(u"{{/info}}", u"BOT - Creating bot userpage")
 			time.sleep(delay)
 		elif not re.search(ur"{{/info}}", bot.get()):
 			bot.put(u"{{/info}}\n%s" % bot.get(), u"BOT - Adding info")
 			time.sleep(delay)
-		botinfo=wikipedia.Page(site, u"User:BOTijo/info")
-		info=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u"User:Emijrp/BOTijoInfo.css").get()
-		
-		#con excludedprojects cambiar los enlaces a rankings que aparecen
-		
-		if not botinfo.exists() or botinfo.get()!=info:
-			botinfo.put(info, u"BOT - Bot info page")
-			time.sleep(delay)
-		bottalk=bot.toggleTalkPage()
-		if not bottalk.exists():
-			bottalk.put(u"#REDIRECT [[User:BOTijo]]", u"BOT - Redirect")
-			time.sleep(delay)
-		elif not bottalk.isRedirectPage():
-			bottalk.put(u"#REDIRECT [[User:BOTijo]]\n\n%s" % bottalk.get(), u"BOT - Redirect")
 	else: #tiene flag
-		bot=wikipedia.Page(site, u"User:BOTijo")
 		if not bot.exists():
-			bot.put(u"This is a bot account operated by [[w:es:User:Emijrp|emijrp]] ([[w:es:User talk:Emijrp|talk]]) from [[w:es:Mainpage|Spanish Wikipedia]].\n\n'''This [[w:en:Wikipedia:Bot policy|bot]] runs on the [[meta:Toolserver|Wikimedia Toolserver]].''' <br /><small>''Administrators: If this bot needs to be blocked due to a malfunction, please remember to disable autoblocks so that other Toolserver bots are not affected.''", u"BOT - Creating bot userpage")
+			#bot.put(u"This is a bot account operated by [[w:es:User:Emijrp|emijrp]] ([[w:es:User talk:Emijrp|talk]]) from [[w:es:Mainpage|Spanish Wikipedia]].\n\n'''This [[w:en:Wikipedia:Bot policy|bot]] runs on the [[meta:Toolserver|Wikimedia Toolserver]].''' <br /><small>''Administrators: If this bot needs to be blocked due to a malfunction, please remember to disable autoblocks so that other Toolserver bots are not affected.''", u"BOT - Creating bot userpage")
+			bot.put(u"{{/info|flag}}", u"BOT - Creating bot userpage")
 			time.sleep(delay)
 		else:
-			bot.put(re.sub(ur"(?i)\{\{\s*/info\s*\}\}", ur"", bot.get()), u"BOT - Flag granted")
-			time.sleep(delay)
-		bottalk=bot.toggleTalkPage()
-		if not bottalk.exists():
-			bottalk.put(u"#REDIRECT [[User:BOTijo]]", u"BOT - Redirect")
+			bot.put(ur"%s\n{{/info|flag}}" % re.sub(ur"(?i)\{\{\s*/info[^\}]*?\}\}", ur"", bot.get()), u"BOT - Flag granted")
 			time.sleep(delay)
 
 def getLangsByFamily(family, min=0, max=999999999):

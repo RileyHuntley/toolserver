@@ -72,6 +72,7 @@ wikipedia.output("Elegidos %d fichero(s)..." % len(gzs))
 pagesdic={}
 namespaceslists={}
 exceptions={}
+
 for lang in langs:
 	namespaceslists[lang]=tareas.getNamespacesList(wikipedia.Site(lang, 'wikipedia'))
 	exceptions[lang]={}
@@ -82,6 +83,7 @@ wikipedia.output("Se van a analizar los idiomas: %s" % ', '.join(langs))
 for lang in langs:
 	wikipedia.output("Excepciones de %s: %s" % (lang, exceptions[lang]['raw']))
 
+totalvisits={}
 for gz in gzs:
 	print gz
 	try:
@@ -124,12 +126,16 @@ for gz in gzs:
 		for i in m:
 			pagelang=i.group('pagelang')
 			page=re.sub('_', ' ', i.group('page'))
+			times=int(i.group('times'))
+			other=int(i.group('other'))
+			
+			if not totalvisits.has_key(pagelang): #debe ir antes la exclusión, para contarlas todas
+				totalvisits[lang]=times
+			else:
+				totalvisits[lang]+=visits
 			
 			if re.search(exceptions[pagelang]['compiled'], page):
 				continue
-			
-			times=int(i.group('times'))
-			other=int(i.group('other'))
 			
 			if hourly and times<minimum:#si hago el diario, no descartar nada...
 				continue
@@ -157,13 +163,6 @@ for lang, pages in pagesdic.items():
 	pageslist[lang].reverse()
 	pageslist[lang] = [(page, visits) for visits, page in pageslist[lang]]
 
-totalvisits={}
-for lang, pages in pageslist.items():
-	if not totalvisits.has_key(lang):
-		totalvisits[lang]=0
-	for page, visits in pages:
-		totalvisits[lang]+=visits
-
 pageselection={}
 for lang, pages in pageslist.items():
 	c=0
@@ -190,9 +189,9 @@ for lang, list in pageselection.items():
 		salida=u"<noinclude>{{%s/begin|{{subst:CURRENTHOUR}}}}</noinclude>\n{| class=\"wikitable sortable\" style=\"text-align: center;\" width=350px \n|+ [[Plantilla:Artículos populares|Artículos populares]] en la última hora \n! # !! Artículo !! Visitas " % exitpage
 	else:
 		if hourly:
-			salida=u"Popular articles in the last hour ([http://dammit.lt/wikistats/%s %s]).\n\nTotal hits to this project: %d.\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (gz, gz, totalvisits[lang])
+			salida=u"Popular articles in the last hour ([http://dammit.lt/wikistats/%s %s]).\n\nTotal hits to this project (including all pages): %d.\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (gz, gz, totalvisits[lang])
 		else:
-			salida=u"Popular articles in the last day (using [http://dammit.lt/wikistats/ {{subst:CURRENTYEAR}}{{subst:CURRENTMONTH}}{{subst:CURRENTDAY2}}]).\n\nTotal hits to this project: %d.\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (totalvisits[lang])
+			salida=u"Popular articles in the last day (using [http://dammit.lt/wikistats/ {{subst:CURRENTYEAR}}{{subst:CURRENTMONTH}}{{subst:CURRENTDAY2}}]).\n\nTotal hits to this project (including all pages): %d.\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (totalvisits[lang])
 
 	list2=[]
 	for quotedpage, visits in list:
