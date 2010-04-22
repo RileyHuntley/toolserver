@@ -237,7 +237,8 @@ for family, langs in projects.items():
 		time.sleep(0.5)
 		#conn = MySQLdb.connect(host='sql-s%s' % server, read_default_file='~/.my.cnf', use_unicode=True)
 		cursor = conns[server].cursor()
-		cursor.execute("use %s;select user_name, user_editcount from user where user_editcount!=0 order by user_editcount desc limit 5000;" % dbname)
+		cursor.execute("use %s;" % dbname) #tiene que ser separado en dos lineas
+		cursor.execute("select user_name, user_editcount from user where user_editcount!=0 order by user_editcount desc limit 5000;")
 		result=cursor.fetchall()
 		cursor.close()
 		#conn.close()
