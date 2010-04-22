@@ -95,7 +95,7 @@ def main():
 	sub_en_monthaaaa=ur"\g<inicio>%s-%s\g<fin>"
 
 	#francés    dd month aaaa
-	separador_fr=[ur" *[\-\/\,\. ] *", ] #cuidado no meter ()
+	separador_fr=[ur" *[\-\/\,\. ]? *", ] #cuidado no meter ()
 	month2number_fr={
 	u"janvier":u"01",
 	u"février":u"02", u"fevrier":u"02",
