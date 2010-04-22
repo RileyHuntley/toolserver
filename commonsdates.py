@@ -363,8 +363,8 @@ def main():
 				m=re.compile(regexp_changed_lic).finditer(newtext)
 				for i in m:
 					changed_lic=i.group("changed")
-					break
-		"""
+					break"""
+		
 		#== {{int:filedesc}} ==
 		change_sum=u""
 		changed_sum=u""
@@ -380,8 +380,8 @@ def main():
 				m=re.compile(regexp_changed_sum).finditer(newtext)
 				for i in m:
 					changed_sum=i.group("changed")
-					break
-		"""
+					break"""
+		
 		
 		#unificamos hora si la hay
 		#wikipedia.showDiff(wtext, newtext)
