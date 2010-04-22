@@ -91,7 +91,7 @@ def insertBOTijoInfo(site):
 			bot.put(u"{{/info|flag}}", u"BOT - Creating bot userpage")
 			time.sleep(delay)
 		else:
-			bot.put(ur"%s\n{{/info|flag}}" % re.sub(ur"(?i)\{\{\s*/info[^\}]*?\}\}", ur"", bot.get()), u"BOT - Flag granted")
+			bot.put(u"%s\n{{/info|flag}}" % re.sub(ur"(?i)\{\{\s*/info[^\}]*?\}\}", ur"", bot.get()), u"BOT - Flag granted")
 			time.sleep(delay)
 
 def getLangsByFamily(family, min=0, max=999999999):
