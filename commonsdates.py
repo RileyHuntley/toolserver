@@ -49,7 +49,7 @@ def main():
 	pre=pagegenerators.PreloadingGenerator(gen, pageNumber=250, lookahead=250)
 
 	inicio=ur"(?im)^(?P<inicio> *\| *Date *\= *)"
-	fin=ur"[ \.]*(?P<fin> *((at|,) *\d\d:\d\d(:\d\d)?)?[ \.]*[\n\r\|])" #eliminamos . finales que no permiten hacer la conversión de fechas
+	fin=ur"[ \.]*(?P<fin> *((at|a las|,|  *)? *\d\d:\d\d(:\d\d)?)?[ \.]*[\n\r\|])" #eliminamos . finales que no permiten hacer la conversión de fechas
 
 	#español   dd month aaaa
 	separador_es=[ur" *de?l? *", ur" *[\-\/\,\. ]? *"] #cuidado no meter ()
@@ -384,13 +384,22 @@ def main():
 		"""
 		
 		#unificamos hora si la hay
-		
-		newtext=re.sub(ur"%s(?P<date>\d{4}-\d{2}(-\d{2})?) *(at|,|  *) *(?P<hour>\d\d:\d\d(:\d\d)?)[ \.]*[\|\n\r]" % (inicio), ur"\g<inicio>\g<date> \g<hour>", newtext, 1)
-			
+		#wikipedia.showDiff(wtext, newtext)
+		changehour=""
+		hour=""
+		hour_r=ur"%s(?P<date>\d{4}-\d{2}(-\d{2})?)(?P<change> *(at|a las|,|  *) *(?P<hour>\d\d:\d\d(:\d\d)?)[ \.]*)(?P<fin>[\|\n\r])" % (inicio)
+		m=re.compile(hour_r).finditer(newtext)
+		for i in m:
+			changehour=i.group("change")
+			hour=i.group("hour")
+			break
+		newtext=re.sub(hour_r, ur"\g<inicio>\g<date> \g<hour>\g<fin>", newtext, 1)
+		#time.sleep(3)
 		#fin unificar hora
 		
 		if newtext!=wtext:
 			wikipedia.showDiff(wtext, newtext)
+			#time.sleep(3)
 			if c>=ratelimit:
 				while time.time()-t1<60:
 					time.sleep(0.1)
@@ -400,7 +409,10 @@ def main():
 			try:
 				summary=u"BOT - Changes to allow localization:"
 				if changed:
-					summary+=u" %s → %s;" % (change, changed)
+					if changehour and hour:
+						summary+=u" %s %s → %s %s;" % (change, changehour, changed, hour)
+					else:
+						summary+=u" %s → %s;" % (change, changed)
 				if changed_own:
 					summary+=u" %s → %s;" % (change_own, changed_own)
 				if changed_lic:
