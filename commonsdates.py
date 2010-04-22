@@ -49,7 +49,7 @@ def main():
 	pre=pagegenerators.PreloadingGenerator(gen, pageNumber=250, lookahead=250)
 
 	inicio=ur"(?im)^(?P<inicio> *\| *Date *\= *)"
-	fin=ur"[ \.]*(?P<fin> *[\n\r\|])" #eliminamos . finales que no permiten hacer la conversión de fechas
+	fin=ur"[ \.]*(?P<fin> *((at|,) *\d\d:\d\d(:\d\d)?)?[ \.]*[\n\r\|])" #eliminamos . finales que no permiten hacer la conversión de fechas
 
 	#español   dd month aaaa
 	separador_es=[ur" *de?l? *", ur" *[\-\/\,\. ]? *"] #cuidado no meter ()
@@ -382,6 +382,13 @@ def main():
 					changed_sum=i.group("changed")
 					break
 		"""
+		
+		#unificamos hora si la hay
+		
+		newtext=re.sub(ur"%s(?P<date>\d{4}-\d{2}(-\d{2})?) *(at|,|  *) *(?P<hour>\d\d:\d\d(:\d\d)?)[ \.]*[\|\n\r]" % (inicio), ur"\g<inicio>\g<date> \g<hour>", newtext, 1)
+			
+		#fin unificar hora
+		
 		if newtext!=wtext:
 			wikipedia.showDiff(wtext, newtext)
 			if c>=ratelimit:
