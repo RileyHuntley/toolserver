@@ -130,9 +130,9 @@ for gz in gzs:
 			other=int(i.group('other'))
 			
 			if not totalvisits.has_key(pagelang): #debe ir antes la exclusión, para contarlas todas
-				totalvisits[lang]=times
+				totalvisits[pagelang]=times
 			else:
-				totalvisits[lang]+=visits
+				totalvisits[pagelang]+=times
 			
 			if re.search(exceptions[pagelang]['compiled'], page):
 				continue
