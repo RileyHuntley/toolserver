@@ -67,8 +67,6 @@ def unflaggedBotsList(site):
 	bots.sort()
 	return bots
 
-print unflaggedBotsList(wikipedia.Site("en", "wikipedia"))
-
 def insertBOTijoInfo(site):
 	delay=10
 	
