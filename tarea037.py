@@ -191,9 +191,9 @@ for lang, list in pageselection.items():
 		salida=u"<noinclude>{{%s/begin|{{subst:CURRENTHOUR}}}}</noinclude>\n{| class=\"wikitable sortable\" style=\"text-align: center;\" width=350px \n|+ [[Plantilla:Artículos populares|Artículos populares]] en la última hora \n! # !! Artículo !! Visitas " % exitpage
 	else:
 		if hourly:
-			salida=u"Popular articles in the last hour ([http://dammit.lt/wikistats/%s %s]).\n\nTotal hits to this project (including all pages): %d.\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (gz, gz, totalvisits[lang])
+			salida=u"Popular articles in the last hour (%s).\n\nTotal hits to this project (including all pages): %d.\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (gz.split(".gz")[0], totalvisits[lang])
 		else:
-			salida=u"Popular articles in the last day (using [http://dammit.lt/wikistats/ {{subst:CURRENTYEAR}}{{subst:CURRENTMONTH}}{{subst:CURRENTDAY2}}]).\n\nTotal hits to this project (including all pages): %d.\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (totalvisits[lang])
+			salida=u"Popular articles in the last day.\n\nTotal hits to this project (including all pages): %d.\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (totalvisits[lang])
 
 	list2=[]
 	for quotedpage, visits in list:
