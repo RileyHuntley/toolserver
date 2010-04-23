@@ -34,6 +34,7 @@ tables=[
 [u"Wikinews/Table", 'http://s23.org/wikistats/wikinews_wiki.php'],
 [u"Wikisource/Table", 'http://s23.org/wikistats/wikisources_wiki.php'],
 [u"Wikiversity/Table", 'http://s23.org/wikistats/wikiversity_wiki.php'],
+[u"List of Wikimedia Projects by Size/Table", 'http://s23.org/wikistats/wikimedias_wiki.php'],
 ]
 for table, url in tables:
 	wii=wikipedia.Page(site, table)
@@ -44,6 +45,7 @@ for table, url in tables:
 	output=unquotehtml(output)
 	if table=="List of Wikipedias/Table":
 		output="=== 1 000 000+ articles ===\n"+output
+	output=output.strip()
 	if wii.get()!=output:
 		wii.put(output, u"BOT - Updating page")
 
