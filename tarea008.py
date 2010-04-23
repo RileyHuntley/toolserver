@@ -235,6 +235,7 @@ for family, langs in projects.items():
 						optouts.append(ii.group("useroptout"))
 		
 		bots+=tarea000.botList(site)
+		bots+=tarea000.unflaggedBotsList(site)
 		admins=tarea000.adminList(site)
 		wikipedianm=tarea000.getNamespaceName(lang, family, 4)
 		articleCount=tarea000.getArticleCount(lang, family)

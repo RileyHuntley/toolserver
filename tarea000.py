@@ -55,6 +55,20 @@ def botList(site):
 	bots.sort()
 	return bots
 
+def unflaggedBotsList(site):
+	bots=[]
+	page=wikipedia.Page(wikipedia.Site("meta", "meta"), u"User:Emijrp/List of Wikimedians by number of edits/Unflagged bots")
+	lines=page.get().splitlines()
+	for line in lines:
+		if line[0]!="#" and len(re.findall(";", line))==2:
+			[lang, family, nick]=line.split(";")
+			if lang==site.lang:# and family==site.family:
+				bots.append(nick)
+	bots.sort()
+	return bots
+
+print unflaggedBotsList(wikipedia.Site("en", "wikipedia"))
+
 def insertBOTijoInfo(site):
 	delay=10
 	
