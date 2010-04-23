@@ -20,8 +20,14 @@ import tarea000
 import MySQLdb
 
 delay=5
-minimumedits=100 #edits to appear in the ranking
+minimumedits=100 #edits to appear in the ranking, para evitar que aparezcan muchos usuarios con pocas ediciones
 minimumusers=10 #para evitar listas de 2 personas
+daily=False
+dailylimit=50000
+if len(sys.argv)>1:
+	if sys.argv[1]=='daily':
+		daily=True
+
 table_header=u"{| class='wikitable sortable' style='text-align:center;'\n! #\n! User\n! Edits\n"
 table_footer=u"|}"
 optouttext=u"Users who don't wish to be on this list can add themselves to this [[meta:User:Emijrp/List of Wikimedians by number of edits/Anonymous|anonymizing list]] for future versions."
@@ -231,6 +237,12 @@ for family, langs in projects.items():
 		bots+=tarea000.botList(site)
 		admins=tarea000.adminList(site)
 		wikipedianm=tarea000.getNamespaceName(lang, family, 4)
+		articleCount=tarea000.getArticleCount(lang, family)
+		print articleCount
+		if daily and articleCount<dailylimit:
+			#evitamos actualizar excesivamente proyectos pequeños
+			print "Skip"
+			continue
 		dbname=tarea000.getDbname(lang, family)
 		time.sleep(0.5)
 		server=tarea000.getServer(lang, family)
@@ -334,7 +346,7 @@ for family, langs in projects.items():
 			#eliminamos autointerwiki
 			s=re.sub(ur"(?im)\[\[%s:.*?\]\](\n|$)" % lang, ur"", s)
 			page=wikipedia.Page(site, title)
-			if projects[family][lang]['rankingusers'] and ((not page.exists()) or (not page.isRedirectPage() and not page.isDisambig() and page.get()!=s and int(page.getVersionHistory(revCount=1)[0][1][8:10])!=datetime.datetime.now().day)):# [0][1] es el timestamp de la última versión del historial, [8:10] es el día del mes
+			if projects[family][lang]['rankingusers'] and ((not page.exists()) or (not page.isRedirectPage() and not page.isDisambig() and page.get()!=s and int(page.getVersionHistory(revCount=1)[0][1][8:10])!=datetime.datetime.now().day)):# [0][1] es el timestamp de la última versión del historial, [8:10] es el día del mes, evitamos actualizar dos veces el mismo día
 				page.put(s, resume)
 				time.sleep(delay)
 		
@@ -358,7 +370,7 @@ for family, langs in projects.items():
 			#eliminamos autointerwiki
 			sbots=re.sub(ur"(?im)\[\[%s:.*?\]\]\n" % lang, ur"", sbots)
 			page=wikipedia.Page(site, title)
-			if projects[family][lang]['rankingbots'] and ((not page.exists()) or (not page.isRedirectPage() and not page.isDisambig() and page.get()!=sbots and int(page.getVersionHistory(revCount=1)[0][1][8:10])!=datetime.datetime.now().day)):
+			if projects[family][lang]['rankingbots'] and ((not page.exists()) or (not page.isRedirectPage() and not page.isDisambig() and page.get()!=sbots and int(page.getVersionHistory(revCount=1)[0][1][8:10])!=datetime.datetime.now().day)):# [0][1] es el timestamp de la última versión del historial, [8:10] es el día del mes, evitamos actualizar dos veces el mismo día
 				page.put(sbots, resume)
 				time.sleep(delay)
 		

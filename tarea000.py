@@ -170,6 +170,22 @@ def getServers():
 	conn.close()
 	return servers
 
+def getArticleCount(lang, family):
+	if lang=='simple':
+		lang='en-simple'
+	conn = MySQLdb.connect(host='sql', db='toolserver', read_default_file='~/.my.cnf', use_unicode=True)
+	cursor = conn.cursor()
+	cursor.execute("SELECT size from wiki where family='%s' and lang='%s';" % (family, lang))
+	result=cursor.fetchall()
+	size=0
+	for row in result:
+		if len(row)==1:
+			size=int(row[0])
+
+	cursor.close()
+	conn.close()
+	return size
+
 def isExcluded(tarea, family, lang):
 	#ejemplo de que funciona http://dv.wikipedia.org/w/index.php?title=%DE%89%DE%AC%DE%89%DE%B0%DE%84%DE%A6%DE%83%DE%AA:Emijrp/List_of_Wikipedians_by_number_of_edits_%28bots_included%29&diff=prev&oldid=64351
 
