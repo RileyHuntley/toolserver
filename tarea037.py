@@ -111,7 +111,7 @@ for gz in gzs:
 				continue
 		c+=1
 		if c % 250000 == 0:
-			print "Leidas %d lineas (%d analizadas, %d errores)" % (c, analized, errores)
+			print "Leidas %d lineas (%d analizadas, %d fallos)" % (c, analized, errores)
 			print "%d idiomas" % len(pagesdic.items())
 			cc=0
 			for proj, projpages in pagesdic.items():
