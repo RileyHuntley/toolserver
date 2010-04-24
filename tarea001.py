@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Copyright (C) 2009 emijrp
@@ -14,52 +15,48 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+    Update a Encarta progress template
+"""
+
 from __future__ import generators
-import sys, re
-import wikipedia, pagegenerators,catlib, config,time, thread
+import re
+import sys
+import urllib
 
+import wikipedia
+import pagegenerators
+import catlib
 
-pre=u"Usuario:Platonides/Encarta/"
+def main():
+    wikies = wikipedia.Site("es", "wikipedia")
+    prefix = "Usuario:Platonides/Encarta/"
+    output = "{{subst:ProgresoEncarta/subst"
+    totalred = 0
+    totalblue = 0
 
-salida=u"{{subst:ProgresoEncarta/subst"
+    for suffix in ["Música", "Compositores_e_intérpretes", "Tauromaquia", "Música._Artes_escénicas._Espectáculos/Cine,_Radio_y_televisión", "Teatro", "Danza", "Instrumentos_musicales", "Economía", "Antropología", "Psicología", "Sociología", "Organizaciones", "Instituciones", "Ciencia_política", "Ejército", "Derecho", "Educación", "Calendarios_y_fiestas", "Escritores", "Pintura._Dibujo._Artes_gráficas", "Artistas", "Literatura", "Cuentos_y_leyendas", "Literaturas_nacionales", "Artes_nacionales_y_regionales", "Artes_decorativas", "Arquitectura_y_monumentos", "Lenguaje", "Movimientos_y_estilos", "Fotografía", "Escultura", "Divisiones_administrativas", "Relieve", "Poblaciones_del_mundo", "Parques_y_reservas_naturales", "Regiones_naturales_e_históricas", "Islas_y_archipiélagos", "Ríos,_lagos_y_canales", "Países", "Océanos_y_mares", "Conceptos_geográficos", "Exploradores_y_descubridores", "Cartografía", "Personajes_de_la_Historia", "Europa_Contemporánea", "El_mundo_desde_1945", "Europa_Antigua", "Europa_Moderna", "Latinoamérica:_periodo_colonial", "Europa_Medieval", "África_y_Próximo_Oriente", "Asia_y_Oceanía", "Estados_Unidos_y_Canadá", "Arqueología_y_Prehistoria", "Latinoamérica:_desde_la_Independencia", "Latinoamérica:_periodo_precolombino", "Principios_y_conceptos_biológicos", "Reptiles_y_anfibios", "Biografías:_Ciencias_de_la_vida", "Anatomía._Fisiología", "Plantas", "Aves", "Medicina", "Medio_ambiente", "Virus,_móneras_y_protistas", "Invertebrados", "Peces", "Mamíferos", "Ciencias_de_la_Tierra", "Agricultura,_alimentación_y_ganadería", "Algas_y_hongos", "Paleontología", "Metrología", "Tecnología_militar", "Química", "Biografías", "Matemáticas", "Física", "Electrónica._Informática", "Ingeniería_y_construcción", "Astronomía._Ciencias_del_espacio", "Comunicaciones", "Transportes", "Industria_y_recursos_naturales", "Máquinas_y_herramientas", "Mitología", "Filosofía", "Figuras_religiosas", "Ocultismo", "Religiones._Grupos_religiosos", "Teología", "Textos_sagrados", "Deportistas", "Deportes_y_juegos", "Animales_de_compañía", "Aficiones"]:
+        wikipedia.output("Analizando [%s]" % suffix)
+        
+        url = "/w/index.php?title=%s%s" % (prefix, urllib.quote(suffix))
+        raw = wikies.getUrl(url)
+        raw = raw.split("start content")[1].split("end content")[0]
+        
+        red = len(re.findall('class="new"', raw))
+        blue = len(re.findall('/wiki/', raw))-1
+        
+        totalred += red
+        totalblue += blue
+        percent = blue * 1.0 / (red + blue) * 100
+        
+        wikipedia.output("%d redlinks, %d blue links, %.2f percent (red links)" % (red, blue, percent))
+        output += "|%.2f" % (percent)
 
-tr=0
-ta=0
+    percent = totalblue * 1.0 / (totalred + totalblue) * 100
+    output += "|%.2f" % (percent)
+    output += "}}<noinclude>{{documentación de plantilla}}</noinclude>"
+    page = wikipedia.Page(wikies, "Plantilla:ProgresoEncarta")
+    page.put(output, "BOT - Actualizando plantilla %.2f%%" % (percent))
 
-for p in [u"M%C3%BAsica", u"Compositores_e_int%C3%A9rpretes", u"Tauromaquia", u"M%C3%BAsica._Artes_esc%C3%A9nicas._Espect%C3%A1culos/Cine%2C_Radio_y_televisi%C3%B3n", u"Teatro", u"Danza", u"Instrumentos_musicales", u"Econom%C3%ADa", u"Antropolog%C3%ADa", u"Psicolog%C3%ADa", u"Sociolog%C3%ADa", u"Organizaciones", u"Instituciones", u"Ciencia_pol%C3%ADtica", u"Ej%C3%A9rcito", u"Derecho", u"Educaci%C3%B3n", u"Calendarios_y_fiestas", u"Escritores", u"Pintura._Dibujo._Artes_gr%C3%A1ficas", u"Artistas", u"Literatura", u"Cuentos_y_leyendas", u"Literaturas_nacionales", u"Artes_nacionales_y_regionales", u"Artes_decorativas", u"Arquitectura_y_monumentos", u"Lenguaje", u"Movimientos_y_estilos", u"Fotograf%C3%ADa", u"Escultura", u"Divisiones_administrativas", u"Relieve", u"Poblaciones_del_mundo", u"Parques_y_reservas_naturales", u"Regiones_naturales_e_hist%C3%B3ricas", u"Islas_y_archipi%C3%A9lagos", u"R%C3%ADos%2C_lagos_y_canales", u"Pa%C3%ADses", u"Oc%C3%A9anos_y_mares", u"Conceptos_geogr%C3%A1ficos", u"Exploradores_y_descubridores", u"Cartograf%C3%ADa", u"Personajes_de_la_Historia", u"Europa_Contempor%C3%A1nea", u"El_mundo_desde_1945", u"Europa_Antigua", u"Europa_Moderna", u"Latinoam%C3%A9rica:_periodo_colonial", u"Europa_Medieval", u"%C3%81frica_y_Pr%C3%B3ximo_Oriente", u"Asia_y_Ocean%C3%ADa", u"Estados_Unidos_y_Canad%C3%A1", u"Arqueolog%C3%ADa_y_Prehistoria", u"Latinoam%C3%A9rica:_desde_la_Independencia", u"Latinoam%C3%A9rica:_periodo_precolombino", u"Principios_y_conceptos_biol%C3%B3gicos", u"Reptiles_y_anfibios", u"Biograf%C3%ADas:_Ciencias_de_la_vida", u"Anatom%C3%ADa._Fisiolog%C3%ADa", u"Plantas", u"Aves", u"Medicina", u"Medio_ambiente", u"Virus%2C_m%C3%B3neras_y_protistas", u"Invertebrados", u"Peces", u"Mam%C3%ADferos", u"Ciencias_de_la_Tierra", u"Agricultura%2C_alimentaci%C3%B3n_y_ganader%C3%ADa", u"Algas_y_hongos", u"Paleontolog%C3%ADa", u"Metrolog%C3%ADa", u"Tecnolog%C3%ADa_militar", u"Qu%C3%ADmica", u"Biograf%C3%ADas", u"Matem%C3%A1ticas", u"F%C3%ADsica", u"Electr%C3%B3nica._Inform%C3%A1tica", u"Ingenier%C3%ADa_y_construcci%C3%B3n", u"Astronom%C3%ADa._Ciencias_del_espacio", u"Comunicaciones", u"Transportes", u"Industria_y_recursos_naturales", u"M%C3%A1quinas_y_herramientas", u"Mitolog%C3%ADa", u"Filosof%C3%ADa", u"Figuras_religiosas", u"Ocultismo", u"Religiones._Grupos_religiosos", u"Teolog%C3%ADa", u"Textos_sagrados", u"Deportistas", u"Deportes_y_juegos", u"Animales_de_compa%C3%B1%C3%ADa", u"Aficiones"]:
-        wikipedia.output(u"Analizando [%s]" % p)
-        
-        #page=wikipedia.Page(wikipedia.Site("es", "wikipedia"), u"%s" % p)
-        
-        s=wikipedia.Site("es", "wikipedia")
-        url=u"/w/index.php?title=%s%s" % (pre, p)
-        d=s.getUrl(url)
-        
-        trozos=d.split("start content")
-        trozos=trozos[1].split("end content")
-        c=trozos[0]
-        
-        m=re.compile("class=\"new\"").finditer(c)
-        n=re.compile("/wiki/").finditer(c)
-        rojos=0
-        azules=-1
-        
-        for i in m:
-                rojos+=1
-        tr+=rojos
-        
-        for i in n:
-                azules+=1
-        ta+=azules
-        
-        por=azules*1.0/(rojos+azules)*100
-        
-        wikipedia.output(u"rojos=%d azules=%d por=%.2f" % (rojos, azules, por))
-        
-        salida+=u"|%.2f" % (por)
-
-por=ta*1.0/(tr+ta)*100
-salida+=u"|%.2f" % (por)
-salida+=u"}}<noinclude>{{documentación de plantilla}}</noinclude>"
-wi=wikipedia.Page(wikipedia.Site("es", "wikipedia"), u"Plantilla:ProgresoEncarta")
-wi.put(salida, u"BOT - Actualizando plantilla %.2f%s" % (por, "%"))
+if __name__ == "__main__":
+    main()
