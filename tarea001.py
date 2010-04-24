@@ -15,9 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-    Update a Encarta progress template
-"""
+""" Update a Encarta progress template """
 
 from __future__ import generators
 import re
@@ -26,9 +24,7 @@ import urllib
 import wikipedia
 
 def main():
-    """
-        Update a Encarta progress template
-    """
+    """ Update a Encarta progress template """
     
     wikies = wikipedia.Site("es", "wikipedia")
     prefix = "Usuario:Platonides/Encarta/"
