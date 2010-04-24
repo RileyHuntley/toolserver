@@ -21,45 +21,63 @@
 
 from __future__ import generators
 import re
-import sys
 import urllib
 
 import wikipedia
-import pagegenerators
-import catlib
 
 def main():
+    """
+        Update a Encarta progress template
+    """
+    
     wikies = wikipedia.Site("es", "wikipedia")
     prefix = "Usuario:Platonides/Encarta/"
     suffixes = ["Música", "Compositores_e_intérpretes", "Tauromaquia", 
-                "Música._Artes_escénicas._Espectáculos/Cine,_Radio_y_televisión", 
-                "Teatro", "Danza", "Instrumentos_musicales", "Economía", "Antropología", 
-                "Psicología", "Sociología", "Organizaciones", "Instituciones", 
-                "Ciencia_política", "Ejército", "Derecho", "Educación",  
-                "Calendarios_y_fiestas", "Escritores", "Pintura._Dibujo._Artes_gráficas",  
-                "Artistas", "Literatura", "Cuentos_y_leyendas", "Literaturas_nacionales",  
-                "Artes_nacionales_y_regionales", "Artes_decorativas", "Arquitectura_y_monumentos", 
-                "Lenguaje", "Movimientos_y_estilos", "Fotografía", "Escultura", 
-                "Divisiones_administrativas", "Relieve", "Poblaciones_del_mundo", 
-                "Parques_y_reservas_naturales", "Regiones_naturales_e_históricas", 
-                "Islas_y_archipiélagos", "Ríos,_lagos_y_canales", "Países", "Océanos_y_mares", 
-                "Conceptos_geográficos", "Exploradores_y_descubridores", "Cartografía", 
-                "Personajes_de_la_Historia", "Europa_Contemporánea", "El_mundo_desde_1945",
-                "Europa_Antigua", "Europa_Moderna", "Latinoamérica:_periodo_colonial", 
-                "Europa_Medieval", "África_y_Próximo_Oriente", "Asia_y_Oceanía", 
-                "Estados_Unidos_y_Canadá", "Arqueología_y_Prehistoria", 
-                "Latinoamérica:_desde_la_Independencia", "Latinoamérica:_periodo_precolombino", 
-                "Principios_y_conceptos_biológicos", "Reptiles_y_anfibios", 
-                "Biografías:_Ciencias_de_la_vida", "Anatomía._Fisiología", "Plantas", 
-                "Aves", "Medicina", "Medio_ambiente", "Virus,_móneras_y_protistas", 
-                "Invertebrados", "Peces", "Mamíferos", "Ciencias_de_la_Tierra", 
-                "Agricultura,_alimentación_y_ganadería", "Algas_y_hongos", "Paleontología", 
-                "Metrología", "Tecnología_militar", "Química", "Biografías", "Matemáticas", 
-                "Física", "Electrónica._Informática", "Ingeniería_y_construcción", 
-                "Astronomía._Ciencias_del_espacio", "Comunicaciones", "Transportes", 
-                "Industria_y_recursos_naturales", "Máquinas_y_herramientas", "Mitología", 
-                "Filosofía", "Figuras_religiosas", "Ocultismo", "Religiones._Grupos_religiosos", 
-                "Teología", "Textos_sagrados", "Deportistas", "Deportes_y_juegos", 
+                "Música._Artes_escénicas._Espectáculos/Cine,_Radio_y_\
+                televisión", "Teatro", "Danza", 
+                "Instrumentos_musicales", "Economía",
+                "Antropología", "Psicología", "Sociología", 
+                "Organizaciones", "Instituciones", "Ciencia_política", 
+                "Ejército", "Derecho", "Educación", 
+                "Calendarios_y_fiestas", "Escritores", 
+                "Pintura._Dibujo._Artes_gráficas", "Artistas", 
+                "Literatura", "Cuentos_y_leyendas", 
+                "Literaturas_nacionales", 
+                "Artes_nacionales_y_regionales", "Artes_decorativas", 
+                "Arquitectura_y_monumentos", 
+                "Lenguaje", "Movimientos_y_estilos", "Fotografía", 
+                "Escultura", "Divisiones_administrativas", "Relieve", 
+                "Poblaciones_del_mundo", "Parques_y_reservas_naturales",
+                "Regiones_naturales_e_históricas", 
+                "Islas_y_archipiélagos", "Ríos,_lagos_y_canales", 
+                "Países", "Océanos_y_mares", "Conceptos_geográficos", 
+                "Exploradores_y_descubridores", "Cartografía", 
+                "Personajes_de_la_Historia", "Europa_Contemporánea", 
+                "El_mundo_desde_1945", "Europa_Antigua", 
+                "Europa_Moderna", "Latinoamérica:_periodo_colonial", 
+                "Europa_Medieval", "África_y_Próximo_Oriente", 
+                "Asia_y_Oceanía", "Estados_Unidos_y_Canadá", 
+                "Arqueología_y_Prehistoria", 
+                "Latinoamérica:_desde_la_Independencia", 
+                "Latinoamérica:_periodo_precolombino", 
+                "Principios_y_conceptos_biológicos", 
+                "Reptiles_y_anfibios", 
+                "Biografías:_Ciencias_de_la_vida", 
+                "Anatomía._Fisiología", "Plantas", "Aves", "Medicina", 
+                "Medio_ambiente", "Virus,_móneras_y_protistas", 
+                "Invertebrados", "Peces", "Mamíferos", 
+                "Ciencias_de_la_Tierra", 
+                "Agricultura,_alimentación_y_ganadería", 
+                "Algas_y_hongos", "Paleontología", "Metrología", 
+                "Tecnología_militar", "Química", "Biografías", 
+                "Matemáticas", "Física", "Electrónica._Informática", 
+                "Ingeniería_y_construcción",
+                "Astronomía._Ciencias_del_espacio", "Comunicaciones", 
+                "Transportes", "Industria_y_recursos_naturales", 
+                "Máquinas_y_herramientas", "Mitología", "Filosofía", 
+                "Figuras_religiosas", "Ocultismo", 
+                "Religiones._Grupos_religiosos", "Teología", 
+                "Textos_sagrados", "Deportistas", "Deportes_y_juegos", 
                 "Animales_de_compañía", "Aficiones"]
     output = u"{{subst:ProgresoEncarta/subst"
     totalred = 0
@@ -79,7 +97,8 @@ def main():
         totalblue += blue
         percent = blue * 1.0 / (red + blue) * 100
         
-        wikipedia.output("%d redlinks, %d blue links, %.2f percent (red links)" % (red, blue, percent))
+        wikipedia.output("%d redlinks, %d blue links, %.2f percent \
+                          (red links)" % (red, blue, percent))
         output += u"|%.2f" % (percent)
 
     percent = totalblue * 1.0 / (totalred + totalblue) * 100
