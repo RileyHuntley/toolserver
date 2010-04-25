@@ -90,7 +90,7 @@ temas={
        'Sudamérica', 'Sudáfrica', 'Sudán', 'Suecia', 'Suiza', 
        'Surinam', 'Tailandia', 'Taiwán', 'Tanzania', 'Tayikistán', 
        'Tecnología', 'Timor Oriental', 'Todas', 'Togo', 'Tonga', 
-       'Turquía', 'Túnez', 'Ucrania', 'Uganda', 'Uruguay', 'Vanuatu', 
+       'Turkmenistán', 'Turquía', 'Túnez', 'Ucrania', 'Uganda', 'Uruguay', 'Vanuatu', 
        'Vaticano', 'Venezuela', 'Videojuegos', 'Vietnam', 'Yemen', 
        'Yibuti', 'Zambia', 'Zimbabue'],
 'fr': ['All'],
