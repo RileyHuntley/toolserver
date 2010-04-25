@@ -39,6 +39,7 @@ def main():
     
     for family, langs in projects.items():
         for lang, preferences in langs.items():
+            print lang, family
             wiki = wikipedia.Site(lang, family)
             suffixes = ["a-absolver", "absorbencia-achicadura", 
                         "achicamiento-acullicar", "acullico-aeromotor", 
@@ -142,7 +143,7 @@ def main():
                 percent = blue * 1.0 / (red + blue) * 100
                 
                 wikipedia.output("%d redlinks, %d blue links, %.2f percent \
-                                  (red links)" % (red, blue, percent))
+                                  (blue links)" % (red, blue, percent))
                 output += u"|%.2f" % (percent)
 
             percent = totalblue * 1.0 / (totalred + totalblue) * 100
