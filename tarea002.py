@@ -136,7 +136,7 @@ def main():
                 raw = raw.split("start content")[1].split("end content")[0]
                 
                 red = len(re.findall('class="new"', raw))
-                blue = len(re.findall('/wiki/', raw))
+                blue = len(re.findall('"/wiki/', raw))
                 totalred += red
                 totalblue += blue
                 percent = blue * 1.0 / (red + blue) * 100
