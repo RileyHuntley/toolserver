@@ -27,17 +27,24 @@ import tarea000
 #y las totales a wikimedia?
 
 limite=100
-langs=['es']
+langs=[]
 hourly=False
+hourlylangs=[]
+daily=False
+dailylangs=[]
 minimum=5 #visitas minimas para ser contabilizada la pagina
 if len(sys.argv)>1:
 	if sys.argv[1]=='daily':
-		langs=['it', 'ja', 'pl', 'nl', 'ru', 'sv', 'zh', 'no', 'ca', 'fi', 'uk', 'cs', 'ko'] #ir metiendo de mas articulos a menos http://meta.wikimedia.org/wiki/List_of_Wikipedias
+		dailylangs=['it', 'ja', 'pl', 'nl', 'ru', 'sv', 'zh', 'no', 'ca', 'fi', 'uk', 'cs', 'ko'] #ir metiendo de mas articulos a menos http://meta.wikimedia.org/wiki/List_of_Wikipedias
+		langs+=dailylangs
+		daily=True
 	elif sys.argv[1]=='hourly':
-		langs=['es', 'en', 'de', 'fr', 'pt', 'da', 'eo', 'hu', 'hr', 'ro', 'sl', 'th', 'tr'] #donde tenga flag
+		hourlylangs=['es', 'en', 'de', 'fr', 'pt', 'da', 'eo', 'hu', 'hr', 'ro', 'sl', 'th', 'tr'] #donde tenga flag
+		langs+=hourlylangs
 		hourly=True
 	else:
-		langs=[sys.argv[1]]
+		langs+=[sys.argv[1]]
+alllangs=dailylangs+hourlylangs
 if len(sys.argv)>2:
 	limite=int(sys.argv[2])
 
@@ -66,7 +73,11 @@ gzs=[]
 for i in m:
 	print i.group(1)
 	gzs.append(i.group(1))
-gzs=gzs[len(gzs)-1:len(gzs)] #nos quedamos con el ultimo que es el mas reciente
+if hourly:
+	gzs=gzs[-1] #nos quedamos con el ultimo que es el mas reciente
+elif daily:
+	pass #dejamos todos los del dia
+	
 wikipedia.output("Elegidos %d fichero(s)..." % len(gzs))
 
 pagesdic={}
@@ -249,7 +260,7 @@ for lang, list in pageselection.items():
 			#	wikipedia.output(u'Error al generar item en lista de %s:' % lang)
 	
 	iws=u''
-	for iw in langs:
+	for iw in alllangs:
 		if iw!=lang:
 			if exitpages.has_key(iw):
 				iws+=u'[[%s:%s]]\n' % (iw, exitpages[iw])
