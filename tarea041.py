@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Copyright (C) 2009 emijrp
@@ -14,34 +15,41 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import wikipedia,re,sys,os,gzip,time
+""" Update a projects list """
+
 import MySQLdb
-import math
+import re
 
-site=wikipedia.Site("es", "wikipedia")
+import wikipedia
 
-conn = MySQLdb.connect(host='sql-s3', db='eswiki_p', read_default_file='~/.my.cnf', use_unicode=True)
-cursor = conn.cursor()
-cursor.execute('SELECT distinct page_title from page where page_namespace=100 and page_is_redirect=0 and page_title not regexp "/";')
-result=cursor.fetchall()
-portales=[]
-for row in result:
-	if len(row)==1:
-		portal=re.sub("_", " ", unicode(row[0], "utf-8"))
-		portales.append(portal)
+def main():
+    """ Update a projects list """
+    site = wikipedia.Site("es", "wikipedia")
 
-page=wikipedia.Page(site, u"Wikiproyecto:Portales/Lista")
-output=u"Portales que existen en [[Wikipedia en español]]:"
-for portal in portales:
-	output+=u"\n# [[Portal:%s|%s]]" % (portal, portal)
-if output!=page.get():
-	page.put(output, u"BOT - Actualizando lista de portales [%s]" % len(portales))
-page=wikipedia.Page(site, u"Wikiproyecto:Portales/Número")
-output=u"%s" % len(portales)
-if output!=page.get():
-	page.put(output, u"BOT - Actualizando número de portales [%s]" % len(portales))
+    conn = MySQLdb.connect(host='sql-s3', db='eswiki_p', read_default_file='~/.my.cnf', use_unicode=True)
+    cursor = conn.cursor()
+    cursor.execute('SELECT distinct page_title from page where page_namespace=100 and page_is_redirect=0 and page_title not regexp "/";')
+    result = cursor.fetchall()
+    portales = []
+    for row in result:
+        if len(row) == 1:
+            portal = re.sub("_", " ", unicode(row[0], "utf-8"))
+            portales.append(portal)
 
-cursor.close()
-conn.close()
+    page = wikipedia.Page(site, u"Wikiproyecto:Portales/Lista")
+    output = u"Portales que existen en [[Wikipedia en español]]:"
+    for portal in portales:
+        output += u"\n# [[Portal:%s|%s]]" % (portal, portal)
+    if output != page.get():
+        page.put(output, u"BOT - Actualizando lista de portales [%s]" % len(portales))
+    page = wikipedia.Page(site, u"Wikiproyecto:Portales/Número")
+    output = u"%s" % len(portales)
+    if output != page.get():
+        page.put(output, u"BOT - Actualizando número de portales [%s]" % len(portales))
 
+    cursor.close()
+    conn.close()
+
+if __name__ == "__main__":
+    main()
 
