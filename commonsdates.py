@@ -67,7 +67,7 @@ def main():
     u"noviembre":u"11", u"nov":u"11", 
     u"diciembre":u"12", u"dic":u"12",
     }
-    regexp_es=ur"%s(?P<change>\[?\[?(?P<day>[1-9]|0[1-9]|1[0-9]|2[0-9]|3[0-1])\]?\]?(?P<separator1>%s)\[?\[?(?P<month>%s)\]?\]?(?P<separator2>%s)\[?\[?(?P<year>\d{4})\]?\]?)%s" % (inicio, "|".join(separador_es), "|".join(month2number_es.keys()), "|".join(separador_es), fin)
+    regexp_es=ur"%s(?P<change>\[?\[?(?P<day>[1-9]|0[1-9]|1[0-9]|2[0-9]|3[0-1])\]?\]?(?P<separator1>%s)\[?\[?(?P<month>%s)\]?\]?(?P<separator2>%s)\[?\[?(?P<year>\d{4}|\d{2})\]?\]?)%s" % (inicio, "|".join(separador_es), "|".join(month2number_es.keys()), "|".join(separador_es), fin)
     regexp_es_monthaaaa=ur"%s(?P<change>\[?\[?(?P<month>%s)\]?\]?(?P<separator2>%s)\[?\[?(?P<year>\d{4})\]?\]?)%s" % (inicio, "|".join(month2number_es.keys()), "|".join(separador_es), fin)
     sub_es=ur"\g<inicio>%s-%s-%s\g<fin>"
     sub_es_monthaaaa=ur"\g<inicio>%s-%s\g<fin>"
@@ -110,7 +110,7 @@ def main():
     u"novembre":u"11",
     u"décembre":u"12",
     }
-    regexp_fr=ur"%s(?P<change>\[?\[?(?P<day>[1-9]|0[1-9]|1[0-9]|2[0-9]|3[0-1])(?P<separator1>%s)(?P<month>%s)\]?\]?(?P<separator2>%s)\[?\[?(?P<year>\d{4})\]?\]?)%s" % (inicio, "|".join(separador_fr), "|".join(month2number_fr.keys()), "|".join(separador_fr), fin)
+    regexp_fr=ur"%s(?P<change>\[?\[?(?P<day>[1-9]|0[1-9]|1[0-9]|2[0-9]|3[0-1])(?P<separator1>%s)(?P<month>%s)\]?\]?(?P<separator2>%s)\[?\[?(?P<year>\d{4}|\d{2})\]?\]?)%s" % (inicio, "|".join(separador_fr), "|".join(month2number_fr.keys()), "|".join(separador_fr), fin)
     sub_fr=ur"\g<inicio>%s-%s-%s\g<fin>"
 
     #dd/mm/aaaa para dd>12
@@ -145,7 +145,7 @@ def main():
     fin_own=ur"[ \.]*(?P<fin> *[\n\r\|])" #eliminamos . finales que no permiten hacer la conversión
     #CUIDADO con own photograph! http://commons.wikimedia.org/w/index.php?title=File:Teatro_Coccia_chandelier.jpg&diff=next&oldid=19903214
     #ideas: own photo, own photograph
-    own_synonym=[ur"own[ \-]*work", ur"Own work by uploader", ur"Opera creata dall\'uploader \(own work by uploader\)", ur"self[ \-]*made", ur"eie[ \-]*werk", ur"Treballo de qui la cargó", ur"Trabayu propiu", ur"Уласны твор", ur"Собствена творба", ur"Vlastito djelo", ur"Treball propi", ur"Vlastní dílo", ur"Eget arbejde", ur"Eigene Arbeit", ur"Propra verko", ur"Trabajo propio", ur"self[ \-]*made *\/ *foto propia", ur"Üleslaadija oma töö", ur"Oma teos", ur"Travail personnel", ur"Traballo propio", ur"Vlastito djelo postavljača", ur"A feltöltő saját munkája", ur"Karya sendiri", ur"Opera propria", ur"Opus proprium", ur"Mano darbas", ur"Egen Wark", ur"Eigen waark", ur"Eigen werk", ur"Eget arbeide", ur"Trabalh personal", ur"Ejen Woakj", ur"Praca własna", ur"Trabalho próprio", ur"Operă proprie", ur"Vlastné dielo", ur"Lastno delo", ur"Eget arbete", ur"Sariling gawa", ur"Opera creata e caricata dall\'autore \(own work by uploader\)", ur"Own work \- Vlastné dielo"] #no meter  ()
+    own_synonym=[ur"own[ \-]*work", ur"Own[ \-]*work by uploader", ur"Opera creata dall\'uploader \(own work by uploader\)", ur"self[ \-]*made", ur"eie[ \-]*werk", ur"Treballo de qui la cargó", ur"Trabayu propiu", ur"Уласны твор", ur"Собствена творба", ur"Vlastito djelo", ur"Treball propi", ur"Vlastní dílo", ur"Eget arbejde", ur"Eigene Arbeit", ur"Propra verko", ur"Trabajo propio", ur"self[ \-]*made *\/ *foto propia", ur"Üleslaadija oma töö", ur"Oma teos", ur"Travail personnel", ur"Traballo propio", ur"Vlastito djelo postavljača", ur"A feltöltő saját munkája", ur"Karya sendiri", ur"Opera propria", ur"Opus proprium", ur"Mano darbas", ur"Egen Wark", ur"Eigen waark", ur"Eigen werk", ur"Eget arbeide", ur"Trabalh personal", ur"Ejen Woakj", ur"Praca własna", ur"Trabalho próprio", ur"Operă proprie", ur"Vlastné dielo", ur"Lastno delo", ur"Eget arbete", ur"Sariling gawa", ur"Opera creata e caricata dall\'autore \(own work by uploader\)", ur"Own work \- Vlastné dielo"] #no meter  ()
     regexp_own=ur"%s(?P<change>\[?\[?(%s)\]?\]?)%s" % (inicio_own, "|".join(own_synonym), fin_own)
     sub_own=ur"\g<inicio>{{Own}}\g<fin>"
 
@@ -193,6 +193,11 @@ def main():
                 [year, month, day]=[i.group("year"), i.group("month"), i.group("day")]
                 if len(day)==1:
                     day="0"+day
+                if len(year)==2:
+                    #if year in ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10']: #peligroso, mes ?
+                    #    year='20'+year
+                    if year in ['90', '91', '92', '93', '94', '95', '96', '97', '98', '99']:
+                        year='19'+year
                 break
         
             newtext=re.sub(regexp_es, sub_es % (year, month2number_es[month.lower()], day), newtext, 1)
@@ -224,7 +229,7 @@ def main():
                 if len(day)==1:
                     day="0"+day
                 if len(year)==2:
-                    #if year in ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10']:
+                    #if year in ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10']: #peligroso, mes ?
                     #    year='20'+year
                     if year in ['90', '91', '92', '93', '94', '95', '96', '97', '98', '99']:
                         year='19'+year
@@ -274,6 +279,11 @@ def main():
                 [year, month, day]=[i.group("year"), i.group("month"), i.group("day")]
                 if len(day)==1:
                     day="0"+day
+                if len(year)==2:
+                    #if year in ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10']: #peligroso, mes ?
+                    #    year='20'+year
+                    if year in ['90', '91', '92', '93', '94', '95', '96', '97', '98', '99']:
+                        year='19'+year
                 break
         
             newtext=re.sub(regexp_fr, sub_fr % (year, month2number_fr[month.lower()], day), newtext, 1)
