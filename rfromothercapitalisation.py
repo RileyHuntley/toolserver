@@ -23,26 +23,26 @@ wiki=wikipedia.Site("en", "wikipedia")
 day=datetime.datetime.now().day
 day=day % len(days)
 if len(sys.argv)==2:
-	start=sys.argv[1]
-	gen=pagegenerators.AllpagesPageGenerator(start, namespace = 0, includeredirects = True, site = wiki)
+    start=sys.argv[1]
+    gen=pagegenerators.AllpagesPageGenerator(start, namespace = 0, includeredirects = True, site = wiki)
 else:
-	start=days[day]
-	gen=pagegenerators.AllpagesPageGenerator(start, namespace = 0, includeredirects = True, site = wiki)
+    start=days[day]
+    gen=pagegenerators.AllpagesPageGenerator(start, namespace = 0, includeredirects = True, site = wiki)
 preloadingGen = pagegenerators.PreloadingGenerator(gen, pageNumber = 200)
 
 for page in preloadingGen:
-	if page.exists() and page.isRedirectPage():
-		wikipedia.output(u"Analizando: [[%s]]" % page.title())
-		wtext=page.get(get_redirect=True)
-		wtitle=page.title()
-		#punto de ruptura
-		if start[0]!=wtitle[0]:
-			break
-		target=page.getRedirectTarget().title()
-		if wtitle.lower()==target.lower() and (len(wtext)==len(target)+13 or len(wtext)==len(target)+14):
-			salida=u'#REDIRECT [[%s]] {{R from other capitalisation}}' % target
-			if wtext!=salida:
-				try:
-					page.put(salida, u'BOT - Sorting redirects')
-				except:
-					pass
+    if page.exists() and page.isRedirectPage():
+        wikipedia.output(u"Analizando: [[%s]]" % page.title())
+        wtext=page.get(get_redirect=True)
+        wtitle=page.title()
+        #punto de ruptura
+        if start[0]!=wtitle[0]:
+            break
+        target=page.getRedirectTarget().title()
+        if wtitle.lower()==target.lower() and (len(wtext)==len(target)+13 or len(wtext)==len(target)+14):
+            salida=u'#REDIRECT [[%s]] {{R from other capitalisation}}' % target
+            if wtext!=salida:
+                try:
+                    page.put(salida, u'BOT - Sorting redirects')
+                except:
+                    pass

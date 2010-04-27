@@ -24,31 +24,31 @@ import re
 import urllib
 
 def main():
-	"""Copy some stats from s23.org and paste in a page in Wikipedia for log purposes
-	"""
-	try:
-		opts, args = getopt.getopt(sys.argv[1:], "h", ["help"])
-	except getopt.error, msg:
-		print msg
-		print "for help use --help"
-		sys.exit(2)
-	for o, a in opts:
-		if o in ("-h", "--help"):
-		    print main.__doc__
-		    sys.exit(0)
+    """Copy some stats from s23.org and paste in a page in Wikipedia for log purposes
+    """
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "h", ["help"])
+    except getopt.error, msg:
+        print msg
+        print "for help use --help"
+        sys.exit(2)
+    for o, a in opts:
+        if o in ("-h", "--help"):
+            print main.__doc__
+            sys.exit(0)
 
-	## @var url
-	# URL to statistics page
-	url='http://s23.org/wikistats/wikipedias_wiki.php'
-	f=urllib.urlopen(url, 'r')
-	text=f.read()
-	text=re.sub(ur'(?im)[\n\r]*</?pre>[\n\r]*', ur'', text) #cleaning...
-	text=u'Lista de Wikipedias extraida de %s\n\n%s' % (url, text)
-	## @var p
-	# Page where to save
-	p=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'User:Emijrp/Lista de Wikipedias')
-	p.put(text, u'BOT - Updating from %s' % url)
-	f.close()
+    ## @var url
+    # URL to statistics page
+    url='http://s23.org/wikistats/wikipedias_wiki.php'
+    f=urllib.urlopen(url, 'r')
+    text=f.read()
+    text=re.sub(ur'(?im)[\n\r]*</?pre>[\n\r]*', ur'', text) #cleaning...
+    text=u'Lista de Wikipedias extraida de %s\n\n%s' % (url, text)
+    ## @var p
+    # Page where to save
+    p=wikipedia.Page(wikipedia.Site('es', 'wikipedia'), u'User:Emijrp/Lista de Wikipedias')
+    p.put(text, u'BOT - Updating from %s' % url)
+    f.close()
 
 if __name__ == "__main__":
     main()

@@ -34,18 +34,18 @@ raw=f.read()
 l=raw.splitlines()
 langs=[]
 for t in l:
-	if t[-4:]=='wiki':
-		lang=t.split("wiki")[0]
-		if not lang in ["en"]:
-			langs.append(lang)
+    if t[-4:]=='wiki':
+        lang=t.split("wiki")[0]
+        if not lang in ["en"]:
+            langs.append(lang)
 f.close()
 
 print "Se van a analizar", len(langs), "idiomas"
 
 for lang in langs:
-	os.system('python missingimages.py %s' % lang)
-	os.system('mysql -h sql -e "use u_emijrp_yarrow;delete from imagesforbio where language=\'%s\';"' % lang)
-	os.system('mysql -h sql u_emijrp_yarrow < /home/emijrp/temporal/candidatas-%s.sql' % lang)
+    os.system('python missingimages.py %s' % lang)
+    os.system('mysql -h sql -e "use u_emijrp_yarrow;delete from imagesforbio where language=\'%s\';"' % lang)
+    os.system('mysql -h sql u_emijrp_yarrow < /home/emijrp/temporal/candidatas-%s.sql' % lang)
 
 
 

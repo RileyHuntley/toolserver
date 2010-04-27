@@ -29,9 +29,9 @@ lenguajefuente='en' # mirar nota1 si meto una lista en vez de individual
 family='wikipedia'
 
 def percent(c):
-	if c % 1000 == 0:
-		#print '\nLlevamos %d' % c
-		sys.stderr.write(".")
+    if c % 1000 == 0:
+        #print '\nLlevamos %d' % c
+        sys.stderr.write(".")
 
 pagetitle2pageid={}
 pageid2pagetitle={}
@@ -56,20 +56,20 @@ cursor.execute("select page_id, page_title from page where page_namespace=0 and 
 row=cursor.fetchone()
 c=0
 while row:
-	pageid=int(row[0])
-	pagetitle=re.sub('_', ' ', row[1])
-	c+=1
-	percent(c)
-	#pageid2pagetitle[pageid]=pagetitle
-	pagetitle2pageid[pagetitle]=pageid
-	row=cursor.fetchone()
+    pageid=int(row[0])
+    pagetitle=re.sub('_', ' ', row[1])
+    c+=1
+    percent(c)
+    #pageid2pagetitle[pageid]=pagetitle
+    pagetitle2pageid[pagetitle]=pageid
+    row=cursor.fetchone()
 cursor.close()
 conn.close()
 print '\nCargados %d pageid/pagetitle para %s:' % (c, lenguajeobjetivo)
 time.sleep(7)
 
 if c==0: #f
-	sys.exit()
+    sys.exit()
 
 #ahora rellenamos sinimagenes con page_ids que no tengan ningún imagelink
 print '-'*70
@@ -82,11 +82,11 @@ cursor.execute("select page_id from page where page_namespace=0 and page_is_redi
 row=cursor.fetchone()
 c=0
 while row:
-	pageid=int(row[0])
-	c+=1
-	percent(c)
-	sinimagenes.add(pageid)
-	row=cursor.fetchone()
+    pageid=int(row[0])
+    c+=1
+    percent(c)
+    sinimagenes.add(pageid)
+    row=cursor.fetchone()
 cursor.close()
 conn.close()
 print '\nSe encontraron %d articulos sin imagenes en %s:' % (c, lenguajeobjetivo) #sin ninguna, hasta las que tienen commons.svg se excluyen ?
@@ -103,17 +103,17 @@ cursor.execute("select ll_from, page_title, ll_title from langlinks inner join p
 row=cursor.fetchone()
 c=0
 while row:
-	pageid=int(row[0])
-	pagetitle=row[1]
-	interwiki=re.sub('_', ' ', row[2])
-	c+=1
-	percent(c)
-	if pagetitle2pageid.has_key(interwiki) and pagetitle2pageid[interwiki] in sinimagenes:
-		#si la pagina a la que apunta el iw existe en el lenguajeobjetivo, y no tiene imagenes...
-		interwikis[pageid]=interwiki
-		pageid2pagetitle2[pageid]=pagetitle
-		#pagetitle2pageid2[pagetitle]=pageid
-	row=cursor.fetchone()
+    pageid=int(row[0])
+    pagetitle=row[1]
+    interwiki=re.sub('_', ' ', row[2])
+    c+=1
+    percent(c)
+    if pagetitle2pageid.has_key(interwiki) and pagetitle2pageid[interwiki] in sinimagenes:
+        #si la pagina a la que apunta el iw existe en el lenguajeobjetivo, y no tiene imagenes...
+        interwikis[pageid]=interwiki
+        pageid2pagetitle2[pageid]=pagetitle
+        #pagetitle2pageid2[pagetitle]=pageid
+    row=cursor.fetchone()
 cursor.close()
 conn.close()
 print '\nCargados %d pageid/pagetitle (y su interwiki a %s:) de %swiki que tienen iw hacia articulos de %s: sin imagenes' % (c, lenguajeobjetivo, lenguajefuente, lenguajeobjetivo)
@@ -131,15 +131,15 @@ cursor.execute("select img_name from image;") #no poner img_width<img_height, ya
 row=cursor.fetchone()
 c=0
 while row:
-	image=re.sub('_', ' ', row[0])
-	#filtro
-	if re.search(exclusion_pattern, image):
-		continue
-	c+=1
-	percent(c)
-	images.add(image)
-	#print image.encode('utf-8')
-	row=cursor.fetchone()
+    image=re.sub('_', ' ', row[0])
+    #filtro
+    if re.search(exclusion_pattern, image):
+        continue
+    c+=1
+    percent(c)
+    images.add(image)
+    #print image.encode('utf-8')
+    row=cursor.fetchone()
 cursor.close()
 conn.close()
 print '\nCargadas %d imagenes locales de %swiki (descartando iconos, escudos... )' % (c, lenguajefuente)
@@ -157,37 +157,37 @@ cursor.execute("select il_from, il_to, page_namespace from imagelinks inner join
 row=cursor.fetchone()
 c=0
 while row:
-	pageid=int(row[0])
-	image=re.sub('_', ' ', row[1])
-	pagenamespace=int(row[2])
-	
-	if image in listanegra: #debe estar lo primero
-		continue
-	if pagenamespace==10:
-		listanegra.add(image)
-		continue
-	#filtro
-	if re.search(exclusion_pattern, image):
-		continue
-	#print image.encode('utf-8')
-	if image in images: #comprobamos si esta subida a la inglesa
-		listanegra.add(image)
-		continue
-	if not pageid2pagetitle2.has_key(pageid): #si no existe tal pagina en la inglesa, hace falta?
-		continue
-	if pagetitle2pageid[interwikis[pageid]] not in sinimagenes: #si ya tiene imagen no hace falta seguir
-		continue
-	c+=1
-	percent(c)
-	#if c % 100 == 0:
-	#	print c
-	#	linea='[[%s]] -> [[Image:%s]]' % (interwikis[pageid], image)
-	#	print linea.encode('utf-8')
-	if candidatas.has_key(pageid):
-		candidatas[pageid].append(image)
-	else:
-		candidatas[pageid]=[image]
-	row=cursor.fetchone()
+    pageid=int(row[0])
+    image=re.sub('_', ' ', row[1])
+    pagenamespace=int(row[2])
+    
+    if image in listanegra: #debe estar lo primero
+        continue
+    if pagenamespace==10:
+        listanegra.add(image)
+        continue
+    #filtro
+    if re.search(exclusion_pattern, image):
+        continue
+    #print image.encode('utf-8')
+    if image in images: #comprobamos si esta subida a la inglesa
+        listanegra.add(image)
+        continue
+    if not pageid2pagetitle2.has_key(pageid): #si no existe tal pagina en la inglesa, hace falta?
+        continue
+    if pagetitle2pageid[interwikis[pageid]] not in sinimagenes: #si ya tiene imagen no hace falta seguir
+        continue
+    c+=1
+    percent(c)
+    #if c % 100 == 0:
+    #    print c
+    #    linea='[[%s]] -> [[Image:%s]]' % (interwikis[pageid], image)
+    #    print linea.encode('utf-8')
+    if candidatas.has_key(pageid):
+        candidatas[pageid].append(image)
+    else:
+        candidatas[pageid]=[image]
+    row=cursor.fetchone()
 cursor.close()
 conn.close()
 print '\nCargadas %d imagenes que se usan en articulos de %s: y nos pueden servir quizas (candidatas)' % (c, lenguajefuente)
@@ -199,47 +199,47 @@ categories_pattern=re.compile(ur"\((?P<pageid>\d+)\,\'\d+ (births|deaths)\'\,\'[
 filename='/mnt/user-store/%swiki-latest-categorylinks.sql.gz' % lenguajefuente
 f=""
 try:
-	f=gzip.open(filename, 'r')
+    f=gzip.open(filename, 'r')
 except:
-	os.system('wget http://download.wikimedia.org/%swiki/latest/%swiki-latest-categorylinks.sql.gz -O %s' % (lenguajefuente, lenguajefuente, filename))
-	f=gzip.open(filename, 'r')
+    os.system('wget http://download.wikimedia.org/%swiki/latest/%swiki-latest-categorylinks.sql.gz -O %s' % (lenguajefuente, lenguajefuente, filename))
+    f=gzip.open(filename, 'r')
 c=0
 for line in f:
-	line=re.sub('_', ' ', line)
-	m=re.findall(categories_pattern, line)
-	for i in m:
-		pageid=int(i.group("pageid"))
-		c+=1
-		percent(c)
-		categories.add(pageid)
+    line=re.sub('_', ' ', line)
+    m=re.findall(categories_pattern, line)
+    for i in m:
+        pageid=int(i.group("pageid"))
+        c+=1
+        percent(c)
+        categories.add(pageid)
 print '\nCargadas %d categorylinks desde biografias para %swiki' % (c, lenguajefuente)
 f.close()
 
 #cargamos imagenes subidas a commons y que cumplan los filtros
 filename='/home/emijrp/temporal/commonswiki-images.txt'
 try:
-	f=open(filename, 'r')
+    f=open(filename, 'r')
 except:
-	os.system('mysql -h commonswiki-p.db.toolserver.org -e "use commonswiki_p;select img_name from image where img_width<img_height;" > %s' % filename)
-	f=open(filename, 'r')
+    os.system('mysql -h commonswiki-p.db.toolserver.org -e "use commonswiki_p;select img_name from image where img_width<img_height;" > %s' % filename)
+    f=open(filename, 'r')
 c=0
 for line in f:
-	try:
-		line=unicode(line, 'utf-8')
-	except:
-		continue
-	line=line[:len(line)-1] #evitamos \n
-	line=re.sub('_', ' ', line)
-	trozos=line.split('	')
-	if len(trozos)==1:
-		image=trozos[0]
-		#filtro
-		if re.search(exclusion_pattern, image):
-			continue
-		c+=1
-		percent(c)
-		imagescommons.add(image)
-		#print image.encode('utf-8')
+    try:
+        line=unicode(line, 'utf-8')
+    except:
+        continue
+    line=line[:len(line)-1] #evitamos \n
+    line=re.sub('_', ' ', line)
+    trozos=line.split('    ')
+    if len(trozos)==1:
+        image=trozos[0]
+        #filtro
+        if re.search(exclusion_pattern, image):
+            continue
+        c+=1
+        percent(c)
+        imagescommons.add(image)
+        #print image.encode('utf-8')
 print '\nCargadas %d images de commons (descartando iconos, escudos... y width>height)' % (c)
 f.close()
 
@@ -248,44 +248,44 @@ cc=0
 f=open('/home/emijrp/temporal/candidatas-%s.txt' % lenguajeobjetivo, 'w')
 g=open('/home/emijrp/temporal/candidatas-%s.sql' % lenguajeobjetivo, 'w')
 for pageid, imagenescandidatas in candidatas.items():
-	if pageid not in categories: #no es biografia?
-		continue
-	article=pageid2pagetitle2[pageid]
-	c+=1
-	for image in imagenescandidatas:
-		iw=interwikis[pageid]
-		if re.search(exclusion_pattern, iw):#evitamos imagenes y articulos que no sirven o erroneas que ya se han comprobado en otras actualizacione
-			continue
-		trocear=' '.join([iw, article]) #para aquellos idiomas como ar: con alfabetos distintos incluimos el nombre en inglés también
-		trozos=re.sub(ur'[\(\)]', ur'', trocear).split(' ')
-		trozos2=[]
-		for t in trozos:
-			t=t.strip()
-			if len(t)>=3:
-				trozos2.append(t)
-		temp="|".join(trozos2)
-		
-		if re.findall(ur'\|', temp)>=1: #al menos dos palabras para buscar (una|otra)
-			if image not in listanegra:
-				if image in imagescommons:
-					if not re.search(exclusion_pattern, image): #evitamos imagenes que no sirven o erroneas que ya se han comprobado en otras actualizaciones
-						if not re.search(ur'([\'\"]|[^\d]0\d\d[^\d])', ' '.join([iw, image])): #?
-							if len(re.findall(ur"(?i)(%s)" % temp, image))>=2: #al menos dos ocurrencias en el nombre del fich
-								cc+=1
-								image_=re.sub(' ', '_', image)
-								md5_=md5.new(image_.encode('utf-8')).hexdigest()
-								
-								salida='%s;%s;%s;\n' % (article, iw, image)
-								salida=salida.encode('utf-8')
-								
-								salida2="INSERT INTO `imagesforbio` (`id`, `language`, `article`, `image`, `url`, `done`) VALUES (NULL, '%s', '%s', '%s', 'http://upload.wikimedia.org/wikipedia/commons/%s/%s/%s', 0);\n" % (lenguajeobjetivo, iw, image, md5_[0], md5_[0:2], image_)
-								salida2=salida2.encode('utf-8')
-								
-								try:
-									f.write(salida)
-									g.write(salida2)
-								except:
-									pass
+    if pageid not in categories: #no es biografia?
+        continue
+    article=pageid2pagetitle2[pageid]
+    c+=1
+    for image in imagenescandidatas:
+        iw=interwikis[pageid]
+        if re.search(exclusion_pattern, iw):#evitamos imagenes y articulos que no sirven o erroneas que ya se han comprobado en otras actualizacione
+            continue
+        trocear=' '.join([iw, article]) #para aquellos idiomas como ar: con alfabetos distintos incluimos el nombre en inglés también
+        trozos=re.sub(ur'[\(\)]', ur'', trocear).split(' ')
+        trozos2=[]
+        for t in trozos:
+            t=t.strip()
+            if len(t)>=3:
+                trozos2.append(t)
+        temp="|".join(trozos2)
+        
+        if re.findall(ur'\|', temp)>=1: #al menos dos palabras para buscar (una|otra)
+            if image not in listanegra:
+                if image in imagescommons:
+                    if not re.search(exclusion_pattern, image): #evitamos imagenes que no sirven o erroneas que ya se han comprobado en otras actualizaciones
+                        if not re.search(ur'([\'\"]|[^\d]0\d\d[^\d])', ' '.join([iw, image])): #?
+                            if len(re.findall(ur"(?i)(%s)" % temp, image))>=2: #al menos dos ocurrencias en el nombre del fich
+                                cc+=1
+                                image_=re.sub(' ', '_', image)
+                                md5_=md5.new(image_.encode('utf-8')).hexdigest()
+                                
+                                salida='%s;%s;%s;\n' % (article, iw, image)
+                                salida=salida.encode('utf-8')
+                                
+                                salida2="INSERT INTO `imagesforbio` (`id`, `language`, `article`, `image`, `url`, `done`) VALUES (NULL, '%s', '%s', '%s', 'http://upload.wikimedia.org/wikipedia/commons/%s/%s/%s', 0);\n" % (lenguajeobjetivo, iw, image, md5_[0], md5_[0:2], image_)
+                                salida2=salida2.encode('utf-8')
+                                
+                                try:
+                                    f.write(salida)
+                                    g.write(salida2)
+                                except:
+                                    pass
 f.close()
 g.close()
 

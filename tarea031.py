@@ -25,9 +25,9 @@ timestamp=datetime.datetime.today()-datetime.timedelta(days=limite)
 month=timestamp.month
 day=timestamp.day
 if int(month)<10:
-	month='0%s' % month
+    month='0%s' % month
 if int(day)<10:
-	day='0%s' % day
+    day='0%s' % day
 timestamplimite=u'%s%s%s000000' % (timestamp.year, month, day)
 
 site = wikipedia.Site('es', 'wikipedia')

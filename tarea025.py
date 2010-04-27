@@ -23,18 +23,18 @@ wtext=wiii.get()
 
 salida=u""
 for l in wtext.splitlines():
-	if re.search(ur'(?im)^\# \[\[([^\]]+?)\]\], ', l):
-		wtitle=l.split("]],")[0].split("[[")[1]
-		temp=wikipedia.Page(site, wtitle)
-		if temp.exists():
-			salida+=l+'\n'
-			wikipedia.output(wtitle+' existe')
-		else:
-			wikipedia.output(wtitle+' NO existe')
-	else:
-		salida+=l+'\n'
+    if re.search(ur'(?im)^\# \[\[([^\]]+?)\]\], ', l):
+        wtitle=l.split("]],")[0].split("[[")[1]
+        temp=wikipedia.Page(site, wtitle)
+        if temp.exists():
+            salida+=l+'\n'
+            wikipedia.output(wtitle+' existe')
+        else:
+            wikipedia.output(wtitle+' NO existe')
+    else:
+        salida+=l+'\n'
 
 if wtext!=salida:
-	wiii.put(salida, u'BOT - Limpiando páginas que se han borrado')
+    wiii.put(salida, u'BOT - Limpiando páginas que se han borrado')
 
 wikipedia.stopme()

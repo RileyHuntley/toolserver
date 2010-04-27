@@ -19,7 +19,7 @@ import wikipedia,re,urllib,sys
 langs=['pt', 'es', 'fr']
 
 if len(sys.argv)>=2:
-	langs=[sys.argv[1]]
+    langs=[sys.argv[1]]
 
 impdic={
 'default': 'NewsImporter',
@@ -98,48 +98,48 @@ temas={
 }
 
 for lang in langs:
-	wikisite=wikipedia.Site(lang, 'wikipedia')
-	newssite=wikipedia.Site(lang, 'wikinews')
-	wikipedia.Page(newssite, u'User:BOTijo/Sandbox').put(u'1', u'BOT')
-	for tema in temas[lang]:
-		exportador=u''
-		if expdic.has_key(lang):
-			exportador=expdic[lang]
-		else:
-			exportador=expdic['default']
-		importador=u''
-		if impdic.has_key(lang):
-			importador=impdic[lang]
-		else:
-			importador=impdic['default']
-		advertencia=u''
-		if advdic.has_key(lang):
-			advertencia=advdic[lang]
-		else:
-			advertencia=advdic['default']
-		
-		url=u"/w/index.php?action=purge&title=%s:%s/%s" % (urllib.quote(tempdic[lang]), exportador, urllib.quote(tema))
-		#url=u"/w/index.php?title=Template:%s/%s" % (exportador, urllib.quote(tema))
-		data=newssite.getUrl(url)
-		trozos=data.split("start content")
-		trozos=trozos[1].split("end content")
-		data=trozos[0]
-		
-		#wikipedia.output(data)
-		m=re.compile(ur"<li>(\d{1,2}.*?20\d\d): <a href=[^>]*>([^<]*?)</a></li>").finditer(data)
-		
-		noticias=u"<noinclude>{{%s/%s}}</noinclude>" % (importador, advertencia)
-		for i in m:
-			fecha=i.group(1)
-			noticia=i.group(2)
-			noticias+="\n* %s: [[n:%s|%s]]" % (fecha, noticia, noticia)
-		
-		#wikipedia.output(u"----------------------------------------\n%s" % noticias)
-		page=wikipedia.Page(wikisite, u'Template:%s/%s' % (importador, urllib.quote(tema)))
-		
-		if page.exists():
-			if noticias!=page.get():
-				page.put(noticias, 'BOT - Updating template from [[:n:|Wikinews]]')
-		else:
-			page.put(noticias, 'BOT - Updating template from [[:n:|Wikinews]]')
+    wikisite=wikipedia.Site(lang, 'wikipedia')
+    newssite=wikipedia.Site(lang, 'wikinews')
+    wikipedia.Page(newssite, u'User:BOTijo/Sandbox').put(u'1', u'BOT')
+    for tema in temas[lang]:
+        exportador=u''
+        if expdic.has_key(lang):
+            exportador=expdic[lang]
+        else:
+            exportador=expdic['default']
+        importador=u''
+        if impdic.has_key(lang):
+            importador=impdic[lang]
+        else:
+            importador=impdic['default']
+        advertencia=u''
+        if advdic.has_key(lang):
+            advertencia=advdic[lang]
+        else:
+            advertencia=advdic['default']
+        
+        url=u"/w/index.php?action=purge&title=%s:%s/%s" % (urllib.quote(tempdic[lang]), exportador, urllib.quote(tema))
+        #url=u"/w/index.php?title=Template:%s/%s" % (exportador, urllib.quote(tema))
+        data=newssite.getUrl(url)
+        trozos=data.split("start content")
+        trozos=trozos[1].split("end content")
+        data=trozos[0]
+        
+        #wikipedia.output(data)
+        m=re.compile(ur"<li>(\d{1,2}.*?20\d\d): <a href=[^>]*>([^<]*?)</a></li>").finditer(data)
+        
+        noticias=u"<noinclude>{{%s/%s}}</noinclude>" % (importador, advertencia)
+        for i in m:
+            fecha=i.group(1)
+            noticia=i.group(2)
+            noticias+="\n* %s: [[n:%s|%s]]" % (fecha, noticia, noticia)
+        
+        #wikipedia.output(u"----------------------------------------\n%s" % noticias)
+        page=wikipedia.Page(wikisite, u'Template:%s/%s' % (importador, urllib.quote(tema)))
+        
+        if page.exists():
+            if noticias!=page.get():
+                page.put(noticias, 'BOT - Updating template from [[:n:|Wikinews]]')
+        else:
+            page.put(noticias, 'BOT - Updating template from [[:n:|Wikinews]]')
 

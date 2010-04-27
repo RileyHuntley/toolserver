@@ -22,39 +22,46 @@ import sets
 
 import wikipedia
 
+projects = [
+["en", "wikipedia", "sql-s1", "enwiki_p", u" {{R from modification}}", u"Creating redirect to"],
+["es", "wikipedia", "sql-s3", "eswiki_p", u"", u"Creando redirección hacia"],
+]
+
 def main():
-	wikien = wikipedia.Site("en", "wikipedia")
+    """ Bot searches for titles with endashes and creates a redirect from hyphens """
 
-	conn = MySQLdb.connect(host='sql-s1', db='enwiki_p', read_default_file='~/.my.cnf', use_unicode=True)
-	cursor = conn.cursor()
-	cursor.execute("SELECT page_title from page where page_namespace=0 and page_title regexp \".*[–-].*\";")
-	row = cursor.fetchone()
-	endashes = sets.Set()
-	hyphens = sets.Set()
-	while row:
-		pagetitle = re.sub(ur"_", ur" ", unicode(row[0], "utf-8"))
-		if re.search(ur"–", pagetitle) and not re.search(ur"-", pagetitle):
-			endashes.add(pagetitle)
-		if not re.search(ur"–", pagetitle) and re.search(ur"-", pagetitle):
-			hyphens.add(pagetitle)
-		row = cursor.fetchone()	
-	cursor.close()
-	conn.close()
+    for lang, family, host, db, footer, summary in projects:
+        wiki = wikipedia.Site(lang, family)
+        conn = MySQLdb.connect(host=host, db=db, read_default_file='~/.my.cnf', use_unicode=True)
+        cursor = conn.cursor()
+        cursor.execute("SELECT page_title from page where page_namespace=0 and page_title regexp \".*[–-].*\";")
+        row = cursor.fetchone()
+        endashes = sets.Set()
+        hyphens = sets.Set()
+        while row:
+            pagetitle = re.sub(ur"_", ur" ", unicode(row[0], "utf-8"))
+            if re.search(ur"–", pagetitle) and not re.search(ur"[-\(\)]", pagetitle): #descartamos las que tienen paréntesis, (cación) (desambiguación)...
+                endashes.add(pagetitle)
+            if not re.search(ur"–", pagetitle) and re.search(ur"-", pagetitle):
+                hyphens.add(pagetitle)
+            row = cursor.fetchone()    
+        cursor.close()
+        conn.close()
 
-	print len(endashes), "endashes"
+        print len(endashes), "endashes"
 
-	for pagetitle in endashes:
-		pagetitle_ = re.sub(ur"–", ur"-", pagetitle)
-		if pagetitle_ not in hyphens:
-			#creamos
-			redirect = wikipedia.Page(wikien, pagetitle_)
-			if not redirect.exists():
-				target = wikipedia.Page(wikien, pagetitle)
-				if target.exists():
-					if target.isRedirectPage():
-						redirect.put(ur"#REDIRECT [[%s]] {{R from modification}}" % target.getRedirectTarget().title(), u"BOT - Creating redirect to [[%s]]" % target.getRedirectTarget().title())
-					else:
-						redirect.put(ur"#REDIRECT [[%s]] {{R from modification}}" % target.title(), u"BOT - Creating redirect to [[%s]]" % target.title())
-			
+        for pagetitle in endashes:
+            pagetitle_ = re.sub(ur"–", ur"-", pagetitle)
+            if pagetitle_ not in hyphens:
+                #creamos
+                redirect = wikipedia.Page(wiki, pagetitle_)
+                if not redirect.exists():
+                    target = wikipedia.Page(wiki, pagetitle)
+                    if target.exists():
+                        if target.isRedirectPage():
+                            redirect.put(ur"#REDIRECT [[%s]]%s" % (target.getRedirectTarget().title(), footer), u"BOT - %s [[%s]]" % (summary, target.getRedirectTarget().title()))
+                        else:
+                            redirect.put(ur"#REDIRECT [[%s]]%s" % (target.title(), footer), u"BOT - %s [[%s]]" % (summary, target.title()))
+                
 if __name__ == "__main__":
     main()

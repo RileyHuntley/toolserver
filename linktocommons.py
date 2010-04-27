@@ -17,12 +17,12 @@
 import wikipedia, os, sys, re, time
 
 def percent(c):
-	if c % 10000 == 0:
-		print 'Llevamos %d' % c
+    if c % 10000 == 0:
+        print 'Llevamos %d' % c
 
 lang='es'
 if len(sys.argv)>=2:
-	lang=sys.argv[1]
+    lang=sys.argv[1]
 
 plantillas={
 'af':[u'Commons', u'CommonsKategorie', u'Commonscat', u'CommonsKategorie-inlyn'],
@@ -62,29 +62,29 @@ f=open('/home/emijrp/temporal/commonswikipageid.txt', 'r')
 c=0
 commons={}
 for line in f:
-	line=unicode(line, 'utf-8')
-	line=line[:len(line)-1] #evitamos \n
-	line=re.sub('_', ' ', line)
-	trozos=line.split('	')
-	if len(trozos)==3:
-		pageid=trozos[0]
-		pagetitle=trozos[1]
-		lltitle=trozos[2]
-		if not commons.has_key(pageid):
-			c+=1
-			percent(c)
-			commons[pageid]=[pagetitle, lltitle, 0]
+    line=unicode(line, 'utf-8')
+    line=line[:len(line)-1] #evitamos \n
+    line=re.sub('_', ' ', line)
+    trozos=line.split('    ')
+    if len(trozos)==3:
+        pageid=trozos[0]
+        pagetitle=trozos[1]
+        lltitle=trozos[2]
+        if not commons.has_key(pageid):
+            c+=1
+            percent(c)
+            commons[pageid]=[pagetitle, lltitle, 0]
 print 'Cargados %d pageid/pagetitle/lltitle para commons con interwiki a %s:' % (c, lang)
 f.close()
 
 #que paginas de lang.wikipedia.org tienen ya enlace hacia commons?
 evitar=u'' #lo dejamos en blanco para que falle si no tenemos plantillas para cierto idioma
 if plantillas.has_key(lang):
-	for k in plantillas[lang]:
-		evitar+=u'tl_title=\'%s\' or ' % k
-		if k!=re.sub(' ', '_', k):
-			evitar+=u'tl_title=\'%s\' or ' % re.sub(' ', '_', k)
-	evitar=evitar[:len(evitar)-4]
+    for k in plantillas[lang]:
+        evitar+=u'tl_title=\'%s\' or ' % k
+        if k!=re.sub(' ', '_', k):
+            evitar+=u'tl_title=\'%s\' or ' % re.sub(' ', '_', k)
+    evitar=evitar[:len(evitar)-4]
 
 print evitar
 
@@ -94,39 +94,39 @@ f=open('/home/emijrp/temporal/usocommons.txt', 'r')
 c=0
 usocommons={}
 for line in f:
-	line=unicode(line, 'utf-8')
-	line=line[:len(line)-1] #evitamos \n
-	line=re.sub('_', ' ', line)
-	trozos=line.split('	')
-	if len(trozos)==2:
-		pageid=trozos[0]
-		pagetitle=trozos[1]
-		if not usocommons.has_key(pagetitle):
-			c+=1
-			percent(c)
-			usocommons[pagetitle]=True
+    line=unicode(line, 'utf-8')
+    line=line[:len(line)-1] #evitamos \n
+    line=re.sub('_', ' ', line)
+    trozos=line.split('    ')
+    if len(trozos)==2:
+        pageid=trozos[0]
+        pagetitle=trozos[1]
+        if not usocommons.has_key(pagetitle):
+            c+=1
+            percent(c)
+            usocommons[pagetitle]=True
 print 'Cargados %d pageid/pagetitle de paginas de %s: que ya apuntan a Commons' % (c, lang)
 f.close()
 
 #cuantas imagenes tienen las galerias? merece la pena enlazar?
 try:
-	f=open('/home/emijrp/temporal/commonsgalleries.txt', 'r')
+    f=open('/home/emijrp/temporal/commonsgalleries.txt', 'r')
 except:
-	os.system('mysql -h commonswiki-p.db.toolserver.org -e "use commonswiki_p;select il_from from imagelinks where il_from in (select page_id from page where page_namespace=0 and page_is_redirect=0);" > /home/emijrp/temporal/commonsgalleries.txt')
-	f=open('/home/emijrp/temporal/commonsgalleries.txt', 'r')
+    os.system('mysql -h commonswiki-p.db.toolserver.org -e "use commonswiki_p;select il_from from imagelinks where il_from in (select page_id from page where page_namespace=0 and page_is_redirect=0);" > /home/emijrp/temporal/commonsgalleries.txt')
+    f=open('/home/emijrp/temporal/commonsgalleries.txt', 'r')
 
 c=0
 for line in f:
-	line=unicode(line, 'utf-8')
-	line=line[:len(line)-1] #evitamos \n
-	line=re.sub('_', ' ', line)
-	trozos=line.split('	')
-	if len(trozos)==1:
-		pageid=trozos[0]
-		if commons.has_key(pageid):
-			c+=1
-			percent(c)
-			commons[pageid][2]+=1
+    line=unicode(line, 'utf-8')
+    line=line[:len(line)-1] #evitamos \n
+    line=re.sub('_', ' ', line)
+    trozos=line.split('    ')
+    if len(trozos)==1:
+        pageid=trozos[0]
+        if commons.has_key(pageid):
+            c+=1
+            percent(c)
+            commons[pageid][2]+=1
 print 'Cargadas %d imagenes en galerias' % (c)
 f.close()
 
@@ -134,11 +134,11 @@ f.close()
 
 evitar='' #lo dejamos en blanco para que falle si no tenemos plantillas para cierto idioma
 if plantillas.has_key(lang):
-	for k2 in plantillas[lang]:
-		evitar+='%s|' % k2
-		if k2!=re.sub(' ', '_', k2):
-			evitar+='%s|' % re.sub(' ', '_', k2)
-	evitar=evitar[:len(evitar)-1]
+    for k2 in plantillas[lang]:
+        evitar+='%s|' % k2
+        if k2!=re.sub(' ', '_', k2):
+            evitar+='%s|' % re.sub(' ', '_', k2)
+    evitar=evitar[:len(evitar)-1]
 
 print evitar
 
@@ -147,30 +147,30 @@ cc=0
 
 resume=u'Adding link to Commons'
 if resumes.has_key(lang):
-	resume=resumes[lang]
+    resume=resumes[lang]
 
 for k, v in commons.items():
-	if not usocommons.has_key(v[1]) and v[2]>=5:
-		c+=1
-		wikipedia.output(u'%d) %s %s %s [Llevamos %d de %d]' % (c, k, v[0], v[1], cc, c))
-		
-		if re.search(ur'(?i)(atlas)', v[0]):
-			continue
-		
-		try:
-			page=wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), v[1])
-			if page.exists() and not page.isRedirectPage() and not page.isDisambig():
-				text=page.get()
-				if evitar and not re.search(ur'(?i)(%s)' % evitar, text) and not re.search(ur'(?i)\{\{ *(taxo|takso)', text): #taxobox
-					if re.search(regexp[lang], text):
-						newtext=re.sub(regexp[lang], ur'\1\n{{Commons|%s}}' % v[0], text)
-						wikipedia.showDiff(text, newtext)
-						#page.put(newtext, u'BOT - Adding link to Commons: [[:commons:%s|%s]] (TESTING SOME EDITS, SUPERVISED)' % (v[0], v[0]))
-						page.put(newtext, u'BOT - %s: [[:commons:%s|%s]]' % (resume, v[0], v[0]))
-						#time.sleep(10)
-						cc+=1
-		except:
-			pass
+    if not usocommons.has_key(v[1]) and v[2]>=5:
+        c+=1
+        wikipedia.output(u'%d) %s %s %s [Llevamos %d de %d]' % (c, k, v[0], v[1], cc, c))
+        
+        if re.search(ur'(?i)(atlas)', v[0]):
+            continue
+        
+        try:
+            page=wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), v[1])
+            if page.exists() and not page.isRedirectPage() and not page.isDisambig():
+                text=page.get()
+                if evitar and not re.search(ur'(?i)(%s)' % evitar, text) and not re.search(ur'(?i)\{\{ *(taxo|takso)', text): #taxobox
+                    if re.search(regexp[lang], text):
+                        newtext=re.sub(regexp[lang], ur'\1\n{{Commons|%s}}' % v[0], text)
+                        wikipedia.showDiff(text, newtext)
+                        #page.put(newtext, u'BOT - Adding link to Commons: [[:commons:%s|%s]] (TESTING SOME EDITS, SUPERVISED)' % (v[0], v[0]))
+                        page.put(newtext, u'BOT - %s: [[:commons:%s|%s]]' % (resume, v[0], v[0]))
+                        #time.sleep(10)
+                        cc+=1
+        except:
+            pass
 
 
 

@@ -24,18 +24,18 @@ f.close()
 m=re.compile(ur"(\d{4}-\d{2}-\d{2})").finditer(sql)
 
 for i in m:
-	date=i.group(1)
+    date=i.group(1)
 
 page=wikipedia.Page(wikipedia.Site("commons", "commons"), u"Template:Potd/%s" % date)
 file=u"Example.jpg"
 if page.exists() and not page.isRedirectPage() and not page.isDisambig():
-	file=page.get()
+    file=page.get()
 file=file.split("|")[1].split("|")[0]
 
 page=wikipedia.Page(wikipedia.Site("commons", "commons"), u"Template:Potd/%s (es)" % date)
 description=u"Error. No hay imagen del día."
 if page.exists() and not page.isRedirectPage() and not page.isDisambig():
-	description=page.get()
+    description=page.get()
 description=description.split("=")[1].split("\n")[0]
 
 page=wikipedia.Page(wikipedia.Site("es", "wikipedia"), u"Template:IDDC/Imagen")

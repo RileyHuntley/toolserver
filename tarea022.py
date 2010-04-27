@@ -18,8 +18,8 @@ import wikipedia,re,sys,os,gzip,time, datetime
 import tarea000
 
 def percent(c):
-	if c % 1000 == 0:
-		wikipedia.output(u'Llevamos %d' % c)
+    if c % 1000 == 0:
+        wikipedia.output(u'Llevamos %d' % c)
 
 site=wikipedia.Site('es', 'wikipedia')
 
@@ -34,23 +34,23 @@ f=open('/home/emijrp/temporal/ultimasedicionesrc.txt', 'r')
 c=0
 print 'Cargando ediciones de cambios recientes'
 for line in f:
-	if c==0: #saltamos la primera linea q es el describe de sql
-		c+=1
-		continue
-	line=unicode(line, 'utf-8')
-	line=line[:len(line)-1] #evitamos \n
-	line=re.sub('_', ' ', line)
-	trozos=line.split('	')
-	if len(trozos)==1:
-		rc_user_text=trozos[0]
-		
-		if users.has_key(rc_user_text):
-			users[rc_user_text]+=1
-		else:
-			users[rc_user_text]=1
-		
-		c+=1
-		percent(c)
+    if c==0: #saltamos la primera linea q es el describe de sql
+        c+=1
+        continue
+    line=unicode(line, 'utf-8')
+    line=line[:len(line)-1] #evitamos \n
+    line=re.sub('_', ' ', line)
+    trozos=line.split('    ')
+    if len(trozos)==1:
+        rc_user_text=trozos[0]
+        
+        if users.has_key(rc_user_text):
+            users[rc_user_text]+=1
+        else:
+            users[rc_user_text]=1
+        
+        c+=1
+        percent(c)
 f.close()
 
 users_list = [(v, k) for k, v in users.items()]
@@ -62,13 +62,13 @@ c=0
 multiplicador=10
 s=u"{{/begin|%s|%s}}\n" % (limite, multiplicador)
 for user, edits in users_list:
-	if edits>=limite*multiplicador and bots.count(user)==0:
-		c+=1
-		#wikipedia.output(u'%d) %s - %d' % (c, user, edits))
-		if admins.count(user):
-			s+=u"|-\n| %s || [[User:%s|%s]] (Admin) || [[User talk:%s|Discusión]] || [[Special:Contributions/%s|%d]] \n" % (str(c),user,user,user,user,edits)
-		else:
-			s+=u"|-\n| %s || [[User:%s|%s]] || [[User talk:%s|Discusión]] || [[Special:Contributions/%s|%d]] \n" % (str(c),user,user,user,user,edits)
+    if edits>=limite*multiplicador and bots.count(user)==0:
+        c+=1
+        #wikipedia.output(u'%d) %s - %d' % (c, user, edits))
+        if admins.count(user):
+            s+=u"|-\n| %s || [[User:%s|%s]] (Admin) || [[User talk:%s|Discusión]] || [[Special:Contributions/%s|%d]] \n" % (str(c),user,user,user,user,edits)
+        else:
+            s+=u"|-\n| %s || [[User:%s|%s]] || [[User talk:%s|Discusión]] || [[Special:Contributions/%s|%d]] \n" % (str(c),user,user,user,user,edits)
 
 s+=u"{{/end}}"
 page=wikipedia.Page(site, u'Wikipedia:Usuarios muy activos')
@@ -78,13 +78,13 @@ c=0
 multiplicador=2
 s=u"{{/begin|%s|%s}}\n" % (limite, multiplicador)
 for user, edits in users_list:
-	if edits>=limite*multiplicador and bots.count(user)==0:
-		c+=1
-		#wikipedia.output(u'%d) %s - %d' % (c, user, edits))
-		if admins.count(user):
-			s+=u"|-\n| %s || [[User:%s|%s]] (Admin) || [[User talk:%s|Discusión]] || [[Special:Contributions/%s|%d]] \n" % (str(c),user,user,user,user,edits)
-		else:
-			s+=u"|-\n| %s || [[User:%s|%s]] || [[User talk:%s|Discusión]] || [[Special:Contributions/%s|%d]] \n" % (str(c),user,user,user,user,edits)
+    if edits>=limite*multiplicador and bots.count(user)==0:
+        c+=1
+        #wikipedia.output(u'%d) %s - %d' % (c, user, edits))
+        if admins.count(user):
+            s+=u"|-\n| %s || [[User:%s|%s]] (Admin) || [[User talk:%s|Discusión]] || [[Special:Contributions/%s|%d]] \n" % (str(c),user,user,user,user,edits)
+        else:
+            s+=u"|-\n| %s || [[User:%s|%s]] || [[User talk:%s|Discusión]] || [[Special:Contributions/%s|%d]] \n" % (str(c),user,user,user,user,edits)
 
 s+=u"{{/end}}"
 page=wikipedia.Page(site, u'Wikipedia:Usuarios activos')

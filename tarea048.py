@@ -20,8 +20,8 @@ import math
 import datetime
 
 def percent(c):
-	if c % 1000 == 0:
-		wikipedia.output(u'Llevamos %d' % c)
+    if c % 1000 == 0:
+        wikipedia.output(u'Llevamos %d' % c)
 
 limit=14
 conn = MySQLdb.connect(host='sql-s3', db='eswiki_p', read_default_file='~/.my.cnf', use_unicode=True)
@@ -31,18 +31,18 @@ result=cursor.fetchall()
 days={}
 c=0
 for row in result:
-	if len(row)==1:
-		rc_timestamp=row[0][:8]
-		if days.has_key(rc_timestamp):
-			days[rc_timestamp]+=1
-		else:
-			days[rc_timestamp]=1
-	c+=1
-	percent(c)
+    if len(row)==1:
+        rc_timestamp=row[0][:8]
+        if days.has_key(rc_timestamp):
+            days[rc_timestamp]+=1
+        else:
+            days[rc_timestamp]=1
+    c+=1
+    percent(c)
 
 l=[]
 for day, edits in days.items():
-	l.append([day, edits])
+    l.append([day, edits])
 l.sort()
 l.reverse()
 
@@ -53,8 +53,8 @@ monthname={1:u'enero', 2:u'febrero', 3:u'marzo', 4:u'abril'}
 
 output=u"{| class='wikitable sortable' align='right' style='text-align: center' \n! Día !! Ediciones "
 for day, edits in l:
-	date=datetime.datetime(year=int(day[0:4]), month=int(day[4:6]), day=int(day[6:8]))
-	output+=u"\n|-\n| %s, [[%d de %s]] || %d " % (weekday[date.weekday()], date.day, monthname[date.month], edits)
+    date=datetime.datetime(year=int(day[0:4]), month=int(day[4:6]), day=int(day[6:8]))
+    output+=u"\n|-\n| %s, [[%d de %s]] || %d " % (weekday[date.weekday()], date.day, monthname[date.month], edits)
 output+=u"\n|-\n| colspan=2 | <small>''Esta tabla recoge la actividad de AVBOT<br/>en los últimos días''</small>\n|}"
 
 wii=wikipedia.Page(site, u"User:AVBOT/Últimos días")

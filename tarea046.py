@@ -20,10 +20,10 @@ import htmlentitydefs
 
 #http://groups.google.com/group/comp.lang.python/browse_thread/thread/7f96723282376f8c/
 def convertentity(m):
-	return unichr(int(m.group(2)))
+    return unichr(int(m.group(2)))
 
 def unquotehtml(s):
-	return re.sub(r'&(#?)(\d+?);',convertentity,s) 
+    return re.sub(r'&(#?)(\d+?);',convertentity,s) 
 
 site=wikipedia.Site('meta', 'meta')
 tables=[
@@ -37,15 +37,15 @@ tables=[
 [u"List of Wikimedia Projects by Size/Table", 'http://s23.org/wikistats/wikimedias_wiki.php'],
 ]
 for table, url in tables:
-	wii=wikipedia.Page(site, table)
-	output=urllib.urlopen(url).read()
-	output="{|"+("{|".join(output.split("{|")[1:]))
-	output=re.sub(ur"(?im)(<pre>\n?|\n?</pre>|</?[^>]+?>)", ur"", output)
-	output.strip()
-	output=unquotehtml(output)
-	if table=="List of Wikipedias/Table":
-		output="=== 1 000 000+ articles ===\n"+output
-	output=output.strip()
-	if wii.get()!=output:
-		wii.put(output, u"BOT - Updating page")
+    wii=wikipedia.Page(site, table)
+    output=urllib.urlopen(url).read()
+    output="{|"+("{|".join(output.split("{|")[1:]))
+    output=re.sub(ur"(?im)(<pre>\n?|\n?</pre>|</?[^>]+?>)", ur"", output)
+    output.strip()
+    output=unquotehtml(output)
+    if table=="List of Wikipedias/Table":
+        output="=== 1 000 000+ articles ===\n"+output
+    output=output.strip()
+    if wii.get()!=output:
+        wii.put(output, u"BOT - Updating page")
 

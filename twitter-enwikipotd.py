@@ -37,7 +37,7 @@ imagedesc=m[0]
 imagedesc=re.sub(ur'(?i)\[\[([^\|]*?)\|(?P<label>[^\]]*?)\]\]', ur'\g<label>', imagedesc)
 imagedesc=re.sub(ur'(?i)[\[\]]', ur'', imagedesc)
 if len(imagedesc)>40:
-	imagedesc=u'%s...' % (imagedesc[:40])
+    imagedesc=u'%s...' % (imagedesc[:40])
 imagename_=re.sub(" ", "_", imagename)
 msg=u'%s → http://en.wikipedia.org/wiki/File:%s #wikipedia #photos' % (imagedesc, imagename_)
 

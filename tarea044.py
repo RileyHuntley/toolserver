@@ -25,11 +25,11 @@ import MySQLdb
 
 family='wikipedia'
 for lang in tarea000.getLangsByFamily(family):
-	try:
-		if lang=='en-simple':
-			lang='simple'
-		site=wikipedia.Site(lang, family)
-		tarea000.insertBOTijoInfo(site)
-	except:
-		print "Hubo un error en: ", lang		
+    try:
+        if lang=='en-simple':
+            lang='simple'
+        site=wikipedia.Site(lang, family)
+        tarea000.insertBOTijoInfo(site)
+    except:
+        print "Hubo un error en: ", lang        
 

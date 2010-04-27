@@ -72,21 +72,21 @@ codigos={
 }
 
 def ine2008(page, nombre, cpro, pob08):
-	if page.isRedirectPage():
-		page=page.getRedirectTarget()
-	if page.exists() and not page.isRedirectPage():
-		wtext=newtext=page.get()
-		wtitle=page.title()
-		if re.search(ur'cod_provincia *= *%s' % cpro, wtext):
-			newtext=re.sub(ur'(?m)^(?P<ineano> *\|? *ine_año *= *)\d{4}', ur'\g<ineano>2008', newtext)
-			newtext=re.sub(ur'(?m)^(?P<pob> *\|? *población *= *)[\d\.\,]*', ur'\g<pob>%s' % pob08, newtext)
-			
-			if newtext!=wtext:
-				wikipedia.output(u'---> %s <---' % wtitle)
-				wikipedia.showDiff(wtext, newtext)
-				page.put(newtext, u'BOT - Actualizando cifras de población según INE 2008')
-				return True, page
-	return False, page
+    if page.isRedirectPage():
+        page=page.getRedirectTarget()
+    if page.exists() and not page.isRedirectPage():
+        wtext=newtext=page.get()
+        wtitle=page.title()
+        if re.search(ur'cod_provincia *= *%s' % cpro, wtext):
+            newtext=re.sub(ur'(?m)^(?P<ineano> *\|? *ine_año *= *)\d{4}', ur'\g<ineano>2008', newtext)
+            newtext=re.sub(ur'(?m)^(?P<pob> *\|? *población *= *)[\d\.\,]*', ur'\g<pob>%s' % pob08, newtext)
+            
+            if newtext!=wtext:
+                wikipedia.output(u'---> %s <---' % wtitle)
+                wikipedia.showDiff(wtext, newtext)
+                page.put(newtext, u'BOT - Actualizando cifras de población según INE 2008')
+                return True, page
+    return False, page
 
 eswiki=wikipedia.Site('es', 'wikipedia')
 
@@ -94,33 +94,33 @@ f=open('ine2008.txt', 'r')
 g=open('ine2008noencontrados.txt', 'w')
 
 for l in f:
-	l=unicode(l, 'utf-8')
-	
-	t=l.split(';')
-	cpro=t[0]
-	provincia=t[1]
-	cmun=t[2]
-	nombre=t[3]
-	nombre=nombre.split('/')[0] #evitamos Alicante/Alicant
-	nombre=re.sub(ur'(.*?) \((.*?)\)', ur'\2 \1', nombre)
-	
-	pob08=re.sub('[\.\s]', '', t[4])
-	
-	page=wikipedia.Page(eswiki, nombre)
-	actualizado=False
-	if page.exists():
-		[actualizado, page]=ine2008(page, nombre, cpro, pob08)
-		red=wikipedia.Page(eswiki, '%s (%s)' % (nombre, codigos[cpro]))
-		if not red.exists():
-			red.put('#REDIRECT [[%s]]' % page.title(), 'BOT - #REDIRECT [[%s]]' % page.title())
-	else:
-		page=wikipedia.Page(eswiki, '%s (%s)' % (nombre, codigos[cpro]))
-		if page.exists():
-			[actualizado, page]=ine2008(page, nombre, cpro, pob08)
-	
-	if not actualizado:
-		salida='%s, %s no se ha actualizado;\n' % (nombre, provincia)
-		g.write(salida.encode('utf-8'))
+    l=unicode(l, 'utf-8')
+    
+    t=l.split(';')
+    cpro=t[0]
+    provincia=t[1]
+    cmun=t[2]
+    nombre=t[3]
+    nombre=nombre.split('/')[0] #evitamos Alicante/Alicant
+    nombre=re.sub(ur'(.*?) \((.*?)\)', ur'\2 \1', nombre)
+    
+    pob08=re.sub('[\.\s]', '', t[4])
+    
+    page=wikipedia.Page(eswiki, nombre)
+    actualizado=False
+    if page.exists():
+        [actualizado, page]=ine2008(page, nombre, cpro, pob08)
+        red=wikipedia.Page(eswiki, '%s (%s)' % (nombre, codigos[cpro]))
+        if not red.exists():
+            red.put('#REDIRECT [[%s]]' % page.title(), 'BOT - #REDIRECT [[%s]]' % page.title())
+    else:
+        page=wikipedia.Page(eswiki, '%s (%s)' % (nombre, codigos[cpro]))
+        if page.exists():
+            [actualizado, page]=ine2008(page, nombre, cpro, pob08)
+    
+    if not actualizado:
+        salida='%s, %s no se ha actualizado;\n' % (nombre, provincia)
+        g.write(salida.encode('utf-8'))
 
 f.close()
 g.close()

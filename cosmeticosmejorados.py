@@ -18,74 +18,74 @@
 import wikipedia, pagegenerators, re, sys, time
 
 def eliminaTripleSaltos(newtext):
-	lineas=newtext.splitlines()
-	c=t=0
-	newtext=''
-	for linea in lineas:
-		t+=1
-		if linea:
-			newtext+=linea
-			if t<len(lineas):
-				newtext+='\n'
-			c=0
-		else:
-			c+=1
-			if c<=1:
-				newtext+='\n'
-	return newtext
+    lineas=newtext.splitlines()
+    c=t=0
+    newtext=''
+    for linea in lineas:
+        t+=1
+        if linea:
+            newtext+=linea
+            if t<len(lineas):
+                newtext+='\n'
+            c=0
+        else:
+            c+=1
+            if c<=1:
+                newtext+='\n'
+    return newtext
 
 def separaSecciones(newtext):
-	
-	
-	return newtext
+    
+    
+    return newtext
 
 def eliminaEspaciosInnecesarios(newtext):
-	newtext=re.sub(ur'(?i)\[\[ *(?!Categor(y|ía) *\:)(?P<art>[^\|\]]*?) *\| *(?P<label>[^\|\]]*?) *\]\]', ur'[[\g<art>|\g<label>]]', newtext) #no espacios en [[   gggg  | hhh ]], evita los [[Categoría:iajasd| ]]
-	newtext=re.sub(ur'(?i)\[\[ *(?P<art>[^\|\]]*?) *\| *\g<art> *\]\]', ur'[[\g<art>]]', newtext) #no repeticiones  [[blabla|blabla]]s
-	newtext=re.sub(ur'(?i)\[\[ *(?P<art>[^\|\]]*?) *\]\]', ur'[[\g<art>]]', newtext) #no espacios en enlaces [[   simples ]]
-	newtext=re.sub(ur'(?im)^(?P<seccion>=+[^=]*?=+) *$', ur'\g<seccion>', newtext) #no espacios en == ssss ===     .
-	newtext=re.sub(ur'(?im)^(?P<lista>[\#\*]+) *', ur'\g<lista> ', newtext) #separacion entre # y el item
-	
-	return newtext
+    newtext=re.sub(ur'(?i)\[\[ *(?!Categor(y|ía) *\:)(?P<art>[^\|\]]*?) *\| *(?P<label>[^\|\]]*?) *\]\]', ur'[[\g<art>|\g<label>]]', newtext) #no espacios en [[   gggg  | hhh ]], evita los [[Categoría:iajasd| ]]
+    newtext=re.sub(ur'(?i)\[\[ *(?P<art>[^\|\]]*?) *\| *\g<art> *\]\]', ur'[[\g<art>]]', newtext) #no repeticiones  [[blabla|blabla]]s
+    newtext=re.sub(ur'(?i)\[\[ *(?P<art>[^\|\]]*?) *\]\]', ur'[[\g<art>]]', newtext) #no espacios en enlaces [[   simples ]]
+    newtext=re.sub(ur'(?im)^(?P<seccion>=+[^=]*?=+) *$', ur'\g<seccion>', newtext) #no espacios en == ssss ===     .
+    newtext=re.sub(ur'(?im)^(?P<lista>[\#\*]+) *', ur'\g<lista> ', newtext) #separacion entre # y el item
+    
+    return newtext
 
 def insertaEspacios(newtext):
-	newtext=re.sub(ur'(?P<pre> [a-z]{2,})\. *(?P<post>[A-Z][a-z]+ )', ur'\g<pre>. \g<post>', newtext) #despues de punto, espacio
-	newtext=re.sub(ur'(?im)^(?P<lista>[\#\*]+)(?P<item>[^ \*\#])', ur'\g<lista> \g<item>', newtext) #separacion entre # y el item
-	
-	return newtext
+    newtext=re.sub(ur'(?P<pre> [a-z]{2,})\. *(?P<post>[A-Z][a-z]+ )', ur'\g<pre>. \g<post>', newtext) #despues de punto, espacio
+    newtext=re.sub(ur'(?im)^(?P<lista>[\#\*]+)(?P<item>[^ \*\#])', ur'\g<lista> \g<item>', newtext) #separacion entre # y el item
+    
+    return newtext
 
 def justificarParametros(newtext, templatesWithParams):
-	
-	#print templatesWithParams
-	
-	for template in templatesWithParams:
-		templateName=template[0]
-		templateParams={}
-		maxlen=0
-		for param in template[1]:
-			param=re.sub(ur'[\r\n]', ur'', param)
-			trozos=param.split('=')
-			param=trozos[0]
-			value=''
-			if len(trozos)>1:
-				value='='.join(trozos[1:])
-			param=param.strip()
-			value=value.strip()
-			if param:
-				templateParams[param]=value
-			if maxlen<len(param):
-				maxlen=len(param)
-		#print templateParams.items()
-		newtext=re.sub(ur'(?im)\{\{ *(?P<templatename>%s) *\|? *\r' % templateName, ur'{{\g<templatename>\r', newtext) #
-		for param, value in templateParams.items(): #justificación de parámetros
-			newtext=re.sub(ur'(?m)^ *\|? *(?P<param>%s) *\= *(?P<value>.*?) *\|? *\r' % param, ur'| \g<param>%s = \g<value>\r' % (' '*(maxlen-len(param))), newtext)
-	
-	return newtext
+    
+    #print templatesWithParams
+    
+    for template in templatesWithParams:
+        templateName=template[0]
+        templateParams={}
+        maxlen=0
+        for param in template[1]:
+            param=re.sub(ur'[\r\n]', ur'', param)
+            trozos=param.split('=')
+            param=trozos[0]
+            value=''
+            if len(trozos)>1:
+                value='='.join(trozos[1:])
+            param=param.strip()
+            value=value.strip()
+            if param:
+                templateParams[param]=value
+            if maxlen<len(param):
+                maxlen=len(param)
+        #print templateParams.items()
+        newtext=re.sub(ur'(?im)\{\{ *(?P<templatename>%s) *\|? *\r' % templateName, ur'{{\g<templatename>\r', newtext) #
+        for param, value in templateParams.items(): #justificación de parámetros
+            newtext=re.sub(ur'(?m)^ *\|? *(?P<param>%s) *\= *(?P<value>.*?) *\|? *\r' % param, ur'| \g<param>%s = \g<value>\r' % (' '*(maxlen-len(param))), newtext)
+    
+    return newtext
 
 def cambiosTesteados(newtext, cambiostesteados):
-	for k, v in cambiostesteados.items():
-		newtext=re.sub(k, v, newtext)
-	return newtext
+    for k, v in cambiostesteados.items():
+        newtext=re.sub(k, v, newtext)
+    return newtext
 
 cambiostesteados={
 
@@ -135,33 +135,33 @@ ur'(?i)< *br */ *>': ur'<br />',
 
 st='A'
 if len(sys.argv)>=2:
-	st=sys.argv[1]
+    st=sys.argv[1]
 
 gen=pagegenerators.AllpagesPageGenerator(start=st, namespace=0, includeredirects=False, site=wikipedia.Site('es', 'wikipedia'))
 preloadingGen=pagegenerators.PreloadingGenerator(gen, pageNumber=33, lookahead=33)
 
 for page in preloadingGen:
-	if page.isRedirectPage() or page.isDisambig():
-		pass
-	else:
-		wtitle=page.title()
-		wtext=newtext=page.get()
-		
-		newtext=justificarParametros(newtext, page.templatesWithParams())
-		"""
-		#newtext=organizarParametrosArchivo()
-		#newtext=organizarEnlacesExternos()
-		#newtext=primeraOcurrenciaTítulo()
-		"""
-		if wtext!=newtext:
-			newtext=eliminaTripleSaltos(newtext)
-			newtext=separaSecciones(newtext)
-			newtext=cambiosTesteados(newtext, cambiostesteados)
-			newtext=eliminaEspaciosInnecesarios(newtext)
-			newtext=insertaEspacios(newtext)
-			
-			wikipedia.output(u'%s###### %s ######' % ('\n'*5, wtitle))
-			wikipedia.showDiff(wtext, newtext)
-			page.put(newtext, u'BOT - Justificando parámetros')
-			time.sleep(10)
-	
+    if page.isRedirectPage() or page.isDisambig():
+        pass
+    else:
+        wtitle=page.title()
+        wtext=newtext=page.get()
+        
+        newtext=justificarParametros(newtext, page.templatesWithParams())
+        """
+        #newtext=organizarParametrosArchivo()
+        #newtext=organizarEnlacesExternos()
+        #newtext=primeraOcurrenciaTítulo()
+        """
+        if wtext!=newtext:
+            newtext=eliminaTripleSaltos(newtext)
+            newtext=separaSecciones(newtext)
+            newtext=cambiosTesteados(newtext, cambiostesteados)
+            newtext=eliminaEspaciosInnecesarios(newtext)
+            newtext=insertaEspacios(newtext)
+            
+            wikipedia.output(u'%s###### %s ######' % ('\n'*5, wtitle))
+            wikipedia.showDiff(wtext, newtext)
+            page.put(newtext, u'BOT - Justificando parámetros')
+            time.sleep(10)
+    

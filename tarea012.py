@@ -28,61 +28,61 @@ c=0
 send=False
 limite=0
 for i in m:
-	limite+=1
-	if limite>3:
-		break
-	cafavor=0
-	cencontra=0
-	estado=u"Abierta"
-	candidato=i.group("candidato")
-	propuesto=i.group("propuesto")
-	candidatura=u"Wikipedia:Candidaturas a bibliotecario/%s" % candidato
-	wikipedia.output(u"Analizando: %s" % candidatura)
-	p=wikipedia.Page(site, candidatura)
-	t=""
-	if p.exists() and not p.isRedirectPage():
-		t=site.getUrl(site.get_address(p.urlname()))
-		#t=site.getUrl("/w/index.php?title=%s" % re.sub(" ", "_", candidatura))
-	else:
-		continue
-	c+=1
-	trozos=t.split('<span class="mw-headline" id="Votos_a_favor">Votos a favor</span>')
-	trozos=trozos[1]
-	trozos=trozos.split('<span class="mw-headline" id="Votos_en_contra">Votos en contra</span>')
-	afavor=trozos[0]
-	trozos=trozos[1]
-	trozos=trozos.split('<span class="mw-headline" id="Comentarios">Comentarios</span>')
-	encontra=trozos[0]
-	
-	if re.search(ur"(?i)(\{\{ *Archivo votar bibliotecario|No debe hacerse ya ningún cambio en esta página)", p.get()):
-		estado=u"Cerrada"
-	
-	regex=ur"(?mi)^<li>"
-	n=re.compile(regex).finditer(afavor)
-	
-	for j in n:
-		cafavor+=1
-	
-	n=re.compile(regex).finditer(encontra)
-	for j in n:
-		cencontra+=1
-	
-	porcentaje=0
-	if cafavor+cencontra>0:
-		porcentaje=(100.0/(cafavor+cencontra))*cafavor
-	if porcentaje>=75:
-		s+="\n|-\n| %s || [[Usuario:%s|%s]] || %s || %s || %s || style='background-color:#D0F0C0;' | %.0f%% || [[%s|%s]]" % (c, candidato, candidato, propuesto, cafavor, cencontra, porcentaje, candidatura, estado)
-	else:
-		s+="\n|-\n| %s || [[Usuario:%s|%s]] || %s || %s || %s || style='background-color:#FFC0CB;' | %.0f%% || [[%s|%s]]" % (c, candidato, candidato, propuesto, cafavor, cencontra, porcentaje, candidatura, estado)
-	
-	raw+=u"%s;;;%s;;;%s;;;%s;;;%.0f;;;%s;;;%s;;;\n" % (candidato, propuesto, cafavor, cencontra, porcentaje, candidatura, estado)
-	send=True
+    limite+=1
+    if limite>3:
+        break
+    cafavor=0
+    cencontra=0
+    estado=u"Abierta"
+    candidato=i.group("candidato")
+    propuesto=i.group("propuesto")
+    candidatura=u"Wikipedia:Candidaturas a bibliotecario/%s" % candidato
+    wikipedia.output(u"Analizando: %s" % candidatura)
+    p=wikipedia.Page(site, candidatura)
+    t=""
+    if p.exists() and not p.isRedirectPage():
+        t=site.getUrl(site.get_address(p.urlname()))
+        #t=site.getUrl("/w/index.php?title=%s" % re.sub(" ", "_", candidatura))
+    else:
+        continue
+    c+=1
+    trozos=t.split('<span class="mw-headline" id="Votos_a_favor">Votos a favor</span>')
+    trozos=trozos[1]
+    trozos=trozos.split('<span class="mw-headline" id="Votos_en_contra">Votos en contra</span>')
+    afavor=trozos[0]
+    trozos=trozos[1]
+    trozos=trozos.split('<span class="mw-headline" id="Comentarios">Comentarios</span>')
+    encontra=trozos[0]
+    
+    if re.search(ur"(?i)(\{\{ *Archivo votar bibliotecario|No debe hacerse ya ningún cambio en esta página)", p.get()):
+        estado=u"Cerrada"
+    
+    regex=ur"(?mi)^<li>"
+    n=re.compile(regex).finditer(afavor)
+    
+    for j in n:
+        cafavor+=1
+    
+    n=re.compile(regex).finditer(encontra)
+    for j in n:
+        cencontra+=1
+    
+    porcentaje=0
+    if cafavor+cencontra>0:
+        porcentaje=(100.0/(cafavor+cencontra))*cafavor
+    if porcentaje>=75:
+        s+="\n|-\n| %s || [[Usuario:%s|%s]] || %s || %s || %s || style='background-color:#D0F0C0;' | %.0f%% || [[%s|%s]]" % (c, candidato, candidato, propuesto, cafavor, cencontra, porcentaje, candidatura, estado)
+    else:
+        s+="\n|-\n| %s || [[Usuario:%s|%s]] || %s || %s || %s || style='background-color:#FFC0CB;' | %.0f%% || [[%s|%s]]" % (c, candidato, candidato, propuesto, cafavor, cencontra, porcentaje, candidatura, estado)
+    
+    raw+=u"%s;;;%s;;;%s;;;%s;;;%.0f;;;%s;;;%s;;;\n" % (candidato, propuesto, cafavor, cencontra, porcentaje, candidatura, estado)
+    send=True
 
 #s+="\n|-\n| colspan=6 | Actualizado a las {{subst:CURRENTTIME}} (UTC) del {{subst:CURRENTDAY}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}}"
 s+="\n|}<!-- RAW --><!--\n%s--><!-- RAW --><noinclude>{{uso de plantilla}}</noinclude>" % raw
 
 if send:
-	wikipedia.output(s)
-	page=wikipedia.Page(site, u"Template:ResumenCandidaturasBibliotecario")
-	if page.get()!=s:
-		page.put(s, u"BOT - Actualizando plantilla")
+    wikipedia.output(s)
+    page=wikipedia.Page(site, u"Template:ResumenCandidaturasBibliotecario")
+    if page.get()!=s:
+        page.put(s, u"BOT - Actualizando plantilla")
