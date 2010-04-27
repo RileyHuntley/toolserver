@@ -39,9 +39,31 @@ def adminList(site):
     return userList(site, 'sysop')
 
 def botList(site):
-    bots=userList(site, 'bot')
-    #also meta bots
-    bots+=[u'AHbot', u'Aibot', u'AkhtaBot', u'Albambot', u'Alecs.bot', u'Alexbot', u'AlleborgoBot', u'Almabot', u'AlnoktaBOT', u'Amirobot', u'AnankeBot', u'ArthurBot', u'BOT-Superzerocool', u'BodhisattvaBot', u'BokimBot', u'BotMultichill', u'Broadbot', u'ButkoBot', u'CarsracBot', u'CarsracBot', u'ChtitBot', u"D'ohBot", u'DSisyphBot', u'Darkicebot', u'Dinamik-bot', u'DirlBot', u'DorganBot', u'DragonBot', u'Drinibot', u'DumZiBoT', u'EivindBot', u'Escarbot', u'Estirabot', u'FiriBot', u'FoxBot', u'Gerakibot', u'GhalyBot', u'GnawnBot', u'GrouchoBot', u'HerculeBot', u'Idioma-bot', u'Interwicket', u'JAnDbot', u'Jotterbot', u'KhanBot', u'Kwjbot', u'LaaknorBot', u'Louperibot', u'Loveless', u'Luckas-bot', u'MSBOT', u'MagnusA.Bot', u'Maksim-bot', u'MalafayaBot', u'MastiBot', u'MelancholieBot', u'MenoBot', u'MondalorBot', u'Muro Bot', u'MystBot', u'Nallimbot', u'OKBot', u'Obersachsebot', u'Ptbotgourou', u'RedBot', u'Robbot', u'RobotQuistnix', u'RoggBot', u'Rubinbot', u'SassoBot', u'SieBot', u'SilvonenBot', u'Soulbot', u'SpBot', u'SpaceBirdyBot', u'SpillingBot', u'StigBot', u'Synthebot', u'Sz-iwbot', u'TXiKiBoT', u'Tanhabot', u'Thijs!bot', u'TinucherianBot II', u'TuvicBot', u'VVVBot', u'Ver-bot', u'VolkovBot', u'WeggeBot', u'Xqbot', u'Zorrobot', u'Zxabot']
+    bots=userList(site, 'bot') #local bots
+    #also meta bots (all are global bots?)
+    bots+=[u'AHbot', u'Aibot', u'AkhtaBot', u'Albambot', u'Alecs.bot', 
+           u'Alexbot', u'AlleborgoBot', u'Almabot', u'AlnoktaBOT', 
+           u'Amirobot', u'AnankeBot', u'ArthurBot', 
+           u'BOT-Superzerocool', u'BodhisattvaBot', u'BokimBot', 
+           u'BotMultichill', u'Broadbot', u'ButkoBot', u'CarsracBot', 
+           u'CarsracBot', u'ChtitBot', u"D'ohBot", u'DSisyphBot', 
+           u'Darkicebot', u'Dinamik-bot', u'DirlBot', u'DorganBot', 
+           u'DragonBot', u'Drinibot', u'DumZiBoT', u'EivindBot', 
+           u'Escarbot', u'Estirabot', u'FiriBot', u'FoxBot', 
+           u'Gerakibot', u'GhalyBot', u'GnawnBot', u'GrouchoBot', 
+           u'HerculeBot', u'Idioma-bot', u'Interwicket', u'JAnDbot', 
+           u'Jotterbot', u'KhanBot', u'Kwjbot', u'LaaknorBot', 
+           u'Louperibot', u'Loveless', u'Luckas-bot', u'MSBOT', 
+           u'MagnusA.Bot', u'Maksim-bot', u'MalafayaBot', u'MastiBot', 
+           u'MelancholieBot', u'MenoBot', u'MondalorBot', u'Muro Bot', 
+           u'MystBot', u'Nallimbot', u'OKBot', u'Obersachsebot', 
+           u'Ptbotgourou', u'RedBot', u'Robbot', u'RobotQuistnix', 
+           u'RoggBot', u'Rubinbot', u'SassoBot', u'SieBot', 
+           u'SilvonenBot', u'Soulbot', u'SpBot', u'SpaceBirdyBot', 
+           u'SpillingBot', u'StigBot', u'Synthebot', u'Sz-iwbot', 
+           u'TXiKiBoT', u'Tanhabot', u'Thijs!bot', 
+           u'TinucherianBot II', u'TuvicBot', u'VVVBot', u'Ver-bot', 
+           u'VolkovBot', u'WeggeBot', u'Xqbot', u'Zorrobot', u'Zxabot']
     """aufrom="!"
     while aufrom:
         query=wikipedia.query.GetData({'action':'query', 'list':'allusers', 'augroup':'bot', 'aulimit':'500', 'aufrom':aufrom},site=wikipedia.Site("meta", "meta"),useAPI=True)
@@ -59,13 +81,35 @@ def unflaggedBotsList(site):
     bots=[]
     page=wikipedia.Page(wikipedia.Site("meta", "meta"), u"User:Emijrp/List of Wikimedians by number of edits/Unflagged bots")
     lines=page.get().splitlines()
+    linesupdated=[]
     for line in lines:
-        if line[0]!="#" and len(re.findall(";", line))==2:
+        if line[0]=="#":
+            linesupdated.append(line)
+        elif len(re.findall(";", line))==2:
             [lang, family, nick]=line.split(";")
-            if lang==site.lang:# and family==site.family:
+            if (lang==site.lang and family==site.family.name) or \
+               (lang=='*' and family==site.family.name) or \
+               (lang==site.lang and family=='*') or \
+               (lang=='*' and family=='*'):
                 bots.append(nick)
+            if (lang!="*" and family!="*"):
+                if lines.count("*;*;%s" % (nick))==0 and \
+                   lines.count("%s;*;%s" % (lang, nick))==0 and \
+                   lines.count("*;%s;%s" % (family, nick))==0:
+					linesupdated.append(line)
+            else:
+                linesupdated.append(line)
+        else:
+            print "error", line
+            linesupdated.append(line)
     bots.sort()
+    linesupdated.sort()
+    #updating page list
+    page.put(u"\n".join(linesupdated), u"BOT - Updating list")
+    
     return bots
+
+#unflaggedBotsList(wikipedia.Site("es", "wikipedia"))
 
 def insertBOTijoInfo(site):
     delay=10
