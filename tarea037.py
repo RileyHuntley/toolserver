@@ -63,14 +63,13 @@ m=re.compile(ur'(?i)\"(pagecounts\-\d{8}\-\d{6}\.gz)\"').finditer(wget)
 #m=re.compile(ur'(?i)\"(pagecounts\-20081201\-\d{6}\.gz)\"').finditer(wget)
 gzs=[]
 for i in m:
-	print i.group(1)
 	gzs.append(i.group(1))
 gzs.sort()
 if hourly:
 	gzs=gzs[-1] #nos quedamos con el ultimo que es el mas reciente
 elif daily:
 	gzs=gzs[-24:] #las ultimas 24 horas para las que haya datos
-	
+print gzs	
 wikipedia.output("Elegidos %d fichero(s)..." % len(gzs))
 
 pagesdic={}
