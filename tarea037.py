@@ -35,7 +35,7 @@ dailylangs=[]
 minimum=5 #visitas minimas para ser contabilizada la pagina
 if len(sys.argv)>1:
 	if sys.argv[1]=='daily':
-		dailylangs=['it', 'ja', 'pl', 'nl', 'ru', 'sv', 'zh', 'no', 'ca', 'fi', 'uk', 'cs', 'ko'] #ir metiendo de mas articulos a menos http://meta.wikimedia.org/wiki/List_of_Wikipedias
+		dailylangs=['it', 'ja', 'pl', 'nl', 'ru', 'sv', 'zh', 'no', 'ca', 'fi', 'uk', 'cs', 'ko', 'gl'] #ir metiendo de mas articulos a menos http://meta.wikimedia.org/wiki/List_of_Wikipedias
 		langs+=dailylangs
 		daily=True
 	elif sys.argv[1]=='hourly':
@@ -59,24 +59,17 @@ os.system('wget http://dammit.lt/wikistats/ -O %s' % index)
 f=open(index, 'r')
 wget=f.read()
 f.close()
-hoy=datetime.date.today()
-hoyano=str(hoy.year)
-hoymes=str(hoy.month)
-if len(hoymes)==1:
-	hoymes='0%s' % hoymes
-hoydia=str(hoy.day)
-if len(hoydia)==1:
-	hoydia='0%s' % hoydia
-m=re.compile(ur'(?i)\"(pagecounts\-%s%s%s\-\d{6}\.gz)\"' % (hoyano, hoymes, hoydia)).finditer(wget)
+m=re.compile(ur'(?i)\"(pagecounts\-\d{8}\-\d{6}\.gz)\"').finditer(wget)
 #m=re.compile(ur'(?i)\"(pagecounts\-20081201\-\d{6}\.gz)\"').finditer(wget)
 gzs=[]
 for i in m:
 	print i.group(1)
 	gzs.append(i.group(1))
+gzs.sort()
 if hourly:
 	gzs=gzs[-1] #nos quedamos con el ultimo que es el mas reciente
 elif daily:
-	pass #dejamos todos los del dia
+	gzs=gzs[-24:] #las ultimas 24 horas para las que haya datos
 	
 wikipedia.output("Elegidos %d fichero(s)..." % len(gzs))
 
@@ -204,7 +197,7 @@ for lang, list in pageselection.items():
 		if hourly:
 			salida=u"Popular articles in the last hour (%s).\n\nTotal hits to this project (including all pages): %d.\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (gz.split(".gz")[0], totalvisits[lang])
 		else:
-			salida=u"Popular articles in the last day.\n\nTotal hits to this project (including all pages): %d.\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (totalvisits[lang])
+			salida=u"Popular articles in the last 24 hours.\n\nTotal hits to this project (including all pages): %d.\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (totalvisits[lang])
 
 	list2=[]
 	for quotedpage, visits in list:
