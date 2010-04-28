@@ -23,13 +23,17 @@ import time, os
 import tarea000
 import MySQLdb
 
-family='wikipedia'
-for lang in tarea000.getLangsByFamily(family):
-    try:
-        if lang=='en-simple':
-            lang='simple'
-        site=wikipedia.Site(lang, family)
-        tarea000.insertBOTijoInfo(site)
-    except:
-        print "Hubo un error en: ", lang        
+def main():
+    family='wikipedia'
+    for lang in tarea000.getLangsByFamily(family):
+        try:
+            if lang=='en-simple':
+                lang='simple'
+            site=wikipedia.Site(lang, family)
+            tarea000.insertBOTijoInfo(site)
+        except:
+            print "Hubo un error en: ", lang        
 
+if __name__ == "__main__":
+    main()
+    
