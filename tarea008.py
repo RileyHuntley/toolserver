@@ -23,7 +23,7 @@ delay=5
 minimumedits=100 #edits to appear in the ranking, para evitar que aparezcan muchos usuarios con pocas ediciones
 minimumusers=10 #para evitar listas de 2 personas
 daily=False
-dailylimit=50000
+dailylimit=100000
 if len(sys.argv)>1:
     if sys.argv[1].startswith('--daily'):
         daily=True
@@ -242,7 +242,7 @@ for family, langs in projects.items():
         wikipedianm=tarea000.getNamespaceName(lang, family, 4)
         articleCount=tarea000.getArticleCount(lang, family)
         print articleCount
-        if daily and articleCount<dailylimit:
+        if (daily and articleCount<dailylimit) or (daily and lang=='vo'):
             #evitamos actualizar excesivamente proyectos pequeños
             print "Skip"
             continue

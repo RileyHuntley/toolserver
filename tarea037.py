@@ -39,7 +39,9 @@ hourlylangs = ['es', 'en', 'de', 'fr', 'pt', 'da', 'eo', 'hu', 'hr',
                'ro', 'sl', 'th', 'tr'] #donde tenga flag
 daily = False
 dailylangs = ['it', 'ja', 'pl', 'nl', 'ru', 'sv', 'zh', 'no', 
-                      'ca', 'fi', 'uk', 'cs', 'ko', 'gl'] 
+              'ca', 'fi', 'uk', 'cs', 'ko', 'da', 'id', 'vi', 'vo',
+              'sk', 'sr', 'lt', 'he',
+              'gl'] 
                       #ir metiendo de mas articulos a menos http://meta.wikimedia.org/wiki/List_of_Wikipedias
                       
 minimum = 5 #visitas minimas para ser contabilizada la pagina, para rankings de la última hora
@@ -297,7 +299,7 @@ def main():
                     iws+=u'[[%s:%s]]\n' % (iw, commonexitpage)
         #salida+="\n{{/end}}\n%s" % (iws)
         if lang=='es':
-            pass#salida+=u"\n%s\n{{%s/end|%d|%d|top={{{top|15}}}|fecha={{subst:CURRENTTIME}} ([[UTC]]) del {{subst:CURRENTDAY2}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}}}}\n|}\n<noinclude>{{documentación de plantilla}}\n%s</noinclude>" % ("}} "*d, exitpage, sum, totalvisits[lang], iws)
+            salida+=u"\n%s\n{{%s/end|%d|%d|top={{{top|15}}}|fecha={{subst:CURRENTTIME}} ([[UTC]]) del {{subst:CURRENTDAY2}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}}}}\n|}\n<noinclude>{{documentación de plantilla}}\n%s</noinclude>" % ("}} "*d, exitpage, sum, totalvisits[lang], iws)
         else:
             salida+=u"\n|}\n\n%s" % (iws)
         wikipedia.output(re.sub(ur"\n", ur" ", salida))
