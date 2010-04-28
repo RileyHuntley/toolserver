@@ -228,9 +228,9 @@ def main():
             salida=u"<noinclude>{{%s/begin|{{subst:CURRENTHOUR}}}}</noinclude>\n{| class=\"wikitable sortable\" style=\"text-align: center;\" width=350px \n|+ [[Plantilla:Artículos populares|Artículos populares]] en la última hora \n! # !! Artículo !! Visitas " % exitpage
         else:
             if hourly:
-                salida=u"Popular articles in the last hour (%s).\n\nTotal hits to this project (including all pages): %d.\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (gzs[0].split(".gz")[0].split("pagecounts-")[1], totalvisits[lang])
+                salida=u"Popular articles in the last hour (%s). This page was last updated in '''{{subst:CURRENTYEAR}}-{{subst:CURRENTMONTH}}-{{subst:CURRENTDAY2}} {{subst:CURRENTTIME}} (UTC)'''.\n\nTotal hits to this project (including all pages): %d.\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (gzs[0].split(".gz")[0].split("pagecounts-")[1], totalvisits[lang])
             else:
-                salida=u"Popular articles in the last 24 hours.\n\nTotal hits to this project (including all pages): %d.\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (totalvisits[lang])
+                salida=u"Popular articles in the last 24 hours. This page was last updated in '''{{subst:CURRENTYEAR}}-{{subst:CURRENTMONTH}}-{{subst:CURRENTDAY2}} {{subst:CURRENTTIME}} (UTC)'''.\n\nTotal hits to this project (including all pages): %d.\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (totalvisits[lang])
 
         #for p in pagesiter: #para ver que pagina fallaba con la codificación
         #    print p
