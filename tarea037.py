@@ -229,7 +229,7 @@ def main():
         projsite=wikipedia.Site(lang, 'wikipedia')
         watch=u'<div style="float: right;"><small>&#91;[[Special:RecentChangesLinked/{{FULLPAGENAME}}|watch popular articles]]&#93;</small></div>'
         map=u'[[File:Daylight_Map,_nonscientific_({{subst:CURRENTHOUR}}00_UTC).jpg|thumb|Daylight map, {{subst:#time:H|-1 hours}}:00–{{subst:#time: H}}:00 (UTC)]]'
-        intro=u"This page was generated at '''{{subst:CURRENTYEAR}}-{{subst:CURRENTMONTH}}-{{subst:CURRENTDAY2}} {{subst:CURRENTTIME}} (UTC)'''.\n\nTotal hits to {{subst:SERVER}} (including all pages): {{formatnum:%d}}.\n\nSource: [http://dammit.lt/wikistats dammit.lt/wikistats]. More page views statistics: [http://stats.wikimedia.org/EN/TablesPageViewsMonthly.htm stats.wikimedia.org] and [http://stats.grok.se stats.grok.se].\n\n" % (totalvisits[lang])
+        intro=u"This page was generated at '''{{subst:CURRENTYEAR}}-{{subst:CURRENTMONTH}}-{{subst:CURRENTDAY2}} {{subst:CURRENTTIME}} (UTC)'''.\n\nTotal hits to [{{subst:SERVER}} {{subst:SERVERNAME}}] (including all pages): {{formatnum:%d}}.\n\nSource: [http://dammit.lt/wikistats dammit.lt/wikistats]. More page views statistics: [http://stats.wikimedia.org/EN/TablesPageViewsMonthly.htm stats.wikimedia.org] and [http://stats.grok.se stats.grok.se].\n\n" % (totalvisits[lang])
         table=u"{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits "
         if lang=='es':
             salida=u"<noinclude>{{%s/begin|{{subst:CURRENTHOUR}}}}</noinclude>\n{| class=\"wikitable sortable\" style=\"text-align: center;\" width=350px \n|+ [[Plantilla:Artículos populares|Artículos populares]] en la última hora \n! # !! Artículo !! Visitas " % exitpage
@@ -317,7 +317,7 @@ def main():
         if lang=='es':
             salida+=u"\n%s\n{{%s/end|%d|%d|top={{{top|15}}}|fecha={{subst:CURRENTTIME}} ([[UTC]]) del {{subst:CURRENTDAY2}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}}}}\n|}\n<noinclude>{{documentación de plantilla}}\n%s</noinclude>" % ("}} "*d, exitpage, sum, totalvisits[lang], iws)
         else:
-            salida+=u"\n|-\n| colspan=3 align=right | ''Top %d hit sum: '''{{formatnum:%d}}'''''&nbsp;&nbsp; \n|}\n\n%s" % (limite, sum, iws)
+            salida+=u"\n|-\n| &nbsp; || '''Top %d hit sum''' || '''{{formatnum:%d}}''''' \n|}\n\n%s" % (limite, sum, iws)
         wikipedia.output(re.sub(ur"\n", ur" ", salida))
         wiii=wikipedia.Page(projsite, exitpage)
         wiii.put(salida, u'BOT - Updating list')
