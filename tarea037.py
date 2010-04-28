@@ -231,8 +231,6 @@ def main():
         map=u'[[File:Daylight_Map,_nonscientific_({{subst:CURRENTHOUR}}00_UTC).jpg|thumb|Daylight map, {{subst:#time:H|-1 hours}}:00–{{subst:#time: H}}:00 (UTC)]]'
         intro=u"This page was generated at '''{{subst:CURRENTYEAR}}-{{subst:CURRENTMONTH}}-{{subst:CURRENTDAY2}} {{subst:CURRENTTIME}} (UTC)'''.\n\nTotal hits to {{subst:SERVER}} (including all pages): {{formatnum:%d}}.\n\nSource: http://dammit.lt/wikistats\n\n" % (totalvisits[lang])
         table=u"{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits "
-        if lang!="en":
-            table+="!! English interwiki "
         if lang=='es':
             salida=u"<noinclude>{{%s/begin|{{subst:CURRENTHOUR}}}}</noinclude>\n{| class=\"wikitable sortable\" style=\"text-align: center;\" width=350px \n|+ [[Plantilla:Artículos populares|Artículos populares]] en la última hora \n! # !! Artículo !! Visitas " % exitpage
         else:
@@ -298,11 +296,9 @@ def main():
                         iws=page2.interwiki()
                         for iw in iws:
                             if iw.site().lang=="en":
-                                iwlink=" || [[:en:%s|%s]]" % (iw.title(), iw.title())
+                                iwlink=" <sup>([[:en:%s|en]])</sup>" % (iw.title())
                                 break
-                        if not iwlink:
-                            iwlink=u" || –"
-                    salida+=u"\n|-\n| %d || [[%s]]%s || {{formatnum:%s}}%s " % (c, wtitle, detalles, pageselection[ind][1], iwlink)
+                    salida+=u"\n|-\n| %d || [[%s]]%s%s || {{formatnum:%s}} " % (c, wtitle, detalles, iwlink, pageselection[ind][1])
                 sum+=int(pageselection[ind][1])
                 
                 if c>=limite:
