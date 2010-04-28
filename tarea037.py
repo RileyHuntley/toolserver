@@ -39,7 +39,7 @@ hourlylangs = ['es', 'en', 'de', 'fr', 'pt', 'da', 'eo', 'hu', 'hr',
                'ro', 'sl', 'th', 'tr'] #donde tenga flag
 daily = False
 dailylangs = ['it', 'ja', 'pl', 'nl', 'ru', 'sv', 'zh', 'no', 
-              'ca', 'fi', 'uk', 'cs', 'ko', 'da', 'id', 'vi', 
+              'ca', 'fi', 'uk', 'cs', 'ko', 'id', 'vi', 
               'sk', 'sr', 'lt', 'he',
               'gl'] #volapuk no mientras no tenga flag, tienen pocas ediciones al dia
               #ir metiendo de mas articulos a menos http://meta.wikimedia.org/wiki/List_of_Wikipedias
