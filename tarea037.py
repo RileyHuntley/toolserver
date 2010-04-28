@@ -229,15 +229,16 @@ def main():
         projsite=wikipedia.Site(lang, 'wikipedia')
         watch=u'<div style="float: right;"><small>&#91;[[Special:RecentChangesLinked/{{FULLPAGENAME}}|watch popular articles]]&#93;</small></div>'
         map=u'[[File:Daylight_Map,_nonscientific_({{subst:CURRENTHOUR}}00_UTC).jpg|thumb|Daylight map, {{subst:#time:H|-1 hours}}:00–{{subst:#time: H}}:00 (UTC)]]'
+        intro=u"This page was generated at '''{{subst:CURRENTYEAR}}-{{subst:CURRENTMONTH}}-{{subst:CURRENTDAY2}} {{subst:CURRENTTIME}} (UTC)'''.\n\nTotal hits to {{subst:SERVER}} (including all pages): {{formatnum:%d}}.\n\nSource: http://dammit.lt/wikistats\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits !! English interwiki " % (totalvisits[lang])
         if lang=='es':
             salida=u"<noinclude>{{%s/begin|{{subst:CURRENTHOUR}}}}</noinclude>\n{| class=\"wikitable sortable\" style=\"text-align: center;\" width=350px \n|+ [[Plantilla:Artículos populares|Artículos populares]] en la última hora \n! # !! Artículo !! Visitas " % exitpage
         else:
             if hourly:
                 salida+=watch+"\n"+map+"\n"
-                salida+=u"Last hour popular articles (Period: '''{{subst:#time:H|-1 hours}}:00–{{subst:#time: H}}:00'''). This page was generated at '''{{subst:CURRENTYEAR}}-{{subst:CURRENTMONTH}}-{{subst:CURRENTDAY2}} {{subst:CURRENTTIME}} (UTC)'''.\n\nTotal hits to {{subst:SERVER}} (including all pages): {{formatnum:%d}}.\n\nSource: http://dammit.lt/wikistats\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (totalvisits[lang])
+                salida+=u"Last hour popular articles (Period: '''{{subst:#time:H|-1 hours}}:00–{{subst:#time: H}}:00'''). %s" % (intro)
             else:
                 salida+=watch+"\n"
-                salida+=u"Last 24 hours popular articles. This page was generated at '''{{subst:CURRENTYEAR}}-{{subst:CURRENTMONTH}}-{{subst:CURRENTDAY2}} {{subst:CURRENTTIME}} (UTC)'''.\n\nTotal hits to {{subst:SERVER}} (including all pages): {{formatnum:%d}}.\n\nSource: http://dammit.lt/wikistats\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (totalvisits[lang])
+                salida+=u"Last 24 hours popular articles. %s" % (intro)
 
         #for p in pagesiter: #para ver que pagina fallaba con la codificación
         #    print p
@@ -257,6 +258,7 @@ def main():
             ind+=1
             if page.exists():
                 wtitle=page.title()
+                iws=page.interwiki()
                 
                 if page.isRedirectPage():
                     detalles+=u' (#REDIRECT [[%s]]) ' % (page.getRedirectTarget().title())
@@ -287,7 +289,13 @@ def main():
                         d+=1
                     salida+=u"\n{{!}}-\n{{!}} %d {{!}}{{!}} [[%s]]%s{{#if:{{{novistas|}}}||{{!}}{{!}} {{formatnum:%s}}}} " % (c, wtitle, detalles, pageselection[ind][1])
                 else:
-                    salida+=u"\n|-\n| %d || [[%s]]%s || {{formatnum:%s}} " % (c, wtitle, detalles, pageselection[ind][1])
+                    if lang!="en":
+                        iwlink=""
+                        for iw in iws:
+                            if iw.site().lang=="en":
+                                iwlink+=" || [[%s]]" % iw.title()
+                                break
+                    salida+=u"\n|-\n| %d || [[%s]]%s || {{formatnum:%s}}%s " % (c, wtitle, detalles, pageselection[ind][1], iwlink)
                 sum+=int(pageselection[ind][1])
                 
                 if c>=limite:
