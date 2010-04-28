@@ -290,8 +290,8 @@ def main():
                     salida+=u"\n{{!}}-\n{{!}} %d {{!}}{{!}} [[%s]]%s{{#if:{{{novistas|}}}||{{!}}{{!}} {{formatnum:%s}}}} " % (c, wtitle, detalles, pageselection[ind][1])
                 else:
                     #english interwiki column
+                    iwlink=""
                     if lang!="en":
-                        iwlink=""
                         for iw in iws:
                             if iw.site().lang=="en":
                                 iwlink+=" || [[:en:%s|%s]]" % (iw.title(), iw.title())
