@@ -39,10 +39,10 @@ hourlylangs = ['es', 'en', 'de', 'fr', 'pt', 'da', 'eo', 'hu', 'hr',
                'ro', 'sl', 'th', 'tr'] #donde tenga flag
 daily = False
 dailylangs = ['it', 'ja', 'pl', 'nl', 'ru', 'sv', 'zh', 'no', 
-              'ca', 'fi', 'uk', 'cs', 'ko', 'da', 'id', 'vi', 'vo',
+              'ca', 'fi', 'uk', 'cs', 'ko', 'da', 'id', 'vi', 
               'sk', 'sr', 'lt', 'he',
-              'gl'] 
-                      #ir metiendo de mas articulos a menos http://meta.wikimedia.org/wiki/List_of_Wikipedias
+              'gl'] #volapuk no mientras no tenga flag, tienen pocas ediciones al dia
+              #ir metiendo de mas articulos a menos http://meta.wikimedia.org/wiki/List_of_Wikipedias
                       
 minimum = 5 #visitas minimas para ser contabilizada la pagina, para rankings de la última hora
 if len(sys.argv)>1:
@@ -55,6 +55,7 @@ if len(sys.argv)>1:
     else:
         langs+=[sys.argv[1]]
 alllangs = dailylangs + hourlylangs
+alllangs.sort()
 if len(sys.argv)>2:
     limite = int(sys.argv[2])
 
@@ -230,9 +231,9 @@ def main():
             salida=u"<noinclude>{{%s/begin|{{subst:CURRENTHOUR}}}}</noinclude>\n{| class=\"wikitable sortable\" style=\"text-align: center;\" width=350px \n|+ [[Plantilla:Artículos populares|Artículos populares]] en la última hora \n! # !! Artículo !! Visitas " % exitpage
         else:
             if hourly:
-                salida=u"Popular articles in the last hour (%s). This page was last updated in '''{{subst:CURRENTYEAR}}-{{subst:CURRENTMONTH}}-{{subst:CURRENTDAY2}} {{subst:CURRENTTIME}} (UTC)'''.\n\nTotal hits to this project (including all pages): %d.\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (gzs[0].split(".gz")[0].split("pagecounts-")[1], totalvisits[lang])
+                salida=u"Last hour popular articles. This page was last updated at '''{{subst:CURRENTYEAR}}-{{subst:CURRENTMONTH}}-{{subst:CURRENTDAY2}} {{subst:CURRENTTIME}} (UTC)'''.\n\nTotal hits to this project (including all pages): {{formatnum:%d}}.\n\nSource: http://dammit.lt/wikistats\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (totalvisits[lang])
             else:
-                salida=u"Popular articles in the last 24 hours. This page was last updated in '''{{subst:CURRENTYEAR}}-{{subst:CURRENTMONTH}}-{{subst:CURRENTDAY2}} {{subst:CURRENTTIME}} (UTC)'''.\n\nTotal hits to this project (including all pages): %d.\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (totalvisits[lang])
+                salida=u"Last 24 hours popular articles. This page was last updated at '''{{subst:CURRENTYEAR}}-{{subst:CURRENTMONTH}}-{{subst:CURRENTDAY2}} {{subst:CURRENTTIME}} (UTC)'''.\n\nTotal hits to this project (including all pages): {{formatnum:%d}}.\n\nSource: http://dammit.lt/wikistats\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (totalvisits[lang])
 
         #for p in pagesiter: #para ver que pagina fallaba con la codificación
         #    print p
@@ -280,9 +281,9 @@ def main():
                     if c-1 in [3,5,10,15,20]:
                         salida+=u"\n{{#ifexpr:{{{top|15}}} > %d|" % (c-1)
                         d+=1
-                    salida+=u"\n{{!}}-\n{{!}} %d {{!}}{{!}} [[%s]]%s{{#if:{{{novistas|}}}||{{!}}{{!}} %s}} " % (c, wtitle, detalles, pageselection[ind][1])
+                    salida+=u"\n{{!}}-\n{{!}} %d {{!}}{{!}} [[%s]]%s{{#if:{{{novistas|}}}||{{!}}{{!}} {{formatnum:%s}}}} " % (c, wtitle, detalles, pageselection[ind][1])
                 else:
-                    salida+=u"\n|-\n| %d || [[%s]]%s || %s " % (c, wtitle, detalles, pageselection[ind][1])
+                    salida+=u"\n|-\n| %d || [[%s]]%s || {{formatnum:%s}} " % (c, wtitle, detalles, pageselection[ind][1])
                 sum+=int(pageselection[ind][1])
                 
                 if c>=limite:
@@ -301,7 +302,7 @@ def main():
         if lang=='es':
             salida+=u"\n%s\n{{%s/end|%d|%d|top={{{top|15}}}|fecha={{subst:CURRENTTIME}} ([[UTC]]) del {{subst:CURRENTDAY2}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}}}}\n|}\n<noinclude>{{documentación de plantilla}}\n%s</noinclude>" % ("}} "*d, exitpage, sum, totalvisits[lang], iws)
         else:
-            salida+=u"\n|}\n\n%s" % (iws)
+            salida+=u"\n|-\n| colspan=3 align=right | ''Top %d hit sum: '''{{formatnum:%d}}'''''&nbsp;&nbsp; \n|}\n\n%s" % (limite, sum, iws)
         wikipedia.output(re.sub(ur"\n", ur" ", salida))
         wiii=wikipedia.Page(projsite, exitpage)
         wiii.put(salida, u'BOT - Updating list')
