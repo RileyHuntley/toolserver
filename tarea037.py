@@ -147,7 +147,7 @@ def main():
                     continue
                 
                 #guardamos
-                fs[pagelang].write("%s    %s    %s\n" % (pagelang, page, times))
+                fs[pagelang].write("%s\t%s\t%s\n" % (pagelang, page, times))
                 analized += 1
         f.close()
     
@@ -175,11 +175,11 @@ def main():
             if not oldpage:
                 oldpage = page
             if oldpage != page: #hemos cambiado ya de pagina, compactamos la anterior
-                g.write("%s    %s    %s\n" % (timessum, pagelang, oldpage))
+                g.write("%s\t%s\t%s\n" % (timessum, pagelang, oldpage))
                 oldpage = page
                 timessum = 0
             timessum += times
-        g.write("%s    %s    %s\n" % (timessum, pagelang, page))
+        g.write("%s\t%s\t%s\n" % (timessum, pagelang, page))
         f.close()
         g.close()
         #os.system("rm /home/emijrp/temporal/tarea037-%s-sorted-page.txt" % lang)
@@ -228,7 +228,7 @@ def main():
             salida=u"<noinclude>{{%s/begin|{{subst:CURRENTHOUR}}}}</noinclude>\n{| class=\"wikitable sortable\" style=\"text-align: center;\" width=350px \n|+ [[Plantilla:Artículos populares|Artículos populares]] en la última hora \n! # !! Artículo !! Visitas " % exitpage
         else:
             if hourly:
-                salida=u"Popular articles in the last hour (%s).\n\nTotal hits to this project (including all pages): %d.\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (gzs[0].split(".gz")[0], 0 )#, totalvisits[lang])
+                salida=u"Popular articles in the last hour (%s).\n\nTotal hits to this project (including all pages): %d.\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (gzs[0].split(".gz")[0].split("pagecounts-")[1], totalvisits[lang])
             else:
                 salida=u"Popular articles in the last 24 hours.\n\nTotal hits to this project (including all pages): %d.\n\n{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits " % (totalvisits[lang])
 

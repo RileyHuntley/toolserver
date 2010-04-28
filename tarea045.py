@@ -51,7 +51,6 @@ for row in result:
         lang=row[3]
         family=row[4]
         
-        
         try:
             t1=time.time()
             conn2 = MySQLdb.connect(host='sql-s%s' % server, db=dbname, read_default_file='~/.my.cnf', use_unicode=True)
@@ -98,20 +97,22 @@ for user_editcount, user_name, domain, lang, family in users:
         prefix=family
     else:
         prefix=u"%s:%s" % (family, lang)
-    if hidden.count(user_name):
-        if bots.count([lang, family, user_name])==0:
+    if hidden.count(user_name): # usuario oculto
+        if bots.count([lang, family, user_name])==0: #no es bot
             if c<=limit:
                 output+=u"\n|-\n| %d || [Placeholder] || %s || %d " % (c, domain, user_editcount)
                 c+=1
+        #sea bot o no
         if cbots<=limit:
-            outputbot+=u"\n|-\n| %d || [Placeholder] || %s || %d " % (c, domain, user_editcount)
+            outputbot+=u"\n|-\n| %d || [Placeholder] || %s || %d " % (cbots, domain, user_editcount)
             cbots+=1
-    else:
-        if bots.count([lang, family, user_name])==0:
+    else: #usuario no oculto
+        if bots.count([lang, family, user_name])==0: #no es bot
             if c<=limit:
                 output+=u"\n|-\n| %d || [[%s:User:%s|%s]] || %s || [[%s:Special:Contributions/%s|%d]] " % (c, prefix, user_name, user_name, domain, prefix, user_name, user_editcount)
                 c+=1
-        outputbot+=u"\n|-\n| %d || [[%s:User:%s|%s]] || %s || [[%s:Special:Contributions/%s|%d]] " % (c, prefix, user_name, user_name, domain, prefix, user_name, user_editcount)
+        #sea bot o no
+        outputbot+=u"\n|-\n| %d || [[%s:User:%s|%s]] || %s || [[%s:Special:Contributions/%s|%d]] " % (cbots, prefix, user_name, user_name, domain, prefix, user_name, user_editcount)
         if cbots<=limit:
             cbots+=1
     if c>limit and cbots>limit:
