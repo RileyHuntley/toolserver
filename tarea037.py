@@ -77,6 +77,7 @@ namespaceslists={}
 exceptions={}
 
 for lang in langs:
+    lang=lang.lower()
     namespaceslists[lang]=tareas.getNamespacesList(wikipedia.Site(lang, 'wikipedia'))
     exceptions[lang]={}
     exceptions[lang]['raw']='|'.join(namespaceslists[lang])
@@ -127,7 +128,7 @@ for gz in gzs:
         
         m=regex.finditer(line)
         for i in m:
-            pagelang=i.group('pagelang')
+            pagelang=i.group('pagelang').lower()
             page=re.sub('_', ' ', i.group('page'))
             times=int(i.group('times'))
             other=int(i.group('other'))
