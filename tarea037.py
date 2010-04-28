@@ -258,10 +258,10 @@ def main():
             ind+=1
             if page.exists():
                 wtitle=page.title()
-                iws=page.interwiki()
-                
+                page2=page #para coger el redirecttarget si es redirect, se usa más abajo también para los interwikis
                 if page.isRedirectPage():
-                    detalles+=u' (#REDIRECT [[%s]]) ' % (page.getRedirectTarget().title())
+                    page2=page.getRedirectTarget()
+                    detalles+=u' (#REDIRECT [[%s]]) ' % (page2.title())
                 elif page.isDisambig():
                     #detalles+=u'(Desambiguación) '
                     pass #para evitar no ponerlo en el idioma loal
@@ -292,6 +292,7 @@ def main():
                     #english interwiki column
                     iwlink=""
                     if lang!="en":
+                        iws=page2.interwiki()
                         for iw in iws:
                             if iw.site().lang=="en":
                                 iwlink+=" || [[:en:%s|%s]]" % (iw.title(), iw.title())
