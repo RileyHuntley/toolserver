@@ -34,14 +34,14 @@ import tarea000
 
 limite = 100
 langs = []
+#las listas de langs deben ser mutuamente excluyentes
+#ja: da error de codificación al compactar
 hourly = False
 hourlylangs = ['es', 'en', 'de', 'fr', 'pt', 'da', 'eo', 'hu', 'hr', 
                'ro', 'sl', 'th', 'tr'] #donde tenga flag
 daily = False
-dailylangs = ['it', 'ja', 'pl', 'nl', 'ru', 'sv', 'zh', 'no', 
-              'ca', 'fi', 'uk', 'cs', 'ko', 'id', 'vi', 
-              'sk', 'sr', 'lt', 'he',
-              'gl'] #volapuk no mientras no tenga flag, tienen pocas ediciones al dia
+dailylangs = ['it', 'pl', 'nl', 'ru', 'sv', 'zh', 'no', 
+              'ca', 'fi', 'uk', 'cs', 'ko', 'gl'] 
               #ir metiendo de mas articulos a menos http://meta.wikimedia.org/wiki/List_of_Wikipedias
                       
 minimum = 5 #visitas minimas para ser contabilizada la pagina, para rankings de la última hora
@@ -84,6 +84,7 @@ exceptions = {}
 
 def main():
     spliter = "\t" #tab
+    
     fs={}
     for lang in langs:
         lang = lang.lower()
@@ -172,13 +173,13 @@ def main():
         oldpage=""
         timessum=0
         for line in f:
-            #line=unicode(line, "utf-8")
             [pagelang, page, times] = line[:-1].split(spliter)
             times = int(times)
             if not oldpage:
                 oldpage = page
             if oldpage != page: #hemos cambiado ya de pagina, compactamos la anterior
-                g.write("%s\t%s\t%s\n" % (timessum, pagelang, oldpage))
+                output="%s\t%s\t%s\n" % (timessum, pagelang, oldpage)
+                g.write(output)
                 oldpage = page
                 timessum = 0
             timessum += times
