@@ -257,7 +257,6 @@ def main():
         
         projsite=wikipedia.Site(lang, 'wikipedia')
         watch=u'<div style="float: right;"><small>&#91;[[Special:RecentChangesLinked/{{FULLPAGENAME}}|watch popular articles]]&#93;</small></div>'
-        map=u'[[File:Daylight_Map,_nonscientific_({{subst:CURRENTHOUR}}00_UTC).jpg|thumb|Daylight map, {{subst:#time:H|-1 hours}}:00–{{subst:#time: H}}:00 (UTC)]]'
         intro=u"This page was generated at '''{{subst:#time:Y-m-d H:i}} (UTC)'''.\n\nTotal hits to [{{subst:SERVER}} {{subst:SERVERNAME}}] (including all pages): {{formatnum:%d}}.\n\nSource: [http://dammit.lt/wikistats dammit.lt/wikistats]. More page views statistics: [http://stats.wikimedia.org/EN/TablesPageViewsMonthly.htm stats.wikimedia.org] and [http://stats.grok.se stats.grok.se].\n\n" % (totalvisits[lang])
         table=u"{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits "
         if lang=='es':
@@ -265,14 +264,15 @@ def main():
         else:
             if hourly:
                 gzhour=gzs[0][20:22]
-                hour=datetime.datetime(year=2000, month=1, day=1, hour=gzhour)-datetime.timedelta(hours=1)).hour
+                hour=(datetime.datetime(year=2000, month=1, day=1, hour=int(gzhour))-datetime.timedelta(hours=1)).hour
+                map=u'[[File:Daylight_Map,_nonscientific_(%s00_UTC).jpg|thumb|Daylight map, %s:00 (UTC)]]' % (gzhour, gzhour)
                 salida+=watch+"\n"+map+"\n"
                 salida+=u"Last hour popular articles (Period: '''%s:00–%s:59 (UTC)'''). %s%s" % (hour, hour, intro, table)
             else:
                 gzhour1=gzs[0][20:22]
-                hour1=datetime.datetime(year=2000, month=1, day=1, hour=gzhour1)-datetime.timedelta(hours=1)).hour
+                hour1=(datetime.datetime(year=2000, month=1, day=1, hour=int(gzhour1))-datetime.timedelta(hours=1)).hour
                 gzhour2=gzs[-1][20:22]
-                hour2=datetime.datetime(year=2000, month=1, day=1, hour=gzhour2)-datetime.timedelta(hours=1)).hour
+                hour2=(datetime.datetime(year=2000, month=1, day=1, hour=int(gzhour2))-datetime.timedelta(hours=1)).hour
                 salida+=watch+"\n"
                 salida+=u"Last 24 hours popular articles (Period: '''%s:00–%s:59 (UTC)'''). %s%s" % (hour1, hour2, intro, table)
 
@@ -358,10 +358,10 @@ def main():
         else:
             salida+=u"\n|-\n| &nbsp; || '''Top %d hit sum''' || '''{{formatnum:%d}}''' \n|}\n\n%s" % (limite, sum, iws)
         wikipedia.output(re.sub(ur"\n", ur" ", salida))
-        wiii=wikipedia.Page(projsite, exitpage)
-        wiii.put(salida, u'BOT - Updating list')
-        
-        if len(salida)<3000:
+        if len(salida)>3000:
+            wiii=wikipedia.Page(projsite, exitpage)
+            wiii.put(salida, u'BOT - Updating list')
+        else:
             print "Error pagina menor de 3KB, fallo algo"
         os.system("rm /home/emijrp/temporal/tarea037-%s*" % lang)
 
