@@ -18,6 +18,7 @@
 
 # TODO: poner una columna para ediciones, otra con el ratio visitas/ediciones
 # marcar las protegidas y semiprotegidas con otro color (dorado y gris?)
+# hacer que no ocupa mas de 30 caracteres?
 
 import datetime
 import gzip
@@ -140,7 +141,8 @@ def compactar():
         g.close()
         #os.system("rm /home/emijrp/temporal/tarea037-%s-sorted-page.txt" % lang)
 
-def analizarPageViewsLogs():
+def analizarPageViewsLogs(fs, exceptions):
+    totalvisits={}
     for gz in gzs:
         print '-'*50, '\n', gz, '\n', '-'*50
         try:
@@ -193,16 +195,16 @@ def analizarPageViewsLogs():
                 fs[pagelang].write("%s%s%s%s%s\n" % (pagelang, spliter, page, spliter, times))
                 analized += 1
         f.close()
+    return totalvisits
 
 def main():
     """ Update popular articles lists """
     
+    wikipedia.output("Se van a analizar los idiomas: %s" % ', '.join(langs))
     fs = openFiles()
     namespaceslists = loadNamespaces()
     exceptions = loadExceptions(namespaceslists)
-    wikipedia.output("Se van a analizar los idiomas: %s" % ', '.join(langs))
-    
-    totalvisits = analizarPageViewsLogs()
+    totalvisits = analizarPageViewsLogs(fs, exceptions)
     closeFiles(fs)
     
     #ordenamos con GNU sort
@@ -232,7 +234,7 @@ def main():
         for line in f:
             line = line[:len(line)-1]
             [times, pagelang, page]=line.split(spliter)
-            if page='' or re.search(ur'(?im)(http://|Special\:|sort_down\.gif|sort_up\.gif|sort_none\.gif|\&limit\=)', page):
+            if page=='' or re.search(ur'(?im)(http://|Special\:|sort_down\.gif|sort_up\.gif|sort_none\.gif|\&limit\=)', page):
                 #ampliar con otros idiomas
                 continue
             c+=1
@@ -321,7 +323,7 @@ def main():
                 else:
                     #english interwiki column
                     iwlink=""
-                    if lang!="en":
+                    if lang!="en": #a veces falla al cargar iws vacios de portadas del tipo [[cs:]], no importa
                         iws=page2.interwiki()
                         for iw in iws:
                             if iw.site().lang=="en":
