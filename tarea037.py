@@ -196,6 +196,15 @@ def analizarPageViewsLogs(fs, exceptions):
         f.close()
     return totalvisits
 
+def sortFiles():
+    for lang in langs:
+        os.system("sort /home/emijrp/temporal/tarea037-%s.txt > /home/emijrp/temporal/tarea037-%s-sorted-page.txt" % (lang, lang))
+
+def sortByPageViews():
+    for lang in langs:
+        print "Ordenando", lang
+        os.system("sort -rg /home/emijrp/temporal/tarea037-%s-compacted.txt > /home/emijrp/temporal/tarea037-%s-sorted-times.txt" % (lang, lang))
+
 def main():
     """ Update popular articles lists """
     
@@ -205,19 +214,12 @@ def main():
     exceptions = loadExceptions(namespaceslists)
     totalvisits = analizarPageViewsLogs(fs, exceptions)
     closeFiles(fs)
-    
     #ordenamos con GNU sort
-    for lang in langs:
-        os.system("sort /home/emijrp/temporal/tarea037-%s.txt > /home/emijrp/temporal/tarea037-%s-sorted-page.txt" % (lang, lang))
-        #os.system("rm /home/emijrp/temporal/tarea037-%s.txt" % lang)
-    
+    sortFiles()
     #compactamos
     compactar()
-    
     #ordenamos de mas visitas a menos, cada idioma
-    for lang in langs:
-        print "Ordenando", lang
-        os.system("sort -rg /home/emijrp/temporal/tarea037-%s-compacted.txt > /home/emijrp/temporal/tarea037-%s-sorted-times.txt" % (lang, lang))
+    sortByPageViews()
     
     #leemos las primeras y actualizamos el ranking
     for lang in langs:
@@ -322,12 +324,16 @@ def main():
                 else:
                     #english interwiki column
                     iwlink=""
-                    if lang!="en": #a veces falla al cargar iws vacios de portadas del tipo [[cs:]], no importa
-                        iws=page2.interwiki()
-                        for iw in iws:
-                            if iw.site().lang=="en":
-                                iwlink=" <sup>([[:en:%s|en]])</sup>" % (iw.title())
-                                break
+                    if lang!="en":
+                        #a veces falla al cargar iws vacios de portadas del tipo [[cs:]]
+                        # puede haber una excepción SectionError, entre otras
+                        try: 
+                            iws=page2.interwiki()
+                            for iw in iws:
+                                if iwlink=='' and iw.site().lang=="en":
+                                    iwlink=" <sup>([[:en:%s|en]])</sup>" % (iw.title())
+                        except:
+                            pass
                     salida+=u"\n|-\n| %d || [[%s]]%s%s || {{formatnum:%s}} " % (c, wtitle, detalles, iwlink, pageselection[ind][1])
                 
                 #except:
