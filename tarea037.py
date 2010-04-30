@@ -264,11 +264,17 @@ def main():
             salida=u"<noinclude>{{%s/begin|{{subst:CURRENTHOUR}}}}</noinclude>\n{| class=\"wikitable sortable\" style=\"text-align: center;\" width=350px \n|+ [[Plantilla:Artículos populares|Artículos populares]] en la última hora \n! # !! Artículo !! Visitas " % exitpage
         else:
             if hourly:
+                gzhour=gzs[0][20:22]
+                hour=datetime.datetime(year=2000, month=1, day=1, hour=gzhour)-datetime.timedelta(hours=1)).hour
                 salida+=watch+"\n"+map+"\n"
-                salida+=u"Last hour popular articles (Period: '''{{subst:#time:H|-1 hours}}:00–{{subst:#time: H}}:00 (UTC)'''). %s%s" % (intro, table)
+                salida+=u"Last hour popular articles (Period: '''%s:00–%s:59 (UTC)'''). %s%s" % (hour, hour, intro, table)
             else:
+                gzhour1=gzs[0][20:22]
+                hour1=datetime.datetime(year=2000, month=1, day=1, hour=gzhour1)-datetime.timedelta(hours=1)).hour
+                gzhour2=gzs[-1][20:22]
+                hour2=datetime.datetime(year=2000, month=1, day=1, hour=gzhour2)-datetime.timedelta(hours=1)).hour
                 salida+=watch+"\n"
-                salida+=u"Last 24 hours popular articles (Period: '''{{subst:#time:H|-24 hours}}:00–{{subst:#time:H|-1 hours}}:59 (UTC)'''). %s%s" % (intro, table)
+                salida+=u"Last 24 hours popular articles (Period: '''%s:00–%s:59 (UTC)'''). %s%s" % (hour1, hour2, intro, table)
 
         #for p in pagesiter: #para ver que pagina fallaba con la codificación
         #    print p
