@@ -14,6 +14,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+""" Update popular articles lists """
+
+# TODO: poner una columna para ediciones, otra con el ratio visitas/ediciones
+# marcar las protegidas y semiprotegidas con otro color (dorado y gris?)
+
 import datetime
 import gzip
 import os
@@ -32,6 +37,7 @@ import tarea000
 #que no cuente las talks
 #y las totales a wikimedia?
 
+spliter = "\t;;;\t" #tab;tab hay títulos con ; y cosas con tabs individualmente
 limite = 100
 langs = []
 #las listas de langs deben ser mutuamente excluyentes
@@ -43,8 +49,9 @@ daily = False
 dailylangs = ['it', 'pl', 'nl', 'ru', 'sv', 'zh', 'no', 
               'ca', 'fi', 'uk', 'cs', 'ko', 'gl'] 
               #ir metiendo de mas articulos a menos http://meta.wikimedia.org/wiki/List_of_Wikipedias
-                      
-minimum = 5 #visitas minimas para ser contabilizada la pagina, para rankings de la última hora
+#no filtrar paginas con pocas visitas
+#con la optimización del código no es necesario
+#minimum = 5 #visitas minimas para ser contabilizada la pagina, para rankings de la última hora
 if len(sys.argv)>1:
     if sys.argv[1].startswith('--daily'):
         langs += dailylangs
@@ -79,26 +86,61 @@ print gzs
 wikipedia.output("Elegidos %d fichero(s)..." % len(gzs))
 
 pagesdic = {}
-namespaceslists = {}
 exceptions = {}
 
-def main():
-    spliter = "\t" #tab
-    
-    fs={}
+def loadExceptions(namespaceslists):
+    exceptions={}
     for lang in langs:
         lang = lang.lower()
-        namespaceslists[lang] = tareas.getNamespacesList(wikipedia.Site(lang, 'wikipedia'))
         exceptions[lang] = {}
         exceptions[lang]['regexp'] = ur'(?i)(%s)\:' % ('|'.join(namespaceslists[lang]))
         exceptions[lang]['compiled'] = re.compile(exceptions[lang]['regexp'])
-        fs[lang]=open("/home/emijrp/temporal/tarea037-%s.txt" % lang, "w")
-        
-    wikipedia.output("Se van a analizar los idiomas: %s" % ', '.join(langs))
-    for lang in langs:
-        wikipedia.output("Excepciones de %s: %s" % (lang, exceptions[lang]['regexp']))
+    return exceptions
     
-    totalvisits = {}
+def loadNamespaces():
+    namespaceslists = {}
+    for lang in langs:
+        lang = lang.lower()
+        namespaceslists[lang] = tareas.getNamespacesList(wikipedia.Site(lang, 'wikipedia'))
+    return namespaceslists
+
+def openFiles():
+    fs={}
+    for lang in langs:
+        lang = lang.lower()
+        fs[lang]=open("/home/emijrp/temporal/tarea037-%s.txt" % lang, "w")
+    return fs
+
+def closeFiles(fs):
+    for lang, f, in fs.items(): #cerramos
+        f.close()
+
+def compactar():
+    for lang in langs:
+        f=open("/home/emijrp/temporal/tarea037-%s-sorted-page.txt" % lang, "r")
+        g=open("/home/emijrp/temporal/tarea037-%s-compacted.txt" % lang, "w")
+        print "Compactando", lang
+        pagelang=""
+        page=""
+        oldpage=""
+        timessum=0
+        for line in f:
+            [pagelang, page, times] = line[:-1].split(spliter)
+            times = int(times)
+            if not oldpage:
+                oldpage = page
+            if oldpage != page: #hemos cambiado ya de pagina, compactamos la anterior
+                output="%s%s%s%s%s\n" % (timessum, spliter, pagelang, spliter, oldpage)
+                g.write(output)
+                oldpage = page
+                timessum = 0
+            timessum += times
+        g.write("%s%s%s%s%s\n" % (timessum, spliter, pagelang, spliter, page))
+        f.close()
+        g.close()
+        #os.system("rm /home/emijrp/temporal/tarea037-%s-sorted-page.txt" % lang)
+
+def analizarPageViewsLogs():
     for gz in gzs:
         print '-'*50, '\n', gz, '\n', '-'*50
         try:
@@ -147,16 +189,21 @@ def main():
                 if re.search(exceptions[pagelang]['compiled'], page):
                     continue
                 
-                if hourly and times < minimum: #si hago el diario, no descartar nada...
-                    continue
-                
                 #guardamos
-                fs[pagelang].write("%s\t%s\t%s\n" % (pagelang, page, times))
+                fs[pagelang].write("%s%s%s%s%s\n" % (pagelang, spliter, page, spliter, times))
                 analized += 1
         f.close()
+
+def main():
+    """ Update popular articles lists """
     
-    for lang, f, in fs.items(): #cerramos
-        f.close()
+    fs = openFiles()
+    namespaceslists = loadNamespaces()
+    exceptions = loadExceptions(namespaceslists)
+    wikipedia.output("Se van a analizar los idiomas: %s" % ', '.join(langs))
+    
+    totalvisits = analizarPageViewsLogs()
+    closeFiles(fs)
     
     #ordenamos con GNU sort
     for lang in langs:
@@ -164,29 +211,7 @@ def main():
         #os.system("rm /home/emijrp/temporal/tarea037-%s.txt" % lang)
     
     #compactamos
-    for lang in langs:
-        f=open("/home/emijrp/temporal/tarea037-%s-sorted-page.txt" % lang, "r")
-        g=open("/home/emijrp/temporal/tarea037-%s-compacted.txt" % lang, "w")
-        print "Compactando", lang
-        pagelang=""
-        page=""
-        oldpage=""
-        timessum=0
-        for line in f:
-            [pagelang, page, times] = line[:-1].split(spliter)
-            times = int(times)
-            if not oldpage:
-                oldpage = page
-            if oldpage != page: #hemos cambiado ya de pagina, compactamos la anterior
-                output="%s\t%s\t%s\n" % (timessum, pagelang, oldpage)
-                g.write(output)
-                oldpage = page
-                timessum = 0
-            timessum += times
-        g.write("%s\t%s\t%s\n" % (timessum, pagelang, page))
-        f.close()
-        g.close()
-        #os.system("rm /home/emijrp/temporal/tarea037-%s-sorted-page.txt" % lang)
+    compactar()
     
     #ordenamos de mas visitas a menos, cada idioma
     for lang in langs:
@@ -207,7 +232,7 @@ def main():
         for line in f:
             line = line[:len(line)-1]
             [times, pagelang, page]=line.split(spliter)
-            if re.search(ur'(?im)(http://|Special\:|sort_down\.gif|sort_up\.gif|sort_none\.gif|\&limit\=)', page):
+            if page='' or re.search(ur'(?im)(http://|Special\:|sort_down\.gif|sort_up\.gif|sort_none\.gif|\&limit\=)', page):
                 #ampliar con otros idiomas
                 continue
             c+=1
@@ -251,14 +276,17 @@ def main():
         except:
             print "Error en la codificacion seguramente", lang
             continue
-        pre=pagegenerators.PreloadingGenerator(gen, pageNumber=limite, lookahead=100)
+        pre=pagegenerators.PreloadingGenerator(gen, pageNumber=limite*2, lookahead=100)
         c=d=0
         sum=0
-        ind=-1
         for page in pre:
             detalles=u''
-            ind+=1
             if page.exists():
+                c+=1
+                ind=c-1
+                sum+=int(pageselection[ind][1])
+                if c>limite:
+                    break
                 wtitle=page.title()
                 page2=page #para coger el redirecttarget si es redirect, se usa más abajo también para los interwikis
                 if page.isRedirectPage():
@@ -284,7 +312,7 @@ def main():
                 
                 if page.namespace() in [6, 14]:
                     wtitle=u':%s' % wtitle
-                c+=1
+                
                 if lang=='es':
                     if c-1 in [3,5,10,15,20]:
                         salida+=u"\n{{#ifexpr:{{{top|15}}} > %d|" % (c-1)
@@ -300,10 +328,7 @@ def main():
                                 iwlink=" <sup>([[:en:%s|en]])</sup>" % (iw.title())
                                 break
                     salida+=u"\n|-\n| %d || [[%s]]%s%s || {{formatnum:%s}} " % (c, wtitle, detalles, iwlink, pageselection[ind][1])
-                sum+=int(pageselection[ind][1])
                 
-                if c>=limite:
-                    break
                 #except:
                 #    wikipedia.output(u'Error al generar item en lista de %s:' % lang)
         
