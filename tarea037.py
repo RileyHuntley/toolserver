@@ -349,7 +349,7 @@ def main():
         wiii=wikipedia.Page(projsite, exitpage)
         wiii.put(salida, u'BOT - Updating list')
         
-        if len(output)<3000:
+        if len(salida)<3000:
             print "Error pagina menor de 3KB, fallo algo"
         os.system("rm /home/emijrp/temporal/tarea037-%s*" % lang)
 
