@@ -19,6 +19,9 @@
 # TODO: poner una columna para ediciones, otra con el ratio visitas/ediciones
 # marcar las protegidas y semiprotegidas con otro color (dorado y gris?)
 # hacer que no ocupa mas de 30 caracteres?
+#que no cuente las talks
+#y las totales a wikimedia?
+# poner icono para los current events
 
 import datetime
 import gzip
@@ -33,10 +36,6 @@ import pagegenerators
 
 import tareas
 import tarea000
-
-#TODO
-#que no cuente las talks
-#y las totales a wikimedia?
 
 spliter = "\t;;;\t" #tab;tab hay títulos con ; y cosas con tabs individualmente
 limite = 100
@@ -350,6 +349,8 @@ def main():
         wiii=wikipedia.Page(projsite, exitpage)
         wiii.put(salida, u'BOT - Updating list')
         
+        if len(output)<3000:
+            print "Error pagina menor de 3KB, fallo algo"
         os.system("rm /home/emijrp/temporal/tarea037-%s*" % lang)
 
 if __name__ == "__main__":
