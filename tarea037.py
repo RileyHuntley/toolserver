@@ -125,23 +125,30 @@ def compactar():
         oldpage=""
         timessum=0
         for line in f:
-            [pagelang, page, times] = line[:-1].split(spliter)
+            #line=unicode(line, "utf-8")
+            try:
+                [pagelang, page, times] = line[:-1].split(spliter)
+            except:
+                print line
+                sys.exit()
             times = int(times)
             if not oldpage:
                 oldpage = page
             if oldpage != page: #hemos cambiado ya de pagina, compactamos la anterior
                 output="%s%s%s%s%s\n" % (timessum, spliter, pagelang, spliter, oldpage)
-                g.write(output)
+                g.write(output)#.encode("utf-8"))
                 oldpage = page
                 timessum = 0
             timessum += times
-        g.write("%s%s%s%s%s\n" % (timessum, spliter, pagelang, spliter, page))
+        output="%s%s%s%s%s\n" % (timessum, spliter, pagelang, spliter, oldpage)
+        g.write(output)#.encode("utf-8"))
         f.close()
         g.close()
         #os.system("rm /home/emijrp/temporal/tarea037-%s-sorted-page.txt" % lang)
 
 def analizarPageViewsLogs(fs, exceptions):
     totalvisits={}
+    ensite=wikipedia.Site("en", "wikipedia") #todos tienen utf-8, este me vale
     for gz in gzs:
         print '-'*50, '\n', gz, '\n', '-'*50
         try:
@@ -177,6 +184,7 @@ def analizarPageViewsLogs(fs, exceptions):
             for i in m:
                 pagelang = i.group('pagelang').lower()
                 page = re.sub('_', ' ', i.group('page')).strip()
+                #page = wikipedia.url2unicode(page, ensite)
                 if not page:
                     continue
                 times = int(i.group('times'))
@@ -191,7 +199,8 @@ def analizarPageViewsLogs(fs, exceptions):
                     continue
                 
                 #guardamos
-                fs[pagelang].write("%s%s%s%s%s\n" % (pagelang, spliter, page, spliter, times))
+                output=u"%s%s%s%s%s\n" % (pagelang, spliter, page, spliter, times)
+                fs[pagelang].write(output.encode("utf-8"))
                 analized += 1
         f.close()
     return totalvisits
@@ -214,12 +223,9 @@ def main():
     exceptions = loadExceptions(namespaceslists)
     totalvisits = analizarPageViewsLogs(fs, exceptions)
     closeFiles(fs)
-    #ordenamos con GNU sort
-    sortFiles()
-    #compactamos
+    sortFiles() #gnu sort
     compactar()
-    #ordenamos de mas visitas a menos, cada idioma
-    sortByPageViews()
+    sortByPageViews() #ordenamos de mas visitas a menos, cada idioma
     
     #leemos las primeras y actualizamos el ranking
     for lang in langs:
@@ -265,14 +271,20 @@ def main():
             if hourly:
                 gzhour=gzs[0][20:22]
                 hour=(datetime.datetime(year=2000, month=1, day=1, hour=int(gzhour))-datetime.timedelta(hours=1)).hour
+                if len(hour)==1:
+                    hour='0'+hour
                 map=u'[[File:Daylight_Map,_nonscientific_(%s00_UTC).jpg|thumb|Daylight map, %s:00 (UTC)]]' % (gzhour, gzhour)
                 salida+=watch+"\n"+map+"\n"
                 salida+=u"Last hour popular articles (Period: '''%s:00–%s:59 (UTC)'''). %s%s" % (hour, hour, intro, table)
             else:
                 gzhour1=gzs[0][20:22]
                 hour1=(datetime.datetime(year=2000, month=1, day=1, hour=int(gzhour1))-datetime.timedelta(hours=1)).hour
+                if len(hour1)==1:
+                    hour1='0'+hour1
                 gzhour2=gzs[-1][20:22]
                 hour2=(datetime.datetime(year=2000, month=1, day=1, hour=int(gzhour2))-datetime.timedelta(hours=1)).hour
+                if len(hour2)==1:
+                    hour2='0'+hour2
                 salida+=watch+"\n"
                 salida+=u"Last 24 hours popular articles (Period: '''%s:00–%s:59 (UTC)'''). %s%s" % (hour1, hour2, intro, table)
 
