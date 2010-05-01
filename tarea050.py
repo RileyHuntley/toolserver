@@ -25,8 +25,7 @@ def main():
     """ Update a template with my user accounts edits """
     
     eswiki = wikipedia.Site('es', 'wikipedia')
-    users = ['AVBOT', 'BOTijo', 'Emijrp', 'Emijrpbot', 
-             'Poc-oban', 'Toolserver']
+    users = ['AVBOT', 'BOTijo', 'Emijrp', 'Emijrpbot', 'Poc-oban', 'Toolserver']
     path = "http://toolserver.org/~vvv/sulutil.php?user="
     salida = u"{{#switch:{{{1|}}}"
     total = 0
