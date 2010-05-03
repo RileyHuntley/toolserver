@@ -105,7 +105,7 @@ for user_editcount, user_name, domain, lang, family in users:
             outputbot+=u"\n|-\n| %d || [Placeholder] || %s || %d " % (cbots, domain, user_editcount)
             cbots+=1
     else: #usuario no oculto
-        if bots.count([lang, family, user_name])==0: #no es bot
+        if isBot==0: #no es bot
             if c<=limit:
                 output+=u"\n|-\n| %d || [[%s:User:%s|%s]] || %s || [[%s:Special:Contributions/%s|%d]] " % (c, prefix, user_name, user_name, domain, prefix, user_name, user_editcount)
                 c+=1
