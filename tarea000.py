@@ -96,7 +96,7 @@ def unflaggedBotsList(site):
                 if lines.count("*;*;%s" % (nick))==0 and \
                    lines.count("%s;*;%s" % (lang, nick))==0 and \
                    lines.count("*;%s;%s" % (family, nick))==0:
-					linesupdated.append(line)
+                    linesupdated.append(line)
             else:
                 linesupdated.append(line)
         else:

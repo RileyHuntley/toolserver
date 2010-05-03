@@ -18,109 +18,135 @@
 
 import re
 import sys
-import wikipedia
-import time, os
-import tarea000
+import time
+import os
+
 import MySQLdb
+
+import wikipedia
+
+import tarea000
 
 wtitle=u"User:Emijrp/List of Wikimedians by number of edits"
 site=wikipedia.Site('meta', 'meta')
 limit=1000
-conn = MySQLdb.connect(host='sql', db='toolserver', read_default_file='~/.my.cnf', use_unicode=True)
-cursor = conn.cursor()
-cursor.execute("SELECT dbname, domain, server, lang, family from wiki where is_closed=0 and (family='commons' or family='wikibooks' or family='wikinews' or family='wikipedia' or family='wikiquote' or family='wikisource' or family='wikispecies' or family='wikiversity' or family='wiktionary');")
-result=cursor.fetchall()
-users=[]
-bots=[]
-botssubpage=wikipedia.Page(site, u"%s/Unflagged bots" % wtitle)
-if botssubpage.exists():
-    bots=botssubpage.get().splitlines()
-    output=botssubpage.get().splitlines()
-    output.sort()
-    botssubpage.put("\n".join(output), u"BOT - Sorting list")
 
-for row in result:
-    #break
-    if len(row)==5:
-        dbname=row[0]
-        domain=row[1]
-        server=row[2]
-        lang=row[3]
-        family=row[4]
-        
+def loadUnflaggedBots():
+    bots = []
+    botssubpage = wikipedia.Page(site, u"%s/Unflagged bots" % wtitle)
+    if botssubpage.exists():
+        bots = botssubpage.get().splitlines()
+        output = botssubpage.get().splitlines()
+        output.sort()
+        botssubpage.put("\n".join(output), u"BOT - Sorting list")
+    return bots
+
+def loadProjects():
+    conn = MySQLdb.connect(host='sql', db='toolserver', read_default_file='~/.my.cnf', use_unicode=True)
+    cursor = conn.cursor()
+    cursor.execute("SELECT dbname, domain, server, lang, family from wiki where is_closed=0 and (family='commons' or family='wikibooks' or family='wikinews' or family='wikipedia' or family='wikiquote' or family='wikisource' or family='wikispecies' or family='wikiversity' or family='wiktionary');")
+    result = cursor.fetchall()
+    projects = []
+    for row in result:
+        if len(row)==5:
+            #fix simple en
+            [dbname, domain, server, lang, family] = row
+            if lang=="simple-en":
+                lang="simple"
+            if family=="species":
+                lang="species"
+            projects.append([dbname, domain, server, lang, family])
+    cursor.close()
+    conn.close()
+    return projects
+
+def main():
+    users = []
+    bots = loadUnflaggedBots()
+    projects = loadProjects()
+    
+    for dbname, domain, server, lang, family in projects:
+        #if lang=="am":
+        #    break
         try:
-            t1=time.time()
+            t1 = time.time()
             conn2 = MySQLdb.connect(host='sql-s%s' % server, db=dbname, read_default_file='~/.my.cnf', use_unicode=True)
             cursor2 = conn2.cursor()
             cursor2.execute("select user_name, user_editcount from user where user_editcount!=0 order by user_editcount desc limit %s;" % limit)
-            result2=cursor2.fetchall()
+            result2 = cursor2.fetchall()
             print domain, time.time()-t1, "seconds"
         
             for row2 in result2:
-                user_name=unicode(row2[0], "utf-8")
-                user_editcount=row2[1]
+                user_name = unicode(row2[0], "utf-8")
+                user_editcount = row2[1]
                 users.append([user_editcount, user_name, domain, lang, family])
             cursor2.close()
             conn2.close()
             
-            try:
-                bots2=tarea000.botList(wikipedia.Site(lang, family))
-                for bot in bots2:
-                    bots.append([lang, family, bot])
-            except:
-                print "Error while recovering bot list", domain
+            bots2 = tarea000.botList(wikipedia.Site(lang, family))
+            for bot in bots2:
+                bots.append('%s;%s;%s' % (lang, family, bot))
         except:
-            print "Error", dbname, domain
+            print "error", lang, family, domain
+            
+    users.sort()
+    users.reverse()
 
-users.sort()
-users.reverse()
+    #hide users
+    hidepage=wikipedia.Page(site, u"%s/Anonymous" % wtitle)
+    m=re.compile(ur"(?i)\[\[\s*User\s*:\s*(?P<user>[^\]\|]+?)\s*[\|\]]").finditer(hidepage.get())
+    hidden=[]
+    for i in m:
+        hidden.append(i.group("user"))
 
-#hide users
-hidepage=wikipedia.Page(site, u"%s/Anonymous" % wtitle)
-m=re.compile(ur"(?i)\[\[\s*User\s*:\s*(?P<user>[^\]\|]+?)\s*[\|\]]").finditer(hidepage.get())
-hidden=[]
-for i in m:
-    hidden.append(i.group("user"))
+    print len(hidden), "usuarios ocultos"
 
-print len(hidden), "usuarios ocultos"
+    output=u"{{/begin|%s}}\n<center>\n{| class='wikitable sortable' style='text-align: center;' \n! # !! User !! Project !! Edits" % limit
+    outputbot=u"{{/begin|%s}}\n<center>\n{| class='wikitable sortable' style='text-align: center;' \n! # !! User !! Project !! Edits" % limit
+    c=1
+    cbots=1
+    for user_editcount, user_name, domain, lang, family in users:
+        prefix=u""
+        if family in ["commons", "wikispecies"]:
+            prefix=family
+        else:
+            prefix=u"%s:%s" % (family, lang)
+        # no usamos regexp porque algunos nicks de bots contienen ( ) u otros
+        isBot=len(re.findall(u'%s;%s;%s' % (lang, family, user_name), '\n'.join(bots))) + \
+              len(re.findall(u'*;%s;%s' % (lang, family, user_name), '\n'.join(bots))) + \
+              len(re.findall(u'%s;*;%s' % (lang, family, user_name), '\n'.join(bots))) + \
+              len(re.findall(u'*;*;%s' % (lang, family, user_name), '\n'.join(bots)))
+        if hidden.count(user_name)>0: # usuario oculto
+            if isBot==0: #no es bot
+                if c<=limit:
+                    output+=u"\n|-\n| %d || [Placeholder] || %s || %d " % (c, domain, user_editcount)
+                    c+=1
+            #sea bot o no
+            if cbots<=limit:
+                outputbot+=u"\n|-\n| %d || [Placeholder] || %s || %d " % (cbots, domain, user_editcount)
+                cbots+=1
+        else: #usuario no oculto
+            if isBot==0: #no es bot
+                if c<=limit:
+                    output+=u"\n|-\n| %d || [[%s:User:%s|%s]] || %s || [[%s:Special:Contributions/%s|%d]] " % (c, prefix, user_name, user_name, domain, prefix, user_name, user_editcount)
+                    c+=1
+            #sea bot o no
+            if cbots<=limit:
+                outputbot+=u"\n|-\n| %d || [[%s:User:%s|%s]] || %s || [[%s:Special:Contributions/%s|%d]] " % (cbots, prefix, user_name, user_name, domain, prefix, user_name, user_editcount)
+                cbots+=1
+        if c>limit and cbots>limit:
+            break
+    output+=u"\n|}\n</center>\n{{/end}}"
+    outputbot+=u"\n|}\n</center>\n{{/end}}"
+    wiii=wikipedia.Page(site, wtitle)
+    wiii.put(output, u"BOT - Updating ranking")
+    wiii=wikipedia.Page(site, u"%s (bots included)" % wtitle)
+    wiii.put(outputbot, u"BOT - Updating ranking")
 
-output=u"{{/begin|%s}}\n<center>\n{| class='wikitable sortable' style='text-align: center;' \n! # !! User !! Project !! Edits" % limit
-outputbot=u"{{/begin|%s}}\n<center>\n{| class='wikitable sortable' style='text-align: center;' \n! # !! User !! Project !! Edits" % limit
-c=1
-cbots=1
-for user_editcount, user_name, domain, lang, family in users:
-    prefix=u""
-    if family in ["commons", "wikispecies"]:
-        prefix=family
-    else:
-        prefix=u"%s:%s" % (family, lang)
-    isBot=len(re.findall(ur'(%s|\*);(%s|\*);%s' % (lang, family, user_name), '\n'.join(bots)))
-    if hidden.count(user_name)>0: # usuario oculto
-        if isBot==0: #no es bot
-            if c<=limit:
-                output+=u"\n|-\n| %d || [Placeholder] || %s || %d " % (c, domain, user_editcount)
-                c+=1
-        #sea bot o no
-        if cbots<=limit:
-            outputbot+=u"\n|-\n| %d || [Placeholder] || %s || %d " % (cbots, domain, user_editcount)
-            cbots+=1
-    else: #usuario no oculto
-        if isBot==0: #no es bot
-            if c<=limit:
-                output+=u"\n|-\n| %d || [[%s:User:%s|%s]] || %s || [[%s:Special:Contributions/%s|%d]] " % (c, prefix, user_name, user_name, domain, prefix, user_name, user_editcount)
-                c+=1
-        #sea bot o no
-        if cbots<=limit:
-            outputbot+=u"\n|-\n| %d || [[%s:User:%s|%s]] || %s || [[%s:Special:Contributions/%s|%d]] " % (cbots, prefix, user_name, user_name, domain, prefix, user_name, user_editcount)
-            cbots+=1
-    if c>limit and cbots>limit:
-        break
-output+=u"\n|}\n</center>\n{{/end}}"
-outputbot+=u"\n|}\n</center>\n{{/end}}"
-wiii=wikipedia.Page(site, wtitle)
-wiii.put(output, u"BOT - Updating ranking")
-wiii=wikipedia.Page(site, u"%s (bots included)" % wtitle)
-wiii.put(outputbot, u"BOT - Updating ranking")
+    cursor.close()
+    conn.close()
 
-cursor.close()
-conn.close()    
+
+if __name__ == "__main__":
+    main()
+
