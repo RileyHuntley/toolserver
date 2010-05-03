@@ -112,12 +112,15 @@ def main():
         else:
             prefix=u"%s:%s" % (family, lang)
         # no usamos regexp porque algunos nicks de bots contienen ( ) u otros
-        isBot=len(re.findall(u'%s;%s;%s' % (lang, family, user_name), '\n'.join(bots))) + \
-              len(re.findall(u'*;%s;%s' % (lang, family, user_name), '\n'.join(bots))) + \
-              len(re.findall(u'%s;*;%s' % (lang, family, user_name), '\n'.join(bots))) + \
-              len(re.findall(u'*;*;%s' % (lang, family, user_name), '\n'.join(bots)))
+        isBot=False
+        for botline in bots:
+            if botline=='%s;%s;%s' % (lang, family, user_name) or \
+               botline=='*;%s;%s' % (family, user_name) or \
+               botline=='%s;*;%s' % (lang, user_name) or \
+               botline=='*;*;%s' % (user_name):
+                isBot=True
         if hidden.count(user_name)>0: # usuario oculto
-            if isBot==0: #no es bot
+            if not isBot: #no es bot
                 if c<=limit:
                     output+=u"\n|-\n| %d || [Placeholder] || %s || %d " % (c, domain, user_editcount)
                     c+=1
@@ -126,7 +129,7 @@ def main():
                 outputbot+=u"\n|-\n| %d || [Placeholder] || %s || %d " % (cbots, domain, user_editcount)
                 cbots+=1
         else: #usuario no oculto
-            if isBot==0: #no es bot
+            if not isBot: #no es bot
                 if c<=limit:
                     output+=u"\n|-\n| %d || [[%s:User:%s|%s]] || %s || [[%s:Special:Contributions/%s|%d]] " % (c, prefix, user_name, user_name, domain, prefix, user_name, user_editcount)
                     c+=1
