@@ -146,10 +146,5 @@ def main():
     wiii=wikipedia.Page(site, u"%s (bots included)" % wtitle)
     wiii.put(outputbot, u"BOT - Updating ranking")
 
-    cursor.close()
-    conn.close()
-
-
 if __name__ == "__main__":
     main()
-

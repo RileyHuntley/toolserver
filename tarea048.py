@@ -49,7 +49,7 @@ l.reverse()
 site=wikipedia.Site('es', 'wikipedia')
 
 weekday={0:u'lunes', 1:u'martes', 2:u'miércoles', 3:u'jueves', 4:u'viernes', 5:u'sábado', 6:u'domingo'}
-monthname={1:u'enero', 2:u'febrero', 3:u'marzo', 4:u'abril'}
+monthname={1:u'enero', 2:u'febrero', 3:u'marzo', 4:u'abril', 5:u'mayo', 6:u'junio', 7:u'julio', 8:u'agosto', 9:u'septiembre', 10:u'octubre', 11:u'noviembre', 12:u'diciembre'}
 
 output=u"{| class='wikitable sortable' align='right' style='text-align: center' \n! Día !! Ediciones "
 for day, edits in l:
