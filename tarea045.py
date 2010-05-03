@@ -34,10 +34,7 @@ users=[]
 bots=[]
 botssubpage=wikipedia.Page(site, u"%s/Unflagged bots" % wtitle)
 if botssubpage.exists():
-    for l in botssubpage.get().splitlines():
-        t=l.split(";")
-        if len(t)==3:
-            bots.append([t[0], t[1], t[2]])
+    bots=botssubpage.get().splitlines()
     output=botssubpage.get().splitlines()
     output.sort()
     botssubpage.put("\n".join(output), u"BOT - Sorting list")
@@ -97,8 +94,9 @@ for user_editcount, user_name, domain, lang, family in users:
         prefix=family
     else:
         prefix=u"%s:%s" % (family, lang)
-    if hidden.count(user_name): # usuario oculto
-        if bots.count([lang, family, user_name])==0: #no es bot
+    isBot=len(re.findall(ur'(%s|\*);(%s|\*);%s' % (lang, family, user_name), '\n'.join(bots)))
+    if hidden.count(user_name)>0: # usuario oculto
+        if isBot==0: #no es bot
             if c<=limit:
                 output+=u"\n|-\n| %d || [Placeholder] || %s || %d " % (c, domain, user_editcount)
                 c+=1
@@ -112,8 +110,8 @@ for user_editcount, user_name, domain, lang, family in users:
                 output+=u"\n|-\n| %d || [[%s:User:%s|%s]] || %s || [[%s:Special:Contributions/%s|%d]] " % (c, prefix, user_name, user_name, domain, prefix, user_name, user_editcount)
                 c+=1
         #sea bot o no
-        outputbot+=u"\n|-\n| %d || [[%s:User:%s|%s]] || %s || [[%s:Special:Contributions/%s|%d]] " % (cbots, prefix, user_name, user_name, domain, prefix, user_name, user_editcount)
         if cbots<=limit:
+            outputbot+=u"\n|-\n| %d || [[%s:User:%s|%s]] || %s || [[%s:Special:Contributions/%s|%d]] " % (cbots, prefix, user_name, user_name, domain, prefix, user_name, user_editcount)
             cbots+=1
     if c>limit and cbots>limit:
         break
@@ -126,4 +124,3 @@ wiii.put(outputbot, u"BOT - Updating ranking")
 
 cursor.close()
 conn.close()    
-
