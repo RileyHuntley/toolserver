@@ -59,7 +59,11 @@ def main():
                     target = wikipedia.Page(wiki, pagetitle)
                     if target.exists():
                         if target.isRedirectPage():
-                            redirect.put(ur"#REDIRECT [[%s]]%s" % (target.getRedirectTarget().title(), footer), u"BOT - %s [[%s]]" % (summary, target.getRedirectTarget().title()))
+                            target = target.getRedirectTarget()
+                            if target.exists() and not target.isRedirectPage():
+                                redirect.put(ur"#REDIRECT [[%s]]%s" % (target.title(), footer), u"BOT - %s [[%s]]" % (summary, target.title()))
+                            else:
+                                pass #demasiadas redirecciones anidadas
                         else:
                             redirect.put(ur"#REDIRECT [[%s]]%s" % (target.title(), footer), u"BOT - %s [[%s]]" % (summary, target.title()))
                 
