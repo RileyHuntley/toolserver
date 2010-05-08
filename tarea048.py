@@ -55,7 +55,7 @@ output=u"{| class='wikitable sortable' align='right' style='text-align: center' 
 for day, edits in l:
     date=datetime.datetime(year=int(day[0:4]), month=int(day[4:6]), day=int(day[6:8]))
     output+=u"\n|-\n| %s, [[%d de %s]] || %d " % (weekday[date.weekday()], date.day, monthname[date.month], edits)
-output+=u"\n|-\n| colspan=2 | <small>''Esta tabla recoge la actividad de AVBOT<br/>en los últimos días''</small>\n|}"
+output+=u"\n|-\n| colspan=2 | <small>''Esta tabla recoge la actividad de AVBOT<br/>en los últimos días<br/>* La tasa ha disminuido gracias a<br/>la nueva herramienta [[Special:AbuseFilter|AbuseFilter]]''</small>\n|}"
 
 wii=wikipedia.Page(site, u"User:AVBOT/Últimos días")
 wii.put(output, u"BOT - Actualizando plantilla")
