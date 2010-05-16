@@ -275,7 +275,15 @@ for family, langs in projects.items():
                 continue
 
             if optouts.count(nick)==0:
-                if admins.count(nick)>0:
+                if bots.count(nick)>0 or re.search(bot_r, nick): #primero miramos si es bot, para evitar mostrar admins bots comoo Cydebot
+                    if c<=10:
+                        pass #no bots in the top 10 template
+                    if c<=cuantos:
+                        pass #no bots in this ranking
+                    if cbots<=cuantos:
+                        sbots+=u"|-\n| %d || [[User:%s|%s]] (Bot) || [[Special:Contributions/%s|%d]] \n" % (cbots,nick,nick,nick,ed)
+                        cbots+=1
+                elif admins.count(nick)>0:
                     if c<=10:
                         planti+=u"|-\n| %d || [[User:%s|%s]] (Admin) || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick,nick,ed)
                         #no poner c+=1 sino incrementa dos veces
@@ -284,14 +292,6 @@ for family, langs in projects.items():
                         c+=1
                     if cbots<=cuantos:
                         sbots+=u"|-\n| %d || [[User:%s|%s]] (Admin) || [[Special:Contributions/%s|%d]] \n" % (cbots,nick,nick,nick,ed)
-                        cbots+=1
-                elif bots.count(nick)>0 or re.search(bot_r, nick):
-                    if c<=10:
-                        pass #no bots in the top 10 template
-                    if c<=cuantos:
-                        pass #no bots in this ranking
-                    if cbots<=cuantos:
-                        sbots+=u"|-\n| %d || [[User:%s|%s]] (Bot) || [[Special:Contributions/%s|%d]] \n" % (cbots,nick,nick,nick,ed)
                         cbots+=1
                 else:
                     if c<=10:
