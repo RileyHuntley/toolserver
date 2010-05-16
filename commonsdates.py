@@ -313,6 +313,11 @@ def main():
                     day="0"+day
                 break
             
+            #4 casos posibles:
+            #ambos > 12 imposible
+            #ambos < 12 ambiguedad (usar metadatos)
+            #day > 12 y month <= 12 todo bien
+            #day <= 12 y month > 12 invertir
             if int(day)>12 and int(month)>12: #error
                 continue
             elif int(day)<=12 and int(month)<=12: #usamos metadatos para evitar ambiguedad
@@ -341,15 +346,20 @@ def main():
                     continue
                 
                 #verificamos dd y mm, y sino intercambiamos, y sino saltamos
-                if metadatadate2[0][1]==month and metadatadate2[0][2]==day:
+                if metadatadate2[0][0]==year and metadatadate2[0][1]==month and metadatadate2[0][2]==day:
                     pass #todo bien
-                elif metadatadate2[0][1]==day and metadatadate2[0][2]==month:
+                elif metadatadate2[0][0]==year and metadatadate2[0][1]==day and metadatadate2[0][2]==month:
                     #tenemos que intercambiarlos
                     aux=month
                     month=day
                     day=aux
                 else:
                     continue
+            elif int(month)>12:
+                #http://commons.wikimedia.org/w/index.php?title=File:16-23_John_Hart_House_2.jpg&diff=39393632&oldid=39248969
+                aux=day
+                day=month
+                month=aux
             
             newtext=re.sub(regexp_ddmmaaaa, sub_ddmmaaaa % (year, month, day), newtext, 1)
             m=re.compile(regexp_changed).finditer(newtext)
