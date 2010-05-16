@@ -14,33 +14,43 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import wikipedia,re,os
+import wikipedia
+import re
+import os
+import datetime
 
-os.system('date +"%Y-%m-%d" > /home/emijrp/temporal/tarea009.data')
+def main():
+    date=datetime.date.today().isoformat()
 
-f=open('/home/emijrp/temporal/tarea009.data', 'r')
-sql=unicode(f.read(), 'utf-8')
-f.close()
-m=re.compile(ur"(\d{4}-\d{2}-\d{2})").finditer(sql)
+    commonssite=wikipedia.Site("commons", "commons")
+    eswikisite=wikipedia.Site("es", "wikipedia")
 
-for i in m:
-    date=i.group(1)
+    page=wikipedia.Page(commonssite, u"Template:Potd/%s" % date)
+    file=u"Example.jpg"
+    if page.exists() and not page.isRedirectPage() and not page.isDisambig():
+        file=page.get()
+    file=file.split("|")[1].split("|")[0]
 
-page=wikipedia.Page(wikipedia.Site("commons", "commons"), u"Template:Potd/%s" % date)
-file=u"Example.jpg"
-if page.exists() and not page.isRedirectPage() and not page.isDisambig():
-    file=page.get()
-file=file.split("|")[1].split("|")[0]
+    description=u""
+    for lang in ['es', 'en']:
+        page=wikipedia.Page(commonssite, u"Template:Potd/%s (%s)" % (date, lang))
+        if page.exists() and not page.isRedirectPage() and not page.isDisambig():
+            description=page.get()
+            if re.search(ur"(?i)(\{\{ *Potd description *\|1=)", description):
+                description=description.split("|1=")[1].split("|2=")[0]
+            elif re.search(ur"(?i)(\{\{ *Potd description *\|[^ \d])", description):
+                description=description.split("|")[1].split("|")[0]
+            elif not re.search(ur"(?i)\{\{", description):
+                pass
+            else:
+                print "Error al parsear", description
+                description=u""
 
-page=wikipedia.Page(wikipedia.Site("commons", "commons"), u"Template:Potd/%s (es)" % date)
-description=u"Error. No hay imagen del día."
-if page.exists() and not page.isRedirectPage() and not page.isDisambig():
-    description=page.get()
-description=description.split("=")[1].split("\n")[0]
+    page=wikipedia.Page(eswikisite, u"Template:IDDC/Imagen")
+    page.put(file, u"BOT - Actualizando imagen del día de Commons")
 
-page=wikipedia.Page(wikipedia.Site("es", "wikipedia"), u"Template:IDDC/Imagen")
-page.put(file, u"BOT - Actualizando imagen del día de Commons")
+    page=wikipedia.Page(eswikisite, u"Template:IDDC/Descripción")
+    page.put(description, u"BOT - Actualizando descripción de la imagen del día de Commons")
 
-page=wikipedia.Page(wikipedia.Site("es", "wikipedia"), u"Template:IDDC/Descripción")
-page.put(description, u"BOT - Actualizando descripción de la imagen del día de Commons")
-
+if __name__ == "__main__":
+    main()
