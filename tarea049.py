@@ -52,7 +52,7 @@ def main():
 
         for pagetitle in endashes:
             pagetitle_ = re.sub(ur"–", ur"-", pagetitle)
-            #if re.sub(ur"[\–\-]", ur" ", pagetitle)!=re.sub(ur"[\–\-]", ur" ", pagetitle_): #lo pongo o no? #fix
+            #if re.sub(ur"[\–\-]", ur" ", pagetitle).lower()!=re.sub(ur"[\–\-]", ur" ", pagetitle_).lower(): #lo pongo o no? #fix
             #    footer=""
             if pagetitle_ not in hyphens:
                 #creamos
