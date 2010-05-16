@@ -115,7 +115,8 @@ def main():
 
     #dd/mm/aaaa para dd>12
     separador_ddmmaaaa=[ur" *del? *", ur" *[\-\/\,\. ] *"]  #cuidado no meter ()
-    regexp_ddmmaaaa=ur"%s(?P<change>(?P<day>1[3-9]|2[0-9]|3[0-1])(?P<separator1>%s)(?P<month>[1-9]|0[1-9]|1[0-2]|\g<day>)(?P<separator2>%s)(?P<year>\d{4}))%s" % (inicio, "|".join(separador_ddmmaaaa), "|".join(separador_ddmmaaaa), fin)
+    #regexp_ddmmaaaa=ur"%s(?P<change>(?P<day>1[3-9]|2[0-9]|3[0-1])(?P<separator1>%s)(?P<month>[1-9]|0[1-9]|1[0-2]|\g<day>)(?P<separator2>%s)(?P<year>\d{4}))%s" % (inicio, "|".join(separador_ddmmaaaa), "|".join(separador_ddmmaaaa), fin)
+    regexp_ddmmaaaa=ur"%s(?P<change>(?P<day>0?[1-9]|1[0-9]|2[0-9]|3[0-1])(?P<separator1>%s)(?P<month>0?[1-9]|1[0-2])(?P<separator2>%s)(?P<year>\d{4}))%s" % (inicio, "|".join(separador_ddmmaaaa), "|".join(separador_ddmmaaaa), fin)
     sub_ddmmaaaa=ur"\g<inicio>%s-%s-%s\g<fin>"
 
     #mm/dd/aaaa para dd>12
@@ -123,7 +124,7 @@ def main():
     regexp_mmddaaaa=ur"%s(?P<change>(?P<month>[1-9]|0[1-9]|1[0-2])(?P<separator1>%s)(?P<day>1[3-9]|2[0-9]|3[0-1]|\g<month>)(?P<separator2>%s)(?P<year>\d{4}))%s" % (inicio, "|".join(separador_mmddaaaa), "|".join(separador_mmddaaaa), fin)
     sub_mmddaaaa=ur"\g<inicio>%s-%s-%s\g<fin>"
 
-    #aaaa/mm/dd para dd>12
+    #aaaa/mm/dd para dd>12 #este no suele tener mucha utilidad porque es el mismo que perseguimos aaaa-mm-dd
     #no tiene mucho sentido http://commons.wikimedia.org/w/index.php?title=File:0-Bullet-anatomy.svg&diff=prev&oldid=23123025
     #le quitamos el - del separador y ya tiene más sentido : )
     separador_aaaammdd=[ur" *del? *", ur" *[\/\,\. ] *"]  #cuidado no meter ()
@@ -173,7 +174,7 @@ def main():
     for page in pre:
         if not page.exists() or page.isRedirectPage() or page.isDisambig():
             continue
-    
+        
         wtitle=page.title()
         wtext=newtext=page.get()
     
@@ -183,7 +184,7 @@ def main():
         
         change=u""
         changed=""
-    
+        metadatadate=""
         if len(re.findall(regexp_es, newtext))==1: #español dd month aaaa
             m=re.compile(regexp_es).finditer(newtext)
         
@@ -291,9 +292,33 @@ def main():
             for i in m:
                 changed=i.group("changed")
                 break
-        elif len(re.findall(regexp_ddmmaaaa, newtext))==1: # dd mm aaaa genericos
+        elif len(re.findall(regexp_ddmmaaaa, newtext))==1: # dd mm aaaa ó mm dd aaaa genericos
             m=re.compile(regexp_ddmmaaaa).finditer(newtext)
-        
+            
+            #metadatos
+            metadata=wikipedia.query.GetData({'action':'query', 'prop':'imageinfo', 'iiprop':'metadata', 'titles':'%s' % re.sub(" ", "_", page.title())},site=wikipedia.Site('commons','commons'),useAPI=True)
+            metadata=metadata['query']['pages'][metadata['query']['pages'].keys()[0]]['imageinfo'][0]['metadata']
+            metadatadate=""
+            metadatac=0
+            if metadata!=None:
+                for metadatadict in metadata:
+                    metaname=metadatadict['name']
+                    metavalue=metadatadict['value']
+                    
+                    if metaname in ['DateTime', 'DateTimeOriginal', 'DateTimeDigitized']:
+                        metadatac+=1 #para mas seguridad, pedimos 3 metadatos de fechas
+                        #print metaname, metavalue
+                        if not metadatadate:
+                            metadatadate=metavalue
+                        elif metadatadate!=metavalue: # los metadatos arrojan varios valores de fechas
+                            continue #nos vamos
+            #tiene el formato habitual? 2008:04:10 11:41:31
+            metadatadate2=re.findall(ur"(\d{4}):(\d{2}):(\d{2}) \d{2}:\d{2}:\d{2}", metadatadate)
+            #print len(metadatadate)
+            #print metadatadate2
+            if metadatac!=3 or len(metadatadate)!=19 or len(metadatadate2)!=1: #[(u'2008', u'12', u'07')]
+                continue
+            
             year=month=day=u""
             for i in m:
                 change=i.group("change")
@@ -303,26 +328,19 @@ def main():
                 if len(day)==1: #nunca deberia entrar aqui, a menos que coincida con el numero del mes
                     day="0"+day
                 break
-        
+            
+            #verificamos dd y mm, y sino intercambiamos, y sino saltamos
+            if metadatadate2[0][1]==month and metadatadate2[0][2]==day:
+                pass #todo bien
+            elif metadatadate2[0][1]==day and metadatadate2[0][2]==month:
+                #tenemos que intercambiarlos
+                aux=month
+                month=day
+                day=aux
+            else:
+                continue
+            
             newtext=re.sub(regexp_ddmmaaaa, sub_ddmmaaaa % (year, month, day), newtext, 1)
-            m=re.compile(regexp_changed).finditer(newtext)
-            for i in m:
-                changed=i.group("changed")
-                break
-        elif len(re.findall(regexp_mmddaaaa, newtext))==1: # mm dd aaaa genericos
-            m=re.compile(regexp_mmddaaaa).finditer(newtext)
-        
-            year=month=day=u""
-            for i in m:
-                change=i.group("change")
-                [year, month, day]=[i.group("year"), i.group("month"), i.group("day")]
-                if len(month)==1:
-                    month="0"+month
-                if len(day)==1: #nunca deberia entrar aqui, a menos que coincida con el numero del mes
-                    day="0"+day
-                break
-        
-            newtext=re.sub(regexp_mmddaaaa, sub_mmddaaaa % (year, month, day), newtext, 1)
             m=re.compile(regexp_changed).finditer(newtext)
             for i in m:
                 changed=i.group("changed")
@@ -428,6 +446,8 @@ def main():
                         summary+=u" %s %s → %s %s;" % (change, changehour, changed, hour)
                     else:
                         summary+=u" %s → %s;" % (change, changed)
+                    if metadatadate:
+                        summary+=u" verified using metadata %s" % (metadatadate)
                 if changed_own:
                     summary+=u" %s → %s;" % (change_own, changed_own)
                 if changed_lic:
