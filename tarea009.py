@@ -26,10 +26,12 @@ def main():
     eswikisite=wikipedia.Site("es", "wikipedia")
 
     page=wikipedia.Page(commonssite, u"Template:Potd/%s" % date)
-    file=u"Example.jpg"
+    file=u""
     if page.exists() and not page.isRedirectPage() and not page.isDisambig():
         file=page.get()
-    file=file.split("|")[1].split("|")[0]
+        file=file.split("|")[1].split("|")[0]
+    else:
+        sys.exit()
 
     description=u""
     for lang in ['es', 'en']:
@@ -47,10 +49,12 @@ def main():
                 description=u""
 
     page=wikipedia.Page(eswikisite, u"Template:IDDC/Imagen")
-    page.put(file, u"BOT - Actualizando imagen del día de Commons")
+    if page.get()!=file:
+        page.put(file, u"BOT - Actualizando imagen del día de Commons")
 
     page=wikipedia.Page(eswikisite, u"Template:IDDC/Descripción")
-    page.put(description, u"BOT - Actualizando descripción de la imagen del día de Commons")
+    if page.get()!=description:
+        page.put(description, u"BOT - Actualizando descripción de la imagen del día de Commons")
 
 if __name__ == "__main__":
     main()
