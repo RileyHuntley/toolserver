@@ -49,7 +49,9 @@ def main():
     pre=pagegenerators.PreloadingGenerator(gen, pageNumber=250, lookahead=250)
 
     inicio=ur"(?im)^(?P<inicio> *\| *Date *\= *)"
-    fin=ur"[ \.]*(?P<fin> *((at|a las|,|  *)? *\d\d:\d\d(:\d\d)?)?[ \.]*[\n\r\|])" #eliminamos . finales que no permiten hacer la conversión de fechas
+    # eliminamos . finales que no permiten hacer la conversión de fechas
+    # no meter el espacio en [ \.]* al comienzo http://commons.wikimedia.org/w/index.php?title=File:18crown6.2.png&diff=prev&oldid=39395458
+    fin=ur"\.*(?P<fin> *((at|a las|,)? *\d\d:\d\d(:\d\d)?)?[ \.]*[\n\r\|])" 
 
     #español   dd month aaaa
     separador_es=[ur" *de?l? *", ur" *[\-\/\,\. ]? *"] #cuidado no meter ()
@@ -441,7 +443,7 @@ def main():
         #wikipedia.showDiff(wtext, newtext)
         changehour=""
         hour=""
-        hour_r=ur"%s(?P<date>\d{4}-\d{2}(-\d{2})?)(?P<change> *(at|a las|,|  *) *(?P<hour>\d\d:\d\d(:\d\d)?)[ \.]*)(?P<fin>[\|\n\r])" % (inicio)
+        hour_r=ur"%s(?P<date>\d{4}-\d{2}(-\d{2})?)(?P<change> *(at|a las|,) *(?P<hour>\d\d:\d\d(:\d\d)?)[ \.]*)(?P<fin>[\|\n\r])" % (inicio)
         m=re.compile(hour_r).finditer(newtext)
         for i in m:
             changehour=i.group("change")
@@ -476,7 +478,7 @@ def main():
                 if changed_sum:
                     summary+=u" %s → %s;" % (change_sum, changed_sum)
             
-                page.put(newtext, summary)
+                #page.put(newtext, summary)
                 c+=1
             except:
                 pass
