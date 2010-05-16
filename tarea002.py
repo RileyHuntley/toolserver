@@ -25,12 +25,12 @@ import wikipedia
 
 projects = {
 'wikipedia': 
-  {'es': {u'prefix': "Usuario:Emijrp/MiPortal/Lemario/", 
-          u'footer': "<noinclude>{{documentación de plantilla}}</noinclude>"}
+  {'es': {u'prefix': u"Usuario:Emijrp/MiPortal/Lemario/", 
+          u'footer': u"<noinclude>{{documentación de plantilla}}</noinclude>"}
   },
 'wiktionary':
-  {'es': {u'prefix': "Wikcionario:Apéndice:Lemario/",
-          u'footer': ""}
+  {'es': {u'prefix': u"Wikcionario:Apéndice:Lemario/",
+          u'footer': u""}
   }
 }
              
