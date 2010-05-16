@@ -67,7 +67,7 @@ def main():
     u"noviembre":u"11", u"nov":u"11", 
     u"diciembre":u"12", u"dic":u"12",
     }
-    regexp_es=ur"%s(?P<change>\[?\[?(?P<day>[1-9]|0[1-9]|1[0-9]|2[0-9]|3[0-1])\]?\]?(?P<separator1>%s)\[?\[?(?P<month>%s)\]?\]?(?P<separator2>%s)\[?\[?(?P<year>\d{4}|\d{2})\]?\]?)%s" % (inicio, "|".join(separador_es), "|".join(month2number_es.keys()), "|".join(separador_es), fin)
+    regexp_es=ur"%s(?P<change>\[?\[?(?P<day>[1-9]|0[1-9]|1[0-9]|2[0-9]|3[0-1])\]?\]?(?P<separator1>%s)\[?\[?(?P<month>%s)\]?\]?(?P<separator2>%s)\[?\[?(?P<year>\d{4})\]?\]?)%s" % (inicio, "|".join(separador_es), "|".join(month2number_es.keys()), "|".join(separador_es), fin)
     regexp_es_monthaaaa=ur"%s(?P<change>\[?\[?(?P<month>%s)\]?\]?(?P<separator2>%s)\[?\[?(?P<year>\d{4})\]?\]?)%s" % (inicio, "|".join(month2number_es.keys()), "|".join(separador_es), fin)
     sub_es=ur"\g<inicio>%s-%s-%s\g<fin>"
     sub_es_monthaaaa=ur"\g<inicio>%s-%s\g<fin>"
@@ -88,7 +88,7 @@ def main():
     u"november":u"11", u"nov":u"11", 
     u"december":u"12", u"dec":u"12",
     }
-    regexp_en=ur"%s(?P<change>\[?\[?(?P<day>[1-9]|0[1-9]|1[0-9]|2[0-9]|3[0-1])\]?\]?(?P<separator1>%s)\[?\[?(?P<month>%s)\]?\]?(?P<separator2>%s)\[?\[?(?P<year>\d{4}|\d{2})\]?\]?)%s" % (inicio, "|".join(separador_en), "|".join(month2number_en.keys()), "|".join(separador_en), fin)
+    regexp_en=ur"%s(?P<change>\[?\[?(?P<day>[1-9]|0[1-9]|1[0-9]|2[0-9]|3[0-1])\]?\]?(?P<separator1>%s)\[?\[?(?P<month>%s)\]?\]?(?P<separator2>%s)\[?\[?(?P<year>\d{4})\]?\]?)%s" % (inicio, "|".join(separador_en), "|".join(month2number_en.keys()), "|".join(separador_en), fin)
     regexp_en_monthddaaaa=ur"%s(?P<change>\[?\[?(?P<month>%s)\]?\]?(?P<separator1>%s)\[?\[?(?P<day>[1-9]|0[1-9]|1[0-9]|2[0-9]|3[0-1])\]?\]?(?P<separator2>%s)\[?\[?(?P<year>\d{4})\]?\]?)%s" % (inicio, "|".join(month2number_en.keys()), "|".join(separador_en), "|".join(separador_en), fin)
     regexp_en_monthaaaa=ur"%s(?P<change>\[?\[?(?P<month>%s)\]?\]?(?P<separator2>%s)\[?\[?(?P<year>\d{4})\]?\]?)%s" % (inicio, "|".join(month2number_en.keys()), "|".join(separador_en), fin)
     sub_en=ur"\g<inicio>%s-%s-%s\g<fin>"
@@ -110,7 +110,7 @@ def main():
     u"novembre":u"11",
     u"décembre":u"12",
     }
-    regexp_fr=ur"%s(?P<change>\[?\[?(?P<day>[1-9]|0[1-9]|1[0-9]|2[0-9]|3[0-1])(?P<separator1>%s)(?P<month>%s)\]?\]?(?P<separator2>%s)\[?\[?(?P<year>\d{4}|\d{2})\]?\]?)%s" % (inicio, "|".join(separador_fr), "|".join(month2number_fr.keys()), "|".join(separador_fr), fin)
+    regexp_fr=ur"%s(?P<change>\[?\[?(?P<day>[1-9]|0[1-9]|1[0-9]|2[0-9]|3[0-1])(?P<separator1>%s)(?P<month>%s)\]?\]?(?P<separator2>%s)\[?\[?(?P<year>\d{4})\]?\]?)%s" % (inicio, "|".join(separador_fr), "|".join(month2number_fr.keys()), "|".join(separador_fr), fin)
     sub_fr=ur"\g<inicio>%s-%s-%s\g<fin>"
 
     #dd/mm/aaaa para dd>12
@@ -201,6 +201,8 @@ def main():
                     #    year='20'+year
                     if year in ['90', '91', '92', '93', '94', '95', '96', '97', '98', '99']:
                         year='19'+year
+                    else:
+                        continue
                 break
         
             newtext=re.sub(regexp_es, sub_es % (year, month2number_es[month.lower()], day), newtext, 1)
@@ -236,6 +238,8 @@ def main():
                     #    year='20'+year
                     if year in ['90', '91', '92', '93', '94', '95', '96', '97', '98', '99']:
                         year='19'+year
+                    else:
+                        continue
                 break
         
             newtext=re.sub(regexp_en, sub_en % (year, month2number_en[month.lower()], day), newtext, 1)
@@ -287,6 +291,8 @@ def main():
                     #    year='20'+year
                     if year in ['90', '91', '92', '93', '94', '95', '96', '97', '98', '99']:
                         year='19'+year
+                    else:
+                        continue
                 break
         
             newtext=re.sub(regexp_fr, sub_fr % (year, month2number_fr[month.lower()], day), newtext, 1)
