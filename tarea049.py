@@ -19,6 +19,7 @@
 import MySQLdb
 import re
 import sets
+import time
 
 import wikipedia
 
@@ -51,25 +52,26 @@ def main():
         print len(endashes), "endashes"
 
         for pagetitle in endashes:
+            footer2=footer
             pagetitle_ = re.sub(ur"–", ur"-", pagetitle)
-            #if re.sub(ur"[\–\-]", ur" ", pagetitle).lower()!=re.sub(ur"[\–\-]", ur" ", pagetitle_).lower(): #lo pongo o no? #fix
-            #    footer=""
             if pagetitle_ not in hyphens:
                 #creamos
                 redirect = wikipedia.Page(wiki, pagetitle_)
                 if not redirect.exists():
+                    time.sleep(3)
                     target = wikipedia.Page(wiki, pagetitle)
                     if target.exists():
                         if target.isRedirectPage():
+                            footer2=""
                             target = target.getRedirectTarget()
                             if target.exists() and not target.isRedirectPage():
-                                redirect.put(ur"#REDIRECT [[%s]]%s" % (target.title(), footer), u"BOT - %s [[%s]]" % (summary, target.title()))
-                                print ur"#REDIRECT [[%s]]%s" % (target.title(), footer)
+                                redirect.put(ur"#REDIRECT [[%s]]%s" % (target.title(), footer2), u"BOT - %s [[%s]]" % (summary, target.title()))
+                                print ur"#REDIRECT [[%s]]%s" % (target.title(), footer2)
                             else:
                                 pass #demasiadas redirecciones anidadas
                         else:
-                            redirect.put(ur"#REDIRECT [[%s]]%s" % (target.title(), footer), u"BOT - %s [[%s]]" % (summary, target.title()))
-                            print ur"#REDIRECT [[%s]]%s" % (target.title(), footer)
+                            redirect.put(ur"#REDIRECT [[%s]]%s" % (target.title(), footer2), u"BOT - %s [[%s]]" % (summary, target.title()))
+                            print ur"#REDIRECT [[%s]]%s" % (target.title(), footer2)
                 
 if __name__ == "__main__":
     main()
