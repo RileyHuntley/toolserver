@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-""" Bot searches for titles with endashes and creates a redirect from hyphens """
+""" Bot searches for titles with endashes (–) and creates a redirect from hyphens (-) """
 
 import MySQLdb
 import re
@@ -52,6 +52,8 @@ def main():
 
         for pagetitle in endashes:
             pagetitle_ = re.sub(ur"–", ur"-", pagetitle)
+            #if re.sub(ur"[\–\-]", ur" ", pagetitle)!=re.sub(ur"[\–\-]", ur" ", pagetitle_): #lo pongo o no? #fix
+            #    footer=""
             if pagetitle_ not in hyphens:
                 #creamos
                 redirect = wikipedia.Page(wiki, pagetitle_)
@@ -62,10 +64,12 @@ def main():
                             target = target.getRedirectTarget()
                             if target.exists() and not target.isRedirectPage():
                                 redirect.put(ur"#REDIRECT [[%s]]%s" % (target.title(), footer), u"BOT - %s [[%s]]" % (summary, target.title()))
+                                print ur"#REDIRECT [[%s]]%s" % (target.title(), footer)
                             else:
                                 pass #demasiadas redirecciones anidadas
                         else:
                             redirect.put(ur"#REDIRECT [[%s]]%s" % (target.title(), footer), u"BOT - %s [[%s]]" % (summary, target.title()))
+                            print ur"#REDIRECT [[%s]]%s" % (target.title(), footer)
                 
 if __name__ == "__main__":
     main()
