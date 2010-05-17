@@ -22,6 +22,7 @@ import MySQLdb
 delay=5
 minimumedits=100 #edits to appear in the ranking, para evitar que aparezcan muchos usuarios con pocas ediciones
 minimumusers=10 #para evitar listas de 2 personas
+inactive=30 #days
 daily=False
 dailylimit=100000
 if len(sys.argv)>1:
@@ -30,7 +31,7 @@ if len(sys.argv)>1:
 
 table_header=u"{| class='wikitable sortable' style='text-align:center;'\n! #\n! User\n! Edits\n"
 table_footer=u"|}"
-optouttext=u"Users who don't wish to be on this list can add themselves to this [[meta:User:Emijrp/List of Wikimedians by number of edits/Anonymous|anonymizing list]] for future versions."
+optouttext=u"Users who don't wish to be on this list can add themselves to this [[meta:User:Emijrp/List of Wikimedians by number of edits/Anonymous|anonymizing list]] for future versions.\n\nUsers who have not edited for at least %d days are in gray." % inactive
 begin=u"''Please, translate this into your language and delete the english text'': This table shows '''first {{{1}}} users with more edits''' in this Wikipedia. Bots are not included.\n\n''If you want to change page title, contact to [[:es:User talk:Emijrp]]. Thanks.''\n\n<center>\n%s" % table_header
 begin2=u"''Please, translate this into your language and delete the english text'': This table shows '''first {{{1}}} users with more edits''' in this Wikipedia. Bots are included.\n\n''If you want to change page title, contact to [[:es:User talk:Emijrp]]. Thanks.''\n\n<center>\n%s" % table_header
 end=u"%s\n</center>\n\n''Please, put here a category similar to <nowiki>[[Category:Wikipedia statistics]]</nowiki>.''" % table_footer
@@ -269,11 +270,17 @@ for family, langs in projects.items():
         planti=u"{| class='wikitable sortable' style='font-size: 90%;text-align: center;float: right;'\n! #\n! Usuario\n! Ediciones\n"
         bot_r=re.compile(ur"(?m)(^([Rr][Oo])?[Bb][Oo][Tt] | ([Rr][Oo])?([Bb][Oo][Tt])$|[a-z0-9\.\- ]([Rr][Oo])?(Bot|BOT)$|^([Rr][Oo])?BOT[a-z0-9\.\- ])")
         for row in result:
-            nick=unicode(row[0], 'utf-8')
+            nick=nick_=unicode(row[0], 'utf-8')
             ed=int(row[1])
             if ed<minimumedits and c>minimumusers: #al menos minimumusers, aunque no tengan ni el minimumedits necesario
                 continue
-
+            d=wikipedia.query.GetData({'action':'query', 'list':'usercontribs', 'ucuser':nick, 'ucprop':'timestamp', 'uclimit':'1'},site=site,useAPI=True)
+            if len(d['query']['usercontribs'])==1:
+                lastedit=datetime.datetime.strptime(d['query']['usercontribs'][0]['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
+                if (datetime.datetime.now()-lastedit).days>=inactive:
+                    nick_=u'<span style="color:gray">%s</span>' % nick
+                    print nick, "inactive"
+            
             if optouts.count(nick)==0:
                 if bots.count(nick)>0 or re.search(bot_r, nick): #primero miramos si es bot, para evitar mostrar admins bots comoo Cydebot
                     if c<=10:
@@ -281,27 +288,27 @@ for family, langs in projects.items():
                     if c<=cuantos:
                         pass #no bots in this ranking
                     if cbots<=cuantos:
-                        sbots+=u"|-\n| %d || [[User:%s|%s]] (Bot) || [[Special:Contributions/%s|%d]] \n" % (cbots,nick,nick,nick,ed)
+                        sbots+=u"|-\n| %d || [[User:%s|%s]] (Bot) || [[Special:Contributions/%s|%d]] \n" % (cbots,nick,nick_,nick,ed)
                         cbots+=1
                 elif admins.count(nick)>0:
                     if c<=10:
-                        planti+=u"|-\n| %d || [[User:%s|%s]] (Admin) || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick,nick,ed)
+                        planti+=u"|-\n| %d || [[User:%s|%s]] (Admin) || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick_,nick,ed)
                         #no poner c+=1 sino incrementa dos veces
                     if c<=cuantos:
-                        s+=u"|-\n| %d || [[User:%s|%s]] (Admin) || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick,nick,ed)
+                        s+=u"|-\n| %d || [[User:%s|%s]] (Admin) || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick_,nick,ed)
                         c+=1
                     if cbots<=cuantos:
-                        sbots+=u"|-\n| %d || [[User:%s|%s]] (Admin) || [[Special:Contributions/%s|%d]] \n" % (cbots,nick,nick,nick,ed)
+                        sbots+=u"|-\n| %d || [[User:%s|%s]] (Admin) || [[Special:Contributions/%s|%d]] \n" % (cbots,nick,nick_,nick,ed)
                         cbots+=1
                 else:
                     if c<=10:
-                        planti+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick,nick,ed)
+                        planti+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick_,nick,ed)
                         #no poner c+=1 sino incrementa dos veces
                     if c<=cuantos:
-                        s+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick,nick,ed)
+                        s+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%d]] \n" % (c,nick,nick_,nick,ed)
                         c+=1
                     if cbots<=cuantos:
-                        sbots+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%d]] \n" % (cbots,nick,nick,nick,ed)
+                        sbots+=u"|-\n| %d || [[User:%s|%s]] || [[Special:Contributions/%s|%d]] \n" % (cbots,nick,nick_,nick,ed)
                         cbots+=1
             elif optouts.count(nick)>0:
                 if c<=10:
