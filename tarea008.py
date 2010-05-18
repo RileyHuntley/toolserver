@@ -279,7 +279,7 @@ for family, langs in projects.items():
                 lastedit=datetime.datetime.strptime(d['query']['usercontribs'][0]['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
                 if (datetime.datetime.now()-lastedit).days>=inactive:
                     nick_=u'<span style="color:gray">%s</span>' % nick
-                    print nick, "inactive"
+                    #print nick, "inactive"
             
             if optouts.count(nick)==0:
                 if bots.count(nick)>0 or re.search(bot_r, nick): #primero miramos si es bot, para evitar mostrar admins bots comoo Cydebot
