@@ -146,7 +146,7 @@ def insertBOTijoInfo(site):
             #bot.put(u"This is a bot account operated by [[w:es:User:Emijrp|emijrp]] ([[w:es:User talk:Emijrp|talk]]) from [[w:es:Mainpage|Spanish Wikipedia]].\n\n'''This [[w:en:Wikipedia:Bot policy|bot]] runs on the [[meta:Toolserver|Wikimedia Toolserver]].''' <br /><small>''Administrators: If this bot needs to be blocked due to a malfunction, please remember to disable autoblocks so that other Toolserver bots are not affected.''", u"BOT - Creating bot userpage")
             bot.put(u"{{/info|flag}}", u"BOT - Creating bot userpage")
             time.sleep(delay)
-        else:
+        elif not re.search(ur"(?i)\{\{\/info\|flag\}\}", bot.get()):
             bot.put(u"%s\n{{/info|flag}}" % re.sub(ur"(?i)\{\{\s*/info[^\}]*?\}\}", ur"", bot.get()), u"BOT - Flag granted")
             time.sleep(delay)
 

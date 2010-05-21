@@ -31,7 +31,7 @@ f=open("gourceforwiki.log", "w")
 f.write(start)
 conn = MySQLdb.connect(host='sql-s3', db='eswiki_p', read_default_file='~/.my.cnf', use_unicode=True)
 cursor = conn.cursor()
-limit=500000
+limit=200000
 #cursor.execute("SELECT rc_id, rc_user_text, rc_timestamp, rc_namespace, rc_title from recentchanges where rc_deleted=0 order by rc_timestamp asc limit %d;" % limit)
 cursor.execute("SELECT rev_id, rev_user_text, rev_timestamp, page_namespace, page_title from revision inner join page on rev_page=page_id where 1 order by rev_timestamp asc limit %d;" % limit)
 result=[]
