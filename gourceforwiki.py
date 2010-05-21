@@ -22,7 +22,7 @@ import math
 import datetime
 import sets
 
-namespaces={-2: u"Media/", -1: u"Especial/", 0: u"", 1: u"Discusión/", 2: u"Usuario/", 3: u"UsuarioDiscusión/", 4: u"Wikipedia/", 5: u"WikipediaDiscusión/", 6: u"Archivo/", 7: u"ArchivoDiscusión/", 8: u"MediaWiki/", 9: u"MediaWikiDiscusión/", 10: u"Plantilla/", 11: u"PlantillaDiscusión/", 12: u"Ayuda/", 13: u"AyudaDiscusión/", 14: u"Categoría/", 15: u"CategoríaDiscusión/", 100: u"Portal/", 101: u"PortalDiscusión/", 102: u"Wikiproyecto/", 103: u"WikiproyectoDiscusión/", 104: u"Anexo/", 105: u"AnexoDiscusión/"}
+namespaces={-2: u"Media", -1: u"Especial", 0: u"", 1: u"Discusión", 2: u"Usuario", 3: u"Usuario Discusión", 4: u"Wikipedia", 5: u"Wikipedia Discusión", 6: u"Archivo", 7: u"Archivo Discusión", 8: u"MediaWiki", 9: u"MediaWiki Discusión", 10: u"Plantilla", 11: u"Plantilla Discusión", 12: u"Ayuda", 13: u"Ayuda Discusión", 14: u"Categoría", 15: u"Categoría Discusión", 100: u"Portal", 101: u"Portal Discusión", 102: u"Wikiproyecto", 103: u"Wikiproyecto Discusión", 104: u"Anexo", 105: u"Anexo Discusión"}
 
 start='<?xml version="1.0"?>\n<log>\n'
 end='</log>'
@@ -31,9 +31,9 @@ f=open("gourceforwiki.log", "w")
 f.write(start)
 conn = MySQLdb.connect(host='sql-s3', db='eswiki_p', read_default_file='~/.my.cnf', use_unicode=True)
 cursor = conn.cursor()
-limit=100000
-cursor.execute("SELECT rc_id, rc_user_text, rc_timestamp, rc_namespace, rc_title from recentchanges where rc_deleted=0 order by rc_timestamp asc limit %d;" % limit)
-#cursor.execute("SELECT rev_id, rev_user_text, rev_timestamp, page_namespace, page_title from revision inner join page on rev_page=page_id where 1 order by rev_timestamp asc limit %d;" % limit)
+limit=500000
+#cursor.execute("SELECT rc_id, rc_user_text, rc_timestamp, rc_namespace, rc_title from recentchanges where rc_deleted=0 order by rc_timestamp asc limit %d;" % limit)
+cursor.execute("SELECT rev_id, rev_user_text, rev_timestamp, page_namespace, page_title from revision inner join page on rev_page=page_id where 1 order by rev_timestamp asc limit %d;" % limit)
 result=[]
 
 pages=sets.Set()
@@ -45,7 +45,7 @@ while True:
     page_title=unicode(row[4], "utf-8")
     page_namespace=int(row[3])
     #page_title=re.sub("/", " ", page_title)
-    page_title_=u"%s%s" % (namespaces[page_namespace], page_title)
+    page_title_=u"%s:%s" % (namespaces[page_namespace], page_title)
     rc_timestamp=row[2]
     if page_title_ not in pages:
         creations.add('%s%s' % (page_title_, rc_timestamp))
@@ -68,12 +68,16 @@ for row in result:
         rc_namespace=int(row[3])
         rc_title=unicode(row[4], "utf-8")
         #rc_title=re.sub("/", " ", rc_title)
-        rc_title_=u"%s%s" % (namespaces[rc_namespace], rc_title)
+        rc_title_=u"%s:%s" % (namespaces[rc_namespace], rc_title)
         
         action="M"
         creation='%s%s' % (rc_title_, rc_timestamp)
         if creation in creations:
             action="A"
+        
+        path=u"/%s" % rc_title
+        if namespaces[rc_namespace]:
+            path=u"/%s/%s" % (namespaces[rc_namespace], rc_title_)
         
         logentry=u"""<logentry
            revision="%d">
@@ -82,10 +86,10 @@ for row in result:
         <paths>
         <path
            kind="file"
-           action="%s">/%s</path>
+           action="%s">%s</path>
         </paths>
         <msg></msg>
-        </logentry>\n""" % ((rows-c+1), rc_author, t, action, rc_title_)
+        </logentry>\n""" % ((rows-c+1), rc_author, t, action, path)
         
         logentry=re.sub("&", "&amp;", logentry)
         logentry=re.sub("_", " ", logentry)
