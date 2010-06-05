@@ -275,14 +275,14 @@ for family, langs in projects.items():
             if ed<minimumedits and c>minimumusers: #al menos minimumusers, aunque no tengan ni el minimumedits necesario
                 continue
             d=wikipedia.query.GetData({'action':'query', 'list':'usercontribs', 'ucuser':nick, 'ucprop':'timestamp', 'uclimit':'1'},site=site,useAPI=True)
-            if len(d['query']['usercontribs'])==1:
+            if d.has_key('query') and d['query'].has_key('usercontribs') and len(d['query']['usercontribs'])==1:
                 lastedit=datetime.datetime.strptime(d['query']['usercontribs'][0]['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
                 if (datetime.datetime.now()-lastedit).days>=inactive:
                     nick_=u'<span style="color:gray">%s</span>' % nick
-                    #print nick, "inactive"
+                    #print nick, "inactive" #da problemas de codificacion, mejor no imprimimos
             
             if optouts.count(nick)==0:
-                if bots.count(nick)>0 or re.search(bot_r, nick): #primero miramos si es bot, para evitar mostrar admins bots comoo Cydebot
+                if bots.count(nick)>0 or re.search(bot_r, nick): #primero miramos si es bot, para evitar mostrar admins bots como Cydebot
                     if c<=10:
                         pass #no bots in the top 10 template
                     if c<=cuantos:
