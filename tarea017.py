@@ -20,8 +20,7 @@ import pagegenerators
 site=wikipedia.Site("es", "wikipedia")
 
 data=site.getUrl("/w/index.php?title=Especial:WhatLinksHere/Plantilla:Ficha_de_wikiproyecto&limit=5000&from=0&namespace=102")
-data=data.split('<!-- start content -->')[1]
-data=data.split('<!-- end content -->')[0]
+data=data.split('<!-- bodytext -->')[1].split('<!-- /bodytext -->')[0]
 m=re.compile(ur'title="Wikiproyecto:(.*?)">Wikiproyecto').finditer(data)
 
 salida=u"{{/begin}}"

@@ -54,8 +54,7 @@ no_pattern = re.compile(ur'(%s)\:' % '|'.join(namespaces))
 
 bots=[]
 data=site.getUrl("/w/index.php?title=Special:Listusers&limit=5000&group=bot")
-data=data.split('<!-- start content -->')
-data=data[1].split('<!-- end content -->')[0]
+data=data.split('<!-- bodytext -->')[1].split('<!-- /bodytext -->')[0]
 m=re.compile(ur' title=".*?:(?P<botname>.*?)">').finditer(data)
 for i in m:
     bots.append(i.group("botname"))

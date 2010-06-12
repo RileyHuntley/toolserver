@@ -29,8 +29,7 @@ for lang in ['en', 'es', 'fr', 'de']:
     #cargamos lista de plantillas mas usadas
     templates=[]
     data=site.getUrl("/w/index.php?title=Special:Mostlinkedtemplates&limit=500&offset=0")
-    data=data.split('<!-- start content -->')
-    data=data[1].split('<!-- end content -->')[0]
+    data=data.split('<!-- bodytext -->')[1].split('<!-- /bodytext -->')[0]
     #<li><a href="/wiki/Mod%C3%A8le:!" title="Modèle:!">Modèle:!</a> ‎(<a href="/w/index.php?title=Special:Pages_li%C3%A9es&amp;target=Mod%C3%A8le%3A%21" title="Special:Pages liées">602 833 liens</a>)</li>
 
     m=re.compile(ur"(?i)<li><a href=\"[^\"]*?\" title=\"[^\:]*?\:([^\"]*?)\">.*?</a>.*?<a href=.*?>(.*?) [a-z]").finditer(data)

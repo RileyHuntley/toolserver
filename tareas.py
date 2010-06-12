@@ -78,8 +78,7 @@ def getPageTitleWithoutInterwiki(wiki, namespace=0):
 def getBotsDic(site):
     bots={u'BOTpolicia':False, u'AVBOT':False, u'CommonsDelinker':False, u'Eskimbot':False, u'YurikBot':False, u'H-Bot':False, u'Paulatz bot':False, u'TekBot':False, u'Alfiobot':False, u'RoboRex':False, u'Agtbot':False, u'Felixbot':False, u'Pixibot':False, u'Sz-iwbot':False, u'Timbot (Gutza)':False, u'Ginosbot':False, u'GrinBot':False, u'.anacondabot':False, u'Omdirigeringsrättaren':False}
     data=site.getUrl("/w/index.php?title=Special:Listusers&limit=5000&group=bot")
-    data=data.split('<!-- start content -->')
-    data=data[1].split('<!-- end content -->')[0]
+    data=data.split('<!-- bodytext -->')[1].split('<!-- /bodytext -->')[0]
     m=re.compile(ur" title=\".*?:(.*?)\">").finditer(data)
     for i in m:
         bots[i.group(1)]=False
@@ -88,8 +87,7 @@ def getBotsDic(site):
 def getAdminsDic(site):
     admins={}
     data=site.getUrl("/w/index.php?title=Special:Listusers&limit=5000&group=sysop")
-    data=data.split('<!-- start content -->')
-    data=data[1].split('<!-- end content -->')[0]
+    data=data.split('<!-- bodytext -->')[1].split('<!-- /bodytext -->')[0]
     m=re.compile(ur" title=\".*?:(.*?)\">").finditer(data)
     for i in m:
         admins[i.group(1)]=False

@@ -20,6 +20,7 @@
 from __future__ import generators
 import re
 import urllib
+import sys
 
 import wikipedia
 
@@ -29,7 +30,7 @@ projects = {
           u'footer': u"<noinclude>{{documentación de plantilla}}</noinclude>"}
   },
 'wiktionary':
-  {'es': {u'prefix': u"Wikcionario:Apéndice:Lemario/",
+  {'es': {u'prefix': u"Apéndice:Lemario/",
           u'footer': u""}
   }
 }
@@ -133,9 +134,13 @@ def main():
                 wikipedia.output("Analizando [%s]" % suffix)
                 
                 url = "/w/index.php?title=%s%s" % (preferences['prefix'], urllib.quote(suffix))
-                raw = wiki.getUrl(url)        
-                raw = raw.split("start content")[1].split("end content")[0]
-                
+                raw = wiki.getUrl(url.encode('utf-8'))        
+                if re.search(ur"<!-- bodytext -->", raw):
+                    raw = raw.split("<!-- bodytext -->")[1].split("<!-- /bodytext -->")[0]
+                elif re.search(ur"<!-- start content -->", raw):
+                    raw = raw.split("<!-- start content -->")[1].split("<!-- end content -->")[0]
+                else:
+                    sys.exit()
                 red = len(re.findall('class="new"', raw))
                 blue = len(re.findall('"/wiki/', raw))
                 totalred += red

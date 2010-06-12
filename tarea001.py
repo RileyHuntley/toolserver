@@ -84,7 +84,7 @@ def main():
         
         url = "/w/index.php?title=%s%s" % (prefix, urllib.quote(suffix))
         raw = wikies.getUrl(url)
-        raw = raw.split("start content")[1].split("end content")[0]
+        raw = raw.split("<!-- bodytext -->")[1].split("<!-- /bodytext -->")[0]
         
         red = len(re.findall('class="new"', raw))
         blue = len(re.findall('/wiki/', raw))-1
