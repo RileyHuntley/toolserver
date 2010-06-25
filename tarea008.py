@@ -63,7 +63,7 @@ tras1={
     u"hu": u"Wikipédisták listája szerkesztésszám szerint",
     u"ko": u"편집횟수 순 사용자 목록",
     u"pl": u"Użytkownicy według liczby edycji",
-    u"ro": u"Lista wikipediştilor după numărul de editări",
+    u"ro": u"Lista wikipediștilor după numărul de editări",
     u"simple": u"List of Wikipedians by number of changes",
     u"sl": u"Seznam Wikipedistov po številu urejanj",
     u"sv": u"Lista över Wikipedia-användare sorterad efter antalet redigeringar",
@@ -95,7 +95,7 @@ tras2={
     u"hu": u"Wikipédisták listája szerkesztésszám szerint (botokkal)",
     u"ko": u"편집횟수 순 사용자 목록 (봇 포함)",
     u"pl": u"Użytkownicy według liczby edycji (w tym boty)",
-    u"ro": u"Lista wikipediştilor după numărul de editări (inclusiv roboţi)",
+    u"ro": u"Lista wikipediștilor după numărul de editări (inclusiv roboți)",
     u"simple": u"List of Wikipedians by number of changes (bots included)",
     u"sl": u"Seznam Wikipedistov po številu urejanj (z boti)",
     u"sv": u"Lista över Wikipedia-användare sorterad efter antalet redigeringar (inklusive robotar)",
@@ -134,6 +134,7 @@ projects={
         'ro': tt500,
         'simple': tt500,
         'sl': tt100,
+        'sv': tt500,
         'th': tt500,
         'tr': tt500,
         'vi': tt500,
@@ -141,6 +142,7 @@ projects={
     'wiktionary': {
         'es': tt100,
         'simple': {'rankingusers':True, 'rankingbots':False, 'limit':100, 'optout':''},
+        'si': tt100,
         },
 }
 
