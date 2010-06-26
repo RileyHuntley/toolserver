@@ -121,8 +121,8 @@ for lang in langs:
         url=u"/w/index.php?action=purge&title=%s:%s/%s" % (urllib.quote(tempdic[lang]), exportador, urllib.quote(tema))
         #url=u"/w/index.php?title=Template:%s/%s" % (exportador, urllib.quote(tema))
         data=newssite.getUrl(url)
-        trozos=data.split("<!-- bodytext -->")
-        trozos=trozos[1].split("<!-- /bodytext -->")
+        trozos=data.split("<!-- start content -->") #(bodytext|content|start content)
+        trozos=trozos[1].split("<!-- end content -->") #(/bodytext|/content|end content)
         data=trozos[0]
         
         #wikipedia.output(data)
