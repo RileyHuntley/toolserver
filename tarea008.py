@@ -72,10 +72,12 @@ tras1={
     u"vi": u"Danh sách thành viên Wikipedia theo số lần sửa trang",
     },
 'wiktionary': {
+    u"default": u"User:Emijrp/List of Wiktionary users by number of edits",
     u"es": u"Ranking de ediciones",     
     u"simple": u"List of Wiktionarians by number of changes",
     },
 'wikinews': {
+    u"default": u"User:Emijrp/List of Wikinews users by number of edits",
     u"es": u"Ranking de ediciones", 
     },
 }
@@ -104,9 +106,11 @@ tras2={
     u"vi": u"Danh sách thành viên Wikipedia theo số lần sửa trang (tính cả bot)",
     },
 'wiktionary': {
+    u"default": u"User:Emijrp/List of Wiktionary users by number of edits (bots included)",
     u"es": u"Ranking de ediciones (incluye bots)", 
     },
 'wikinews': {
+    u"default": u"User:Emijrp/List of Wikinews users by number of edits (bots included)",
     u"es": u"Ranking de ediciones (incluye bots)", 
     },
 }
