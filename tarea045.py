@@ -83,7 +83,14 @@ def main():
             cursor2.close()
             conn2.close()
             
-            bots2 = tarea000.botList(wikipedia.Site(lang, family))
+            lang2=lang
+            family2=family
+            if lang2=='en-simple':
+                lang2='simple'
+            elif lang2=='en' and family=='wikispecies':
+                lang2='species'
+                family2='species'
+            bots2 = tarea000.botList(wikipedia.Site(lang2, family2))
             for bot in bots2:
                 bots.append('%s;%s;%s' % (lang, family, bot))
         except:
@@ -110,7 +117,10 @@ def main():
         if family in ["commons", "wikispecies"]:
             prefix=family
         else:
-            prefix=u"%s:%s" % (family, lang)
+            lang2=lang
+            if lang2=='en-simple':
+                lang2='simple'
+            prefix=u"%s:%s" % (family, lang2)
         # no usamos regexp porque algunos nicks de bots contienen ( ) u otros
         isBot=False
         for botline in bots:
