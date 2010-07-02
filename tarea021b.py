@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import _mysql
+import gzip
 import re
 import os
 import sets
@@ -154,15 +155,15 @@ def main():
         conn.query("SELECT cl_from, cl_to from categorylinks;")
         r=conn.use_result()
         row=r.fetch_row(maxrows=1, how=1)
-        projectpages=[]
+        projectpages=sets.Set()
         while row:
             if len(row)==1:
                 cl_from=int(row[0]['cl_from'])
                 cl_to=unicode(row[0]['cl_to'], 'utf-8')
                 cl_to=re.sub("_", " ", cl_to)
                 
-                if cl_to in categories: # Revisamos todas las categorías de este wikiproyecto
-                    projectpages.append(cl_from)
+                if cl_to in categories and cl_from not in projectpages: # Revisamos todas las categorías de este wikiproyecto
+                    projectpages.add(cl_from)
                 
             row=r.fetch_row(maxrows=1, how=1)
         wikipedia.output(u"Ha este wikiproyecto pertenecen %d páginas" % len(projectpages))
