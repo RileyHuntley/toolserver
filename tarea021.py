@@ -14,6 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import generators
+
+import sets
 import wikipedia
 import re
 import sys
@@ -22,13 +25,30 @@ import gzip
 import time
 import sqlite3
 import MySQLdb
+import _mysql
 
 # todo:
 # evitar hacer fetchall (xfetch?) enteros
 
+def ResultIter(cursor, arraysize=1000):
+    'An iterator that uses fetchmany to keep memory usage down'
+    while True:
+        results = cursor.fetchmany(arraysize)
+        if not results:
+            break
+        for result in results:
+            yield result
+
 def percent(c):
     if c % 1000 == 0:
         wikipedia.output(u'Llevamos %d' % c)
+
+def getPageTitle(conn, cursor, pageid):
+    cursor.execute("select title from page where id=?", (pageid,))
+    conn.commit()
+    for row in ResultIter(cursor):
+        return row
+    return None
 
 def loadProjects(site):
     wikipedia.output(u'Loading projects names')
@@ -120,6 +140,7 @@ def main():
     #hacer que carguen las categorias desde una pagina, que quite category: etc, y compruebe que existen
     categories=loadCategories(essite, projects)
     
+    #page=sets.Set()
     page={}
     pagetitle2pageid={}
 
@@ -129,54 +150,62 @@ def main():
     #page_id, page_title, page_length
     sqliteconn = sqlite3.connect(sqlite3file)
     sqlitecursor = sqliteconn.cursor()
-    
-    conn = MySQLdb.connect(host='sql-s3', db='%swiki_p' % lang, read_default_file='~/.my.cnf', use_unicode=True)
-    cursor = conn.cursor()
-    cursor.execute("SELECT page_id, page_title, page_len, page_namespace from page where (page_namespace=0 or page_namespace=104) and page_is_redirect=0;")
-    result=cursor.fetchall()
-    c=0
-    print 'Loading pages from %swiki' % (lang)
-
     sqlitecursor.execute("""create table page 
-    (id integer, title text, length integer, namespace integer, i integer, class integer, 
-     categories integer, interwikis integer, images integer, en integer, f bool, con bool, 
+    (id integer, title text, length integer, namespace integer, images integer, class integer, 
+     categories integer, interwikis integer, importance integer, en integer, f bool, con bool, 
      rel bool, wik bool, edit bool, ref bool, obras bool, neutral bool, 
      trad bool, discutido bool, nuevo bool)""")
     sqliteconn.commit()
-
-    for row in result:
-        if len(row)==4:
-            page_id=int(row[0])
-            page_title=re.sub('_', ' ', row[1])
-            page_len=int(row[2])
-            page_nm=int(row[3])
+    
+    conn = _mysql.connect(host='sql-s3', db='%swiki_p' % lang, read_default_file='~/.my.cnf')
+    conn.query("SELECT page_id, page_title, page_len, page_namespace from page where (page_namespace=0 or page_namespace=104) and page_is_redirect=0;")
+    r=conn.use_result()
+    row=r.fetch_row(maxrows=1, how=1)
+    c=0
+    print 'Loading pages from %swiki' % (lang)
+    while row:
+        if len(row)==1:
+            row=row[0]
+            page_id=int(row['page_id'])
+            page_title=re.sub('_', ' ', row['page_title'])
+            page_len=int(row['page_len'])
+            page_nm=int(row['page_namespace'])
             page_new=False
             if nuevos_dic.has_key(page_title):
                 page_new=True
             c+=1
             percent(c)
+            #page.add(page_id)
             pagetitle2pageid[page_title]=page_id
             #page[page_id]=0
-            #page[page_id]={'t':page_title, 'l':page_len, 'nm':page_nm, 'i':0, 'c':0, 'cat':0, 'iws':0, 'im':0, 'en':0, 'f':False, 'con':False, 'rel':False, 'wik':False, 'edit':False, 'ref':False, 'obras':False, 'neutral':False, 'trad':False, 'discutido':False, 'nuevo':page_new}
+            page[page_id]={'t':page_title, 'l':page_len, 'nm':page_nm, 'i':0, 'c':0, 'cat':0, 'iws':0, 'im':0, 'en':0, 'f':False, 'con':False, 'rel':False, 'wik':False, 'edit':False, 'ref':False, 'obras':False, 'neutral':False, 'trad':False, 'discutido':False, 'nuevo':page_new}
             #insert
             #print page_title
-            tupla=(page_id, page_title, page_len, page_nm, 0, 0, 0, 0, 0, 0, False, False, False, False, False, False, False, False, False, False, page_new)
-            sqlitecursor.execute("insert into page values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", tupla)
-            if c % 100 == 0:
-                sqliteconn.commit()
+            #tupla=(page_id, page_title, page_len, page_nm, 0, 0, 0, 0, 0, 0, False, False, False, False, False, False, False, False, False, False, page_new)
+            #sqlitecursor.execute("insert into page values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", tupla)
+            #if c % 1000 == 0:
+            #    sqliteconn.commit()
             #print "insert into page (`id`, `t`, `l`, `nm`, `i`, `c`, `cat`, `iws`, `im`, `en`, `f`, `con`, `rel`, `wik`, `edit`, `ref`, `obras`, `neutral`, `trad`, `discutido`, `nuevo`) values (%s, '%s', %s, %s, 0, 0, 0, 0, 0, 0, False, False, False, False, False, False, False, False, False, False, False)" % (page_id, MySQLdb.escape_string(page_title), page_len, page_nm)
             #cursor2.execute("SELECT count(*) from page where 1")
             #result2=cursor2.fetchall()
-            #print result2[0]        
+            #print result2[0]
+        row=r.fetch_row(maxrows=1, how=1)
     sqliteconn.commit()
+    #se ha olvidado alguna el commit? (sqllite puede fallar segun lei por ahi)
+    for row2 in sqlitecursor.execute("select count(*) from page"):
+        if c!=row2[0]:
+            print "Error"
+            sys.exit()
     print 'Loaded %d pages from %swiki' % (c, lang)
+    
+    for i in range(1000):
+        print getPageTitle(sqliteconn, sqlitecursor, i)
     
     #cargamos page_id y page_title para plantillas
     templates={} #nos va a hacer falta luego para las imagenes inservibles
     cursor.execute("SELECT page_id, page_title from page where page_namespace=10;")
-    result=cursor.fetchall()
     c=0
-    for row in result:
+    for row in ResultIter(cursor):
         if len(row)==2:
             page_id=int(row[0])
             page_title=re.sub('_', ' ', row[1])
@@ -188,27 +217,40 @@ def main():
     #esto debe ser lo primero, elegir las paginas para los proyectos, y su numero de categorias
     #bajamos tabla de categorylinks
     exclusioncat_pattern=re.compile(ur'(?i)Wikipedia:')
-    cursor.execute("SELECT cl_from, cl_to from categorylinks where cl_from in (select page_id from page where (page_namespace=0 or page_namespace=104) and page_is_redirect=0);") #subconsulta extraida de la priemra ocnsulta
-    result=cursor.fetchall()
-    print len(result)
+    # es mas eficiente un join?
+    cursor.execute("SELECT cl_from, cl_to from categorylinks;")
     c=0
-    for row in result:
+    for row in ResultIter(cursor):
         if len(row)==2:
             cl_from=int(row[0])
             cl_to=re.sub('_', ' ', row[1])
-            for k, v in categories.items():
-                if categories[k].has_key(cl_to) and categories[k][cl_to].count(cl_from)==0:
-                    categories[k][cl_to].append(cl_from)
-                    c+=1
-                    percent(c)
             #sumamos 1 cat
-            if not re.search(exclusioncat_pattern, cl_to):
+            if cl_from in page and not re.search(exclusioncat_pattern, cl_to):
                 #print '->%s<-' % cl_from
                 #print page[cl_from]
                 #page[cl_from]+=1
-                cursor2.execute("update page set cat=cat+1 where id=%s" % cl_from) #no importa que se haya creado un artículo nuevo en los últimos segundos, no veríamos error en mysql
+                for k, v in categories.items():
+                    if categories[k].has_key(cl_to) and categories[k][cl_to].count(cl_from)==0:
+                        categories[k][cl_to].append(cl_from)
+                        c+=1
+                        percent(c)
+                sqlitecursor.execute("update page set categories=categories+1 where id=?", (cl_from,)) #no importa que se haya creado un artículo nuevo en los últimos segundos, no veríamos error en mysql
+                if c % 100 == 0:
+                    sqliteconn.commit()
+    sqliteconn.commit()
     print 'Categorizados %d veces' % (c)
-
+    
+    #quitar
+    sqlitecursor.execute("select * from page where categories!=0")
+    c=0
+    for row2 in sqlitecursor:
+        print row2
+        c+=1
+        if c>10:
+            break
+    sys.exit()
+    #fin quitar
+    
     #comprobamos clasificacion
     miniesbozo_pattern=re.compile(ur'(?im)^mini ?esbozo')
     esbozo_pattern=re.compile(ur'(?im)^esbozo')
@@ -226,9 +268,8 @@ def main():
     traduccion_pattern=re.compile(ur'(?im)^Traducción$')
     discutido_pattern=re.compile(ur'(?im)^Discutido$')
     cursor.execute("SELECT tl_from, tl_title from templatelinks;")
-    result=cursor.fetchall()
     c=0
-    for row in result:
+    for row in ResultIter(cursor):
         if len(row)==2:
             c+=1
             percent(c)
