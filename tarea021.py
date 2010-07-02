@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import wikipedia,re,sys,os,gzip,time
+import sqlite3
 import MySQLdb
 
 def percent(c):
