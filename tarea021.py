@@ -342,6 +342,7 @@ def main():
                 c2+=1
     print '%d imagelinks, %d imagenes negras' % (c, c2)
 
+    #VOY POR AQUI tarea021b.py
     #ahora contamos imagenes, sin contar inservibles, usamos el mismo fichero q antes
     cursor.execute("SELECT il_from, il_to from imagelinks where il_from in (select page_id from page where (page_namespace=0 or page_namespace=104) and page_is_redirect=0);")
     result=cursor.fetchall()

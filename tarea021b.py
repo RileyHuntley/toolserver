@@ -17,10 +17,15 @@
 import _mysql
 import re
 import os
+import sets
 import sys
 import time
 
 import wikipedia
+
+def percent(c, d=1000):
+    if c % d == 0:
+        wikipedia.output(u'Llevamos %d' % c)
 
 def loadProjects(site):
     wikipedia.output(u'Loading projects names')
@@ -82,6 +87,48 @@ def loadNewPages(site, limitenuevos):
     
     return nuevos_dic, nuevos_list
 
+def loadTemplates(conn):
+    #cargamos page_id y page_title para plantillas
+    templates={} #nos va a hacer falta luego para las imagenes inservibles
+    conn.query("SELECT page_id, page_title from page where page_namespace=10;")
+    c=0
+    r=conn.use_result()
+    row=r.fetch_row(maxrows=1, how=1)
+    while row:
+        if len(row)==1:
+            page_id=int(row[0]['page_id'])
+            page_title=re.sub("_", " ", unicode(row[0]['page_title'], 'utf-8'))
+            c+=1
+            percent(c)
+            templates[page_id]=page_title
+        row=r.fetch_row(maxrows=1, how=1)
+    print 'Cargadas %d plantillas de eswiki' % (c)
+    return templates
+
+def loadBadImages(conn, templates):
+    #generamos lista de imagenes inservibles
+    badimages=sets.Set()
+    conn.query("SELECT il_from, il_to from imagelinks;")
+    c=0
+    cc=0
+    r=conn.use_result()
+    row=r.fetch_row(maxrows=1, how=1)
+    while row:
+        if len(row)==1:
+            c+=1
+            percent(c, 100000)
+            il_from=int(row[0]['il_from'])
+            try:
+                il_to=re.sub('_', ' ', unicode(row[0]['il_to'], "utf-8"))
+            except:
+                wikipedia.output(row[0]['il_to'])
+            if templates.has_key(il_from):
+                badimages.add(il_to)
+                cc+=1
+        row=r.fetch_row(maxrows=1, how=1)
+    wikipedia.output(u"%d enlaces a imágenes, %d imágenes inservibles" % (c, cc))
+    return badimages
+
 def main():
     lang="es"
     if len(sys.argv)>1:
@@ -92,6 +139,8 @@ def main():
     projects=loadProjects(essite)
     limitenuevos=2000
     [nuevos_dic, nuevos_list]=loadNewPages(essite, limitenuevos)
+    templates=loadTemplates(conn)
+    badimages=loadBadImages(conn, templates)
     
     for project in projects:
         print "PR:%s" % project
@@ -123,6 +172,8 @@ def main():
         row=r.fetch_row(maxrows=1, how=1)
         c=0
         wikipedia.output(u"Cargando páginas del wikiproyecto %s" % (project))
+        pages={}
+        pagetitle2pageid={}
         while row:
             if len(row)==1:
                 page_id=int(row[0]['page_id'])
@@ -136,10 +187,81 @@ def main():
                     c+=1
                     percent(c)
                     pagetitle2pageid[page_title]=page_id
-                    page[page_id]={'t':page_title, 'l':page_len, 'nm':page_nm, 'i':0, 'c':0, 'cat':0, 'iws':0, 'im':0, 'en':0, 'f':False, 'con':False, 'rel':False, 'wik':False, 'edit':False, 'ref':False, 'obras':False, 'neutral':False, 'trad':False, 'discutido':False, 'nuevo':page_new}
+                    pages[page_id]={'t':page_title, 'l':page_len, 'nm':page_nm, 'i':0, 'c':0, 'cat':0, 'iws':0, 'im':0, 'en':0, 'f':False, 'con':False, 'rel':False, 'wik':False, 'edit':False, 'ref':False, 'obras':False, 'neutral':False, 'trad':False, 'discutido':False, 'nuevo':page_new}
             row=r.fetch_row(maxrows=1, how=1)
         
-        time.sleep(10)
+        #Plantillas de mantenimiento
+        miniesbozo_pattern=re.compile(ur'(?im)^mini ?esbozo')
+        esbozo_pattern=re.compile(ur'(?im)^esbozo')
+        desamb_pattern=re.compile(ur'(?im)^(Des|D[ei]sambig|Desambiguaci[oó]n)$')
+        destacado_pattern=re.compile(ur'(?im)^Artículo destacado$')
+        bueno_pattern=re.compile(ur'(?im)^Artículo bueno$')
+        fusionar_pattern=re.compile(ur'(?im)^Fusionar$')
+        contextualizar_pattern=re.compile(ur'(?im)^Contextualizar$')
+        sinrelevancia_pattern=re.compile(ur'(?im)^Sin ?relevancia$')
+        wikificar_pattern=re.compile(ur'(?im)^Wikificar$')
+        copyedit_pattern=re.compile(ur'(?im)^Copyedit$')
+        sinreferencias_pattern=re.compile(ur'(?im)^(Referencias|Artículo sin fuentes|Unreferenced)$')
+        enobras_pattern=re.compile(ur'(?im)^(En ?obras|En ?desarrollo)$')
+        noneutral_pattern=re.compile(ur'(?im)^(NN|No ?neutral|NPOV|No ?neutralidad)$')
+        traduccion_pattern=re.compile(ur'(?im)^Traducción$')
+        discutido_pattern=re.compile(ur'(?im)^Discutido$')
+        
+        conn.query("SELECT tl_from, tl_title from templatelinks;")
+        r=conn.use_result()
+        row=r.fetch_row(maxrows=1, how=1)
+        
+        c=0
+        while row:
+            if len(row)==1:
+                tl_from=int(row [0]['tl_from'])
+                tl_title=re.sub('_', ' ', unicode(row [0]['tl_title'], "utf-8"))
+                if pages.has_key(tl_from):
+                    c+=1
+                    percent(c)
+                    if re.search(destacado_pattern, tl_title):
+                        pages[tl_from]['c']=1
+                    elif re.search(bueno_pattern, tl_title):
+                        pages[tl_from]['c']=2
+                    elif re.search(esbozo_pattern, tl_title):
+                        pages[tl_from]['c']=3
+                    elif re.search(miniesbozo_pattern, tl_title):
+                        pages[tl_from]['c']=4
+                    elif re.search(desamb_pattern, tl_title):
+                        pages[tl_from]['c']=5
+                    #sino es ninguna de las 5 cosas, se queda el 0 que significa desconocida
+                    
+                    if re.search(fusionar_pattern, tl_title):
+                        pages[tl_from]['f']=True
+                    if re.search(contextualizar_pattern, tl_title):
+                        pages[tl_from]['con']=True
+                    if re.search(sinrelevancia_pattern, tl_title):
+                        pages[tl_from]['rel']=True
+                    if re.search(wikificar_pattern, tl_title):
+                        pages[tl_from]['wik']=True
+                    if re.search(copyedit_pattern, tl_title):
+                        pages[tl_from]['edit']=True
+                    if re.search(sinreferencias_pattern, tl_title):
+                        pages[tl_from]['ref']=True
+                    if re.search(enobras_pattern, tl_title):
+                        pages[tl_from]['obras']=True
+                    if re.search(noneutral_pattern, tl_title):
+                        pages[tl_from]['neutral']=True
+                    if re.search(traduccion_pattern, tl_title):
+                        pages[tl_from]['trad']=True
+                    if re.search(discutido_pattern, tl_title):
+                        pages[tl_from]['discutido']=True
+            row=r.fetch_row(maxrows=1, how=1)
+        print '%d plantillas de mantenimiento en las páginas de este wikiproyecto' % (c)
+        
+        #Conteo de imágenes (obviando las inservibles)
+        
+        #Contar interwikis
+        
+        #Contar enlaces entrantes
+        
+        #Resto
+        
     conn.close()
 
 if __name__ == "__main__":
