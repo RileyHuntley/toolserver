@@ -14,41 +14,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import generators
-
-import sets
-import wikipedia
-import re
-import sys
-import os
-import gzip
-import time
-import sqlite3
-import MySQLdb
 import _mysql
+import gzip
+import re
+import os
+import sets
+import sys
+import time
 
-# todo:
-# evitar hacer fetchall (xfetch?) enteros
+import wikipedia
 
-def ResultIter(cursor, arraysize=1000):
-    'An iterator that uses fetchmany to keep memory usage down'
-    while True:
-        results = cursor.fetchmany(arraysize)
-        if not results:
-            break
-        for result in results:
-            yield result
-
-def percent(c):
-    if c % 1000 == 0:
+def percent(c, d=1000):
+    if c % d == 0:
         wikipedia.output(u'Llevamos %d' % c)
-
-def getPageTitle(conn, cursor, pageid):
-    cursor.execute("select title from page where id=?", (pageid,))
-    conn.commit()
-    for row in ResultIter(cursor):
-        return row
-    return None
 
 def loadProjects(site):
     wikipedia.output(u'Loading projects names')
@@ -73,29 +51,26 @@ def loadProjects(site):
         wii.put(salida, u'BOT - Ordenado lista de wikiproyectos y quitando repeticiones si las hay')
     return projects
 
-def loadCategories(site, projects):
-    categories={}
+def loadCategories(site, project):
+    categories=[]
     categoriesall=[]
-    for pr in projects:
-        wikipedia.output(u'Loading categories for %s project' % pr)
-        wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Categorías' % pr)
-        if wii.exists() and not wii.isRedirectPage():
-            categories[pr]={}
-            trozos=wii.get().splitlines()
-            categoriesall=[]
-            for trozo in trozos:
-                trozo=trozo.strip() #re.sub(ur'(?im)^ *([^\n\r]*?) *$', ur'\1', trozo)
-                trozo=re.sub(ur'(?i) *(Categoría|Category) *: *', ur'', trozo)
-                trozo=re.sub('_', ' ', trozo)
-                if len(trozo)<1 or trozo[0]=='#':
-                    continue
-                if categoriesall.count(trozo)==0:
-                    #wikipedia.output(u'  Categoría:%s' % trozo)
-                    categoriesall.append(trozo)
-                    categories[pr][trozo]=[]
-            categoriesall.sort()
-            salida='\n'.join(categoriesall)
-            wii.put(salida, u'BOT - Ordenado lista de categorías y quitando repeticiones si las hay')
+    wikipedia.output(u'Loading categories for %s project' % project)
+    wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Categorías' % project)
+    if wii.exists() and not wii.isRedirectPage():
+        trozos=wii.get().splitlines()
+        categoriesall=[]
+        for trozo in trozos:
+            trozo=trozo.strip()
+            trozo=re.sub(ur'(?i) *(Categoría|Category) *: *', ur'', trozo)
+            trozo=re.sub('_', ' ', trozo)
+            if len(trozo)<1 or trozo[0]=='#':
+                continue
+            if categoriesall.count(trozo)==0:
+                categoriesall.append(trozo)
+                categories.append(trozo)
+        categoriesall.sort()
+        salida='\n'.join(categoriesall)
+        wii.put(salida, u'BOT - Ordenado lista de categorías y quitando repeticiones si las hay')
     return categories
 
 def loadNewPages(site, limitenuevos):
@@ -113,321 +88,272 @@ def loadNewPages(site, limitenuevos):
     
     return nuevos_dic, nuevos_list
 
-sqlite3file='/home/emijrp/temporal/tarea021.db'
-os.system('rm %s' % sqlite3file)
+def loadTemplates(conn):
+    #cargamos page_id y page_title para plantillas
+    templates={} #nos va a hacer falta luego para las imagenes inservibles
+    conn.query("SELECT page_id, page_title from page where page_namespace=10;")
+    c=0
+    r=conn.use_result()
+    row=r.fetch_row(maxrows=1, how=1)
+    while row:
+        if len(row)==1:
+            page_id=int(row[0]['page_id'])
+            page_title=re.sub("_", " ", unicode(row[0]['page_title'], 'utf-8'))
+            c+=1
+            percent(c, 10000)
+            templates[page_id]=page_title
+        row=r.fetch_row(maxrows=1, how=1)
+    wikipedia.output(u"Cargadas %d plantillas de eswiki" % (c))
+    return templates
+
+def loadBadImages(conn, templates):
+    #generamos lista de imagenes inservibles
+    badimages=sets.Set()
+    conn.query("SELECT il_from, il_to from imagelinks;")
+    c=0
+    cc=0
+    r=conn.use_result()
+    row=r.fetch_row(maxrows=1, how=1)
+    while row:
+        if len(row)==1:
+            c+=1
+            percent(c, 100000)
+            il_from=int(row[0]['il_from'])
+            try:
+                il_to=re.sub('_', ' ', unicode(row[0]['il_to'], "utf-8"))
+            except:
+                wikipedia.output(row[0]['il_to'])
+            if templates.has_key(il_from):
+                badimages.add(il_to)
+                cc+=1
+        row=r.fetch_row(maxrows=1, how=1)
+    wikipedia.output(u"%d enlaces a imágenes, %d imágenes inservibles" % (c, cc))
+    return badimages
 
 def main():
     lang="es"
     if len(sys.argv)>1:
         lang=sys.argv[1]
-
+    
     clasificacion={0:u'·',1:u'Destacado',2:u'Bueno',3:u'Esbozo',4:u'Miniesbozo',5:u'Desambiguación'}
     #calidad={0:u'·',1:u'Bueno ([[Imagen:Artículo bueno.svg|14px|Artículo bueno]])',2:u'Destacado ([[Imagen:Cscr-featured.svg|14px|Artículo destacado]])'}
     importancia={0:u'·',1:u'Clase-A',2:u'Clase-B',3:u'Clase-C',4:u'Clase-D'}
     namespaces={104:u'Anexo'}
     namespaces_={104:u'Anexo:'}
     limitenuevos=2000
-    categories={}
-    projects=[]
-    projectsall=[]
     avisotoolserver=u'<noinclude>{{aviso|Esta plantilla es actualizada automáticamente. No hagas cambios aquí. Si hay errores avisa a {{u|emijrp}}.}}</noinclude>\n'
     nohay=u':No hay contenido con estas características.'
     
-    essite=wikipedia.Site('es', 'wikipedia')
-    #Loading projects names
-    projects=loadProjects(essite)
-    
-    #hacer que carguen las categorias desde una pagina, que quite category: etc, y compruebe que existen
-    categories=loadCategories(essite, projects)
-    
-    #page=sets.Set()
-    page={}
-    pagetitle2pageid={}
-
-    #bajamos los ultimos articulos nuevos y los metemos en un diccionario
-    [nuevos_dic, nuevos_list]=loadNewPages(essite, limitenuevos)
-    
-    #page_id, page_title, page_length
-    sqliteconn = sqlite3.connect(sqlite3file)
-    sqlitecursor = sqliteconn.cursor()
-    sqlitecursor.execute("""create table page 
-    (id integer, title text, length integer, namespace integer, images integer, class integer, 
-     categories integer, interwikis integer, importance integer, en integer, f bool, con bool, 
-     rel bool, wik bool, edit bool, ref bool, obras bool, neutral bool, 
-     trad bool, discutido bool, nuevo bool)""")
-    sqliteconn.commit()
-    
     conn = _mysql.connect(host='sql-s3', db='%swiki_p' % lang, read_default_file='~/.my.cnf')
-    conn.query("SELECT page_id, page_title, page_len, page_namespace from page where (page_namespace=0 or page_namespace=104) and page_is_redirect=0;")
-    r=conn.use_result()
-    row=r.fetch_row(maxrows=1, how=1)
-    c=0
-    print 'Loading pages from %swiki' % (lang)
-    while row:
-        if len(row)==1:
-            row=row[0]
-            page_id=int(row['page_id'])
-            page_title=re.sub('_', ' ', row['page_title'])
-            page_len=int(row['page_len'])
-            page_nm=int(row['page_namespace'])
-            page_new=False
-            if nuevos_dic.has_key(page_title):
-                page_new=True
-            c+=1
-            percent(c)
-            #page.add(page_id)
-            pagetitle2pageid[page_title]=page_id
-            #page[page_id]=0
-            page[page_id]={'t':page_title, 'l':page_len, 'nm':page_nm, 'i':0, 'c':0, 'cat':0, 'iws':0, 'im':0, 'en':0, 'f':False, 'con':False, 'rel':False, 'wik':False, 'edit':False, 'ref':False, 'obras':False, 'neutral':False, 'trad':False, 'discutido':False, 'nuevo':page_new}
-            #insert
-            #print page_title
-            #tupla=(page_id, page_title, page_len, page_nm, 0, 0, 0, 0, 0, 0, False, False, False, False, False, False, False, False, False, False, page_new)
-            #sqlitecursor.execute("insert into page values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", tupla)
-            #if c % 1000 == 0:
-            #    sqliteconn.commit()
-            #print "insert into page (`id`, `t`, `l`, `nm`, `i`, `c`, `cat`, `iws`, `im`, `en`, `f`, `con`, `rel`, `wik`, `edit`, `ref`, `obras`, `neutral`, `trad`, `discutido`, `nuevo`) values (%s, '%s', %s, %s, 0, 0, 0, 0, 0, 0, False, False, False, False, False, False, False, False, False, False, False)" % (page_id, MySQLdb.escape_string(page_title), page_len, page_nm)
-            #cursor2.execute("SELECT count(*) from page where 1")
-            #result2=cursor2.fetchall()
-            #print result2[0]
+    site=wikipedia.Site(lang, "wikipedia")
+    projects=loadProjects(site)
+    [nuevos_dic, nuevos_list]=loadNewPages(site, limitenuevos)
+    templates=loadTemplates(conn)
+    badimages=loadBadImages(conn, templates)
+    
+    for project in projects:
+        pr=project
+        wikipedia.output(u"PR:%s" % project)
+        categories=loadCategories(site, project)
+        
+        for category in categories:
+            wikipedia.output(u"  CAT:%s" % category)
+        
+        #Recorremos CategoryLinks buscando las categorías de este wikiproyecto y capturamos los cl_from
+        conn.query("SELECT cl_from, cl_to from categorylinks;")
+        r=conn.use_result()
         row=r.fetch_row(maxrows=1, how=1)
-    sqliteconn.commit()
-    #se ha olvidado alguna el commit? (sqllite puede fallar segun lei por ahi)
-    for row2 in sqlitecursor.execute("select count(*) from page"):
-        if c!=row2[0]:
-            print "Error"
-            sys.exit()
-    print 'Loaded %d pages from %swiki' % (c, lang)
-    
-    for i in range(1000):
-        print getPageTitle(sqliteconn, sqlitecursor, i)
-    
-    #cargamos page_id y page_title para plantillas
-    templates={} #nos va a hacer falta luego para las imagenes inservibles
-    cursor.execute("SELECT page_id, page_title from page where page_namespace=10;")
-    c=0
-    for row in ResultIter(cursor):
-        if len(row)==2:
-            page_id=int(row[0])
-            page_title=re.sub('_', ' ', row[1])
-            c+=1
-            percent(c)
-            templates[page_id]=page_title
-    print 'Cargadas %d templates en %swiki' % (c, lang)
-
-    #esto debe ser lo primero, elegir las paginas para los proyectos, y su numero de categorias
-    #bajamos tabla de categorylinks
-    exclusioncat_pattern=re.compile(ur'(?i)Wikipedia:')
-    # es mas eficiente un join?
-    cursor.execute("SELECT cl_from, cl_to from categorylinks;")
-    c=0
-    for row in ResultIter(cursor):
-        if len(row)==2:
-            cl_from=int(row[0])
-            cl_to=re.sub('_', ' ', row[1])
-            #sumamos 1 cat
-            if cl_from in page and not re.search(exclusioncat_pattern, cl_to):
-                #print '->%s<-' % cl_from
-                #print page[cl_from]
-                #page[cl_from]+=1
-                for k, v in categories.items():
-                    if categories[k].has_key(cl_to) and categories[k][cl_to].count(cl_from)==0:
-                        categories[k][cl_to].append(cl_from)
-                        c+=1
-                        percent(c)
-                sqlitecursor.execute("update page set categories=categories+1 where id=?", (cl_from,)) #no importa que se haya creado un artículo nuevo en los últimos segundos, no veríamos error en mysql
-                if c % 100 == 0:
-                    sqliteconn.commit()
-    sqliteconn.commit()
-    print 'Categorizados %d veces' % (c)
-    
-    #quitar
-    sqlitecursor.execute("select * from page where categories!=0")
-    c=0
-    for row2 in sqlitecursor:
-        print row2
-        c+=1
-        if c>10:
-            break
-    sys.exit()
-    #fin quitar
-    
-    #comprobamos clasificacion
-    miniesbozo_pattern=re.compile(ur'(?im)^mini ?esbozo')
-    esbozo_pattern=re.compile(ur'(?im)^esbozo')
-    desamb_pattern=re.compile(ur'(?im)^(Des|D[ei]sambig|Desambiguaci[oó]n)$')
-    destacado_pattern=re.compile(ur'(?im)^Artículo destacado$')
-    bueno_pattern=re.compile(ur'(?im)^Artículo bueno$')
-    fusionar_pattern=re.compile(ur'(?im)^Fusionar$')
-    contextualizar_pattern=re.compile(ur'(?im)^Contextualizar$')
-    sinrelevancia_pattern=re.compile(ur'(?im)^Sin ?relevancia$')
-    wikificar_pattern=re.compile(ur'(?im)^Wikificar$')
-    copyedit_pattern=re.compile(ur'(?im)^Copyedit$')
-    sinreferencias_pattern=re.compile(ur'(?im)^(Referencias|Artículo sin fuentes|Unreferenced)$')
-    enobras_pattern=re.compile(ur'(?im)^(En ?obras|En ?desarrollo)$')
-    noneutral_pattern=re.compile(ur'(?im)^(NN|No ?neutral|NPOV|No ?neutralidad)$')
-    traduccion_pattern=re.compile(ur'(?im)^Traducción$')
-    discutido_pattern=re.compile(ur'(?im)^Discutido$')
-    cursor.execute("SELECT tl_from, tl_title from templatelinks;")
-    c=0
-    for row in ResultIter(cursor):
-        if len(row)==2:
-            c+=1
-            percent(c)
-            tl_from=int(row [0])
-            tl_title=re.sub('_', ' ', row [1])
-            if page.has_key(tl_from):
-                if re.search(destacado_pattern, tl_title):
-                    #page[tl_from]['c']=1
-                    cursor2.execute("update page set c=1 where id=%s" % tl_from)
-                elif re.search(bueno_pattern, tl_title):
-                    #page[tl_from]['c']=2
-                    cursor2.execute("update page set c=2 where id=%s" % tl_from)
-                elif re.search(esbozo_pattern, tl_title):
-                    #page[tl_from]['c']=3
-                    cursor2.execute("update page set c=3 where id=%s" % tl_from)
-                elif re.search(miniesbozo_pattern, tl_title):
-                    #page[tl_from]['c']=4
-                    cursor2.execute("update page set c=4 where id=%s" % tl_from)
-                elif re.search(desamb_pattern, tl_title):
-                    #page[tl_from]['c']=5
-                    cursor2.execute("update page set c=5 where id=%s" % tl_from)
-                #sino es ninguna de las 5 cosas, se queda el 0 que significa desconocida
+        projectpages=sets.Set()
+        while row:
+            if len(row)==1:
+                cl_from=int(row[0]['cl_from'])
+                cl_to=unicode(row[0]['cl_to'], 'utf-8')
+                cl_to=re.sub("_", " ", cl_to)
                 
-                if re.search(fusionar_pattern, tl_title):
-                    #page[tl_from]['f']=True
-                    cursor2.execute("update page set f=True where id=%s" % tl_from)
-                if re.search(contextualizar_pattern, tl_title):
-                    #page[tl_from]['con']=True
-                    cursor2.execute("update page set con=True where id=%s" % tl_from)
-                if re.search(sinrelevancia_pattern, tl_title):
-                    #page[tl_from]['rel']=True
-                    cursor2.execute("update page set rel=True where id=%s" % tl_from)
-                if re.search(wikificar_pattern, tl_title):
-                    #page[tl_from]['wik']=True
-                    cursor2.execute("update page set wik=True where id=%s" % tl_from)
-                if re.search(copyedit_pattern, tl_title):
-                    #page[tl_from]['edit']=True
-                    cursor2.execute("update page set edit=True where id=%s" % tl_from)
-                if re.search(sinreferencias_pattern, tl_title):
-                    #page[tl_from]['ref']=True
-                    cursor2.execute("update page set ref=True where id=%s" % tl_from)
-                if re.search(enobras_pattern, tl_title):
-                    #page[tl_from]['obras']=True
-                    cursor2.execute("update page set obras=True where id=%s" % tl_from)
-                if re.search(noneutral_pattern, tl_title):
-                    #page[tl_from]['neutral']=True
-                    cursor2.execute("update page set neutral=True where id=%s" % tl_from)
-                if re.search(traduccion_pattern, tl_title):
-                    #page[tl_from]['trad']=True
-                    cursor2.execute("update page set trad=True where id=%s" % tl_from)
-                if re.search(discutido_pattern, tl_title):
-                    #page[tl_from]['discutido']=True
-                    cursor2.execute("update page set discutido=True where id=%s" % tl_from)
-    print '%d templatelinks' % (c)
-
-    #generamos lista de imagenes inservibles
-    imagenesnegras={}
-    cursor.execute("SELECT il_from, il_to from imagelinks;")
-    result=cursor.fetchall()
-    c=0
-    c2=0
-    for row in result:
-        if len(row)==2:
-            c+=1
-            percent(c)
-            il_from=int(row[0])
-            il_to=re.sub('_', ' ', row[1])
-            if templates.has_key(il_from):
-                imagenesnegras[il_to]=False #ahorrar
-                c2+=1
-    print '%d imagelinks, %d imagenes negras' % (c, c2)
-
-    #VOY POR AQUI tarea021b.py
-    #ahora contamos imagenes, sin contar inservibles, usamos el mismo fichero q antes
-    cursor.execute("SELECT il_from, il_to from imagelinks where il_from in (select page_id from page where (page_namespace=0 or page_namespace=104) and page_is_redirect=0);")
-    result=cursor.fetchall()
-    c=0
-    for row in result:
-        if len(row)==2:
-            il_from=int(row[0])
-            il_to=re.sub('_', ' ', row[1])
-            if not imagenesnegras.has_key(il_to):
-                #page[il_from]['i']+=1
-                cursor2.execute("update page set i=i+1 where id=%s" % il_from)
+                if cl_to in categories and cl_from not in projectpages: # Revisamos todas las categorías de este wikiproyecto
+                    projectpages.add(cl_from)
+                
+            row=r.fetch_row(maxrows=1, how=1)
+        wikipedia.output(u"Ha este wikiproyecto pertenecen %d páginas" % len(projectpages))
+        
+        #Inicializamos diccionario para las páginas de este wikiproyecto
+        conn.query("SELECT page_id, page_title, page_len, page_namespace from page where (page_namespace=0 or page_namespace=104) and page_is_redirect=0;")
+        r=conn.use_result()
+        row=r.fetch_row(maxrows=1, how=1)
+        c=0
+        wikipedia.output(u"Cargando páginas del wikiproyecto %s" % (project))
+        pages={}
+        pagetitle2pageid={}
+        while row:
+            if len(row)==1:
+                page_id=int(row[0]['page_id'])
+                page_title=re.sub('_', ' ', unicode(row[0]['page_title'], 'utf-8'))
+                page_len=int(row[0]['page_len'])
+                page_nm=int(row[0]['page_namespace'])
+                page_new=False
+                if nuevos_dic.has_key(page_title):
+                    page_new=True
+                if page_id in projectpages:
+                    c+=1
+                    percent(c)
+                    pagetitle2pageid[page_title]=page_id
+                    pages[page_id]={'t':page_title, 'l':page_len, 'nm':page_nm, 'i':0, 'c':0, 'cat':0, 'iws':0, 'im':0, 'en':0, 'f':False, 'con':False, 'rel':False, 'wik':False, 'edit':False, 'ref':False, 'obras':False, 'neutral':False, 'trad':False, 'discutido':False, 'nuevo':page_new}
+            row=r.fetch_row(maxrows=1, how=1)
+        wikipedia.output(u"Cargadas las %d páginas" % (c))
+        
+        #Plantillas de mantenimiento
+        miniesbozo_pattern=re.compile(ur'(?im)^mini ?esbozo')
+        esbozo_pattern=re.compile(ur'(?im)^esbozo')
+        desamb_pattern=re.compile(ur'(?im)^(Des|D[ei]sambig|Desambiguaci[oó]n)$')
+        destacado_pattern=re.compile(ur'(?im)^Artículo destacado$')
+        bueno_pattern=re.compile(ur'(?im)^Artículo bueno$')
+        fusionar_pattern=re.compile(ur'(?im)^Fusionar$')
+        contextualizar_pattern=re.compile(ur'(?im)^Contextualizar$')
+        sinrelevancia_pattern=re.compile(ur'(?im)^Sin ?relevancia$')
+        wikificar_pattern=re.compile(ur'(?im)^Wikificar$')
+        copyedit_pattern=re.compile(ur'(?im)^Copyedit$')
+        sinreferencias_pattern=re.compile(ur'(?im)^(Referencias|Artículo sin fuentes|Unreferenced)$')
+        enobras_pattern=re.compile(ur'(?im)^(En ?obras|En ?desarrollo)$')
+        noneutral_pattern=re.compile(ur'(?im)^(NN|No ?neutral|NPOV|No ?neutralidad)$')
+        traduccion_pattern=re.compile(ur'(?im)^Traducción$')
+        discutido_pattern=re.compile(ur'(?im)^Discutido$')
+        
+        wikipedia.output(u"Cargando enlaces a plantillas")
+        conn.query("SELECT tl_from, tl_title from templatelinks where tl_namespace=10;")
+        r=conn.use_result()
+        row=r.fetch_row(maxrows=1, how=1)
+        c=0
+        while row:
+            if len(row)==1:
+                tl_from=int(row[0]['tl_from'])
+                try:
+                    tl_title=re.sub("_", " ", unicode(row[0]['tl_title'], "utf-8"))
+                except:
+                    wikipedia.output(row[0]['tl_title'])
+                if pages.has_key(tl_from):
+                    c+=1
+                    percent(c, 10000)
+                    if re.search(destacado_pattern, tl_title):
+                        pages[tl_from]['c']=1
+                    elif re.search(bueno_pattern, tl_title):
+                        pages[tl_from]['c']=2
+                    elif re.search(esbozo_pattern, tl_title):
+                        pages[tl_from]['c']=3
+                    elif re.search(miniesbozo_pattern, tl_title):
+                        pages[tl_from]['c']=4
+                    elif re.search(desamb_pattern, tl_title):
+                        pages[tl_from]['c']=5
+                    #sino es ninguna de las 5 cosas, se queda el 0 que significa desconocida
+                    
+                    if re.search(fusionar_pattern, tl_title):
+                        pages[tl_from]['f']=True
+                    if re.search(contextualizar_pattern, tl_title):
+                        pages[tl_from]['con']=True
+                    if re.search(sinrelevancia_pattern, tl_title):
+                        pages[tl_from]['rel']=True
+                    if re.search(wikificar_pattern, tl_title):
+                        pages[tl_from]['wik']=True
+                    if re.search(copyedit_pattern, tl_title):
+                        pages[tl_from]['edit']=True
+                    if re.search(sinreferencias_pattern, tl_title):
+                        pages[tl_from]['ref']=True
+                    if re.search(enobras_pattern, tl_title):
+                        pages[tl_from]['obras']=True
+                    if re.search(noneutral_pattern, tl_title):
+                        pages[tl_from]['neutral']=True
+                    if re.search(traduccion_pattern, tl_title):
+                        pages[tl_from]['trad']=True
+                    if re.search(discutido_pattern, tl_title):
+                        pages[tl_from]['discutido']=True
+            row=r.fetch_row(maxrows=1, how=1)
+        wikipedia.output(u"%d plantillas de mantenimiento en las páginas de este wikiproyecto" % (c))
+        
+        #Conteo de imágenes (obviando las inservibles)
+        conn.query("SELECT il_from, il_to from imagelinks;")
+        r=conn.use_result()
+        row=r.fetch_row(maxrows=1, how=1)
+        c=0
+        while row:
+            if len(row)==1:
+                il_from=int(row[0]['il_from'])
+                try:
+                    il_to=re.sub('_', ' ', unicode(row[0]['il_to'], 'utf-8'))
+                except:
+                    wikipedia.output(row[0]['il_to'])
+                if pages.has_key(il_from) and il_to not in badimages:
+                    pages[il_from]['i']+=1
+                    c+=1
+                    percent(c, 100000)
+            row=r.fetch_row(maxrows=1, how=1)
+        wikipedia.output(u"%d enlaces a imágenes" % (c))
+        
+        #Contar interwikis
+        conn.query("SELECT ll_from, ll_lang from langlinks;")
+        r=conn.use_result()
+        row=r.fetch_row(maxrows=1, how=1)
+        c=0
+        while row:
+            if len(row)==1:
                 c+=1
-                percent(c)
-    print '%d imagenes usadas' % (c)
-
-    #contamos interwikis
-    cursor.execute("SELECT ll_from, ll_lang from langlinks where ll_from in (select page_id from page where (page_namespace=0 or page_namespace=104) and page_is_redirect=0);")
-    result=cursor.fetchall()
-    c=0
-    for row in result:
-        if len(row)==2:
-            c+=1
-            percent(c)
-            ll_from=int(row[0])
-            ll_lang=re.sub('_', ' ', row[1])
-            #if page.has_key(ll_from):
-            #    page[ll_from]['iws']+=1
-            cursor2.execute("update page set iws=iws+1 where id=%s" % ll_from)
-    print '%d langlinks' % (c)
-    f.close()
-
-    #contamos enlaces entrantes
-    #bajamos el dump, es mas eficiente
-    try:
-        f=gzip.open('/mnt/user-store/%swiki-latest-pagelinks.sql.gz' % lang, 'r')
-    except:
-        os.system('wget http://download.wikimedia.org/%swiki/latest/%swiki-latest-pagelinks.sql.gz -O /mnt/user-store/%swiki-latest-pagelinks.sql.gz' % (lang, lang, lang)) #entorno a 150MB
-        f=gzip.open('/mnt/user-store/%swiki-latest-pagelinks.sql.gz' % lang, 'r')
-    c=0
-    pagelinks_pattern=re.compile(ur'(?i)\((\d+)\,(0|104)\,\'([^\']*?)\'\)') #104 anexo:
-    for line in f:
-        line=line[:len(line)-1] #evitamos \n
-        line=re.sub('_', ' ', line)
-        m=re.findall(pagelinks_pattern, line)
-        for i in m:
-            c+=1
-            percent(c)
-            pl_from=int(i[0])
-            pl_nm=int(i[1])
-            pl_title=u''
-            try:
-                pl_title=unicode(i[2], 'utf-8')
-            except:
-                continue
-            #if page.has_key(pl_from) and pagetitle2pageid.has_key(pl_title): #si el enlace proviene del nm=0 y va hacia un nm=0
-            #    page_id=pagetitle2pageid[pl_title]
-            #    if page.has_key(page_id):
-            #        page[page_id]['en']+=1 #+1 entrante, im es importancia
-            cursor2.execute("update page set en=en+1 where id=%s" % pl_from)
-    print '%d pagelinks' % (c)
-    f.close()
-
-
-    #empezamos el analisis propiamente dicho
-    limpag=500
-    limcabecera=50
-    limkblist=5
-    cabeceratabla=u'\n|-\n! # !! Artículo !! Disc !! Tamaño !! Clasificación !! Importancia !! Ent !! Cat !! Img !! Iw !! Otros '
-    for pr, cats in categories.items():
-        wikipedia.output(u'%s' % pr)
-        inicio=u'{{Wikipedia:Contenido por wikiproyecto/Inicio|%s}}\n\n== Índice ==\n{{Wikipedia:Contenido por wikiproyecto/%s/Índice}}\n\n== Artículos ==\n\'\'Actualizado por última vez a las {{subst:CURRENTTIME}} ([[UTC]]) del {{subst:CURRENTDAY}} de {{subst:CURRENTMONTHNAME}} de {{subst:CURRENTYEAR}}.\'\'\n<center>\n<span style="clear:left;float:left;">{{#ifexpr:{{SUBPAGENAME}}>1|← [[Wikipedia:Contenido por wikiproyecto/%s/{{#expr:{{SUBPAGENAME}}-1}}|Anterior]]|← Esta es la primera}}</span><span style="clear:right;float:right;">{{#ifexist:Wikipedia:Contenido por wikiproyecto/%s/{{#expr:{{SUBPAGENAME}}+1}}|[[Wikipedia:Contenido por wikiproyecto/%s/{{#expr:{{SUBPAGENAME}}+1}}|Siguiente]] →|Esta es la última →}}</span><span id="arriba">↓ [[#abajo|Ir al final]] ↓</span>\n{| class="wikitable sortable" style="text-align: center;"%s' % (pr, pr, pr, pr, pr, cabeceratabla)
-        fin=u'\n|}\n<span style="clear:left;float:left;">{{#ifexpr:{{SUBPAGENAME}}>1|← [[Wikipedia:Contenido por wikiproyecto/%s/{{#expr:{{SUBPAGENAME}}-1}}|Anterior]]|← Esta es la primera}}</span><span style="clear:right;float:right;">{{#ifexist:Wikipedia:Contenido por wikiproyecto/%s/{{#expr:{{SUBPAGENAME}}+1}}|[[Wikipedia:Contenido por wikiproyecto/%s/{{#expr:{{SUBPAGENAME}}+1}}|Siguiente]] →|Esta es la última →}}</span><span id="abajo">↑ [[#arriba|Ir al principio]] ↑</span>\n</center>\n\n{{Wikipedia:Contenido por wikiproyecto/Fin|%s}}' % (pr, pr, pr, pr)
+                percent(c, 500000)
+                ll_from=int(row[0]['ll_from'])
+                try:
+                    ll_lang=re.sub('_', ' ', unicode(row[0]['ll_lang'], 'utf-8'))
+                except:
+                    wikipedia.output(row[0]['ll_lang'])
+                if pages.has_key(ll_from):
+                    pages[ll_from]['iws']+=1
+            row=r.fetch_row(maxrows=1, how=1)
+        wikipedia.output(u"%d interwikis" % (c))
+        
+        #Contar enlaces entrantes
+        try:
+            f=gzip.open('/mnt/user-store/%swiki-latest-pagelinks.sql.gz' % lang, 'r')
+        except:
+            os.system('wget http://download.wikimedia.org/%swiki/latest/%swiki-latest-pagelinks.sql.gz -O /mnt/user-store/%swiki-latest-pagelinks.sql.gz' % (lang, lang, lang)) #entorno a 150MB
+            f=gzip.open('/mnt/user-store/%swiki-latest-pagelinks.sql.gz' % lang, 'r')
+        c=0
+        pagelinks_pattern=re.compile(ur'(?i)\((\d+)\,(0|104)\,\'([^\']*?)\'\)') #104 anexo:
+        for line in f:
+            line=line[:len(line)-1] #evitamos \n
+            line=re.sub('_', ' ', line)
+            m=re.findall(pagelinks_pattern, line)
+            for i in m:
+                c+=1
+                percent(c, 1000000)
+                pl_from=int(i[0])
+                pl_nm=int(i[1])
+                pl_title=u''
+                try:
+                    pl_title=unicode(i[2], 'utf-8')
+                except:
+                    pass
+                if pages.has_key(pl_from) and pagetitle2pageid.has_key(pl_title): #si el enlace proviene del nm=0 y va hacia un nm=0
+                    page_id=pagetitle2pageid[pl_title]
+                    if pages.has_key(page_id):
+                        pages[page_id]['en']+=1 #+1 entrante, im es importancia
+        wikipedia.output(u"%d enlaces entre páginas" % (c))
+        f.close()
+        
+        #Resto
+        #empezamos el analisis propiamente dicho
+        limpag=500
+        limcabecera=50
+        limkblist=5
+        cabeceratabla=u'\n|-\n! # !! Artículo !! Disc !! Tamaño !! Clasificación !! Importancia !! Ent !! Cat !! Img !! Iw !! Otros '
+        
+        wikipedia.output(u'Generando análisis para %s' % project)
+        inicio=u'{{Wikipedia:Contenido por wikiproyecto/Inicio|%s}}\n\n== Índice ==\n{{Wikipedia:Contenido por wikiproyecto/%s/Índice}}\n\n== Artículos ==\n\'\'Actualizado por última vez a las {{subst:CURRENTTIME}} ([[UTC]]) del {{subst:CURRENTDAY}} de {{subst:CURRENTMONTHNAME}} de {{subst:CURRENTYEAR}}.\'\'\n<center>\n<span style="clear:left;float:left;">{{#ifexpr:{{SUBPAGENAME}}>1|← [[Wikipedia:Contenido por wikiproyecto/%s/{{#expr:{{SUBPAGENAME}}-1}}|Anterior]]|← Esta es la primera}}</span><span style="clear:right;float:right;">{{#ifexist:Wikipedia:Contenido por wikiproyecto/%s/{{#expr:{{SUBPAGENAME}}+1}}|[[Wikipedia:Contenido por wikiproyecto/%s/{{#expr:{{SUBPAGENAME}}+1}}|Siguiente]] →|Esta es la última →}}</span><span id="arriba">↓ [[#abajo|Ir al final]] ↓</span>\n{| class="wikitable sortable" style="text-align: center;"%s' % (project, project, project, project, project, cabeceratabla)
+        fin=u'\n|}\n<span style="clear:left;float:left;">{{#ifexpr:{{SUBPAGENAME}}>1|← [[Wikipedia:Contenido por wikiproyecto/%s/{{#expr:{{SUBPAGENAME}}-1}}|Anterior]]|← Esta es la primera}}</span><span style="clear:right;float:right;">{{#ifexist:Wikipedia:Contenido por wikiproyecto/%s/{{#expr:{{SUBPAGENAME}}+1}}|[[Wikipedia:Contenido por wikiproyecto/%s/{{#expr:{{SUBPAGENAME}}+1}}|Siguiente]] →|Esta es la última →}}</span><span id="abajo">↑ [[#arriba|Ir al principio]] ↑</span>\n</center>\n\n{{Wikipedia:Contenido por wikiproyecto/Fin|%s}}' % (project, project, project, project)
         salida=inicio
         c=0
-        nodupes=[] #evitamos duplicados
         resumen={'desconocida':0,'bueno':0,'destacado':0,'esbozo':0,'miniesbozo':0,'desambig':0,'>10':0,'>5':0,'>2':0,'>1':0,'<1':0,'<2':0}
         artstitles=[]
         artstitles2=[]
-        for cat, arts in cats.items():
-            wikipedia.output(u'  Categoría:%s' % cat)
-            for artid in arts:
-                if page.has_key(artid) and nodupes.count(artid)==0:
-                    nodupes.append(artid)
-                    artstitles.append([page[artid]['t'], artid])
-                    artstitles2.append([page[artid]['en'], page[artid]['t'], artid])
+        for projectpage in projectpages:
+            if pages.has_key(projectpage):
+                artstitles.append([pages[projectpage]['t'], projectpage])
+                artstitles2.append([pages[projectpage]['en'], pages[projectpage]['t'], projectpage])
         
         #ordenamos alfabeticamente
         artstitles.sort()
@@ -447,21 +373,18 @@ def main():
         i=0
         for artentrantes, arttitle, artid in artstitles2:
             if i<qclasea:
-                page[artid]['im']=1
+                pages[artid]['im']=1
                 if listqclasea.count(arttitle)==0:
                     listqclasea.append([artentrantes, arttitle])
             elif i<qclasea+qclaseb:
-                page[artid]['im']=2
+                pages[artid]['im']=2
                 if listqclaseb.count(arttitle)==0:
                     listqclaseb.append([artentrantes, arttitle])
             elif i<qclasea+qclaseb+qclasec:
-                page[artid]['im']=3
+                pages[artid]['im']=3
             else:
-                page[artid]['im']=4
+                pages[artid]['im']=4
             i+=1
-        
-        #blanqueamos para ahorrar memoria
-        artstitles2=[]
         
         #ordenamos listas de importancia
         listqclasea.sort()
@@ -487,114 +410,114 @@ def main():
         relatedchanges=u''
         for arttitle, pageid in artstitles:
             #resumen tamanios
-            if page[pageid]['l']>=10*1024:
+            if pages[pageid]['l']>=10*1024:
                 resumen['>10']+=1
-            if page[pageid]['l']>=5*1024:
+            if pages[pageid]['l']>=5*1024:
                 resumen['>5']+=1
-            if page[pageid]['l']>=2*1024:
+            if pages[pageid]['l']>=2*1024:
                 resumen['>2']+=1
-            if page[pageid]['l']>=1*1024:
+            if pages[pageid]['l']>=1*1024:
                 resumen['>1']+=1
-            if page[pageid]['l']<1*1024:
+            if pages[pageid]['l']<1*1024:
                 resumen['<1']+=1
-            if page[pageid]['l']<2*1024:
+            if pages[pageid]['l']<2*1024:
                 resumen['<2']+=1
             
             #resumen calidad
-            if page[pageid]['c']==1:
+            if pages[pageid]['c']==1:
                 resumen['destacado']+=1
-            elif page[pageid]['c']==2:
+            elif pages[pageid]['c']==2:
                 resumen['bueno']+=1
-            elif page[pageid]['c']==3:
+            elif pages[pageid]['c']==3:
                 resumen['esbozo']+=1
-            elif page[pageid]['c']==4:
+            elif pages[pageid]['c']==4:
                 resumen['miniesbozo']+=1
-            elif page[pageid]['c']==5:
+            elif pages[pageid]['c']==5:
                 resumen['desambig']+=1
             else:
                 resumen['desconocida']+=1
             
             c+=1
             otros=u''
-            if page[pageid]['f']:
+            if pages[pageid]['f']:
                 qfusionar+=1
                 if otros:
                     otros+=u', '
                 otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Fusionar|fusionar]]' % pr
-            if page[pageid]['con']:
+            if pages[pageid]['con']:
                 qcontextualizar+=1
                 if otros:
                     otros+=u', '
                 otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Contextualizar|contextualizar]]' % pr
-            if page[pageid]['rel']:
+            if pages[pageid]['rel']:
                 qsinrelevancia+=1
                 if otros:
                     otros+=u', '
                 otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Sin relevancia|sin relevancia]]' % pr
-            if page[pageid]['wik']:
+            if pages[pageid]['wik']:
                 qwikificar+=1
                 if otros:
                     otros+=u', '
                 otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Wikificar|wikificar]]' % pr
-            if page[pageid]['edit']:
+            if pages[pageid]['edit']:
                 qcopyedit+=1
                 if otros:
                     otros+=u', '
                 otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Copyedit|copyedit]]' % pr
-            if page[pageid]['ref']:
+            if pages[pageid]['ref']:
                 qsinreferencias+=1
                 if otros:
                     otros+=u', '
                 otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Sin referencias|sin referencias]]' % pr
-            if page[pageid]['obras']:
+            if pages[pageid]['obras']:
                 qenobras+=1
                 if otros:
                     otros+=u', '
                 otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#En obras|en obras]]' % pr
-            if page[pageid]['neutral']:
+            if pages[pageid]['neutral']:
                 qnoneutral+=1
                 if otros:
                     otros+=u', '
                 otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#No neutral|no neutral]]' % pr
-            if page[pageid]['trad']:
+            if pages[pageid]['trad']:
                 qentraduccion+=1
                 if otros:
                     otros+=u', '
                 otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#En traducción|en traducción]]' % pr
-            if page[pageid]['discutido']:
+            if pages[pageid]['discutido']:
                 qveracidaddiscutida+=1
                 if otros:
                     otros+=u', '
                 otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Veracidad discutida|discutido]]' % pr
-            if page[pageid]['nuevo']:
+            if pages[pageid]['nuevo']:
                 if otros:
                     otros+=u', '
                 otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Nuevos|nuevo]]' % pr
             
             clasificacionplana=u''
-            if page[pageid]['c']==1: #1 destacado
+            if pages[pageid]['c']==1: #1 destacado
                 clasificacionplana=u'[[Wikipedia:Contenido por wikiproyecto/%s#Artículos destacados|Destacado]]' % pr
-            elif page[pageid]['c']==2: #2 es bueno, 
+            elif pages[pageid]['c']==2: #2 es bueno, 
                 clasificacionplana=u'[[Wikipedia:Contenido por wikiproyecto/%s#Artículos buenos|Bueno]]' % pr
             else: #resto: esbozo, miniesbozo, desambig, ·
-                clasificacionplana=clasificacion[page[pageid]['c']]
+                clasificacionplana=clasificacion[pages[pageid]['c']]
             
             importanciaplana=u''
-            if page[pageid]['im']==1:
+            if pages[pageid]['im']==1:
                 importanciaplana=u'[[Wikipedia:Contenido por wikiproyecto/%s#Clase-A|Clase-A]]' % pr
-            elif page[pageid]['im']==2:
+            elif pages[pageid]['im']==2:
                 importanciaplana=u'[[Wikipedia:Contenido por wikiproyecto/%s#Clase-B|Clase-B]]' % pr
             else:
-                importanciaplana=importancia[page[pageid]['im']]
+                importanciaplana=importancia[pages[pageid]['im']]
             
             artnm=u''
             artnm_=u''
-            if page[pageid]['nm']!=0:
-                artnm=namespaces[page[pageid]['nm']]
+            if pages[pageid]['nm']!=0:
+                artnm=namespaces[pages[pageid]['nm']]
                 artnm+=u' ' # http://es.wikipedia.org/w/index.php?title=Wikipedia:Contenido_por_wikiproyecto/Aviaci%C3%B3n/4&curid=1996845&diff=21475084&oldid=21403165
-                artnm_=namespaces_[page[pageid]['nm']]
+                artnm_=namespaces_[pages[pageid]['nm']]
             
-            salida+=u'\n|-\n| %d || [[%s%s]] || [[%sDiscusión:%s|Disc]] || %d || %s || %s || %d || %d || %d || %d || %s ' % (c, artnm_, arttitle, artnm, arttitle, page[pageid]['l'], clasificacionplana, importanciaplana, page[pageid]['en'], page[pageid]['cat'], page[pageid]['i'], page[pageid]['iws'], otros)
+            salida+=u'\n|-\n| %d || [[%s%s]] || [[%sDiscusión:%s|Disc]] || %d || %s || %s || %d || %d || %d || %d || %s ' % (c, artnm_, arttitle, artnm, arttitle, pages[pageid]['l'], clasificacionplana, importanciaplana, pages[pageid]['en'], pages[pageid]['cat'], pages[pageid]['i'], pages[pageid]['iws'], otros)
             relatedchanges+=u'# [[%s%s]]\n' % (artnm_, arttitle) #pagina 0
             #if c % limcabecera == 0:
             #    salida+=cabeceratabla
@@ -686,7 +609,7 @@ def main():
         wii.put(tablamantenimiento, u'BOT - Actualizando tabla de mantenimiento para [[Wikiproyecto:%s]]' % pr)
         
         #tabla con categorias y numero de articulos que contienen, en desuso
-        categoriasanalizadas=u'{| class="wikitable sortable" style="text-align: center;"\n! #\n! Categoría\n! Artículos'
+        """categoriasanalizadas=u'{| class="wikitable sortable" style="text-align: center;"\n! #\n! Categoría\n! Artículos'
         categoriasordenadas=[]
         for cat, arts in categories[pr].items():
             categoriasordenadas.append([cat, arts])
@@ -695,7 +618,7 @@ def main():
         for cat, arts in categoriasordenadas:
             categoriasanalizadas+=u'\n|-\n| %d || [[:Categoría:%s|%s]] || %d ' %  (cont, cat, cat, len(arts))
             cont+=1
-        categoriasanalizadas+=u'\n|}'
+        categoriasanalizadas+=u'\n|}'"""
 
         #pagina de resumen con hijas
         resumen=u'\'\'Actualizado por última vez a las {{subst:CURRENTTIME}} ([[UTC]]) del {{subst:CURRENTDAY}} de {{subst:CURRENTMONTHNAME}} de {{subst:CURRENTYEAR}}.\'\'\n'
@@ -706,7 +629,7 @@ def main():
         resumen+=u'<small>\'\'Esta tabla proviene de <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Resumen/Tamaños]]<nowiki>}}</nowiki>\'\'.</small>\n' % pr
         resumen+=u'{{Wikipedia:Contenido por wikiproyecto/%s/Resumen/Importancia}}\n' % pr
         resumen+=u'<small>\'\'Esta tabla proviene de <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Resumen/Importancia]]<nowiki>}}</nowiki>\'\'.</small>\n' % pr
-        resumen+=u'\nEn total han sido analizadas [[Wikipedia:Contenido por wikiproyecto/%s/Categorías|%d categorías]].\n' % (pr, len(categoriasordenadas))
+        resumen+=u'\nEn total han sido analizadas [[Wikipedia:Contenido por wikiproyecto/%s/Categorías|%d categorías]].\n' % (pr, len(categories))
         resumen+=u'| valign=top |\n{{Wikipedia:Contenido por wikiproyecto/%s/Resumen/Mantenimiento}}\n' % pr
         resumen+=u'<small>\'\'Esta tabla proviene de <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Resumen/Mantenimiento]]<nowiki>}}</nowiki>\'\'.</small>\n' % pr
         resumen+=u'|}'
@@ -736,34 +659,34 @@ def main():
         for arttitle, pageid in artstitles:
             artnm=u''
             artnm_=u''
-            if page[pageid]['nm']!=0:
-                artnm=namespaces[page[pageid]['nm']]
-                artnm_=namespaces_[page[pageid]['nm']]
-            if page[pageid]['c']==2:
+            if pages[pageid]['nm']!=0:
+                artnm=namespaces[pages[pageid]['nm']]
+                artnm_=namespaces_[pages[pageid]['nm']]
+            if pages[pageid]['c']==2:
                 buenos+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-            if page[pageid]['c']==1:
+            if pages[pageid]['c']==1:
                 destacados+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-            if page[pageid]['f']:
+            if pages[pageid]['f']:
                 fusionar+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-            if page[pageid]['con']:
+            if pages[pageid]['con']:
                 contextualizar+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-            if page[pageid]['rel']:
+            if pages[pageid]['rel']:
                 sinrelevancia+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-            if page[pageid]['wik']:
+            if pages[pageid]['wik']:
                 wikificar+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-            if page[pageid]['edit']:
+            if pages[pageid]['edit']:
                 copyedit+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-            if page[pageid]['ref']:
+            if pages[pageid]['ref']:
                 sinreferencias+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-            if page[pageid]['obras']:
+            if pages[pageid]['obras']:
                 enobras+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-            if page[pageid]['neutral']:
+            if pages[pageid]['neutral']:
                 noneutral+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-            if page[pageid]['trad']:
+            if pages[pageid]['trad']:
                 traduccion+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-            if page[pageid]['discutido']:
+            if pages[pageid]['discutido']:
                 discutido+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-            if page[pageid]['nuevo']:
+            if pages[pageid]['nuevo']:
                 nuevos_temp.append(arttitle) #los almacenamos para despues ordenarlos cronologicamente
         
         for arttitle in nuevos_list:
@@ -813,12 +736,7 @@ def main():
         wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s' % pr) #principal
         wii.put(salida, u'BOT - Actualizando página de [[Wikiproyecto:%s]]' % pr)
 
-    sqlitecursor.close()
-    sqliteconn.close()
-    cursor.close()
     conn.close()
-    cursor2.close()
-    conn2.close()
 
 if __name__ == "__main__":
     main()
