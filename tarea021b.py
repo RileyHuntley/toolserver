@@ -99,7 +99,7 @@ def loadTemplates(conn):
             page_id=int(row[0]['page_id'])
             page_title=re.sub("_", " ", unicode(row[0]['page_title'], 'utf-8'))
             c+=1
-            percent(c)
+            percent(c, 10000)
             templates[page_id]=page_title
         row=r.fetch_row(maxrows=1, how=1)
     wikipedia.output(u"Cargadas %d plantillas de eswiki" % (c))
@@ -157,7 +157,7 @@ def main():
         projectpages=[]
         while row:
             if len(row)==1:
-                cl_from=row[0]['cl_from']
+                cl_from=int(row[0]['cl_from'])
                 cl_to=unicode(row[0]['cl_to'], 'utf-8')
                 cl_to=re.sub("_", " ", cl_to)
                 
@@ -190,6 +190,7 @@ def main():
                     pagetitle2pageid[page_title]=page_id
                     pages[page_id]={'t':page_title, 'l':page_len, 'nm':page_nm, 'i':0, 'c':0, 'cat':0, 'iws':0, 'im':0, 'en':0, 'f':False, 'con':False, 'rel':False, 'wik':False, 'edit':False, 'ref':False, 'obras':False, 'neutral':False, 'trad':False, 'discutido':False, 'nuevo':page_new}
             row=r.fetch_row(maxrows=1, how=1)
+        wikipedia.output(u"Cargadas las %d páginas" % (c))
         
         #Plantillas de mantenimiento
         miniesbozo_pattern=re.compile(ur'(?im)^mini ?esbozo')
@@ -209,21 +210,20 @@ def main():
         discutido_pattern=re.compile(ur'(?im)^Discutido$')
         
         wikipedia.output(u"Cargando enlaces a plantillas")
-        conn.query("SELECT tl_from, tl_title from templatelinks;")
+        conn.query("SELECT tl_from, tl_title from templatelinks where tl_namespace=10;")
         r=conn.use_result()
         row=r.fetch_row(maxrows=1, how=1)
-        
         c=0
         while row:
             if len(row)==1:
                 tl_from=int(row[0]['tl_from'])
                 try:
-                    tl_title=re.sub('_', ' ', unicode(row[0]['tl_title'], "utf-8"))
+                    tl_title=re.sub("_", " ", unicode(row[0]['tl_title'], "utf-8"))
                 except:
-                    wikipedia.output(row [0]['tl_title'])
+                    wikipedia.output(row[0]['tl_title'])
                 if pages.has_key(tl_from):
                     c+=1
-                    percent(c)
+                    percent(c, 10000)
                     if re.search(destacado_pattern, tl_title):
                         pages[tl_from]['c']=1
                     elif re.search(bueno_pattern, tl_title):
@@ -274,7 +274,7 @@ def main():
                 if pages.has_key(il_from) and il_to not in badimages:
                     pages[il_from]['i']+=1
                     c+=1
-                    percent(c)
+                    percent(c, 100000)
             row=r.fetch_row(maxrows=1, how=1)
         wikipedia.output(u"%d enlaces a imágenes" % (c))
         
@@ -286,7 +286,7 @@ def main():
         while row:
             if len(row)==1:
                 c+=1
-                percent(c)
+                percent(c, 100000)
                 ll_from=int(row[0]['ll_from'])
                 try:
                     ll_lang=re.sub('_', ' ', unicode(row[0]['ll_lang'], 'utf-8'))
@@ -311,7 +311,7 @@ def main():
             m=re.findall(pagelinks_pattern, line)
             for i in m:
                 c+=1
-                percent(c)
+                percent(c, 100000)
                 pl_from=int(i[0])
                 pl_nm=int(i[1])
                 pl_title=u''
