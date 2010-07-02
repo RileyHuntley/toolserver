@@ -135,10 +135,18 @@ def main():
     if len(sys.argv)>1:
         lang=sys.argv[1]
     
+    clasificacion={0:u'·',1:u'Destacado',2:u'Bueno',3:u'Esbozo',4:u'Miniesbozo',5:u'Desambiguación'}
+    #calidad={0:u'·',1:u'Bueno ([[Imagen:Artículo bueno.svg|14px|Artículo bueno]])',2:u'Destacado ([[Imagen:Cscr-featured.svg|14px|Artículo destacado]])'}
+    importancia={0:u'·',1:u'Clase-A',2:u'Clase-B',3:u'Clase-C',4:u'Clase-D'}
+    namespaces={104:u'Anexo'}
+    namespaces_={104:u'Anexo:'}
+    limitenuevos=2000
+    avisotoolserver=u'<noinclude>{{aviso|Esta plantilla es actualizada automáticamente. No hagas cambios aquí. Si hay errores avisa a {{u|emijrp}}.}}</noinclude>\n'
+    nohay=u':No hay contenido con estas características.'
+    
     conn = _mysql.connect(host='sql-s3', db='%swiki_p' % lang, read_default_file='~/.my.cnf')
     site=wikipedia.Site(lang, "wikipedia")
     projects=loadProjects(site)
-    limitenuevos=2000
     [nuevos_dic, nuevos_list]=loadNewPages(site, limitenuevos)
     templates=loadTemplates(conn)
     badimages=loadBadImages(conn, templates)
@@ -312,7 +320,7 @@ def main():
             m=re.findall(pagelinks_pattern, line)
             for i in m:
                 c+=1
-                percent(c, 100000)
+                percent(c, 500000)
                 pl_from=int(i[0])
                 pl_nm=int(i[1])
                 pl_title=u''
