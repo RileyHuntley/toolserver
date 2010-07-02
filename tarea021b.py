@@ -208,6 +208,7 @@ def main():
         traduccion_pattern=re.compile(ur'(?im)^Traducción$')
         discutido_pattern=re.compile(ur'(?im)^Discutido$')
         
+        wikipedia.output(u"Cargando enlaces a plantillas")
         conn.query("SELECT tl_from, tl_title from templatelinks;")
         r=conn.use_result()
         row=r.fetch_row(maxrows=1, how=1)
@@ -215,8 +216,12 @@ def main():
         c=0
         while row:
             if len(row)==1:
-                tl_from=int(row [0]['tl_from'])
-                tl_title=re.sub('_', ' ', unicode(row [0]['tl_title'], "utf-8"))
+                tl_from=int(row[0]['tl_from'])
+                try:
+                    tl_title=re.sub('_', ' ', unicode(row[0]['tl_title'], "utf-8"))
+                except:
+                    wikipedia.output(row [0]['tl_title'])
+                    continue
                 if pages.has_key(tl_from):
                     c+=1
                     percent(c)
@@ -253,7 +258,7 @@ def main():
                     if re.search(discutido_pattern, tl_title):
                         pages[tl_from]['discutido']=True
             row=r.fetch_row(maxrows=1, how=1)
-        print '%d plantillas de mantenimiento en las páginas de este wikiproyecto' % (c)
+        wikipedia.output(u"%d plantillas de mantenimiento en las páginas de este wikiproyecto" % (c))
         
         #Conteo de imágenes (obviando las inservibles)
         conn.query("SELECT il_from, il_to from imagelinks;")
@@ -268,7 +273,7 @@ def main():
                 except:
                     wikipedia.output(row[0]['il_to'])
                     continue
-                if il_to in badimages:
+                if pages.has_key(il_from) and il_to not in badimages:
                     pages[il_from]['i']+=1
                     c+=1
                     percent(c)
