@@ -102,7 +102,7 @@ def loadTemplates(conn):
             percent(c)
             templates[page_id]=page_title
         row=r.fetch_row(maxrows=1, how=1)
-    print 'Cargadas %d plantillas de eswiki' % (c)
+    wikipedia.output(u"Cargadas %d plantillas de eswiki" % (c))
     return templates
 
 def loadBadImages(conn, templates):
@@ -144,11 +144,11 @@ def main():
     
     for project in projects:
         pr=project
-        print "PR:%s" % project
+        wikipedia.output(u"PR:%s" % project)
         categories=loadCategories(site, project)
         
         for category in categories:
-            print "  CAT:%s" % category
+            wikipedia.output(u"  CAT:%s" % category)
         
         #Recorremos CategoryLinks buscando las categorías de este wikiproyecto y capturamos los cl_from
         conn.query("SELECT cl_from, cl_to from categorylinks;")
@@ -221,7 +221,6 @@ def main():
                     tl_title=re.sub('_', ' ', unicode(row[0]['tl_title'], "utf-8"))
                 except:
                     wikipedia.output(row [0]['tl_title'])
-                    continue
                 if pages.has_key(tl_from):
                     c+=1
                     percent(c)
@@ -272,7 +271,6 @@ def main():
                     il_to=re.sub('_', ' ', unicode(row[0]['il_to'], 'utf-8'))
                 except:
                     wikipedia.output(row[0]['il_to'])
-                    continue
                 if pages.has_key(il_from) and il_to not in badimages:
                     pages[il_from]['i']+=1
                     c+=1
@@ -294,7 +292,6 @@ def main():
                     ll_lang=re.sub('_', ' ', unicode(row[0]['ll_lang'], 'utf-8'))
                 except:
                     wikipedia.output(row[0]['ll_lang'])
-                    continue
                 if pages.has_key(ll_from):
                     pages[ll_from]['iws']+=1
             row=r.fetch_row(maxrows=1, how=1)
@@ -321,7 +318,7 @@ def main():
                 try:
                     pl_title=unicode(i[2], 'utf-8')
                 except:
-                    continue
+                    pass
                 if pages.has_key(pl_from) and pagetitle2pageid.has_key(pl_title): #si el enlace proviene del nm=0 y va hacia un nm=0
                     page_id=pagetitle2pageid[pl_title]
                     if pages.has_key(page_id):
