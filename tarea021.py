@@ -729,8 +729,13 @@ def main():
                 salida+=u'{{Wikipedia:Contenido por wikiproyecto/%s/%s}}\n' % (pr, subpage)
                 salida+=u'|:\'\'Esta lista excede los %d KB y no se mostrará. Se puede consultar directamente en <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/%s]]<nowiki>}}</nowiki>\'\'.\n' % (limkblist, pr, subpage)
                 salida+=u'}}\n\n'
-            if c==3:
+            if c==1:
+                salida+=u'== Importancia ==\n'
+            elif c==3:
                 salida+=u'== Mantenimiento ==\n'
+            elif c==14:
+                salida+=u'== Miscelánea ==\n'
+            c+=1
         
         wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Detalles' % pr) #detalles
         wii.put(salida, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
