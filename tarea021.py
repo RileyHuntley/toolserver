@@ -135,6 +135,8 @@ def main():
     if len(sys.argv)>1:
         lang=sys.argv[1]
     
+    os.system('rm /mnt/user-store/%swiki-latest-pagelinks.sql.gz' % lang) #borramos para descargar luego la versión más nueva
+    
     clasificacion={0:u'·',1:u'Destacado',2:u'Bueno',3:u'Esbozo',4:u'Miniesbozo',5:u'Desambiguación'}
     #calidad={0:u'·',1:u'Bueno ([[Imagen:Artículo bueno.svg|14px|Artículo bueno]])',2:u'Destacado ([[Imagen:Cscr-featured.svg|14px|Artículo destacado]])'}
     importancia={0:u'·',1:u'Clase-A',2:u'Clase-B',3:u'Clase-C',4:u'Clase-D'}
