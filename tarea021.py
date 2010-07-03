@@ -537,7 +537,7 @@ def main():
         if len(relatedchanges)<=10: #no existe el wikiproyecto o no tiene páginas asignadas?
             wikipedia.output(u"No existe tal wikiproyecto o no tiene páginas asignadas")
             continue #siguiente wikiproyecto
-        if len(relatedchanges)<=1024*500: #limite de KBs
+        if len(relatedchanges)<=1024*1000: #limite de KBs
             wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/0' % (pr))
             wii.put(relatedchanges, u'BOT - Actualizando lista para [[Wikiproyecto:%s]]' % pr)
         #fin pagina 0
