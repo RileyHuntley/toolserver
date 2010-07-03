@@ -551,7 +551,7 @@ def main():
             else:
                 salida+=u'[[Wikipedia:Contenido por wikiproyecto/%s|Resumen]]: [[Wikipedia:Contenido por wikiproyecto/%s/%d|Página %d]]' % (pr, pr, i, i)
         wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Índice' % pr) #index
-        wii.put(salida, u'BOT - Actualizando índice')
+        wii.put(salida, u'BOT - Actualizando índice para [[Wikiproyecto:%s]]' % pr)
         
         
         #resumen global
