@@ -455,7 +455,7 @@ def main():
                 qsinrelevancia+=1
                 if otros:
                     otros+=u', '
-                otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Sin relevancia|sin relevancia]]' % pr
+                otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Sin_relevancia|sin relevancia]]' % pr
             if pages[pageid]['wik']:
                 qwikificar+=1
                 if otros:
@@ -470,27 +470,27 @@ def main():
                 qsinreferencias+=1
                 if otros:
                     otros+=u', '
-                otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Sin referencias|sin referencias]]' % pr
+                otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Sin_referencias|sin referencias]]' % pr
             if pages[pageid]['obras']:
                 qenobras+=1
                 if otros:
                     otros+=u', '
-                otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#En obras|en obras]]' % pr
+                otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#En_obras|en obras]]' % pr
             if pages[pageid]['neutral']:
                 qnoneutral+=1
                 if otros:
                     otros+=u', '
-                otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#No neutral|no neutral]]' % pr
+                otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#No_neutral|no neutral]]' % pr
             if pages[pageid]['trad']:
                 qentraduccion+=1
                 if otros:
                     otros+=u', '
-                otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#En traducción|en traducción]]' % pr
+                otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#En_traducción|en traducción]]' % pr
             if pages[pageid]['discutido']:
                 qveracidaddiscutida+=1
                 if otros:
                     otros+=u', '
-                otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Veracidad discutida|discutido]]' % pr
+                otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Veracidad_discutida|discutido]]' % pr
             if pages[pageid]['nuevo']:
                 if otros:
                     otros+=u', '
@@ -498,17 +498,17 @@ def main():
             
             clasificacionplana=u''
             if pages[pageid]['c']==1: #1 destacado
-                clasificacionplana=u'[[Wikipedia:Contenido por wikiproyecto/%s#Artículos destacados|Destacado]]' % pr
+                clasificacionplana=u'[[Wikipedia:Contenido por wikiproyecto/%s#Artículos_destacados|Destacado]]' % pr
             elif pages[pageid]['c']==2: #2 es bueno, 
-                clasificacionplana=u'[[Wikipedia:Contenido por wikiproyecto/%s#Artículos buenos|Bueno]]' % pr
+                clasificacionplana=u'[[Wikipedia:Contenido por wikiproyecto/%s#Artículos_buenos|Bueno]]' % pr
             else: #resto: esbozo, miniesbozo, desambig, ·
                 clasificacionplana=clasificacion[pages[pageid]['c']]
             
             importanciaplana=u''
             if pages[pageid]['im']==1:
-                importanciaplana=u'[[Wikipedia:Contenido por wikiproyecto/%s#Clase-A|Clase-A]]' % pr
+                importanciaplana=u'[[Wikipedia:Contenido por wikiproyecto/%s#Importancia_Clase-A|Clase-A]]' % pr
             elif pages[pageid]['im']==2:
-                importanciaplana=u'[[Wikipedia:Contenido por wikiproyecto/%s#Clase-B|Clase-B]]' % pr
+                importanciaplana=u'[[Wikipedia:Contenido por wikiproyecto/%s#Importancia_Clase-B|Clase-B]]' % pr
             else:
                 importanciaplana=importancia[pages[pageid]['im']]
             
