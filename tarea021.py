@@ -14,6 +14,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#todo:
+# no contabiliza enlaces con \' en el dump pagelinks? mejorar regexp
+# 
+
 import _mysql
 import gzip
 import re
@@ -645,7 +649,7 @@ def main():
         tablaimportancia+=u'<onlyinclude>{| class="wikitable" style="text-align: center;clear: {{{1|}}};float: {{{1|}}};"\n'
         tablaimportancia+=u'! colspan=4 | Importancia !! rowspan=2 | Total '
         tablaimportancia+=u'\n|-\n! Clase-A ↑↑ !! Clase-B ↑ !! Clase-C ↓ !! Clase-D ↓↓'
-        tablaimportancia+=u'\n|-\n| [[Wikipedia:Contenido por wikiproyecto/%s#Clase-A|%d]] || [[Wikipedia:Contenido por wikiproyecto/%s#Clase-B|%d]] || %d || %d || %d ' % (pr, qclasea, pr, qclaseb, qclasec, qclased, lenartstitles)
+        tablaimportancia+=u'\n|-\n| [[Wikipedia:Contenido por wikiproyecto/%s#Importancia_Clase-A|%d]] || [[Wikipedia:Contenido por wikiproyecto/%s#Importancia_Clase-B|%d]] || %d || %d || %d ' % (pr, qclasea, pr, qclaseb, qclasec, qclased, lenartstitles)
         tablaimportancia+=u'\n|-\n| 1–2%s || 3–5%s || 6–10%s || 11–100%s || 100%s ' % (u'%', u'%', u'%', u'%', u'%')
         tablaimportancia+=u'\n|}</onlyinclude>\n'
         
@@ -659,14 +663,14 @@ def main():
         tablamantenimiento+=u'! colspan=3 | Mantenimiento '
         tablamantenimiento+=u'\n|-\n! Fusionar \n| [[Wikipedia:Contenido por wikiproyecto/%s#Fusionar|%d]] \n| %.1f%% ' % (pr, qfusionar, (qfusionar/(qmantenimiento/100.0)))
         tablamantenimiento+=u'\n|-\n! Contextualizar \n| [[Wikipedia:Contenido por wikiproyecto/%s#Contextualizar|%d]] \n| %.1f%% ' % (pr, qcontextualizar, (qcontextualizar/(qmantenimiento/100.0)))
-        tablamantenimiento+=u'\n|-\n! Sin relevancia \n| [[Wikipedia:Contenido por wikiproyecto/%s#Sin relevancia|%d]] \n| %.1f%% ' % (pr, qsinrelevancia, (qsinrelevancia/(qmantenimiento/100.0)))
+        tablamantenimiento+=u'\n|-\n! Sin relevancia \n| [[Wikipedia:Contenido por wikiproyecto/%s#Sin_relevancia|%d]] \n| %.1f%% ' % (pr, qsinrelevancia, (qsinrelevancia/(qmantenimiento/100.0)))
         tablamantenimiento+=u'\n|-\n! Wikificar \n| [[Wikipedia:Contenido por wikiproyecto/%s#Wikificar|%d]] \n| %.1f%% ' % (pr, qwikificar, (qwikificar/(qmantenimiento/100.0)))
         tablamantenimiento+=u'\n|-\n! Copyedit \n| [[Wikipedia:Contenido por wikiproyecto/%s#Copyedit|%d]] \n| %.1f%% ' % (pr, qcopyedit, (qcopyedit/(qmantenimiento/100.0)))
-        tablamantenimiento+=u'\n|-\n! Sin referencias \n| [[Wikipedia:Contenido por wikiproyecto/%s#Sin referencias|%d]] \n| %.1f%% ' % (pr, qsinreferencias, (qsinreferencias/(qmantenimiento/100.0)))
-        tablamantenimiento+=u'\n|-\n! En obras \n| [[Wikipedia:Contenido por wikiproyecto/%s#En obras|%d]] \n| %.1f%% ' % (pr, qenobras, (qenobras/(qmantenimiento/100.0)))
-        tablamantenimiento+=u'\n|-\n! No neutral \n| [[Wikipedia:Contenido por wikiproyecto/%s#No neutral|%d]] \n| %.1f%% ' % (pr, qnoneutral, (qnoneutral/(qmantenimiento/100.0)))
-        tablamantenimiento+=u'\n|-\n! En traducción \n| [[Wikipedia:Contenido por wikiproyecto/%s#En traducción|%d]] \n| %.1f%% ' % (pr, qentraduccion, (qentraduccion/(qmantenimiento/100.0)))
-        tablamantenimiento+=u'\n|-\n! Veracidad discutida \n| [[Wikipedia:Contenido por wikiproyecto/%s#Veracidad discutida|%d]] \n| %.1f%% ' % (pr, qveracidaddiscutida, (qveracidaddiscutida/(qmantenimiento/100.0)))
+        tablamantenimiento+=u'\n|-\n! Sin referencias \n| [[Wikipedia:Contenido por wikiproyecto/%s#Sin_referencias|%d]] \n| %.1f%% ' % (pr, qsinreferencias, (qsinreferencias/(qmantenimiento/100.0)))
+        tablamantenimiento+=u'\n|-\n! En obras \n| [[Wikipedia:Contenido por wikiproyecto/%s#En_obras|%d]] \n| %.1f%% ' % (pr, qenobras, (qenobras/(qmantenimiento/100.0)))
+        tablamantenimiento+=u'\n|-\n! No neutral \n| [[Wikipedia:Contenido por wikiproyecto/%s#No_neutral|%d]] \n| %.1f%% ' % (pr, qnoneutral, (qnoneutral/(qmantenimiento/100.0)))
+        tablamantenimiento+=u'\n|-\n! En traducción \n| [[Wikipedia:Contenido por wikiproyecto/%s#En_traducción|%d]] \n| %.1f%% ' % (pr, qentraduccion, (qentraduccion/(qmantenimiento/100.0)))
+        tablamantenimiento+=u'\n|-\n! Veracidad discutida \n| [[Wikipedia:Contenido por wikiproyecto/%s#Veracidad_discutida|%d]] \n| %.1f%% ' % (pr, qveracidaddiscutida, (qveracidaddiscutida/(qmantenimiento/100.0)))
         tablamantenimiento+=u'\n|-\n| Total \n| %d \n| 100%% ' % (qmantenimiento)
         tablamantenimiento+=u'\n|}</onlyinclude>\n'
         
@@ -698,6 +702,11 @@ def main():
         resumen+=u'| valign=top |\n{{Wikipedia:Contenido por wikiproyecto/%s/Resumen/Mantenimiento}}\n' % pr
         resumen+=u'<small>\'\'Esta tabla proviene de <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Resumen/Mantenimiento]]<nowiki>}}</nowiki>\'\'.</small>\n' % pr
         resumen+=u'|}'
+        
+        #algunos detalles globales más para el resumen
+        
+        #fin detalles
+        
         resumen+=u'(en obras) Algunos detalles sobre las %d páginas analizadas:\n' % lenartstitles
         resumen+=u'* %d tienen alguna imagen (%.2f%%) y %d no tienen ninguna (%.2f%%). La media de imágenes por página es de %d.\n' % (0, 0.0, 0, 0.0, 0)
         resumen+=u'* %d tienen alguna categoría (%.2f%%) y %d no tienen ninguna (%.2f%%). La media de categorías por página es de %d.\n' % (0, 0.0, 0, 0.0, 0)
@@ -797,7 +806,7 @@ def main():
                 salida+=u'== Importancia ==\n'
             elif c==3:
                 salida+=u'== Mantenimiento ==\n'
-            elif c==14:
+            elif c==13:
                 salida+=u'== Miscelánea ==\n'
             c+=1
         
@@ -806,7 +815,7 @@ def main():
         
         #pagina del pr
         #salida=u'{{Wikipedia:Contenido por wikiproyecto/Iconos|%s}}\nAnálisis del contenido en el ámbito de [[Wikiproyecto:%s]]. Para añadir páginas debes modificar la <span class="plainlinks">[http://es.wikipedia.org/w/index.php?title=Wikipedia:Contenido_por_wikiproyecto/%s/Categorías&action=edit lista de categorías]</span>.\n\n== Índice ==\n{{Wikipedia:Contenido por wikiproyecto/%s/Índice}}\n\n== Resumen ==\n{{Wikipedia:Contenido por wikiproyecto/%s/Resumen}}\n\n{{Wikipedia:Contenido por wikiproyecto/%s/Detalles}}\n\n[[Categoría:Wikipedia:Contenido por wikiproyecto|%s]]\n[[Categoría:Wikipedia:Contenido por wikiproyecto/%s| ]]' % (pr, pr, re.sub(u' ', u'_', pr), pr, pr, pr, pr, pr)
-        salida=u'{{Wikipedia:Contenido por wikiproyecto/Iconos|%s}}\nAnálisis del contenido en el ámbito de [[Wikiproyecto:%s]]. Para añadir páginas debes modificar la <span class="plainlinks">[http://es.wikipedia.org/w/index.php?title=Wikipedia:Contenido_por_wikiproyecto/%s/Categorías&action=edit lista de categorías]</span>.\n\n== Índice ==\n{{Wikipedia:Contenido por wikiproyecto/%s/Índice}}\n\n== Resumen ==\n{{Wikipedia:Contenido por wikiproyecto/%s/Resumen}}\n\n{{Wikipedia:Contenido por wikiproyecto/%s/Detalles}}\n\n[[Categoría:Wikipedia:Contenido por wikiproyecto|%s]]\n[[Categoría:Wikipedia:Contenido por wikiproyecto/%s| ]]' % (pr, pr, re.sub(u' ', u'_', pr), pr, pr, pr, pr, pr)
+        salida=u'{{Wikipedia:Contenido por wikiproyecto/Iconos|%s}}\nEsta página muestra el análisis del contenido de Wikipedia en español relacionado con el [[Wikiproyecto:%s]]. Para añadir páginas debes modificar la <span class="plainlinks">[http://es.wikipedia.org/w/index.php?title=Wikipedia:Contenido_por_wikiproyecto/%s/Categorías&action=edit lista de categorías]</span>.\n\n== Índice ==\n{{Wikipedia:Contenido por wikiproyecto/%s/Índice}}\n\n== Resumen ==\n{{Wikipedia:Contenido por wikiproyecto/%s/Resumen}}\n\n{{Wikipedia:Contenido por wikiproyecto/%s/Detalles}}\n\n[[Categoría:Wikipedia:Contenido por wikiproyecto|%s]]\n[[Categoría:Wikipedia:Contenido por wikiproyecto/%s| ]]' % (pr, pr, re.sub(u' ', u'_', pr), pr, pr, pr, pr, pr)
         wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s' % pr) #principal
         wii.put(salida, u'BOT - Actualizando página de [[Wikiproyecto:%s]]' % pr)
 

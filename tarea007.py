@@ -64,7 +64,7 @@ temas={
        'India', 'Indonesia', 'Informática', 'Inglaterra', 'Iraq', 
        'Irlanda', 'Irlanda del Norte', 'Irán', 'Islandia', 
        'Islas Marshall', 'Islas Salomón', 'Israel', 'Italia', 
-       'Jamaica', 'Japón', 'Jordania', 'Judicial', 'Kenia', 
+       'Jamaica', 'Japón', 'Jordania', 'Judicial', 'Kenia', 'Kirguistán', 
        'Kosovo', 'Kuwait', 'Lesoto', 'Letonia', 'Liberia', 
        'Libia', 'Liechtenstein', 'Linux', 'Lituania', 'Luxemburgo', 
        'Líbano', 'Macedonia', 'Madagascar', 'Malasia', 'Malaui', 
