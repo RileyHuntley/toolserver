@@ -718,7 +718,7 @@ def main():
             if pagevalues['iws']>0:
                 alguninterwiki+=1
         
-        resumen+=u'(en obras) Algunos detalles sobre las %d páginas analizadas:\n' % lenartstitles
+        resumen+=u'Algunos detalles sobre las %d páginas analizadas:\n' % lenartstitles
         resumen+=u'* %d tienen alguna imagen (%.1f%%) y %d no tienen ninguna (%.1f%%). La media de imágenes por página es de %.1f.\n' % (algunaimagen, algunaimagen/(lenartstitles/100), lenartstitles-algunaimagen, 100-(algunaimagen/(lenartstitles/100)), totalimagenes/lenartstitles)
         resumen+=u'* %d tienen alguna categoría (%.1f%%) y %d no tienen ninguna (%.1f%%). La media de categorías por página es de %.1f.\n' % (algunacategoria, algunacategoria/(lenartstitles/100), lenartstitles-algunacategoria, 100-(algunacategoria/(lenartstitles/100)), totalcategorias/lenartstitles)
         resumen+=u'* %d tienen algún interwiki (%.1f%%) y %d no tienen ninguno (%.1f%%). La media de interwikis por página es de %.1f.\n' % (alguninterwiki, alguninterwiki/(lenartstitles/100), lenartstitles-alguninterwiki, 100-(alguninterwiki/(lenartstitles/100)), totalinterwikis/lenartstitles)
