@@ -704,6 +704,7 @@ def main():
         resumen+=u'|}'
         
         #algunos detalles globales más para el resumen
+        #todo: enlaces entrantes (resto de propiedades del dic pages?)
         algunaimagen=0.0
         algunacategoria=0.0
         alguninterwiki=0.0
