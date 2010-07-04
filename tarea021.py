@@ -51,6 +51,15 @@ def loadProjects(site):
         wii.put(salida, u'BOT - Ordenado lista de wikiproyectos y quitando repeticiones si las hay')
     return projects
 
+def parsePRCAT(site):
+    #WhatLinksHere to PRCAT
+    
+    #parse parameters
+    
+    #update lists
+    
+    return None
+
 def loadCategories(site, project):
     categories=[]
     categoriesall=[]
@@ -135,7 +144,7 @@ def main():
     if len(sys.argv)>1:
         lang=sys.argv[1]
     
-    os.system('rm /mnt/user-store/%swiki-latest-pagelinks.sql.gz' % lang) #borramos para descargar luego la versión más nueva
+    #os.system('rm /mnt/user-store/%swiki-latest-pagelinks.sql.gz' % lang) #borramos para descargar luego la versión más nueva
     
     clasificacion={0:u'·',1:u'Destacado',2:u'Bueno',3:u'Esbozo',4:u'Miniesbozo',5:u'Desambiguación'}
     #calidad={0:u'·',1:u'Bueno ([[Imagen:Artículo bueno.svg|14px|Artículo bueno]])',2:u'Destacado ([[Imagen:Cscr-featured.svg|14px|Artículo destacado]])'}
@@ -156,6 +165,7 @@ def main():
     for project in projects:
         pr=project
         wikipedia.output(u"PR:%s" % project)
+        parsePRCAT(site)
         categories=loadCategories(site, project)
         
         for category in categories:
@@ -166,17 +176,19 @@ def main():
         r=conn.use_result()
         row=r.fetch_row(maxrows=1, how=1)
         projectpages=sets.Set()
+        wikipedia.output(u"Buscando páginas que pertenezcan a este wikiproyecto")
+        c=0
         while row:
             if len(row)==1:
                 cl_from=int(row[0]['cl_from'])
                 cl_to=unicode(row[0]['cl_to'], 'utf-8')
                 cl_to=re.sub("_", " ", cl_to)
-                
                 if cl_to in categories and cl_from not in projectpages: # Revisamos todas las categorías de este wikiproyecto
                     projectpages.add(cl_from)
-                
+                    c+=1
+                    percent(c)
             row=r.fetch_row(maxrows=1, how=1)
-        wikipedia.output(u"Ha este wikiproyecto pertenecen %d páginas" % len(projectpages))
+        wikipedia.output(u"A este wikiproyecto pertenecen %d páginas" % len(projectpages))
         
         #Inicializamos diccionario para las páginas de este wikiproyecto
         conn.query("SELECT page_id, page_title, page_len, page_namespace from page where (page_namespace=0 or page_namespace=104) and page_is_redirect=0;")
@@ -186,6 +198,7 @@ def main():
         wikipedia.output(u"Cargando páginas del wikiproyecto %s" % (project))
         pages={}
         pagetitle2pageid={}
+        allpagesnm0=sets.Set()
         while row:
             if len(row)==1:
                 page_id=int(row[0]['page_id'])
@@ -193,6 +206,8 @@ def main():
                 page_len=int(row[0]['page_len'])
                 page_nm=int(row[0]['page_namespace'])
                 page_new=False
+                #hace falta para contar enlaces entrantes provenientes del nm=0
+                allpagesnm0.add(page_id) #meter redirecciones también?
                 if nuevos_dic.has_key(page_title):
                     page_new=True
                 if page_id in projectpages:
@@ -201,7 +216,52 @@ def main():
                     pagetitle2pageid[page_title]=page_id
                     pages[page_id]={'t':page_title, 'l':page_len, 'nm':page_nm, 'i':0, 'c':0, 'cat':0, 'iws':0, 'im':0, 'en':0, 'f':False, 'con':False, 'rel':False, 'wik':False, 'edit':False, 'ref':False, 'obras':False, 'neutral':False, 'trad':False, 'discutido':False, 'nuevo':page_new}
             row=r.fetch_row(maxrows=1, how=1)
-        wikipedia.output(u"Cargadas las %d páginas" % (c))
+        wikipedia.output(u"Cargadas %d páginas" % (c))
+        
+        """#Ranking de usuarios
+        conn.query("SELECT rc_cur_id, rc_user_text from recentchanges where (rc_namespace=0 or rc_namespace=104);") #rc no muestra si es redirect, pero la filtramos con pages.has_key
+        r=conn.use_result()
+        row=r.fetch_row(maxrows=1, how=1)
+        c=0
+        wikipedia.output(u"Cargando cambios recientes a páginas del wikiproyecto %s" % (project))
+        users={}
+        while row:
+            if len(row)==1:
+                rc_cur_id=int(row[0]['rc_cur_id'])
+                rc_user_text=re.sub('_', ' ', unicode(row[0]['rc_user_text'], 'utf-8'))
+                if pages.has_key(rc_cur_id):
+                    if users.has_key(rc_user_text):
+                        users[rc_user_text]+=1
+                    else:
+                        users[rc_user_text]=1
+                    c+=1
+                    percent(c, 100)
+            row=r.fetch_row(maxrows=1, how=1)
+        wikipedia.output(u"Se han contado %d cambios recientes a páginas de este wikiproyecto" % (c))
+        u=[]
+        for k, v in users.items():
+            u.append([v, k])
+        u.sort()
+        u.reverse()
+        print u[:15]
+        """
+        #Recorremos CategoryLinks sumando categorías para los artículos
+        conn.query("SELECT cl_from, cl_to from categorylinks;")
+        r=conn.use_result()
+        row=r.fetch_row(maxrows=1, how=1)
+        c=0
+        while row:
+            if len(row)==1:
+                cl_from=int(row[0]['cl_from'])
+                cl_to=unicode(row[0]['cl_to'], 'utf-8')
+                cl_to=re.sub("_", " ", cl_to)
+                
+                if pages.has_key(cl_from):
+                    pages[cl_from]['cat']+=1
+                    c+=1
+                    percent(c)
+            row=r.fetch_row(maxrows=1, how=1)
+        wikipedia.output(u"Las páginas de este wikiproyecto están categorizadas %d veces" % (c))
         
         #Plantillas de mantenimiento
         miniesbozo_pattern=re.compile(ur'(?im)^mini ?esbozo')
@@ -296,8 +356,6 @@ def main():
         c=0
         while row:
             if len(row)==1:
-                c+=1
-                percent(c, 500000)
                 ll_from=int(row[0]['ll_from'])
                 try:
                     ll_lang=re.sub('_', ' ', unicode(row[0]['ll_lang'], 'utf-8'))
@@ -305,8 +363,10 @@ def main():
                     wikipedia.output(row[0]['ll_lang'])
                 if pages.has_key(ll_from):
                     pages[ll_from]['iws']+=1
+                    c+=1
+                    percent(c, 500000)
             row=r.fetch_row(maxrows=1, how=1)
-        wikipedia.output(u"%d interwikis" % (c))
+        wikipedia.output(u"%d interwikis tienen las páginas de este wikiproyecto" % (c))
         
         #Contar enlaces entrantes
         try:
@@ -315,7 +375,7 @@ def main():
             os.system('wget http://download.wikimedia.org/%swiki/latest/%swiki-latest-pagelinks.sql.gz -O /mnt/user-store/%swiki-latest-pagelinks.sql.gz' % (lang, lang, lang)) #entorno a 150MB
             f=gzip.open('/mnt/user-store/%swiki-latest-pagelinks.sql.gz' % lang, 'r')
         c=0
-        pagelinks_pattern=re.compile(ur'(?i)\((\d+)\,(0|104)\,\'([^\']*?)\'\)') #104 anexo:
+        pagelinks_pattern=re.compile(ur'(?i)\((\d+)\,(0|104)\,\'([^\']*?)\'\)[\,\;]') #104 anexo:
         for line in f:
             line=line[:len(line)-1] #evitamos \n
             line=re.sub('_', ' ', line)
@@ -325,12 +385,12 @@ def main():
                 percent(c, 1000000)
                 pl_from=int(i[0])
                 pl_nm=int(i[1])
-                pl_title=u''
+                pl_title=None
                 try:
                     pl_title=unicode(i[2], 'utf-8')
                 except:
-                    pass
-                if pages.has_key(pl_from) and pagetitle2pageid.has_key(pl_title): #si el enlace proviene del nm=0 y va hacia un nm=0
+                    pl_title=None
+                if pl_from in allpagesnm0 and pl_title and pagetitle2pageid.has_key(pl_title): #si el enlace proviene del nm=0 y va hacia un nm=0
                     page_id=pagetitle2pageid[pl_title]
                     if pages.has_key(page_id):
                         pages[page_id]['en']+=1 #+1 entrante, im es importancia
@@ -638,6 +698,10 @@ def main():
         resumen+=u'| valign=top |\n{{Wikipedia:Contenido por wikiproyecto/%s/Resumen/Mantenimiento}}\n' % pr
         resumen+=u'<small>\'\'Esta tabla proviene de <nowiki>{{</nowiki>[[Wikipedia:Contenido por wikiproyecto/%s/Resumen/Mantenimiento]]<nowiki>}}</nowiki>\'\'.</small>\n' % pr
         resumen+=u'|}'
+        resumen+=u'(en obras) Algunos detalles sobre las %d páginas analizadas:\n' % lenartstitles
+        resumen+=u'* %d tienen alguna imagen (%.2f%%) y %d no tienen ninguna (%.2f%%). La media de imágenes por página es de %d.\n' % (0, 0.0, 0, 0.0, 0)
+        resumen+=u'* %d tienen alguna categoría (%.2f%%) y %d no tienen ninguna (%.2f%%). La media de categorías por página es de %d.\n' % (0, 0.0, 0, 0.0, 0)
+        resumen+=u'* %d tienen algún interwiki (%.2f%%) y %d no tienen ninguno (%.2f%%). La media de interwikis por página es de %d.\n' % (0, 0.0, 0, 0.0, 0)
         
         wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Resumen' % pr) #resumen
         wii.put(resumen, u'BOT - Actualizando resumen para [[Wikiproyecto:%s]]' % pr)
@@ -742,7 +806,7 @@ def main():
         
         #pagina del pr
         #salida=u'{{Wikipedia:Contenido por wikiproyecto/Iconos|%s}}\nAnálisis del contenido en el ámbito de [[Wikiproyecto:%s]]. Para añadir páginas debes modificar la <span class="plainlinks">[http://es.wikipedia.org/w/index.php?title=Wikipedia:Contenido_por_wikiproyecto/%s/Categorías&action=edit lista de categorías]</span>.\n\n== Índice ==\n{{Wikipedia:Contenido por wikiproyecto/%s/Índice}}\n\n== Resumen ==\n{{Wikipedia:Contenido por wikiproyecto/%s/Resumen}}\n\n{{Wikipedia:Contenido por wikiproyecto/%s/Detalles}}\n\n[[Categoría:Wikipedia:Contenido por wikiproyecto|%s]]\n[[Categoría:Wikipedia:Contenido por wikiproyecto/%s| ]]' % (pr, pr, re.sub(u' ', u'_', pr), pr, pr, pr, pr, pr)
-        salida=u'{{Wikipedia:Contenido por wikiproyecto/Iconos|%s}}\nAnálisis del contenido en el ámbito de [[Wikiproyecto:%s]]. Para añadir páginas debes modificar la <span class="plainlinks">[http://es.wikipedia.org/w/index.php?title=Wikipedia:Contenido_por_wikiproyecto/%s/Categorías&action=edit lista de categorías]</span>. {{Purgar|Actualizar esta página}}.\n\n== Índice ==\n{{Wikipedia:Contenido por wikiproyecto/%s/Índice}}\n\n== Resumen ==\n{{Wikipedia:Contenido por wikiproyecto/%s/Resumen}}\n\n{{Wikipedia:Contenido por wikiproyecto/%s/Detalles}}\n\n[[Categoría:Wikipedia:Contenido por wikiproyecto|%s]]\n[[Categoría:Wikipedia:Contenido por wikiproyecto/%s| ]]' % (pr, pr, re.sub(u' ', u'_', pr), pr, pr, pr, pr, pr)
+        salida=u'{{Wikipedia:Contenido por wikiproyecto/Iconos|%s}}\nAnálisis del contenido en el ámbito de [[Wikiproyecto:%s]]. Para añadir páginas debes modificar la <span class="plainlinks">[http://es.wikipedia.org/w/index.php?title=Wikipedia:Contenido_por_wikiproyecto/%s/Categorías&action=edit lista de categorías]</span>.\n\n== Índice ==\n{{Wikipedia:Contenido por wikiproyecto/%s/Índice}}\n\n== Resumen ==\n{{Wikipedia:Contenido por wikiproyecto/%s/Resumen}}\n\n{{Wikipedia:Contenido por wikiproyecto/%s/Detalles}}\n\n[[Categoría:Wikipedia:Contenido por wikiproyecto|%s]]\n[[Categoría:Wikipedia:Contenido por wikiproyecto/%s| ]]' % (pr, pr, re.sub(u' ', u'_', pr), pr, pr, pr, pr, pr)
         wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s' % pr) #principal
         wii.put(salida, u'BOT - Actualizando página de [[Wikiproyecto:%s]]' % pr)
 
