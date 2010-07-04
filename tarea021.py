@@ -704,24 +704,27 @@ def main():
         resumen+=u'|}'
         
         #algunos detalles globales más para el resumen
-        algunaimagen=0
-        algunacategoria=0
-        alguninterwiki=0
-        totalimagenes=0
-        totalcategorias=0
-        totalinterwikis=0
+        algunaimagen=0.0
+        algunacategoria=0.0
+        alguninterwiki=0.0
+        totalimagenes=0.0
+        totalcategorias=0.0
+        totalinterwikis=0.0
         for page, pagevalues in pages.items():
             if pagevalues['i']>0:
-                algunaimagen+=1
+                algunaimagen+=1.0
+                totalimagenes+=pagevalues['i']
             if pagevalues['cat']>0:
-                algunacategoria+=1
+                algunacategoria+=1.0
+                totalcategorias+=pagevalues['cat']
             if pagevalues['iws']>0:
-                alguninterwiki+=1
+                alguninterwiki+=1.0
+                totalinterwikis+=pagevalues['iws']
         
         resumen+=u'Algunos detalles sobre las %d páginas analizadas:\n' % lenartstitles
-        resumen+=u'* %d tienen alguna imagen (%.1f%%) y %d no tienen ninguna (%.1f%%). La media de imágenes por página es de %.1f.\n' % (algunaimagen, algunaimagen/(lenartstitles/100), lenartstitles-algunaimagen, 100-(algunaimagen/(lenartstitles/100)), totalimagenes/lenartstitles)
-        resumen+=u'* %d tienen alguna categoría (%.1f%%) y %d no tienen ninguna (%.1f%%). La media de categorías por página es de %.1f.\n' % (algunacategoria, algunacategoria/(lenartstitles/100), lenartstitles-algunacategoria, 100-(algunacategoria/(lenartstitles/100)), totalcategorias/lenartstitles)
-        resumen+=u'* %d tienen algún interwiki (%.1f%%) y %d no tienen ninguno (%.1f%%). La media de interwikis por página es de %.1f.\n' % (alguninterwiki, alguninterwiki/(lenartstitles/100), lenartstitles-alguninterwiki, 100-(alguninterwiki/(lenartstitles/100)), totalinterwikis/lenartstitles)
+        resumen+=u'* %d tienen alguna imagen (%.1f%%) y %d no tienen ninguna (%.1f%%). La media de imágenes por página es de %.1f.\n' % (algunaimagen, algunaimagen/(lenartstitles/100.0), lenartstitles-algunaimagen, 100.0-(algunaimagen/(lenartstitles/100.0)), totalimagenes/lenartstitles)
+        resumen+=u'* %d tienen alguna categoría (%.1f%%) y %d no tienen ninguna (%.1f%%). La media de categorías por página es de %.1f.\n' % (algunacategoria, algunacategoria/(lenartstitles/100.0), lenartstitles-algunacategoria, 100.0-(algunacategoria/(lenartstitles/100.0)), totalcategorias/lenartstitles)
+        resumen+=u'* %d tienen algún interwiki (%.1f%%) y %d no tienen ninguno (%.1f%%). La media de interwikis por página es de %.1f.\n' % (alguninterwiki, alguninterwiki/(lenartstitles/100.0), lenartstitles-alguninterwiki, 100.0-(alguninterwiki/(lenartstitles/100.0)), totalinterwikis/lenartstitles)
         #fin detalles
         
         wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Resumen' % pr) #resumen
