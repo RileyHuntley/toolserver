@@ -29,30 +29,23 @@ import time
 import wikipedia
 
 def percent(c, d=1000):
-    if c % d == 0:
-        wikipedia.output(u'Llevamos %d' % c)
+    if c % d == 0: wikipedia.output(u'Llevamos %d' % c)
 
 def loadProjects(site):
     wikipedia.output(u'Loading projects names')
-    
-    projects=[]
-    projectsall=[]
+    projects, projectsall = [], []
     wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/Wikiproyectos')
     if wii.exists() and not wii.isRedirectPage():
         for trozo in wii.get().splitlines():
-            trozo=trozo.strip() #re.sub(ur'(?im)^ *([^\n\r]*?) *$', ur'\1', trozo)
-            trozo=re.sub(ur'(?i) *(Wikiproyecto|Wikiproject) *: *', ur'', trozo)
-            trozo=re.sub('_', ' ', trozo)
-            trozo=trozo.strip()
+            trozo=re.sub(ur'(?i) *(Wikiproyecto|Wikiproject) *: *', ur'', trozo.strip())
+            trozo=re.sub('_', ' ', trozo).strip()
             projectsall.append(trozo)
-            if trozo[0]=='#':
-                continue
+            if trozo[0]=='#': continue
             if projects.count(trozo)==0:
                 wikipedia.output(u'PR:%s' % trozo)
                 projects.append(trozo)
         projectsall.sort()
-        salida='\n'.join(projectsall)
-        wii.put(salida, u'BOT - Ordenado lista de wikiproyectos y quitando repeticiones si las hay')
+        wii.put('\n'.join(projectsall), u'BOT - Ordenado lista de wikiproyectos y quitando repeticiones si las hay')
     return projects
 
 def parsePRCAT(site):
@@ -65,30 +58,23 @@ def parsePRCAT(site):
     return None
 
 def loadCategories(site, project):
-    categories=[]
-    categoriesall=[]
+    categories = []
     wikipedia.output(u'Loading categories for %s project' % project)
     wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Categorías' % project)
     if wii.exists() and not wii.isRedirectPage():
         trozos=wii.get().splitlines()
-        categoriesall=[]
         for trozo in trozos:
-            trozo=trozo.strip()
-            trozo=re.sub(ur'(?i) *(Categoría|Category) *: *', ur'', trozo)
+            trozo=re.sub(ur'(?i) *(Categoría|Category) *: *', ur'', trozo.strip())
             trozo=re.sub('_', ' ', trozo)
-            if len(trozo)<1 or trozo[0]=='#':
-                continue
-            if categoriesall.count(trozo)==0:
-                categoriesall.append(trozo)
+            if len(trozo)<1 or trozo[0]=='#': continue
+            if categories.count(trozo)==0:
                 categories.append(trozo)
-        categoriesall.sort()
-        salida='\n'.join(categoriesall)
-        wii.put(salida, u'BOT - Ordenado lista de categorías y quitando repeticiones si las hay')
+        categories.sort()
+        wii.put('\n'.join(categories), u'BOT - Ordenado lista de categorías y quitando repeticiones si las hay')
     return categories
 
 def loadNewPages(site, limitenuevos):
-    nuevos_dic={}
-    nuevos_list=[]
+    nuevos_dic, nuevos_list = {}, []
     newpagesgen=site.newpages(number=limitenuevos)
 
     for newpage in newpagesgen:
@@ -112,8 +98,7 @@ def loadTemplates(conn):
         if len(row)==1:
             page_id=int(row[0]['page_id'])
             page_title=re.sub("_", " ", unicode(row[0]['page_title'], 'utf-8'))
-            c+=1
-            percent(c, 10000)
+            c+=1;percent(c, 10000)
             templates[page_id]=page_title
         row=r.fetch_row(maxrows=1, how=1)
     wikipedia.output(u"Cargadas %d plantillas de eswiki" % (c))
@@ -123,14 +108,12 @@ def loadBadImages(conn, templates):
     #generamos lista de imagenes inservibles
     badimages=sets.Set()
     conn.query("SELECT il_from, il_to from imagelinks;")
-    c=0
-    cc=0
+    c=0;cc=0
     r=conn.use_result()
     row=r.fetch_row(maxrows=1, how=1)
     while row:
         if len(row)==1:
-            c+=1
-            percent(c, 100000)
+            c+=1;percent(c, 100000)
             il_from=int(row[0]['il_from'])
             try:
                 il_to=re.sub('_', ' ', unicode(row[0]['il_to'], "utf-8"))
@@ -185,12 +168,10 @@ def main():
         while row:
             if len(row)==1:
                 cl_from=int(row[0]['cl_from'])
-                cl_to=unicode(row[0]['cl_to'], 'utf-8')
-                cl_to=re.sub("_", " ", cl_to)
+                cl_to=re.sub("_", " ", unicode(row[0]['cl_to'], 'utf-8'))
                 if cl_to in categories and cl_from not in projectpages: # Revisamos todas las categorías de este wikiproyecto
                     projectpages.add(cl_from)
-                    c+=1
-                    percent(c)
+                    c+=1;percent(c)
             row=r.fetch_row(maxrows=1, how=1)
         wikipedia.output(u"A este wikiproyecto pertenecen %d páginas" % len(projectpages))
         
@@ -215,8 +196,7 @@ def main():
                 if nuevos_dic.has_key(page_title):
                     page_new=True
                 if page_id in projectpages:
-                    c+=1
-                    percent(c)
+                    c+=1;percent(c)
                     pagetitle2pageid[page_title]=page_id
                     pages[page_id]={'t':page_title, 'l':page_len, 'nm':page_nm, 'i':0, 'c':0, 'cat':0, 'iws':0, 'im':0, 'en':0, 'f':False, 'con':False, 'rel':False, 'wik':False, 'edit':False, 'ref':False, 'obras':False, 'neutral':False, 'trad':False, 'discutido':False, 'nuevo':page_new}
             row=r.fetch_row(maxrows=1, how=1)
@@ -238,8 +218,7 @@ def main():
                         users[rc_user_text]+=1
                     else:
                         users[rc_user_text]=1
-                    c+=1
-                    percent(c, 100)
+                    c+=1;percent(c, 100)
             row=r.fetch_row(maxrows=1, how=1)
         wikipedia.output(u"Se han contado %d cambios recientes a páginas de este wikiproyecto" % (c))
         u=[]
@@ -257,13 +236,11 @@ def main():
         while row:
             if len(row)==1:
                 cl_from=int(row[0]['cl_from'])
-                cl_to=unicode(row[0]['cl_to'], 'utf-8')
-                cl_to=re.sub("_", " ", cl_to)
-                
+                cl_to=re.sub("_", " ", unicode(row[0]['cl_to'], 'utf-8'))
+                                
                 if pages.has_key(cl_from):
                     pages[cl_from]['cat']+=1
-                    c+=1
-                    percent(c)
+                    c+=1;percent(c)
             row=r.fetch_row(maxrows=1, how=1)
         wikipedia.output(u"Las páginas de este wikiproyecto están categorizadas %d veces" % (c))
         
@@ -297,8 +274,7 @@ def main():
                 except:
                     wikipedia.output(row[0]['tl_title'])
                 if pages.has_key(tl_from):
-                    c+=1
-                    percent(c, 10000)
+                    c+=1;percent(c, 10000)
                     if re.search(destacado_pattern, tl_title):
                         pages[tl_from]['c']=1
                     elif re.search(bueno_pattern, tl_title):
@@ -453,134 +429,81 @@ def main():
             i+=1
         
         #ordenamos listas de importancia
-        listqclasea.sort()
-        listqclasea.reverse()
-        listqclaseb.sort()
-        listqclaseb.reverse()
+        listqclasea.sort();listqclasea.reverse()
+        listqclaseb.sort();listqclaseb.reverse()
         
         #generamos salida de listas de importancia
-        listqclaseaplana='\n'.join(['# [[%s]] (%d enlaces entrantes)' % (arttitle, artentrantes) for artentrantes, arttitle in listqclasea])
-        listqclasebplana='\n'.join(['# [[%s]] (%d enlaces entrantes)' % (arttitle, artentrantes) for artentrantes, arttitle in listqclaseb])
+        listqclaseaplana=u''
+        for artentrantes, arttitle in listqclasea:
+            if pagetitle2pageid.has_key(arttitle):
+                artnm=u''
+                pageid=pagetitle2pageid[arttitle]
+                if pages.has_key(pageid):
+                    if pages[pageid]['nm']!=0:
+                        artnm=namespaces_[pages[pageid]['nm']]
+                    listqclaseaplana+=u'# [[%s%s]] (%d enlaces entrantes)\n' % (artnm, arttitle, artentrantes)
+        listqclasebplana=u''
+        for artentrantes, arttitle in listqclaseb:
+            if pagetitle2pageid.has_key(arttitle):
+                artnm=u''
+                pageid=pagetitle2pageid[arttitle]
+                if pages.has_key(pageid):
+                    if pages[pageid]['nm']!=0:
+                        artnm=namespaces_[pages[pageid]['nm']]
+                    listqclasebplana+=u'# [[%s%s]] (%d enlaces entrantes)\n' % (artnm, arttitle, artentrantes)
+        #fin listas importancia
         
         #recorremos los articulos del wikiproyecto
-        qfusionar=0
-        qcontextualizar=0
-        qsinrelevancia=0
-        qwikificar=0
-        qcopyedit=0
-        qsinreferencias=0
-        qenobras=0
-        qnoneutral=0
-        qentraduccion=0
-        qveracidaddiscutida=0
+        qfusionar=0;qcontextualizar=0;qsinrelevancia=0;qwikificar=0
+        qcopyedit=0;qsinreferencias=0;qenobras=0;qnoneutral=0;
+        qentraduccion=0;qveracidaddiscutida=0
         relatedchanges=u''
         for arttitle, pageid in artstitles:
             #resumen tamanios
-            if pages[pageid]['l']>=10*1024:
-                resumen['>10']+=1
-            if pages[pageid]['l']>=5*1024:
-                resumen['>5']+=1
-            if pages[pageid]['l']>=2*1024:
-                resumen['>2']+=1
-            if pages[pageid]['l']>=1*1024:
-                resumen['>1']+=1
-            if pages[pageid]['l']<1*1024:
-                resumen['<1']+=1
-            if pages[pageid]['l']<2*1024:
-                resumen['<2']+=1
+            if pages[pageid]['l']>=10*1024: resumen['>10']+=1
+            if pages[pageid]['l']>=5*1024: resumen['>5']+=1
+            if pages[pageid]['l']>=2*1024: resumen['>2']+=1
+            if pages[pageid]['l']>=1*1024: resumen['>1']+=1
+            if pages[pageid]['l']<1*1024: resumen['<1']+=1
+            if pages[pageid]['l']<2*1024: resumen['<2']+=1
             
             #resumen calidad
-            if pages[pageid]['c']==1:
-                resumen['destacado']+=1
-            elif pages[pageid]['c']==2:
-                resumen['bueno']+=1
-            elif pages[pageid]['c']==3:
-                resumen['esbozo']+=1
-            elif pages[pageid]['c']==4:
-                resumen['miniesbozo']+=1
-            elif pages[pageid]['c']==5:
-                resumen['desambig']+=1
-            else:
-                resumen['desconocida']+=1
+            if pages[pageid]['c']==1: resumen['destacado']+=1
+            elif pages[pageid]['c']==2: resumen['bueno']+=1
+            elif pages[pageid]['c']==3: resumen['esbozo']+=1
+            elif pages[pageid]['c']==4: resumen['miniesbozo']+=1
+            elif pages[pageid]['c']==5: resumen['desambig']+=1
+            else: resumen['desconocida']+=1
             
+            #columna otros
             c+=1
-            otros=u''
-            if pages[pageid]['f']:
-                qfusionar+=1
-                if otros:
-                    otros+=u', '
-                otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Fusionar|fusionar]]' % pr
-            if pages[pageid]['con']:
-                qcontextualizar+=1
-                if otros:
-                    otros+=u', '
-                otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Contextualizar|contextualizar]]' % pr
-            if pages[pageid]['rel']:
-                qsinrelevancia+=1
-                if otros:
-                    otros+=u', '
-                otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Sin_relevancia|sin relevancia]]' % pr
-            if pages[pageid]['wik']:
-                qwikificar+=1
-                if otros:
-                    otros+=u', '
-                otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Wikificar|wikificar]]' % pr
-            if pages[pageid]['edit']:
-                qcopyedit+=1
-                if otros:
-                    otros+=u', '
-                otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Copyedit|copyedit]]' % pr
-            if pages[pageid]['ref']:
-                qsinreferencias+=1
-                if otros:
-                    otros+=u', '
-                otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Sin_referencias|sin referencias]]' % pr
-            if pages[pageid]['obras']:
-                qenobras+=1
-                if otros:
-                    otros+=u', '
-                otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#En_obras|en obras]]' % pr
-            if pages[pageid]['neutral']:
-                qnoneutral+=1
-                if otros:
-                    otros+=u', '
-                otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#No_neutral|no neutral]]' % pr
-            if pages[pageid]['trad']:
-                qentraduccion+=1
-                if otros:
-                    otros+=u', '
-                otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#En_traducción|en traducción]]' % pr
-            if pages[pageid]['discutido']:
-                qveracidaddiscutida+=1
-                if otros:
-                    otros+=u', '
-                otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Veracidad_discutida|discutido]]' % pr
-            if pages[pageid]['nuevo']:
-                if otros:
-                    otros+=u', '
-                otros+=u'[[Wikipedia:Contenido por wikiproyecto/%s#Nuevos|nuevo]]' % pr
+            otros=[]
+            if pages[pageid]['f']: qfusionar+=1;otros.append(u'[[Wikipedia:Contenido por wikiproyecto/%s#Fusionar|fusionar]]' % pr)
+            if pages[pageid]['con']: qcontextualizar+=1;otros.append(u'[[Wikipedia:Contenido por wikiproyecto/%s#Contextualizar|contextualizar]]' % pr)
+            if pages[pageid]['rel']: qsinrelevancia+=1;otros.append(u'[[Wikipedia:Contenido por wikiproyecto/%s#Sin_relevancia|sin relevancia]]' % pr)
+            if pages[pageid]['wik']: qwikificar+=1;otros.append(u'[[Wikipedia:Contenido por wikiproyecto/%s#Wikificar|wikificar]]' % pr)
+            if pages[pageid]['edit']: qcopyedit+=1;otros.append(u'[[Wikipedia:Contenido por wikiproyecto/%s#Copyedit|copyedit]]' % pr)
+            if pages[pageid]['ref']: qsinreferencias+=1;otros.append(u'[[Wikipedia:Contenido por wikiproyecto/%s#Sin_referencias|sin referencias]]' % pr)
+            if pages[pageid]['obras']: qenobras+=1;otros.append(u'[[Wikipedia:Contenido por wikiproyecto/%s#En_obras|en obras]]' % pr)
+            if pages[pageid]['neutral']: qnoneutral+=1;otros.append(u'[[Wikipedia:Contenido por wikiproyecto/%s#No_neutral|no neutral]]' % pr)
+            if pages[pageid]['trad']: qentraduccion+=1;otros.append(u'[[Wikipedia:Contenido por wikiproyecto/%s#En_traducción|en traducción]]' % pr)
+            if pages[pageid]['discutido']: qveracidaddiscutida+=1;otros.append(u'[[Wikipedia:Contenido por wikiproyecto/%s#Veracidad_discutida|discutido]]' % pr)
+            if pages[pageid]['nuevo']: otros.append(u'[[Wikipedia:Contenido por wikiproyecto/%s#Nuevos|nuevo]]' % pr)
+            otros=', '.join(otros)
             
-            clasificacionplana=u''
-            if pages[pageid]['c']==1: #1 destacado
-                clasificacionplana=u'[[Wikipedia:Contenido por wikiproyecto/%s#Artículos_destacados|Destacado]]' % pr
-            elif pages[pageid]['c']==2: #2 es bueno, 
-                clasificacionplana=u'[[Wikipedia:Contenido por wikiproyecto/%s#Artículos_buenos|Bueno]]' % pr
-            else: #resto: esbozo, miniesbozo, desambig, ·
-                clasificacionplana=clasificacion[pages[pageid]['c']]
+            clasificacionplana=u'' #1 destacado, 2 es bueno, resto: esbozo, miniesbozo, desambig, ·
+            if pages[pageid]['c']==1: clasificacionplana=u'[[Wikipedia:Contenido por wikiproyecto/%s#Artículos_destacados|Destacado]]' % pr
+            elif pages[pageid]['c']==2: clasificacionplana=u'[[Wikipedia:Contenido por wikiproyecto/%s#Artículos_buenos|Bueno]]' % pr
+            else: clasificacionplana=clasificacion[pages[pageid]['c']]
             
             importanciaplana=u''
-            if pages[pageid]['im']==1:
-                importanciaplana=u'[[Wikipedia:Contenido por wikiproyecto/%s#Importancia_Clase-A|Clase-A]]' % pr
-            elif pages[pageid]['im']==2:
-                importanciaplana=u'[[Wikipedia:Contenido por wikiproyecto/%s#Importancia_Clase-B|Clase-B]]' % pr
-            else:
-                importanciaplana=importancia[pages[pageid]['im']]
+            if pages[pageid]['im']==1: importanciaplana=u'[[Wikipedia:Contenido por wikiproyecto/%s#Importancia_Clase-A|Clase-A]]' % pr
+            elif pages[pageid]['im']==2: importanciaplana=u'[[Wikipedia:Contenido por wikiproyecto/%s#Importancia_Clase-B|Clase-B]]' % pr
+            else: importanciaplana=importancia[pages[pageid]['im']]
             
-            artnm=u''
-            artnm_=u''
+            artnm=u'';artnm_=u''
             if pages[pageid]['nm']!=0:
-                artnm=namespaces[pages[pageid]['nm']]
-                artnm+=u' ' # http://es.wikipedia.org/w/index.php?title=Wikipedia:Contenido_por_wikiproyecto/Aviaci%C3%B3n/4&curid=1996845&diff=21475084&oldid=21403165
+                artnm=namespaces[pages[pageid]['nm']];artnm+=u' ' # http://es.wikipedia.org/w/index.php?curid=1996845&diff=21475084&oldid=21403165
                 artnm_=namespaces_[pages[pageid]['nm']]
             
             salida+=u'\n|-\n| %d || [[%s%s]] || [[%sDiscusión:%s|Disc]] || %d || %s || %s || %d || %d || %d || %d || %s ' % (c, artnm_, arttitle, artnm, arttitle, pages[pageid]['l'], clasificacionplana, importanciaplana, pages[pageid]['en'], pages[pageid]['cat'], pages[pageid]['i'], pages[pageid]['iws'], otros)
@@ -589,13 +512,11 @@ def main():
             #    salida+=cabeceratabla
             if c % limpag == 0:
                 salida+=fin
-                #guardamos
                 wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/%d' % (pr, c/limpag)) #numeracion
                 wii.put(salida, u'BOT - Actualizando lista para [[Wikiproyecto:%s]]' % pr)
                 salida=inicio
         if salida!=inicio:
             salida+=fin
-            #guardamos
             wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/%d' % (pr, c/limpag+1)) #numeracion
             wii.put(salida, u'BOT - Actualizando lista para [[Wikiproyecto:%s]]' % pr)
         
@@ -603,20 +524,20 @@ def main():
         if len(relatedchanges)<=10: #no existe el wikiproyecto o no tiene páginas asignadas?
             wikipedia.output(u"No existe tal wikiproyecto o no tiene páginas asignadas")
             continue #siguiente wikiproyecto
-        if len(relatedchanges)<=1024*1000: #limite de KBs
-            wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/0' % (pr))
-            wii.put(relatedchanges, u'BOT - Actualizando lista para [[Wikiproyecto:%s]]' % pr)
+        if len(relatedchanges)<=1024*500: #limite de KBs #con 1 MB da error el servidor
+            try:
+                wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/0' % (pr))
+                wii.put(relatedchanges, u'BOT - Actualizando lista para [[Wikiproyecto:%s]]' % pr)
+            except:
+                wikipedia.output(u"Error: No se pudo guardar la página 0 ¿demasiado grande?")
         #fin pagina 0
         
         salida=u''
         for i in range(1, c/limpag+2):
-            if salida:
-                salida+=u' – [[Wikipedia:Contenido por wikiproyecto/%s/%d|Página %d]]' % (pr, i, i)
-            else:
-                salida+=u'[[Wikipedia:Contenido por wikiproyecto/%s|Resumen]]: [[Wikipedia:Contenido por wikiproyecto/%s/%d|Página %d]]' % (pr, pr, i, i)
+            if salida: salida+=u' – [[Wikipedia:Contenido por wikiproyecto/%s/%d|Página %d]]' % (pr, i, i)
+            else: salida+=u'[[Wikipedia:Contenido por wikiproyecto/%s|Resumen]]: [[Wikipedia:Contenido por wikiproyecto/%s/%d|Página %d]]' % (pr, pr, i, i)
         wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Índice' % pr) #index
         wii.put(salida, u'BOT - Actualizando índice para [[Wikiproyecto:%s]]' % pr)
-        
         
         #resumen global
         
@@ -705,22 +626,12 @@ def main():
         
         #algunos detalles globales más para el resumen
         #todo: enlaces entrantes (resto de propiedades del dic pages?)
-        algunaimagen=0.0
-        algunacategoria=0.0
-        alguninterwiki=0.0
-        totalimagenes=0.0
-        totalcategorias=0.0
-        totalinterwikis=0.0
+        algunaimagen=0.0;algunacategoria=0.0;alguninterwiki=0.0
+        totalimagenes=0.0;totalcategorias=0.0;totalinterwikis=0.0
         for page, pagevalues in pages.items():
-            if pagevalues['i']>0:
-                algunaimagen+=1.0
-                totalimagenes+=pagevalues['i']
-            if pagevalues['cat']>0:
-                algunacategoria+=1.0
-                totalcategorias+=pagevalues['cat']
-            if pagevalues['iws']>0:
-                alguninterwiki+=1.0
-                totalinterwikis+=pagevalues['iws']
+            if pagevalues['i']>0: algunaimagen+=1.0;totalimagenes+=pagevalues['i']
+            if pagevalues['cat']>0: algunacategoria+=1.0;totalcategorias+=pagevalues['cat']
+            if pagevalues['iws']>0: alguninterwiki+=1.0;totalinterwikis+=pagevalues['iws']
         
         resumen+=u'Algunos detalles sobre las %d páginas analizadas:\n' % lenartstitles
         resumen+=u'* %d tienen alguna imagen (%.1f%%) y %d no tienen ninguna (%.1f%%). La media de imágenes por página es de %.1f.\n' % (algunaimagen, algunaimagen/(lenartstitles/100.0), lenartstitles-algunaimagen, 100.0-(algunaimagen/(lenartstitles/100.0)), totalimagenes/lenartstitles)
@@ -735,53 +646,32 @@ def main():
         clasea=avisotoolserver+listqclaseaplana
         claseb=avisotoolserver+listqclasebplana
         
-        buenos=avisotoolserver
-        destacados=avisotoolserver
-        fusionar=avisotoolserver
-        contextualizar=avisotoolserver
-        sinrelevancia=avisotoolserver
-        wikificar=avisotoolserver
-        copyedit=avisotoolserver
-        sinreferencias=avisotoolserver
-        enobras=avisotoolserver
-        noneutral=avisotoolserver
-        traduccion=avisotoolserver
-        discutido=avisotoolserver
+        buenos=avisotoolserver;destacados=avisotoolserver
+        fusionar=avisotoolserver;contextualizar=avisotoolserver
+        sinrelevancia=avisotoolserver;wikificar=avisotoolserver
+        copyedit=avisotoolserver;sinreferencias=avisotoolserver
+        enobras=avisotoolserver;noneutral=avisotoolserver
+        traduccion=avisotoolserver;discutido=avisotoolserver
         nuevos=avisotoolserver
         nuevos_temp=[]
         
         for arttitle, pageid in artstitles:
-            artnm=u''
-            artnm_=u''
+            artnm=u'';artnm_=u''
             if pages[pageid]['nm']!=0:
-                artnm=namespaces[pages[pageid]['nm']]
-                artnm_=namespaces_[pages[pageid]['nm']]
-            if pages[pageid]['c']==2:
-                buenos+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-            if pages[pageid]['c']==1:
-                destacados+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-            if pages[pageid]['f']:
-                fusionar+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-            if pages[pageid]['con']:
-                contextualizar+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-            if pages[pageid]['rel']:
-                sinrelevancia+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-            if pages[pageid]['wik']:
-                wikificar+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-            if pages[pageid]['edit']:
-                copyedit+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-            if pages[pageid]['ref']:
-                sinreferencias+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-            if pages[pageid]['obras']:
-                enobras+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-            if pages[pageid]['neutral']:
-                noneutral+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-            if pages[pageid]['trad']:
-                traduccion+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-            if pages[pageid]['discutido']:
-                discutido+=u'# [[%s%s]]\n' % (artnm_, arttitle)
-            if pages[pageid]['nuevo']:
-                nuevos_temp.append(arttitle) #los almacenamos para despues ordenarlos cronologicamente
+                artnm, artnm_ = namespaces[pages[pageid]['nm']], namespaces_[pages[pageid]['nm']]
+            if pages[pageid]['c']==1: destacados+=u'# [[%s%s]]\n' % (artnm_, arttitle)
+            if pages[pageid]['c']==2: buenos+=u'# [[%s%s]]\n' % (artnm_, arttitle)
+            if pages[pageid]['f']: fusionar+=u'# [[%s%s]]\n' % (artnm_, arttitle)
+            if pages[pageid]['con']: contextualizar+=u'# [[%s%s]]\n' % (artnm_, arttitle)
+            if pages[pageid]['rel']: sinrelevancia+=u'# [[%s%s]]\n' % (artnm_, arttitle)
+            if pages[pageid]['wik']: wikificar+=u'# [[%s%s]]\n' % (artnm_, arttitle)
+            if pages[pageid]['edit']: copyedit+=u'# [[%s%s]]\n' % (artnm_, arttitle)
+            if pages[pageid]['ref']: sinreferencias+=u'# [[%s%s]]\n' % (artnm_, arttitle)
+            if pages[pageid]['obras']: enobras+=u'# [[%s%s]]\n' % (artnm_, arttitle)
+            if pages[pageid]['neutral']: noneutral+=u'# [[%s%s]]\n' % (artnm_, arttitle)
+            if pages[pageid]['trad']: traduccion+=u'# [[%s%s]]\n' % (artnm_, arttitle)
+            if pages[pageid]['discutido']: discutido+=u'# [[%s%s]]\n' % (artnm_, arttitle)
+            if pages[pageid]['nuevo']: nuevos_temp.append(arttitle) #los almacenamos para despues ordenarlos cronologicamente
         
         for arttitle in nuevos_list:
             if nuevos_temp.count(arttitle)!=0:
@@ -829,8 +719,7 @@ def main():
         wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s/Detalles' % pr) #detalles
         wii.put(salida, u'BOT - Actualizando detalles para [[Wikiproyecto:%s]]' % pr)
         
-        #pagina del pr
-        #salida=u'{{Wikipedia:Contenido por wikiproyecto/Iconos|%s}}\nAnálisis del contenido en el ámbito de [[Wikiproyecto:%s]]. Para añadir páginas debes modificar la <span class="plainlinks">[http://es.wikipedia.org/w/index.php?title=Wikipedia:Contenido_por_wikiproyecto/%s/Categorías&action=edit lista de categorías]</span>.\n\n== Índice ==\n{{Wikipedia:Contenido por wikiproyecto/%s/Índice}}\n\n== Resumen ==\n{{Wikipedia:Contenido por wikiproyecto/%s/Resumen}}\n\n{{Wikipedia:Contenido por wikiproyecto/%s/Detalles}}\n\n[[Categoría:Wikipedia:Contenido por wikiproyecto|%s]]\n[[Categoría:Wikipedia:Contenido por wikiproyecto/%s| ]]' % (pr, pr, re.sub(u' ', u'_', pr), pr, pr, pr, pr, pr)
+        #pagina principal del pr
         salida=u'{{Wikipedia:Contenido por wikiproyecto/Iconos|%s}}\nEsta página muestra el análisis del contenido de Wikipedia en español relacionado con el [[Wikiproyecto:%s]]. Para añadir páginas debes modificar la <span class="plainlinks">[http://es.wikipedia.org/w/index.php?title=Wikipedia:Contenido_por_wikiproyecto/%s/Categorías&action=edit lista de categorías]</span>.\n\n== Índice ==\n{{Wikipedia:Contenido por wikiproyecto/%s/Índice}}\n\n== Resumen ==\n{{Wikipedia:Contenido por wikiproyecto/%s/Resumen}}\n\n{{Wikipedia:Contenido por wikiproyecto/%s/Detalles}}\n\n[[Categoría:Wikipedia:Contenido por wikiproyecto|%s]]\n[[Categoría:Wikipedia:Contenido por wikiproyecto/%s| ]]' % (pr, pr, re.sub(u' ', u'_', pr), pr, pr, pr, pr, pr)
         wii=wikipedia.Page(site, u'Wikipedia:Contenido por wikiproyecto/%s' % pr) #principal
         wii.put(salida, u'BOT - Actualizando página de [[Wikiproyecto:%s]]' % pr)
