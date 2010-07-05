@@ -275,38 +275,23 @@ def main():
                     wikipedia.output(row[0]['tl_title'])
                 if pages.has_key(tl_from):
                     c+=1;percent(c, 10000)
-                    if re.search(destacado_pattern, tl_title):
-                        pages[tl_from]['c']=1
-                    elif re.search(bueno_pattern, tl_title):
-                        pages[tl_from]['c']=2
-                    elif re.search(esbozo_pattern, tl_title):
-                        pages[tl_from]['c']=3
-                    elif re.search(miniesbozo_pattern, tl_title):
-                        pages[tl_from]['c']=4
-                    elif re.search(desamb_pattern, tl_title):
-                        pages[tl_from]['c']=5
+                    if re.search(destacado_pattern, tl_title): pages[tl_from]['c']=1
+                    elif re.search(bueno_pattern, tl_title): pages[tl_from]['c']=2
+                    elif re.search(esbozo_pattern, tl_title): pages[tl_from]['c']=3
+                    elif re.search(miniesbozo_pattern, tl_title): pages[tl_from]['c']=4
+                    elif re.search(desamb_pattern, tl_title): pages[tl_from]['c']=5
                     #sino es ninguna de las 5 cosas, se queda el 0 que significa desconocida
                     
-                    if re.search(fusionar_pattern, tl_title):
-                        pages[tl_from]['f']=True
-                    if re.search(contextualizar_pattern, tl_title):
-                        pages[tl_from]['con']=True
-                    if re.search(sinrelevancia_pattern, tl_title):
-                        pages[tl_from]['rel']=True
-                    if re.search(wikificar_pattern, tl_title):
-                        pages[tl_from]['wik']=True
-                    if re.search(copyedit_pattern, tl_title):
-                        pages[tl_from]['edit']=True
-                    if re.search(sinreferencias_pattern, tl_title):
-                        pages[tl_from]['ref']=True
-                    if re.search(enobras_pattern, tl_title):
-                        pages[tl_from]['obras']=True
-                    if re.search(noneutral_pattern, tl_title):
-                        pages[tl_from]['neutral']=True
-                    if re.search(traduccion_pattern, tl_title):
-                        pages[tl_from]['trad']=True
-                    if re.search(discutido_pattern, tl_title):
-                        pages[tl_from]['discutido']=True
+                    if re.search(fusionar_pattern, tl_title): pages[tl_from]['f']=True
+                    if re.search(contextualizar_pattern, tl_title): pages[tl_from]['con']=True
+                    if re.search(sinrelevancia_pattern, tl_title): pages[tl_from]['rel']=True
+                    if re.search(wikificar_pattern, tl_title): pages[tl_from]['wik']=True
+                    if re.search(copyedit_pattern, tl_title): pages[tl_from]['edit']=True
+                    if re.search(sinreferencias_pattern, tl_title): pages[tl_from]['ref']=True
+                    if re.search(enobras_pattern, tl_title): pages[tl_from]['obras']=True
+                    if re.search(noneutral_pattern, tl_title): pages[tl_from]['neutral']=True
+                    if re.search(traduccion_pattern, tl_title): pages[tl_from]['trad']=True
+                    if re.search(discutido_pattern, tl_title): pages[tl_from]['discutido']=True
             row=r.fetch_row(maxrows=1, how=1)
         wikipedia.output(u"%d plantillas de mantenimiento en las páginas de este wikiproyecto" % (c))
         
@@ -324,8 +309,7 @@ def main():
                     wikipedia.output(row[0]['il_to'])
                 if pages.has_key(il_from) and il_to not in badimages:
                     pages[il_from]['i']+=1
-                    c+=1
-                    percent(c, 100000)
+                    c+=1;percent(c, 100000)
             row=r.fetch_row(maxrows=1, how=1)
         wikipedia.output(u"%d enlaces a imágenes" % (c))
         
@@ -343,8 +327,7 @@ def main():
                     wikipedia.output(row[0]['ll_lang'])
                 if pages.has_key(ll_from):
                     pages[ll_from]['iws']+=1
-                    c+=1
-                    percent(c, 500000)
+                    c+=1;percent(c, 500000)
             row=r.fetch_row(maxrows=1, how=1)
         wikipedia.output(u"%d interwikis tienen las páginas de este wikiproyecto" % (c))
         
@@ -361,8 +344,7 @@ def main():
             line=re.sub('_', ' ', line)
             m=re.findall(pagelinks_pattern, line)
             for i in m:
-                c+=1
-                percent(c, 1000000)
+                c+=1;percent(c, 1000000)
                 pl_from=int(i[0])
                 pl_nm=int(i[1])
                 pl_title=None
@@ -390,8 +372,7 @@ def main():
         salida=inicio
         c=0
         resumen={'desconocida':0,'bueno':0,'destacado':0,'esbozo':0,'miniesbozo':0,'desambig':0,'>10':0,'>5':0,'>2':0,'>1':0,'<1':0,'<2':0}
-        artstitles=[]
-        artstitles2=[]
+        artstitles, artstitles2 = [], []
         for projectpage in projectpages:
             if pages.has_key(projectpage):
                 artstitles.append([pages[projectpage]['t'], projectpage])
@@ -400,16 +381,14 @@ def main():
         #ordenamos alfabeticamente
         artstitles.sort()
         #ordenamos por entrantes
-        artstitles2.sort()
-        artstitles2.reverse()
+        artstitles2.sort();artstitles2.reverse()
         
         lenartstitles=len(artstitles)
         qclasea=lenartstitles/100*2
-        listqclasea=[]
         qclaseb=lenartstitles/100*5-qclasea
-        listqclaseb=[]
         qclasec=lenartstitles/100*20-qclaseb
         qclased=lenartstitles-qclasec
+        listqclasea, listqclaseb = [], []
         
         #calculamos importancias
         i=0
