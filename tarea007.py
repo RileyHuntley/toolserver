@@ -83,7 +83,7 @@ temas={
        'Provincia del Neuquén‎', 'Puerto Rico', 'Qatar', 'Reino Unido', 
        'República Centroafricana', 'República Checa', 
        'República Democrática del Congo', 'República Dominicana', 
-       'República del Congo', 'Ruanda', 'Rugby', 'Rumania', 'Rusia', 'Samoa', 
+       'República del Congo', 'Ruanda', 'Rugby', 'Rumania', 'Rusia', 'Sahara Occidental', 'Samoa', 
        'San Marino', 'Santo Tomé y Príncipe', 'Senegal', 'Serbia', 
        'Seychelles', 'Sierra Leona', 'Singapur', 'Siria', 
        'Software libre', 'Somalia', 'Sri Lanka', 'Suazilandia', 
