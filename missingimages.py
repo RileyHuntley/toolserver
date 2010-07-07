@@ -130,7 +130,7 @@ def main():
             c+=1;percent(c)
             images.add(image)
             #print image.encode('utf-8')
-        print '\nCargadas %d imagenes locales de %s.%s.org (descartando iconos, escudos y http://en.wikipedia.org/wiki/User:Emijrp/Images_for_biographies/Exclusions... )' % (c, lenguajefuente, family)
+    print '\nCargadas %d imagenes locales de %s.%s.org (descartando iconos, escudos y http://en.wikipedia.org/wiki/User:Emijrp/Images_for_biographies/Exclusions... )' % (c, lenguajefuente, family)
     f.close()
     
     #cargamos las imagenes que se usan (y no estan subidas en la inglesa (están en Commons)) y en que articulos se usan
@@ -138,8 +138,8 @@ def main():
     print 'Cargamos imagenes que se usan en %s: y en que articulos' % lenguajefuente #pesado
     candidatas={}
     listanegra=set()
-    cursor.execute("select il_from, il_to, page_namespace from imagelinks inner join page on il_from=page_id where (page_namespace=0 or page_namespace=10) and page_is_redirect=0;") #el nm 10 hace falta para descartar las imagenes de las plantillas stub, etc, y meterlas en listanegra
-    r=conn.use_result()
+    conn2.execute("select il_from, il_to, page_namespace from imagelinks inner join page on il_from=page_id where (page_namespace=0 or page_namespace=10) and page_is_redirect=0;") #el nm 10 hace falta para descartar las imagenes de las plantillas stub, etc, y meterlas en listanegra
+    r=conn2.use_result()
     row=r.fetch_row(maxrows=1, how=1)
     c=0
     while row:
