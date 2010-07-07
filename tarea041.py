@@ -43,7 +43,7 @@ def main():
     if output != page.get():
         page.put(output, u"BOT - Actualizando lista de portales [%s]" % len(portales))
     page = wikipedia.Page(site, u"Wikiproyecto:Portales/Número")
-    output = u"%s" % len(portales)
+    output = u"%s<noinclude>{{documentación}}</noinclude>" % len(portales)
     if output != page.get():
         page.put(output, u"BOT - Actualizando número de portales [%s]" % len(portales))
 
