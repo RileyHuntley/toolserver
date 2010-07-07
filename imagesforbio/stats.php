@@ -3,7 +3,7 @@ require_once('../../database.inc');
 mysql_connect('sql',$toolserver_username,$toolserver_password);
 @mysql_select_db('u_emijrp_yarrow') or print mysql_error();
 
-echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head><body style="background-color:#f6f6f6;font-family: Trebuchet;font-size:100%">';
+echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><link rel="stylesheet" href="style.css" type="text/css" /></head><body>';
 
 echo "<center><table style='text-align:center;'><tr><td><img src='im1.jpg'></td><td><h1><a href='http://toolserver.org/~emijrp/imagesforbio/'>Images for biographies</a><sup><span style='font-color:#ff0000;'>new!</span></sup></h1></td><td><img src='im2.png'></td></tr><center><table border=1 style='text-align: center;'><tr><th>Language</th><th>Uncompleted</th><th>Completed</th><th>Total</th><th>Completed (%)</th></tr>";
 
