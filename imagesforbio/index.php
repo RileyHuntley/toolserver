@@ -123,6 +123,6 @@ if ($language)
  
 mysql_close();
 
-echo "<hr/><center>This is a tool of <a href='http://tools.wikimedia.de/~emijrp/'>WikiFORJA</a>. Developed by <a href='http://en.wikipedia.org/wiki/User:Emijrp'>emijrp</a> (some functions by <a href='http://tools.wikimedia.de/~magnus/'>magnus</a>)<br/><a href='http://tools.wikimedia.de/'><img src='../wikimedia-toolserver-button.png'></a></center>";
+echo "<hr/><center>This is a tool of <a href='http://tools.wikimedia.de/~emijrp/'>WikiFORJA</a>. Developed by <a href='http://en.wikipedia.org/wiki/User:Emijrp'>emijrp</a> (some functions by <a href='http://tools.wikimedia.de/~magnus/'>magnus</a>)<br/><a href='http://tools.wikimedia.de/'><img src='wikimedia-toolserver-button.png'></a></center>";
 echo "</body></html>";
 ?>
