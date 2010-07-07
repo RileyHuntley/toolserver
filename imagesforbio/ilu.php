@@ -3,11 +3,12 @@
 function leer($url)
 {
 	//fixed Disabling of ilu.php email bug
-	$f = fopen($url,"r"); 
-
+	/*$f = fopen("http://es.wikipedia.org/w/index.php?title=A&action=raw","r"); 
 	$data="";
+	$data=stream_get_contents($f);
+	fclose($f);*/
 
-	/*a vees provoca bucle infinito
+	/*a veces provoca bucle infinito
 	$c=0;
 	while(!feof($f)){ 
 		$data.= fgets($f);
@@ -18,9 +19,13 @@ function leer($url)
 		}
 	}*/
 	
-	$data=stream_get_contents($f);
-	
-	fclose($f);
+	$curl_handle=curl_init();
+	curl_setopt($curl_handle, CURLOPT_URL, $url);
+	curl_setopt($curl_handle, CURLOPT_CONNECTTIMEOUT, 2);
+	curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($curl_handle, CURLOPT_USERAGENT, 'imagesforbio tool in toolserver by emijrp');
+	$data = curl_exec($curl_handle);
+	curl_close($curl_handle);
 	
 	return $data;
 }
