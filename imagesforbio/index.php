@@ -68,9 +68,9 @@ foreach($langs as $lang)
 echo "<hr/>";
 
 if ($show)
-	echo "<b>Options:</b> <a href=index.php?language={$language}&show=0>Hide done or useless</a> - <a href='stats.php'>Stats</a>";
+	echo "<b>Options:</b> <a href=index.php?language={$language}&show=0>Hide added or useless images</a> &ndash; <a href='stats.php'>Statistics</a>";
 else
-	echo "<b>Options:</b> <a href=index.php?language={$language}&show=1>Show done or useless</a> - <a href='stats.php'>Stats</a>";
+	echo "<b>Options:</b> <a href=index.php?language={$language}&show=1>Show added or useless images</a> &ndash; <a href='stats.php'>Statistics</a>";
 echo "<hr/>";
 
 $limit=20;
@@ -91,7 +91,7 @@ if ($language)
 	$result = mysql_query($query);
 	if(!$result) Die("ERROR: No result returned.");
 
-	echo "<center><table border=0 cellpadding=2><tr style='text-align: center;'><td><b>#</b></td><td><b>Language</b></td><td><b>Article</b></td><td><b>Image</b></td><td><b>Thumbnail</b></td><td><b>Done or useless?</b></td><td><b>Action</b></td></tr>\n";
+	echo "<center><table border=0 cellpadding=2><tr style='text-align: center;'><td><b>#</b></td><td><b>Language</b></td><td><b>Article</b></td><td><b>Image</b></td><td><b>Thumbnail</b></td><td><b>Action</b></td></tr>\n";
 	$cont=0;
 	while($row = mysql_fetch_assoc($result))
 	{
@@ -111,11 +111,11 @@ if ($language)
 			if ($show)
 			{
 				$cont++;
-				echo "<tr valign=middle style='text-align: center;background-color:#FFC0CB;'><td>{$cont}</td><td><a href='http://{$l}.wikipedia.org'>{$l}</a></td><td><a href=\"http://{$l}.wikipedia.org/wiki/{$a}\">{$a}</a></td><td><a href='http://commons.wikimedia.org/wiki/Image:{$i}'>{$i}</a></td><td><a href='http://commons.wikimedia.org/wiki/Image:{$i}'><img src='{$thumb}'></a></td><td><a href='index.php?language={$language}&show={$show}&done={$id}'>Mark as undone</a></td><td></td></tr>\n";
+				echo "<tr valign=middle style='text-align: center;background-color:#FFC0CB;'><td>{$cont}</td><td><a href='http://{$l}.wikipedia.org'>{$l}</a></td><td><a href=\"http://{$l}.wikipedia.org/wiki/{$a}\">{$a}</a></td><td><a href='http://commons.wikimedia.org/wiki/Image:{$i}'>{$i}</a></td><td><a href='http://commons.wikimedia.org/wiki/Image:{$i}'><img src='{$thumb}'></a></td><td><a href='index.php?language={$language}&show={$show}&done={$id}'>Mark as undone</a></td></tr>\n";
 			}
 		}else{ //#cedff2;
 			$cont++;
-			echo "<tr id='{$cont}' valign=middle style='text-align: center;background-color:#cedff2;'><td>{$cont}</td><td><a href='http://{$l}.wikipedia.org'>{$l}</a></td><td><a href=\"http://{$l}.wikipedia.org/wiki/{$a}\">{$a}</a></td><td><a href='http://commons.wikimedia.org/wiki/Image:{$i}'>{$i}</a></td><td><a href='http://commons.wikimedia.org/wiki/Image:{$i}'><img src='{$thumb}'></a></td><td><a href='index.php?language={$language}&show={$show}&done={$id}#{$cont}'>Mark as done or useless</a></td><td><form method='post' action='ilu.php' target='_blank'><input type='hidden' name='article' value='{$aa}'><input type='hidden' name='image' value='{$ii}'><input type='hidden' name='lang' value='{$l}'><input type='submit' value='Add'></form></td></tr>\n";
+			echo "<tr id='{$cont}' valign=middle style='text-align: center;background-color:#cedff2;'><td>{$cont}</td><td><a href='http://{$l}.wikipedia.org'>{$l}</a></td><td><a href=\"http://{$l}.wikipedia.org/wiki/{$a}\">{$a}</a></td><td><a href='http://commons.wikimedia.org/wiki/Image:{$i}'>{$i}</a></td><td><a href='http://commons.wikimedia.org/wiki/Image:{$i}'><img src='{$thumb}'></a></td><td><a href='index.php?language={$language}&show={$show}&done={$id}#{$cont}'>Image added</a><br/><br/><form method='post' action='ilu.php' target='_blank'><input type='hidden' name='article' value='{$aa}'><input type='hidden' name='image' value='{$ii}'><input type='hidden' name='lang' value='{$l}'><input type='submit' value='Add image to page'></form><br/><a href='http://en.wikipedia.org/wiki/User_talk:Emijrp/Images_for_biographies/Exclusions' target='_blank'>Report wrong image</a></td></tr>\n";
 		}
 	}
 	echo "</table></center>\n";
