@@ -133,51 +133,77 @@ def main():
     print '\nCargadas %d imagenes locales de %s.%s.org (descartando iconos, escudos y http://en.wikipedia.org/wiki/User:Emijrp/Images_for_biographies/Exclusions... )' % (c, lenguajefuente, family)
     f.close()
     
+    #cargamos pageid de templates de lenguaje fuente
+    print '-'*70
+    print 'Cargamos pageid de plantillas de %s.%s.org' % (lenguajefuente, family)
+    templatesfuente=set()
+    conn2.query("select page_id from page where page_namespace=10;")
+    r=conn2.use_result()
+    row=r.fetch_row(maxrows=1, how=1)
+    c=0
+    while row:
+        pageid=int(row[0]['page_id'])
+        templatesfuente.add(pageid)
+        row=r.fetch_row(maxrows=1, how=1)
+        c+=1;percent(c)
+    wikipedia.output(u"\nCargadas %d plantillas %s.%s.org" % (c, lenguajefuente, family))
+    
     #cargamos las imagenes que se usan (y no estan subidas en la inglesa (están en Commons)) y en que articulos se usan
     print '-'*70
     print 'Cargamos imagenes que se usan en %s: y en que articulos' % lenguajefuente #pesado
     candidatas={}
     listanegra=set()
-    conn2.execute("select il_from, il_to, page_namespace from imagelinks inner join page on il_from=page_id where (page_namespace=0 or page_namespace=10) and page_is_redirect=0;") #el nm 10 hace falta para descartar las imagenes de las plantillas stub, etc, y meterlas en listanegra
-    r=conn2.use_result()
-    row=r.fetch_row(maxrows=1, how=1)
+    imagelinks_pattern=re.compile(ur"\((?P<ilfrom>\d+)\,\'(?P<ilto>[^\']+?)\'\)") #no hace falta (?i)
+    # (607,'Flag_of_France.svg'),
+    filename='/mnt/user-store/%swiki-latest-imagelinks.sql.gz' % lenguajefuente
+    f=""
+    try:
+        f=gzip.open(filename, 'r')
+    except:
+        os.system('wget http://download.wikimedia.org/%swiki/latest/%swiki-latest-imagelinks.sql.gz -O %s' % (lenguajefuente, lenguajefuente, filename))
+        f=gzip.open(filename, 'r')
     c=0
-    while row:
-        pageid=int(row[0]['il_from'])
-        image=re.sub('_', ' ', unicode(row[0]['il_to'], "utf-8"))
-        pagenamespace=int(row[0]['page_namespace'])
-        
-        if image in listanegra: #debe estar lo primero
-            continue
-        if pagenamespace==10:
-            listanegra.add(image)
-            continue
-        #filtro
-        if re.search(exclusion_pattern, image):
-            continue
-        #print image.encode('utf-8')
-        if image in images: #comprobamos si esta subida a la inglesa
-            listanegra.add(image)
-            continue
-        if not pageid2pagetitle2.has_key(pageid): #si no existe tal pagina en la inglesa, hace falta?
-            continue
-        if pagetitle2pageid[interwikis[pageid]] not in sinimagenes: #si ya tiene imagen no hace falta seguir
-            continue
-        c+=1;percent(c)
-        #if c % 100 == 0:
-        #    print c
-        #    linea='[[%s]] -> [[Image:%s]]' % (interwikis[pageid], image)
-        #    print linea.encode('utf-8')
-        if candidatas.has_key(pageid):
-            candidatas[pageid].append(image)
-        else:
-            candidatas[pageid]=[image]
-        row=r.fetch_row(maxrows=1, how=1)
+    for line in f:
+        line=re.sub('_', ' ', line)
+        m=imagelinks_pattern.finditer(line)
+        for i in m:
+            pageid=int(i.group("ilfrom"))
+            try:
+                image=re.sub('_', ' ', unicode(i.group("ilto"), "utf-8"))
+            except:
+                wikipedia.output(i.group("ilto"))
+                continue
+            if image in listanegra: #debe estar lo primero
+                continue
+            if pageid in templatesfuente: #filtramos las imagenes insertadas por plantillas (cara de einstein en navbox de físcia, etc)
+                listanegra.add(image)
+                continue
+            #filtro
+            if re.search(exclusion_pattern, image):
+                continue
+            #print image.encode('utf-8')
+            if image in images: #comprobamos si esta subida a la inglesa
+                listanegra.add(image)
+                continue
+            if not pageid2pagetitle2.has_key(pageid): #si no existe tal pagina en la inglesa, hace falta?
+                continue
+            if pagetitle2pageid[interwikis[pageid]] not in sinimagenes: #si ya tiene imagen no hace falta seguir
+                continue
+            c+=1;percent(c)
+            #if c % 100 == 0:
+            #    print c
+            #    linea='[[%s]] -> [[Image:%s]]' % (interwikis[pageid], image)
+            #    print linea.encode('utf-8')
+            if candidatas.has_key(pageid):
+                candidatas[pageid].append(image)
+            else:
+                candidatas[pageid]=[image]
     print '\nCargadas %d imagenes que se usan en articulos de %s.%s.org y nos pueden servir quizás (candidatas)' % (c, lenguajefuente, family)
-
+    f.close()
+    
     #cargamos categorylinks de la inglesa que lleven a una categoria births o deaths, para cribar biografias, que es lo que nos interesa
     categories=set()
-    categories_pattern=re.compile(ur"\((?P<pageid>\d+)\,\'\d+ (births|deaths)\'\,\'[^\']*?\'\,\d+\)") #no hace falta (?i)
+    categorylinks_pattern=re.compile(ur"\((?P<pageid>\d+)\,\'\d+ (births|deaths)\'\,\'[^\']*?\'\,\'\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d\'\)") #no hace falta (?i)
     # (1031,'1950 births','Blabla, Antonio',20080805144158)
     filename='/mnt/user-store/%swiki-latest-categorylinks.sql.gz' % lenguajefuente
     f=""
@@ -189,12 +215,12 @@ def main():
     c=0
     for line in f:
         line=re.sub('_', ' ', line)
-        m=re.findall(categories_pattern, line)
+        m=categorylinks_pattern.finditer(line)
         for i in m:
             pageid=int(i.group("pageid"))
             c+=1;percent(c)
             categories.add(pageid)
-    print '\nCargadas %d categorylinks desde biografias para %s.%s.org' % (c, lenguajefuente, family)
+    print '\nCargados %d categorylinks desde biografias para %s.%s.org' % (c, lenguajefuente, family)
     f.close()
 
     #cargamos imagenes subidas a commons y que cumplan los filtros
