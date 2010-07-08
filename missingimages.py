@@ -37,6 +37,7 @@ def main():
     sinimagenes=set()
     interwikis={}
     imagescommons=set()
+    
     imagelinks_pattern=re.compile(ur"\((\d+)\,\'([^\']+?)\'\)")
     ex=ur'(?i)(%s)' % ('|'.join(wikipedia.Page(wikipedia.Site("en", "wikipedia"), u"User:Emijrp/Images for biographies/Exclusions").get().splitlines()))
     exclusion_pattern=re.compile(ex) # los ' y " los filtramos al final
