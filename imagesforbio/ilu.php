@@ -97,6 +97,7 @@ if (isset($_POST['image']) and isset($_POST['article']) and isset($_POST['lang']
 		case 'bn': $resume="ছবি যোগ হয়েছে http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'bs': $resume="Dodajem sliku sa http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'ca': $resume="Afegeixo imatge des de http://toolserver.org/~emijrp/imagesforbio/"; break;
+		case 'ckb': $position="left"; break;
 		case 'cs': $resume="Přidaný obrázek pomocí http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'de': $resume="Bild hinzufügen mit http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'da': $resume="Tilføjer billede fra http://toolserver.org/~emijrp/imagesforbio/"; break;
