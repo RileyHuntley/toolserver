@@ -92,6 +92,8 @@ if (isset($_POST['image']) and isset($_POST['article']) and isset($_POST['lang']
 	switch($lang)
 	{
 		case 'ar': $resume="إضافة صورة من http://toolserver.org/~emijrp/imagesforbio/"; $position="left"; break;
+		case 'arc': $position="left"; break;
+		case 'arz': $position="left"; break;
 		case 'bn': $resume="ছবি যোগ হয়েছে http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'bs': $resume="Dodajem sliku sa http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'ca': $resume="Afegeixo imatge des de http://toolserver.org/~emijrp/imagesforbio/"; break;
