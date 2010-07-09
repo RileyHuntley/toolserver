@@ -6,9 +6,9 @@ mysql_connect('sql',$toolserver_username,$toolserver_password);
 echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><link rel="stylesheet" href="style.css" type="text/css" /></head><body>';
 
 $done=0;
-if (isset($_GET['done']))
+if (isset($_POST['done']))
 {
-	$done=$_GET['done'];
+	$done=$_POST['done'];
 	$done=intval($done);
 	$query="";
 	$query="update imagesforbio set done=not done where id={$done}";
@@ -29,6 +29,11 @@ $language="all";
 if (isset($_GET['language']))
 {
 	$temp=$_GET['language'];
+	if (in_array($temp, $langs))
+		$language=$temp;
+}else if(isset($_POST['lang']))
+{
+	$temp=$_POST['lang'];
 	if (in_array($temp, $langs))
 		$language=$temp;
 }
@@ -59,7 +64,7 @@ while($row = mysql_fetch_assoc($result))
 }*/
 
 //echo "<center><table style='text-align:center;'><tr><td><img src='im1.jpg'></td><td><h1><a href='http://toolserver.org/~emijrp/imagesforbio/'>Images for biographies</a><sup><span style='font-color:#ff0000;'>new!</span></sup></h1></td><td><img src='im2.png'></td></tr><tr><td colspan=3><b>{$c1} done or useless, {$c2} left (".number_format($c1/($c1+$c2/100),2)."% completed)</b></td></tr></table></center>This tool is being tested. If you get problems by putting images on your Wikipedia, or odd characters like this ??? ?????? ??, please <a href='http://en.wikipedia.org/wiki/User_talk:Emijrp'>tell me</a> and show me a diff. Also, you can help <a href='http://en.wikipedia.org/wiki/User:BOTijo/Images_for_biographies'>translating this tool</a>.<hr/><center><b>Select language:</b> <a href=index.php?language=all>All</a> ({$c2})";
-echo "<center><table style='text-align:center;'><tr><td><img src='im1.jpg'></td><td><h1><a href='http://toolserver.org/~emijrp/imagesforbio/'>Images for biographies</a><sup><span style='font-color:#ff0000;'>new!</span></sup></h1></td><td><img src='im2.png'></td></tr></table></center><center><b>PLEASE! Check images before insert them. Do not insert images not related with the article subject. Thanks.</b><br/>You can help <a href='http://en.wikipedia.org/wiki/User:BOTijo/Images_for_biographies'>translating this tool</a> and reporting <a href='http://en.wikipedia.org/wiki/User_talk:Emijrp/Images_for_biographies/Exclusions'>wrong image&lt;---&gt;article</a> relations.<br/>How to use this tool? 1) Choose an image. 2) Press \"Add image to page\" (if the image is correct). 3) The Wikipedia article is loaded in a new tab. 4) If the article has an infobox template, move the image into the infobox. 5) Save changes pressing the save button. 6) Click \"Mark as done\" link to remove the image from this list.</center><hr/><center><b>Select language:</b> <a href=index.php?language=all>All</a>";
+echo "<center><table style='text-align:center;'><tr><td><img src='im1.jpg'></td><td><h1><a href='http://toolserver.org/~emijrp/imagesforbio/'>Images for biographies</a><sup><span style='font-color:#ff0000;'>new!</span></sup></h1></td><td><img src='im2.png'></td></tr></table></center><center><b>PLEASE! Check images before insert them. Do not insert images not related with the article subject. Thanks.</b><br/>You can help <a href='http://en.wikipedia.org/wiki/User:BOTijo/Images_for_biographies'>translating this tool</a> and reporting <a href='http://en.wikipedia.org/wiki/User_talk:Emijrp/Images_for_biographies/Exclusions'>wrong image&lt;---&gt;article</a> relations.<br/>How to use this tool? 1) Choose an image. 2) Press \"Add image to page\" (if the image is correct). 3) The Wikipedia article is loaded in a new tab. 4) If the article has an infobox template, move the image into the infobox. 5) Save changes pressing the save button. 6) Click \"Mark as done\" button to remove the image from this list.</center><hr/><center><b>Select language:</b> <a href=index.php?language=all>All</a>";
 
 foreach($langs as $lang)
 {
@@ -111,11 +116,11 @@ if ($language)
 			if ($show)
 			{
 				$cont++;
-				echo "<tr valign=middle style='text-align: center;background-color:#FFC0CB;'><td>{$cont}</td><td><a href='http://{$l}.wikipedia.org'>{$l}</a></td><td><a href=\"http://{$l}.wikipedia.org/wiki/{$a}\">{$a}</a></td><td><a href='http://commons.wikimedia.org/wiki/Image:{$i}'>{$i}</a></td><td><a href='http://commons.wikimedia.org/wiki/Image:{$i}'><img src='{$thumb}'></a></td><td><a href='index.php?language={$language}&show={$show}&done={$id}'>Mark as undone</a></td></tr>\n";
+				echo "<tr valign=middle style='text-align: center;background-color:#FFC0CB;'><td>{$cont}</td><td><a href='http://{$l}.wikipedia.org'>{$l}</a></td><td><a href=\"http://{$l}.wikipedia.org/wiki/{$a}\">{$a}</a></td><td><a href='http://commons.wikimedia.org/wiki/Image:{$i}'>{$i}</a></td><td><a href='http://commons.wikimedia.org/wiki/Image:{$i}'><img src='{$thumb}'></a></td><td><form method='post' action='index.php?language={$l}&show=1'><input type='hidden' name='done' value='{$id}'><input type='submit' value='Mark as undone'></form></td></tr>\n";
 			}
 		}else{ //#cedff2;
 			$cont++;
-			echo "<tr id='{$cont}' valign=middle style='text-align: center;background-color:#cedff2;'><td>{$cont}</td><td><a href='http://{$l}.wikipedia.org'>{$l}</a></td><td><a href=\"http://{$l}.wikipedia.org/wiki/{$a}\">{$a}</a></td><td><a href='http://commons.wikimedia.org/wiki/Image:{$i}'>{$i}</a></td><td><a href='http://commons.wikimedia.org/wiki/Image:{$i}'><img src='{$thumb}'></a></td><td><br/><form method='post' action='ilu.php' target='_blank'><input type='hidden' name='article' value='{$aa}'><input type='hidden' name='image' value='{$ii}'><input type='hidden' name='lang' value='{$l}'><input type='submit' value='Add image to page'></form><a href='index.php?language={$language}&show={$show}&done={$id}#{$cont}'>Mark as done</a><br/><br/><a href='http://en.wikipedia.org/wiki/User_talk:Emijrp/Images_for_biographies/Exclusions' target='_blank'>Report wrong image</a></td></tr>\n";
+			echo "<tr id='{$cont}' valign=middle style='text-align: center;background-color:#cedff2;'><td>{$cont}</td><td><a href='http://{$l}.wikipedia.org'>{$l}</a></td><td><a href=\"http://{$l}.wikipedia.org/wiki/{$a}\">{$a}</a></td><td><a href='http://commons.wikimedia.org/wiki/Image:{$i}'>{$i}</a></td><td><a href='http://commons.wikimedia.org/wiki/Image:{$i}'><img src='{$thumb}'></a></td><td><br/><form method='post' action='ilu.php' target='_blank'><input type='hidden' name='article' value='{$aa}'><input type='hidden' name='image' value='{$ii}'><input type='hidden' name='lang' value='{$l}'><input type='submit' value='Add image to page'></form><br/><form method='post' action='index.php'><input type='hidden' name='lang' value='{$l}'><input type='hidden' name='done' value='{$id}'><input type='submit' value='Mark as done'></form><br/><a href='http://en.wikipedia.org/wiki/User_talk:Emijrp/Images_for_biographies/Exclusions' target='_blank'>Report wrong image</a></td></tr>\n";
 		}
 	}
 	echo "</table></center>\n";
