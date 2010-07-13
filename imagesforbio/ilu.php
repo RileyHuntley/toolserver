@@ -102,6 +102,7 @@ if (isset($_POST['image']) and isset($_POST['article']) and isset($_POST['lang']
 		case 'de': $resume="Bild hinzufügen mit http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'da': $resume="Tilføjer billede fra http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'dsb': $resume="Pśidał jo wobraz wužywacy http://toolserver.org/~emijrp/imagesforbio/"; break;
+		case 'dv': $position="left"; break;
 		case 'el': $resume="Προσθήκη εικόνας με το http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'en': $resume="Add image from http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'eo': $resume="Aldonis bildon per http://toolserver.org/~emijrp/imagesforbio/"; break;

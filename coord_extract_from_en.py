@@ -71,6 +71,8 @@ for page in pre:
             coord=i.group("coord")
             if not re.search(ur"(?i)title", coord): #evitamos coordenadas que estén por el medio del texto y no salgan arriba a la derecha
                 break
+            if re.search(ur"(?i)(lat|long?)", coord): #evitar {{coord|LAT|LONG|display=title}} http://es.wikipedia.org/w/index.php?title=Ahmose-Meritam%C3%B3n&diff=prev&oldid=38754303
+                break
             wikipedia.output(u"%s - %s" % (enwtitle, coord))
             coord=re.sub(ur"display *\=[^\|\}]+([\|\}])", ur"display=title\1", coord) #dejamos display title solo
             
