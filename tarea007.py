@@ -59,7 +59,7 @@ temas={
        'Eslovaquia', 'Eslovenia', 'España', 'Estados Unidos', 'Europa', 
        'Estonia', 'Etiopía', 'Filipinas', 'Finlandia', 'Fiyi', 
        'Fórmula 1', 'Francia', 'Fútbol', 'Gabón', 'Gales', 'Gambia', 'Georgia', 
-       'Ghana', 'Grecia', 'Guatemala', 'Guinea', 'Guinea Ecuatorial', 
+       'Ghana', 'Grecia', 'Guatemala', 'Guayaquil', 'Guinea', 'Guinea Ecuatorial', 
        'Guinea-Bissau', 'Guyana', 'Haití', 'Honduras', 'Hungría', 
        'India', 'Indonesia', 'Informática', 'Inglaterra', 'Iraq', 
        'Irlanda', 'Irlanda del Norte', 'Irán', 'Islandia', 
