@@ -70,7 +70,7 @@ temas={
        'Líbano', 'Macedonia', 'Madagascar', 'Malasia', 'Malaui', 
        'Malta', 'Malí', 'Marruecos', 'Martinica', 'Mauricio', 
        'Mauritania', 'México, D. F.', 'México y Centroamérica', 
-       'Micronesia', 'Montenegro', 'Mozambique', 'México', 
+       'Micronesia', 'Mongolia', 'Montenegro', 'Mozambique', 'México', 
        'México y Centroamérica', 'Namibia', 'Nauru', 'Nepal', 
        'Nicaragua', 'Nigeria', 'Norteamérica', 'Noruega', 
        'Nueva Zelanda', 'Níger', 'OTAN', 'Oceanía', 'Pakistán', 

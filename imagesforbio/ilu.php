@@ -110,11 +110,13 @@ if (isset($_POST['image']) and isset($_POST['article']) and isset($_POST['lang']
 		case 'fa': $resume="افزودن نگاره به زندگی‌نامه http://toolserver.org/~emijrp/imagesforbio/"; $position="left"; break;
 		case 'fi': $resume="Lisätty kuva työkalulla http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'fr': $resume="Ajout d'une image depuis http://toolserver.org/~emijrp/imagesforbio/"; break;
+		case 'gl': $resume="Engadindo imaxe dende http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'he': $resume="הוספת תמונה בעזרת http://toolserver.org/~emijrp/imagesforbio/"; $position="left"; break;
 		case 'hr': $resume="Dodajem sliku sa http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'hsb': $resume="Přida wobraz wužiwajo http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'it': $resume="Aggiungi un'immagine usando http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'ja': $resume="http://toolserver.org/~emijrp/imagesforbio/ から画像を追加"; break;
+		case 'ka': $resume="სურათის ჩამატება http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'nl': $resume="Afbeelding toegevoegd via http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'nds': $resume="Bild rinstellt. http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'nn': $resume="Legg til bilete frå http://toolserver.org/~emijrp/imagesforbio/"; break;
