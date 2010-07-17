@@ -79,7 +79,7 @@ for i in m:
     send=True
 
 #s+="\n|-\n| colspan=6 | Actualizado a las {{subst:CURRENTTIME}} (UTC) del {{subst:CURRENTDAY}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}}"
-s+="\n|}<!-- RAW --><!--\n%s--><!-- RAW --><noinclude>{{uso de plantilla}}</noinclude>" % raw
+s+="\n|}<!-- RAW --><!--\n%s--><!-- RAW --><noinclude>{{documentación}}</noinclude>" % raw
 
 if send:
     wikipedia.output(s)

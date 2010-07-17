@@ -77,7 +77,7 @@ salida=u'''{| class="infobox" style="width: {{{width|auto}}}; float: {{{float|ri
 |-
 !Lag en s5
 | <!--s5-->%s<!--s5-->
-|}<noinclude>{{uso de plantilla}}</noinclude>''' % (update, dic[rosemary], dic[daphne], dic[yarrow], s1, s2, s3, s4, s5)
+|}<noinclude>{{documentación}}</noinclude>''' % (update, dic[rosemary], dic[daphne], dic[yarrow], s1, s2, s3, s4, s5)
 
 estool.put(salida, u'BOT - Estado: rosemary: %s; daphne %s; yarrow %s; Replag: s1 %s; s2 %s; s3 %s; s4 %s; s5 %s' % (dic[rosemary], dic[daphne], dic[yarrow], s1, s2, s3, s4, s5))
 

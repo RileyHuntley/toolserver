@@ -49,7 +49,7 @@ salida+=u"\n* '''[[Wikipedia:Veracidad discutida|Veracidad discutida]]''': [[%s]
 salida+=u"\n* '''[[Wikipedia:Verificabilidad|Verificar]]''': [[%s]], [[%s]], [[%s]], '''''[[:Categoría:Wikipedia:Artículos que necesitan referencias|más...]]'''''" % (l3[5][0], l3[5][1], l3[5][2])
 #salida+=u"\n* '''[[Wikiproyecto:Wikificar|Wikificar]]''': [[%s]], [[%s]], [[%s]], '''''[[:Categoría:Wikipedia:Wikificar|más...]]'''''" % (l3[7][0], l3[7][1], l3[7][2])
 
-salida+=u"<noinclude>{{uso de plantilla}}</noinclude>"
+salida+=u"<noinclude>{{documentación}}</noinclude>"
 wiii = wikipedia.Page(wikipedia.Site("es", "wikipedia"), u"Portal:Comunidad/Mantenimiento")
 wiii.put(u"%s" % salida, u"BOT - Actualizando plantilla")
 

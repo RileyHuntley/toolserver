@@ -332,8 +332,8 @@ for family, langs in projects.items():
                     planti2+=u"|%s=%s\n" % (nick,ed)
                     cplanti2+=1
         
-        planti2+=u"|USUARIO DESCONOCIDO\n}}<noinclude>{{uso de plantilla}}</noinclude>"
-        planti+=u"|-\n| colspan=3 | Véase también [[Wikipedia:Ranking de ediciones]]<br/>Actualizado a las {{subst:CURRENTTIME}} (UTC) del  {{subst:CURRENTDAY}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}} por [[Usuario:BOTijo|BOTijo]] \n|}<noinclude>{{uso de plantilla}}</noinclude>"
+        planti2+=u"|USUARIO DESCONOCIDO\n}}<noinclude>{{documentación}}</noinclude>"
+        planti+=u"|-\n| colspan=3 | Véase también [[Wikipedia:Ranking de ediciones]]<br/>Actualizado a las {{subst:CURRENTTIME}} (UTC) del  {{subst:CURRENTDAY}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}} por [[Usuario:BOTijo|BOTijo]] \n|}<noinclude>{{documentación}}</noinclude>"
         
         resume=u""
         if bots.count(u"BOTijo") or noflagrequired.count([lang, family])>0:
