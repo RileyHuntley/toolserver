@@ -94,12 +94,13 @@ if (isset($_POST['image']) and isset($_POST['article']) and isset($_POST['lang']
 		case 'ar': $resume="إضافة صورة من http://toolserver.org/~emijrp/imagesforbio/"; $position="left"; break;
 		case 'arc': $position="left"; break;
 		case 'arz': $position="left"; break;
+		case 'bg': $resume="Добавена картинка чрез http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'bn': $resume="ছবি যোগ হয়েছে http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'bs': $resume="Dodajem sliku sa http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'ca': $resume="Afegeixo imatge des de http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'ckb': $position="left"; break;
 		case 'cs': $resume="Přidaný obrázek pomocí http://toolserver.org/~emijrp/imagesforbio/"; break;
-		case 'de': $resume="Bild hinzufügen mit http://toolserver.org/~emijrp/imagesforbio/"; break;
+		case 'de': $resume="Bild hinzugefügt mit http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'da': $resume="Tilføjer billede fra http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'dsb': $resume="Pśidał jo wobraz wužywacy http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'dv': $position="left"; break;
@@ -107,6 +108,7 @@ if (isset($_POST['image']) and isset($_POST['article']) and isset($_POST['lang']
 		case 'en': $resume="Add image from http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'eo': $resume="Aldonis bildon per http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'es': $resume="Añado imagen desde http://toolserver.org/~emijrp/imagesforbio/"; break;
+		case 'et': $resume="Pilt lisatud tööriistaga http://tools.wikimedia.de/~emijrp/imagesforbio/"; break;
 		case 'fa': $resume="افزودن نگاره به زندگی‌نامه http://toolserver.org/~emijrp/imagesforbio/"; $position="left"; break;
 		case 'fi': $resume="Lisätty kuva työkalulla http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'fr': $resume="Ajout d'une image depuis http://toolserver.org/~emijrp/imagesforbio/"; break;
@@ -117,20 +119,22 @@ if (isset($_POST['image']) and isset($_POST['article']) and isset($_POST['lang']
 		case 'it': $resume="Aggiungi un'immagine usando http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'ja': $resume="http://toolserver.org/~emijrp/imagesforbio/ から画像を追加"; break;
 		case 'ka': $resume="სურათის ჩამატება http://toolserver.org/~emijrp/imagesforbio/"; break;
+		case 'mk': $resume="Додадете слика од http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'nl': $resume="Afbeelding toegevoegd via http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'nds': $resume="Bild rinstellt. http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'nn': $resume="Legg til bilete frå http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'no': $resume="Legger til bilde fra http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'pl': $resume="Dodaj grafikę z tego źródła: http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'pt': $resume="Adicionada imagem usando http://toolserver.org/~emijrp/imagesforbio/"; break;
-		case 'ro': $resume="Adăugat imagine de la http://toolserver.org/~emijrp/imagesforbio/"; break;
+		case 'ro': $resume="Imagine adăugată de la http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'ru': $resume="Добавлено изображение. http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'sk': $resume="Pridaný obrázok pomocou http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'sl': $resume="Vključena bioslika s pomočjo http://tools.wikimedia.de/~emijrp/imagesforbio/"; break;
 		case 'sr': $resume="додајем слику са http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'sv': $resume="Lägger till bild från http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'uk': $resume="Додано зображення з http://toolserver.org/~emijrp/imagesforbio/"; break;
-		case 'ur': $resume="Add image from http://toolserver.org/~emijrp/imagesforbio/"; $position="left"; break;
+		case 'ur': $resume="تصاوير http://toolserver.org/~emijrp/imagesforbio/"; $position="left"; break;
+		case 'vi': $resume="Thêm ảnh từ http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'zh': $resume="由 http://toolserver.org/~emijrp/imagesforbio/ 加入圖片"; break;
 	}
 	
