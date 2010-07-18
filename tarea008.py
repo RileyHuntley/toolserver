@@ -135,6 +135,7 @@ projects={
         'gl': tt100,
         'hr': tt500,
         'ht': tt100,
+        'pt': tt500,
         'ro': tt500,
         'simple': tt500,
         'sl': tt100,
