@@ -329,7 +329,11 @@ def main():
                     #    detalles+='[[Image:Padlock-silver-medium.svg|20px|Semiprotegida]]'
                     #if re.search(ur'(?i)\{\{ *(Protegida|Protegido|Pp-template)', tmpget):
                     #    detalles+='[[Image:Padlock.svg|20px|Protegida]]'
-                
+                locks=page.getRestrictions()
+                if locks["edit"]=="autoconfirmed":
+					detalles+=u'[[File:Padlock-silver.svg|15px|Semi-protected]] '
+				elif locks["edit"]=="sysop":
+					detalles+=u'[[File:Padlock.svg|15px|Full-protected]] '
                 #wikipedia.output('%s - %d - %s' % (wtitle, visits, detalles))
                 #continue
                 
