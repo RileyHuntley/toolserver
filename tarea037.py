@@ -262,7 +262,7 @@ def main():
         
         projsite=wikipedia.Site(lang, 'wikipedia')
         watch=u'<div style="float: right;"><small>&#91;[[Special:RecentChangesLinked/{{FULLPAGENAME}}|watch popular articles]]&#93;</small></div>'
-        intro=u"This page was generated at '''{{subst:#time:Y-m-d H:i}} (UTC)'''.\n\nTotal hits to [{{subst:SERVER}} {{subst:SERVERNAME}}] (including all pages): {{formatnum:%d}}.\n\nSource: [http://dammit.lt/wikistats dammit.lt/wikistats]. More page views statistics: [http://stats.wikimedia.org/EN/TablesPageViewsMonthly.htm stats.wikimedia.org] and [http://stats.grok.se stats.grok.se].\n\n" % (totalvisits[lang])
+        intro=u"This page was generated at '''{{subst:#time:Y-m-d H:i}} (UTC)'''.\n\nTotal hits to [{{subst:SERVER}} {{subst:SERVERNAME}}] (including all pages): {{formatnum:%d}}.\n\n[[File:Padlock.svg|20px|Full protected]] = Full protected, [[File:Padlock-silver.svg|20px|Semi-protected]] = Semi-protected.\n\nSource: [http://dammit.lt/wikistats dammit.lt/wikistats]. More page views statistics: [http://stats.wikimedia.org/EN/TablesPageViewsMonthly.htm stats.wikimedia.org] and [http://stats.grok.se stats.grok.se].\n\n" % (totalvisits[lang])
         table=u"{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits "
         if lang=='es':
             salida=u"<noinclude>{{%s/begin|{{subst:CURRENTHOUR}}}}</noinclude>\n{| class=\"wikitable sortable\" style=\"text-align: center;\" width=350px \n|+ [[Plantilla:Artículos populares|Artículos populares]] en la última hora \n! # !! Artículo !! Visitas " % exitpage
