@@ -51,7 +51,8 @@ dailylangs = ['it', 'pl', 'nl', 'ru', 'sv', 'zh', 'no',
               #ir metiendo de mas articulos a menos http://meta.wikimedia.org/wiki/List_of_Wikipedias
 #no filtrar paginas con pocas visitas
 #con la optimización del código no es necesario
-#minimum = 5 #visitas minimas para ser contabilizada la pagina, para rankings de la última hora
+#aunque si filtrar la salida de la tabla y no poner páginas con menos de X visitas
+minimum = 100
 if len(sys.argv)>1:
     if sys.argv[1].startswith('--daily'):
         langs += dailylangs
@@ -199,8 +200,12 @@ def analizarPageViewsLogs(fs, exceptions):
                     continue
                 
                 #guardamos
-                output=u"%s%s%s%s%s\n" % (pagelang, spliter, page, spliter, times)
-                fs[pagelang].write(output.encode("utf-8"))
+                try:
+                    output="%s%s%s%s%s\n" % (pagelang, spliter, page, spliter, times) #sin la u si no se pone el encode al hacer f.write
+                except:
+                    print "Error:", page, times
+                #fs[pagelang].write(output.encode("utf-8")) #falla a veces con títulos raros
+                fs[pagelang].write(output) #sin el encode no falla
                 analized += 1
         f.close()
     return totalvisits
@@ -227,6 +232,15 @@ def main():
     compactar()
     sortByPageViews() #ordenamos de mas visitas a menos, cada idioma
     
+    #excluded namespaces and stuff
+    exclusions=['http://', 'Special\:', 'sort_down\.gif', 'sort_up\.gif', 'sort_none\.gif', '\&limit\=']
+    for lang in langs:
+        for nm in wikipedia.Site(lang, "wikipedia").namespaces():
+            nm_=re.sub(" ", "_", "%s\:" % nm)
+            nm__=re.sub("_", " ", "%s\:" % nm)
+            exclusions+=[nm_, nm__]
+    exclusions_r=re.compile(ur'(?im)(%s)' % ("|".join(exclusions)))
+    
     #leemos las primeras y actualizamos el ranking
     for lang in langs:
         if tarea000.isExcluded('tarea037', 'wikipedia', lang):
@@ -241,8 +255,8 @@ def main():
         for line in f:
             line = line[:len(line)-1]
             [times, pagelang, page]=line.split(spliter)
-            if page=='' or re.search(ur'(?im)(http://|Special\:|sort_down\.gif|sort_up\.gif|sort_none\.gif|\&limit\=)', page):
-                #ampliar con otros idiomas
+            
+            if page=='' or re.search(exclusions_r, page):
                 continue
             c+=1
             if c<=limite*2: #margen de error, pueden no existir las paginas, aunque seria raro
@@ -270,23 +284,26 @@ def main():
         else:
             if hourly:
                 gzhour=gzs[0][20:22]
-                hour=(datetime.datetime(year=2000, month=1, day=1, hour=int(gzhour))-datetime.timedelta(hours=1)).hour
-                if len(hour)==1:
-                    hour='0'+hour
+                hour=(datetime.datetime(year=2000, month=1, day=1, hour=int(gzhour))-datetime.timedelta(hours=1)).hour #calcular la hora anterior, la ant a 0 es 23
+                hour_=str(hour)
+                if hour<10:
+                    hour_='0'+hour_
                 map=u'[[File:Daylight_Map,_nonscientific_(%s00_UTC).jpg|thumb|Daylight map, %s:00 (UTC)]]' % (gzhour, gzhour)
                 salida+=watch+"\n"+map+"\n"
-                salida+=u"Last hour popular articles (Period: '''%s:00–%s:59 (UTC)'''). %s%s" % (hour, hour, intro, table)
+                salida+=u"Last hour popular articles (Period: '''%s:00–%s:59 (UTC)'''). %s%s" % (hour_, hour_, intro, table)
             else:
                 gzhour1=gzs[0][20:22]
                 hour1=(datetime.datetime(year=2000, month=1, day=1, hour=int(gzhour1))-datetime.timedelta(hours=1)).hour
-                if len(hour1)==1:
-                    hour1='0'+hour1
+                hour1_=str(hour1)
+                if hour1<10:
+                    hour1_='0'+hour1_
                 gzhour2=gzs[-1][20:22]
                 hour2=(datetime.datetime(year=2000, month=1, day=1, hour=int(gzhour2))-datetime.timedelta(hours=1)).hour
-                if len(hour2)==1:
-                    hour2='0'+hour2
+                hour2_=str(hour2)
+                if hour2<10:
+                    hour2_='0'+hour2_
                 salida+=watch+"\n"
-                salida+=u"Last 24 hours popular articles (Period: '''%s:00–%s:59 (UTC)'''). %s%s" % (hour1, hour2, intro, table)
+                salida+=u"Last 24 hours popular articles (Period: '''%s:00–%s:59 (UTC)'''). %s%s" % (hour1_, hour2_, intro, table)
 
         #for p in pagesiter: #para ver que pagina fallaba con la codificación
         #    print p
