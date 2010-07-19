@@ -313,10 +313,15 @@ def main():
                 
                 #debe ser lo primero que se añada a detalles, para que el candado salga junto al título
                 locks=page.getRestrictions()
-                if locks["edit"]=="autoconfirmed":
-                    detalles+=u'[[File:Padlock-silver.svg|15px|Semi-protected]] '
-                elif locks["edit"]=="sysop":
-                    detalles+=u'[[File:Padlock.svg|15px|Full-protected]] '
+                #formato de locks
+                #{u'edit': None, 'move': None}
+                #{u'edit': [u'autoconfirmed', u'2010-09-10T20:08:39Z']}
+                #{u'edit': [u'autoconfirmed', u'infinity'], u'move': [u'autoconfirmed', u'infinity']}
+                if locks.has_key("edit") and locks["edit"]:
+                    if locks["edit"][0]=="autoconfirmed":
+                        detalles+=u'[[File:Padlock-silver.svg|15px|Semi-protected]] '
+                    elif locks["edit"][0]=="sysop":
+                        detalles+=u'[[File:Padlock.svg|15px|Full-protected]] '
                 
                 wtitle=page.title()
                 page2=page #para coger el redirecttarget si es redirect, se usa más abajo también para los interwikis
