@@ -310,6 +310,14 @@ def main():
                 sum+=int(pageselection[ind][1])
                 if c>limite:
                     break
+                
+                #debe ser lo primero que se añada a detalles, para que el candado salga junto al título
+                locks=page.getRestrictions()
+                if locks["edit"]=="autoconfirmed":
+                    detalles+=u'[[File:Padlock-silver.svg|15px|Semi-protected]] '
+                elif locks["edit"]=="sysop":
+                    detalles+=u'[[File:Padlock.svg|15px|Full-protected]] '
+                
                 wtitle=page.title()
                 page2=page #para coger el redirecttarget si es redirect, se usa más abajo también para los interwikis
                 if page.isRedirectPage():
@@ -329,11 +337,6 @@ def main():
                     #    detalles+='[[Image:Padlock-silver-medium.svg|20px|Semiprotegida]]'
                     #if re.search(ur'(?i)\{\{ *(Protegida|Protegido|Pp-template)', tmpget):
                     #    detalles+='[[Image:Padlock.svg|20px|Protegida]]'
-                locks=page.getRestrictions()
-                if locks["edit"]=="autoconfirmed":
-					detalles+=u'[[File:Padlock-silver.svg|15px|Semi-protected]] '
-				elif locks["edit"]=="sysop":
-					detalles+=u'[[File:Padlock.svg|15px|Full-protected]] '
                 #wikipedia.output('%s - %d - %s' % (wtitle, visits, detalles))
                 #continue
                 
