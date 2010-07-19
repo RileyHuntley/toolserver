@@ -228,10 +228,6 @@ def main():
     
     #leemos las primeras y actualizamos el ranking
     for lang in langs:
-        try:
-            os.remove("/home/emijrp/temporal/tarea037-%s*" % lang)
-        except:
-            pass
         if tarea000.isExcluded('tarea037', 'wikipedia', lang):
                 continue
         print '-'*50, '\n', lang.upper(), '\n', '-'*50
@@ -381,7 +377,7 @@ def main():
             wiii.put(salida, u'BOT - Updating list')
         else:
             print "Error pagina menor de 3KB, fallo algo"
-        os.remove("/home/emijrp/temporal/tarea037-%s*" % lang)
+        os.system("rm /home/emijrp/temporal/tarea037-%s*" % lang)
 
 if __name__ == "__main__":
     main()
