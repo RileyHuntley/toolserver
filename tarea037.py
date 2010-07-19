@@ -30,6 +30,7 @@ import re
 import sys
 import time
 import urllib
+import sets
 
 import wikipedia
 import pagegenerators
@@ -52,7 +53,8 @@ dailylangs = ['it', 'pl', 'nl', 'ru', 'sv', 'zh', 'no',
 #no filtrar paginas con pocas visitas
 #con la optimización del código no es necesario
 #aunque si filtrar la salida de la tabla y no poner páginas con menos de X visitas
-minimum = 100
+minimum = 100 #aunque de momento no lo uso
+
 if len(sys.argv)>1:
     if sys.argv[1].startswith('--daily'):
         langs += dailylangs
@@ -87,23 +89,6 @@ print gzs
 wikipedia.output("Elegidos %d fichero(s)..." % len(gzs))
 
 pagesdic = {}
-exceptions = {}
-
-def loadExceptions(namespaceslists):
-    exceptions={}
-    for lang in langs:
-        lang = lang.lower()
-        exceptions[lang] = {}
-        exceptions[lang]['regexp'] = ur'(?i)(%s)\:' % ('|'.join(namespaceslists[lang]))
-        exceptions[lang]['compiled'] = re.compile(exceptions[lang]['regexp'])
-    return exceptions
-    
-def loadNamespaces():
-    namespaceslists = {}
-    for lang in langs:
-        lang = lang.lower()
-        namespaceslists[lang] = tareas.getNamespacesList(wikipedia.Site(lang, 'wikipedia'))
-    return namespaceslists
 
 def openFiles():
     fs={}
@@ -147,7 +132,7 @@ def compactar():
         g.close()
         #os.system("rm /home/emijrp/temporal/tarea037-%s-sorted-page.txt" % lang)
 
-def analizarPageViewsLogs(fs, exceptions):
+def analizarPageViewsLogs(fs, exclusions_r):
     totalvisits={}
     ensite=wikipedia.Site("en", "wikipedia") #todos tienen utf-8, este me vale
     for gz in gzs:
@@ -196,7 +181,7 @@ def analizarPageViewsLogs(fs, exceptions):
                 else:
                     totalvisits[pagelang] += times
                 
-                if re.search(exceptions[pagelang]['compiled'], page):
+                if re.search(exclusions_r, page):
                     continue
                 
                 #guardamos
@@ -222,27 +207,31 @@ def sortByPageViews():
 def main():
     """ Update popular articles lists """
     
+    #excluded namespaces and stuff
+    exclusions=['http://', 'Special\:', 'sort[_ ]down\.gif', 'sort[_ ]up\.gif', 'sort[_ ]none\.gif', '\&limit\=']
+    for lang in langs:
+        for nm in wikipedia.Site(lang, "wikipedia").namespaces():
+            exclusions+=[re.sub(" ", "_", "%s\:" % nm),
+                         re.sub("_", " ", "%s\:" % nm),
+                        ]
+    exclusions=sets.Set(exclusions)
+    #print exclusions
+    exclusions_r=re.compile(r'(?im)(%s)' % ("|".join(exclusions)))
+    
     wikipedia.output("Se van a analizar los idiomas: %s" % ', '.join(langs))
     fs = openFiles()
-    namespaceslists = loadNamespaces()
-    exceptions = loadExceptions(namespaceslists)
-    totalvisits = analizarPageViewsLogs(fs, exceptions)
+    totalvisits = analizarPageViewsLogs(fs, exclusions_r)
     closeFiles(fs)
     sortFiles() #gnu sort
     compactar()
     sortByPageViews() #ordenamos de mas visitas a menos, cada idioma
     
-    #excluded namespaces and stuff
-    exclusions=['http://', 'Special\:', 'sort_down\.gif', 'sort_up\.gif', 'sort_none\.gif', '\&limit\=']
-    for lang in langs:
-        for nm in wikipedia.Site(lang, "wikipedia").namespaces():
-            nm_=re.sub(" ", "_", "%s\:" % nm)
-            nm__=re.sub("_", " ", "%s\:" % nm)
-            exclusions+=[nm_, nm__]
-    exclusions_r=re.compile(ur'(?im)(%s)' % ("|".join(exclusions)))
-    
     #leemos las primeras y actualizamos el ranking
     for lang in langs:
+        try:
+            os.remove("/home/emijrp/temporal/tarea037-%s*" % lang)
+        except:
+            pass
         if tarea000.isExcluded('tarea037', 'wikipedia', lang):
                 continue
         print '-'*50, '\n', lang.upper(), '\n', '-'*50
@@ -357,7 +346,7 @@ def main():
                         d+=1
                     salida+=u"\n{{!}}-\n{{!}} %d {{!}}{{!}} [[%s]]%s{{#if:{{{novistas|}}}||{{!}}{{!}} {{formatnum:%s}}}} " % (c, wtitle, detalles, pageselection[ind][1])
                 else:
-                    #english interwiki column
+                    #english interwiki <sup>
                     iwlink=""
                     if lang!="en":
                         #a veces falla al cargar iws vacios de portadas del tipo [[cs:]]
@@ -392,7 +381,7 @@ def main():
             wiii.put(salida, u'BOT - Updating list')
         else:
             print "Error pagina menor de 3KB, fallo algo"
-        os.system("rm /home/emijrp/temporal/tarea037-%s*" % lang)
+        os.remove("/home/emijrp/temporal/tarea037-%s*" % lang)
 
 if __name__ == "__main__":
     main()

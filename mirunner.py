@@ -41,6 +41,12 @@ for t in l:
             langs.append(lang)
 f.close()"""
 
+try:
+    os.remove("/mnt/user-store/enwiki-latest-imagelinks.sql.gz")
+    os.remove("/mnt/user-store/enwiki-latest-categorylinks.sql.gz")
+except:
+    print "Error: no se pudieron borrar los archivos enwiki-latest-imagelinks.sql.gz y enwiki-latest-categorylinks.sql.gz"
+
 print "Se van a analizar", len(langs), "idiomas"
 
 for lang in langs:
