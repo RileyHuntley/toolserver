@@ -285,15 +285,17 @@ def main():
             salida=u"<noinclude>{{%s/begin|{{subst:CURRENTHOUR}}}}</noinclude>\n{| class=\"wikitable sortable\" style=\"text-align: center;\" width=350px \n|+ [[Plantilla:Artículos populares|Artículos populares]] en la última hora \n! # !! Artículo !! Visitas " % exitpage
         else:
             if hourly:
+                #decir que hora es analizada
                 gzhour=gzs[0][20:22]
                 hour=(datetime.datetime(year=2000, month=1, day=1, hour=int(gzhour))-datetime.timedelta(hours=1)).hour #calcular la hora anterior, la ant a 0 es 23
                 hour_=str(hour)
                 if hour<10:
                     hour_='0'+hour_
-                map=u'[[File:Daylight_Map,_nonscientific_(%s00_UTC).jpg|thumb|Daylight map, %s:00 (UTC)]]' % (gzhour, gzhour)
+                map=u'[[File:Daylight_Map,_nonscientific_(%s00_UTC).jpg|thumb|Daylight map, %s:00 (UTC)]]' % (hour_, hour_)
                 salida+=watch+"\n"+map+"\n"
-                salida+=u"Last hour popular articles (Period: '''%s:00–%s:59 (UTC)'''). %s%s" % (hour_, hour_, intro, table)
+                salida+=u"Last hour '''popular articles''' (Period: '''%s:00–%s:59 (UTC)'''). %s%s" % (hour_, hour_, intro, table)
             else:
+                #decir a que periodo de 24 horas se refiere el análisis
                 gzhour1=gzs[0][20:22]
                 hour1=(datetime.datetime(year=2000, month=1, day=1, hour=int(gzhour1))-datetime.timedelta(hours=1)).hour
                 hour1_=str(hour1)
@@ -305,7 +307,7 @@ def main():
                 if hour2<10:
                     hour2_='0'+hour2_
                 salida+=watch+"\n"
-                salida+=u"Last 24 hours popular articles (Period: '''%s:00–%s:59 (UTC)'''). %s%s" % (hour1_, hour2_, intro, table)
+                salida+=u"Last 24 hours '''popular articles''' (Period: '''%s:00–%s:59 (UTC)'''). %s%s" % (hour1_, hour2_, intro, table)
 
         #for p in pagesiter: #para ver que pagina fallaba con la codificación
         #    print p
