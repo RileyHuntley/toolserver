@@ -122,6 +122,14 @@ def getSoftwareRedirect(lang, page):
             print "Error al cargar pagetitles"
             sys.exit()
     l=f.readline()
+    if not l: #0 bytes en el fichero?
+        f.close()
+        loadPageTitles(lang)
+        try:
+            f=open("/home/emijrp/temporal/tarea037-%s-pagetitles.txt" % lang, "r")
+        except:
+            print "Error al cargar pagetitles"
+            sys.exit()
     c=0
     while l:
         try:
@@ -488,7 +496,13 @@ def main():
             wiii.put(salida, u'BOT - Updating list')
         else:
             print "Error pagina menor de 3KB, fallo algo"
-        os.system("rm /home/emijrp/temporal/tarea037-%s*" % lang)
+        os.system("rm /home/emijrp/temporal/tarea037-%s.txt" % lang)
+        os.system("rm /home/emijrp/temporal/tarea037-%s-compacted.txt" % lang)
+        os.system("rm /home/emijrp/temporal/tarea037-%s-sorted-page.txt" % lang)
+        os.system("rm /home/emijrp/temporal/tarea037-%s-sorted-times.txt" % lang)
+        if not random.randint(0,9) or daily:
+            #lo renovamos cada 10 ejecuciones más o menos si es el ranking por horas y siempre si es el diario
+            os.system("rm /home/emijrp/temporal/tarea037-%s-pagetitles.txt" % lang)
 
 if __name__ == "__main__":
     main()
