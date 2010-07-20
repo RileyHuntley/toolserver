@@ -257,7 +257,8 @@ def main():
             line = line[:len(line)-1]
             [times, pagelang, page]=line.split(spliter)
             if len(pagesiter)<=limite*2: #margen de error, pueden no existir las paginas, aunque seria raro
-                page=re.sub("_", " ", re.sub("%20", " ", urllib.quote(page))) #porque quote? todo
+                #strip() para evitar espacios y paginas sin titulo
+                page=re.sub("_", " ", re.sub("%20", " ", urllib.quote(page))).strip() #porque quote? todo
                 if page=='' or re.search(exclusions_r, page):
                     continue
                 else:
@@ -332,8 +333,12 @@ def main():
                 
                 #no user string.title() porque convierte x1x en X1X 
                 #http://en.wikibooks.org/wiki/Python_Programming/Strings#title.2C_upper.2C_lower.2C_swapcase.2C_capitalize
-                pagecapitalized=" ".join(map(lambda x: x.capitalize(), page.title().split(" ")))
-                page=wikipedia.Page(projsite, pagecapitalized)
+                temp=page.title().split(" ")
+                temp3=[]
+                for temp2 in temp:
+                   temp3.append(temp2.capitalize())
+                titlecapitalized=" ".join(temp3)
+                page=wikipedia.Page(projsite, titlecapitalized)
             if page.exists() and page.namespace()==0:
                 c+=1
                 ind=c-1
