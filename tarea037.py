@@ -100,12 +100,14 @@ pagesdic = {}
 
 def loadPageTitles(lang):
     try:
+        #las redirecciones también nos interesa cogerlas
         os.system(""" mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_title from page where page_namespace=0;" > /home/emijrp/temporal/tarea037-%s-pagetitles.txt """ % (lang, lang, lang))
     except:
         print "Error al cargar de la bbdd los pagetitles"
         sys.exit()
 
 def getSoftwareRedirect(lang, page):
+    wtitle=page.title()
     try:
         f=open("/home/emijrp/temporal/tarea037-%s-pagetitles.txt" % lang, "r")
     except:
@@ -116,6 +118,7 @@ def getSoftwareRedirect(lang, page):
             print "Error al cargar pagetitles"
             sys.exit()
     l=f.readline()
+    c=0
     while l:
         try:
             l=unicode(l[:-1], "utf-8")
@@ -123,10 +126,14 @@ def getSoftwareRedirect(lang, page):
         except:
             print "Error al cargar pagetitles", l
             l=f.readline()
-        if page.title().lower()==l.lower():
+        c+=1
+        if c % 250000 == 0:
+            print "lower", c
+        if wtitle.lower()==l.lower():
             #sería raro que hubiera dos artículos distintos con diferencia de mayúsculas/minúsculas solo
             #y que uno de ellos fuera muy visitado
             #en el caso que estemos devolviendo una redirección, ya se controla luego que coja el target
+            f.close()
             return wikipedia.Page(wikipedia.Site(lang, "wikipedia"), l)
         l=f.readline()
     f.close()
@@ -194,8 +201,9 @@ def analizarPageViewsLogs(fs, exclusions_r):
         analized = 0
         errores = 0
         for line in f:
+            line = line.encode('utf-8')
             line = line[:-1]
-            try:
+            """try:
                 pass
                 #line = line.encode('utf-8')
                 #line = urllib.unquote(line)
@@ -205,7 +213,7 @@ def analizarPageViewsLogs(fs, exclusions_r):
                 except:
                     errores += 1
                     print "Error", errores, wikipedia.output(line)
-                    continue
+                    continue"""
             c+=1
             if c % 100000 == 0:
                 print "Leidas %d lineas (%d analizadas, %d errores)" % (c, analized, errores)
@@ -292,7 +300,8 @@ def main():
             [times, pagelang, page]=line.split(spliter)
             if len(pagesiter)<=limite*2: #margen de error, pueden no existir las paginas, aunque seria raro
                 #strip() para evitar espacios y paginas sin titulo
-                page=re.sub("_", " ", re.sub("%20", " ", urllib.quote(page))).strip() #porque quote? todo
+                #May 29 at 9:27 http://stackoverflow.com/questions/2934303/having-encoded-a-unicode-string-in-javascript-how-can-i-decode-it-in-python
+                page=re.sub("_", " ", urllib.unquote(page.encode("ascii")).decode("utf-8")).strip() #porque quote? todo
                 if page=='' or re.search(exclusions_r, page):
                     continue
                 else:
@@ -366,6 +375,7 @@ def main():
                 #Recovery (Eminem album)
                 #Glee (TV series)
                 #PubMed Identifier
+                print "No existe? %s" % page.title()
                 page=getSoftwareRedirect(lang, page)
                 r=0
                 while page.exists() and page.isRedirectPage():
