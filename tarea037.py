@@ -43,6 +43,8 @@ limite = 100
 langs = []
 #las listas de langs deben ser mutuamente excluyentes
 #ja: da error de codificación al compactar
+test = False
+testlangs = ['it', 'pl']
 hourly = False
 hourlylangs = ['es', 'en', 'de', 'fr', 'pt', 'da', 'eo', 'hu', 'hr', 
                'ro', 'sl', 'th', 'tr'] #donde tenga flag
@@ -62,6 +64,9 @@ if len(sys.argv)>1:
     elif sys.argv[1].startswith('--hourly'):
         langs += hourlylangs
         hourly = True
+    elif sys.argv[1].startswith('--test'):
+        langs += testlangs
+        test = True
     else:
         langs+=[sys.argv[1]]
 alllangs = dailylangs + hourlylangs
@@ -83,6 +88,8 @@ gzs.sort()
 if hourly:
     gzs = [gzs[-1]] #nos quedamos con el ultimo que es el mas reciente
     #gzs = gzs[-2:] #los dos ultimos, para pruebas
+elif test:
+    gzs = gzs[-2:] #dos ultimos
 elif daily:
     gzs = gzs[-24:] #las ultimas 24 horas para las que haya datos
 print gzs    
@@ -93,7 +100,7 @@ pagesdic = {}
 def openFiles():
     fs={}
     for lang in langs:
-        lang = lang.lower()
+        lang = lang.lower().strip()
         fs[lang]=open("/home/emijrp/temporal/tarea037-%s.txt" % lang, "w")
     return fs
 
@@ -108,17 +115,18 @@ def compactar():
         print "Compactando", lang
         pagelang=""
         page=""
-        oldpage=""
+        oldpage=None
+        times=0
         timessum=0
         for line in f:
             #line=unicode(line, "utf-8")
             try:
                 [pagelang, page, times] = line[:-1].split(spliter)
             except:
-                print line
+                print "Error compactando:", line
                 sys.exit()
             times = int(times)
-            if not oldpage:
+            if oldpage==None:
                 oldpage = page
             if oldpage != page: #hemos cambiado ya de pagina, compactamos la anterior
                 output="%s%s%s%s%s\n" % (timessum, spliter, pagelang, spliter, oldpage)
@@ -145,13 +153,13 @@ def analizarPageViewsLogs(fs, exclusions_r):
             sys.exit()
         
         #regex=re.compile(ur'(?im)^([a-z]{2}) (.*?) (\d{1,}) (\d{1,})$') #evitamos aa.b
-        regexp = re.compile(r'(?im)^(?P<pagelang>%s) (?P<page>.+) (?P<times>\d{1,}) (?P<other>\d{1,})$' % '|'.join(langs)) #evitamos aa.b
+        regexp = re.compile(r'(?im)^(?P<pagelang>%s) (?P<page>.+) (?P<times>\d{1,}) (?P<other>\d{1,})$' % '|'.join(langs))
         
         c = 0
         analized = 0
         errores = 0
         for line in f:
-            line = line[:len(line)-1]
+            line = line[:-1]
             try:
                 line = line.encode('utf-8')
                 line = urllib.unquote(line)
@@ -159,24 +167,24 @@ def analizarPageViewsLogs(fs, exclusions_r):
                 try:
                     line = urllib.unquote(line)
                 except:
-                    print "Error", wikipedia.output(line)
                     errores += 1
+                    print "Error", errores, wikipedia.output(line)
                     continue
             c+=1
             if c % 100000 == 0:
-                print "Leidas %d lineas (%d analizadas, %d fallos)" % (c, analized, errores)
+                print "Leidas %d lineas (%d analizadas, %d errores)" % (c, analized, errores)
                 
             m = regexp.finditer(line)
             for i in m:
-                pagelang = i.group('pagelang').lower()
+                pagelang = i.group('pagelang').lower().strip()
                 page = re.sub('_', ' ', i.group('page')).strip()
                 #page = wikipedia.url2unicode(page, ensite)
                 if not page:
                     continue
-                times = int(i.group('times'))
-                other = int(i.group('other'))
+                times = int(i.group('times').strip())
+                other = int(i.group('other').strip())
                 
-                if not totalvisits.has_key(pagelang): #debe ir antes la exclusión, para contarlas todas
+                if not totalvisits.has_key(pagelang): #debe ir antes de la exclusión, para contarlas todas
                     totalvisits[pagelang] = times
                 else:
                     totalvisits[pagelang] += times
@@ -184,11 +192,12 @@ def analizarPageViewsLogs(fs, exclusions_r):
                 if re.search(exclusions_r, page):
                     continue
                 
-                #guardamos
+                #guardamos las que no excluimos
                 try:
+                    #no guardamos el other
                     output="%s%s%s%s%s\n" % (pagelang, spliter, page, spliter, times) #sin la u si no se pone el encode al hacer f.write
                 except:
-                    print "Error:", page, times
+                    print "Error al guardar:", page, times
                 #fs[pagelang].write(output.encode("utf-8")) #falla a veces con títulos raros
                 fs[pagelang].write(output) #sin el encode no falla
                 analized += 1
@@ -196,13 +205,15 @@ def analizarPageViewsLogs(fs, exclusions_r):
     return totalvisits
 
 def sortFiles():
+    #formato: pagelang pagetitle times (no incluye other)
     for lang in langs:
         os.system("sort /home/emijrp/temporal/tarea037-%s.txt > /home/emijrp/temporal/tarea037-%s-sorted-page.txt" % (lang, lang))
 
 def sortByPageViews():
     for lang in langs:
+        #no ordena bien si tiene titulos con %D6 y similares?
         print "Ordenando", lang
-        os.system("sort -rg /home/emijrp/temporal/tarea037-%s-compacted.txt > /home/emijrp/temporal/tarea037-%s-sorted-times.txt" % (lang, lang))
+        os.system("sort -rn /home/emijrp/temporal/tarea037-%s-compacted.txt > /home/emijrp/temporal/tarea037-%s-sorted-times.txt" % (lang, lang))
 
 def main():
     """ Update popular articles lists """
@@ -226,6 +237,10 @@ def main():
     compactar()
     sortByPageViews() #ordenamos de mas visitas a menos, cada idioma
     
+    if test:
+        print "Fin de la prueba, chequea los archivos"
+        sys.exit()
+    
     #leemos las primeras y actualizamos el ranking
     for lang in langs:
         if tarea000.isExcluded('tarea037', 'wikipedia', lang):
@@ -236,7 +251,6 @@ def main():
         pagesiter=[]
         
         c=0
-        errores=0
         for line in f:
             line = line[:len(line)-1]
             [times, pagelang, page]=line.split(spliter)
@@ -251,7 +265,7 @@ def main():
             else:
                 break
         f.close()
-        print "Elegidas", len(pageselection), "candidatas, hubo", errores, "errores"
+        print "Elegidas", len(pageselection), "candidatas"
         
         exitpage=u""
         if exitpages.has_key(lang):
@@ -389,7 +403,7 @@ def main():
             wiii.put(salida, u'BOT - Updating list')
         else:
             print "Error pagina menor de 3KB, fallo algo"
-        os.system("rm /home/emijrp/temporal/tarea037-%s*" % lang)
+        #os.system("rm /home/emijrp/temporal/tarea037-%s*" % lang)
 
 if __name__ == "__main__":
     main()
