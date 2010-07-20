@@ -378,7 +378,10 @@ def main():
                 #Recovery (Eminem album)
                 #Glee (TV series)
                 #PubMed Identifier
-                print "No existe? %s" % page.title()
+                try:
+                    wikipedia.output(u"No existe? %s" % page.title())
+                except:
+                    print "No existe"
                 page=getSoftwareRedirect(lang, page)
                 r=0
                 while page.exists() and page.isRedirectPage():
