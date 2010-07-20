@@ -105,7 +105,7 @@ def loadPageTitles(lang):
         print "Error al cargar de la bbdd los pagetitles"
         sys.exit()
 
-def getSoftwareRedirect(lang, wtitle):
+def getSoftwareRedirect(lang, page):
     try:
         f=open("/home/emijrp/temporal/tarea037-%s-pagetitles.txt" % lang, "r")
     except:
@@ -123,10 +123,14 @@ def getSoftwareRedirect(lang, wtitle):
         except:
             print "Error al cargar pagetitles", l
             l=f.readline()
-        if wtitle.lower()==l.lower():
+        if page.title().lower()==l.lower():
+            #sería raro que hubiera dos artículos distintos con diferencia de mayúsculas/minúsculas solo
+            #y que uno de ellos fuera muy visitado
+            #en el caso que estemos devolviendo una redirección, ya se controla luego que coja el target
             return wikipedia.Page(wikipedia.Site(lang, "wikipedia"), l)
         l=f.readline()
     f.close()
+    return page
 
 def openFiles():
     fs={}
@@ -362,7 +366,7 @@ def main():
                 #Recovery (Eminem album)
                 #Glee (TV series)
                 #PubMed Identifier
-                page=getSoftwareRedirect(lang, page.title())
+                page=getSoftwareRedirect(lang, page)
                 r=0
                 while page.exists() and page.isRedirectPage():
                     r+=1
