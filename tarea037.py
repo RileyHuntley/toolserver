@@ -101,7 +101,10 @@ pagesdic = {}
 def loadPageTitles(lang):
     try:
         #las redirecciones también nos interesa cogerlas
-        os.system(""" mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_title from page where page_namespace=0;" > /home/emijrp/temporal/tarea037-%s-pagetitles.txt """ % (lang, lang, lang))
+        #ordeno por touched porque es la fecha en la que el caché se renovó por última vez
+        #se supone que las más vistas quedarán en el top de esta query
+        #con las pruebas que he hecho, así parece
+        os.system(""" mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_title from page where page_namespace=0 order by page_touched desc;" > /home/emijrp/temporal/tarea037-%s-pagetitles.txt """ % (lang, lang, lang))
     except:
         print "Error al cargar de la bbdd los pagetitles"
         sys.exit()
