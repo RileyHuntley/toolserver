@@ -306,10 +306,10 @@ def main():
                 #strip() para evitar espacios y paginas sin titulo
                 #May 29 at 9:27 http://stackoverflow.com/questions/2934303/having-encoded-a-unicode-string-in-javascript-how-can-i-decode-it-in-python
                 try:
-                    page=re.sub("_", " ", urllib.unquote(page.encode("ascii"))).strip() #fallo en de: con page.encode("ascii").decode("utf-8")
+                    page=re.sub("_", " ", urllib.unquote(page.encode("ascii").decode("utf-8"))).strip() #fallo en de: con page.encode("ascii").decode("utf-8")
                 except:
-                    print "Error al hacer unquote:", page
-                    sys.exit()
+                    print "Error al hacer unquote", lang, page
+                    #sys.exit()
                 if page=='' or re.search(exclusions_r, page):
                     continue
                 else:
