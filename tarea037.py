@@ -104,6 +104,7 @@ def loadPageTitles(lang):
         #ordeno por touched porque es la fecha en la que el caché se renovó por última vez
         #se supone que las más vistas quedarán en el top de esta query
         #con las pruebas que he hecho, así parece
+        print "Metiendo los pagetitles en un fichero... esto puede tardar un poco..."
         os.system(""" mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_title from page where page_namespace=0 order by page_touched desc;" > /home/emijrp/temporal/tarea037-%s-pagetitles.txt """ % (lang, lang, lang))
     except:
         print "Error al cargar de la bbdd los pagetitles"
