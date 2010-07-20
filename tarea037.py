@@ -253,22 +253,23 @@ def main():
         pageselection=[]
         pagesiter=[]
         
-        c=0
         for line in f:
             line = line[:len(line)-1]
             [times, pagelang, page]=line.split(spliter)
-            
-            if page=='' or re.search(exclusions_r, page):
-                continue
-            c+=1
-            if c<=limite*2: #margen de error, pueden no existir las paginas, aunque seria raro
-                page=re.sub("%20", " ", urllib.quote(page))
-                pageselection.append([page, times])
-                pagesiter.append(page)
+            if len(pagesiter)<=limite*2: #margen de error, pueden no existir las paginas, aunque seria raro
+                page=re.sub("_", " ", re.sub("%20", " ", urllib.quote(page))) #porque quote? todo
+                if page=='' or re.search(exclusions_r, page):
+                    continue
+                else:
+                    pageselection.append([page, times])
+                    pagesiter.append(page)
             else:
                 break
         f.close()
         print "Elegidas", len(pageselection), "candidatas"
+        if len(pagesiter)<limite:
+            print "Hay menos de %d, que ha pasado? Siguiente wikipedia" % len(pagesiter)
+            continue
         
         exitpage=u""
         if exitpages.has_key(lang):
