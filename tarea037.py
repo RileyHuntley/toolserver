@@ -180,7 +180,7 @@ def analizarPageViewsLogs(fs, exclusions_r):
             for i in m:
                 pagelang = i.group('pagelang').lower().strip()
                 #page = re.sub('_', ' ', i.group('page')).strip()
-                page = i.group('page').strip()
+                page = i.group('page').strip().capitalize() #para evitar que salgan duplicadas por minúscula inicial
                 #page = wikipedia.url2unicode(page, ensite)
                 if not page:
                     continue
