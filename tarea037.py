@@ -324,6 +324,16 @@ def main():
         sum=0
         for page in pre:
             detalles=u''
+            if not page.exists():
+                #error Veuve clicuot Main page/
+                #la gente escribe esos titulos tal cual y el software al no encontrar una pagina/redirección
+                #exacta, capitaliza el resto de palabras y lo manda a Veuve Clicuot y Main Page/
+                #entonces al hacer page.exists() no lo encuentra y no sale en el ranking
+                
+                #no user string.title() porque convierte x1x en X1X 
+                #http://en.wikibooks.org/wiki/Python_Programming/Strings#title.2C_upper.2C_lower.2C_swapcase.2C_capitalize
+                pagecapitalized=" ".join(map(lambda x: x.capitalize(), page.title().split(" ")))
+                page=wikipedia.Page(projsite, pagecapitalized)
             if page.exists() and page.namespace()==0:
                 c+=1
                 ind=c-1
