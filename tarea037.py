@@ -201,7 +201,7 @@ def analizarPageViewsLogs(fs, exclusions_r):
         analized = 0
         errores = 0
         for line in f:
-            line = line.encode('utf-8')
+            line = unicode(line, 'utf-8')
             line = line[:-1]
             """try:
                 pass
