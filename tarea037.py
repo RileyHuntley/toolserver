@@ -98,6 +98,36 @@ wikipedia.output("Elegidos %d fichero(s)..." % len(gzs))
 
 pagesdic = {}
 
+def loadPageTitles(lang):
+    try:
+        os.system(""" mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_title from page where page_namespace=0;" > /home/emijrp/temporal/tarea037-%s-pagetitles.txt """ % (lang, lang, lang))
+    except:
+        print "Error al cargar de la bbdd los pagetitles"
+        sys.exit()
+
+def getSoftwareRedirect(lang, wtitle):
+    try:
+        f=open("/home/emijrp/temporal/tarea037-%s-pagetitles.txt" % lang, "r")
+    except:
+        loadPageTitles(lang)
+        try:
+            f=open("/home/emijrp/temporal/tarea037-%s-pagetitles.txt" % lang, "r")
+        except:
+            print "Error al cargar pagetitles"
+            sys.exit()
+    l=f.readline()
+    while l:
+        try:
+            l=unicode(l[:-1], "utf-8")
+            l=re.sub("_", " ", l)
+        except:
+            print "Error al cargar pagetitles", l
+            l=f.readline()
+        if wtitle.lower()==l.lower():
+            return wikipedia.Page(wikipedia.Site(lang, "wikipedia"), l)
+        l=f.readline()
+    f.close()
+
 def openFiles():
     fs={}
     for lang in langs:
@@ -321,27 +351,29 @@ def main():
             print "Error en la codificacion seguramente", lang
             continue
         pre=pagegenerators.PreloadingGenerator(gen, pageNumber=limite*2, lookahead=100)
-        c=d=0
+        c=d=ind=0
         sum=0
         for page in pre:
             detalles=u''
             if not page.exists():
-                #error Veuve clicuot Main page/
-                #la gente escribe esos titulos tal cual y el software al no encontrar una pagina/redirección
-                #exacta, capitaliza el resto de palabras y lo manda a Veuve Clicuot y Main Page/
-                #entonces al hacer page.exists() no lo encuentra y no sale en el ranking
-                
-                #no user string.title() porque convierte x1x en X1X 
-                #http://en.wikibooks.org/wiki/Python_Programming/Strings#title.2C_upper.2C_lower.2C_swapcase.2C_capitalize
-                temp=page.title().split(" ")
-                temp3=[]
-                for temp2 in temp:
-                   temp3.append(temp2.capitalize())
-                titlecapitalized=" ".join(temp3)
-                page=wikipedia.Page(projsite, titlecapitalized)
+                #si la página no existe es porque es una redirección por software (mediawiki)
+                #o porque la han borrado o nunca existió... algún DDoS loco...
+                #algunos ejemplos...
+                #Recovery (Eminem album)
+                #Glee (TV series)
+                #PubMed Identifier
+                page=getSoftwareRedirect(lang, page.title())
+                r=0
+                while page.exists() and page.isRedirectPage():
+                    r+=1
+                    page=page.getRedirectTarget()
+                    if r>5: #what?
+                        break
+                if not page.exists():
+                    #sayonara baby, ddos, loco?
+                    continue
             if page.exists() and page.namespace()==0:
                 c+=1
-                ind=c-1
                 sum+=int(pageselection[ind][1])
                 if c>limite:
                     break
@@ -380,6 +412,9 @@ def main():
                 #wikipedia.output('%s - %d - %s' % (wtitle, visits, detalles))
                 #continue
                 
+                #quitamos enlaces a #secciones y nos quedamos con la primera parte
+                wtitle=wtitle.split("#")[0]
+                
                 if page.namespace() in [6, 14]:
                     wtitle=u':%s' % wtitle
                 
@@ -405,6 +440,7 @@ def main():
                 
                 #except:
                 #    wikipedia.output(u'Error al generar item en lista de %s:' % lang)
+            ind+=1 #se incrementa siempre, para que no se desplace la columna de visitas, no ponerlo al principio, empieza en 0
         
         iws=u''
         for iw in alllangs:
