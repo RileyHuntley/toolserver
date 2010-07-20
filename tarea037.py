@@ -305,7 +305,11 @@ def main():
             if len(pagesiter)<=limite*2: #margen de error, pueden no existir las paginas, aunque seria raro
                 #strip() para evitar espacios y paginas sin titulo
                 #May 29 at 9:27 http://stackoverflow.com/questions/2934303/having-encoded-a-unicode-string-in-javascript-how-can-i-decode-it-in-python
-                page=re.sub("_", " ", urllib.unquote(page.encode("ascii"))).strip() #fallo en de: con page.encode("ascii").decode("utf-8")
+                try:
+                    page=re.sub("_", " ", urllib.unquote(page.encode("ascii"))).strip() #fallo en de: con page.encode("ascii").decode("utf-8")
+                except:
+                    print "Error al hacer unquote:", page
+                    sys.exit()
                 if page=='' or re.search(exclusions_r, page):
                     continue
                 else:
