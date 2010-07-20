@@ -39,6 +39,7 @@ import tareas
 import tarea000
 
 spliter = "\t;;;\t" #tab;tab hay títulos con ; y cosas con tabs individualmente
+spliter = " " #originalmente trae un spliter de espacio, porque no va a funcionar?
 limite = 100
 langs = []
 #las listas de langs deben ser mutuamente excluyentes
@@ -161,8 +162,9 @@ def analizarPageViewsLogs(fs, exclusions_r):
         for line in f:
             line = line[:-1]
             try:
-                line = line.encode('utf-8')
-                line = urllib.unquote(line)
+                pass
+                #line = line.encode('utf-8')
+                #line = urllib.unquote(line)
             except:
                 try:
                     line = urllib.unquote(line)
@@ -177,7 +179,8 @@ def analizarPageViewsLogs(fs, exclusions_r):
             m = regexp.finditer(line)
             for i in m:
                 pagelang = i.group('pagelang').lower().strip()
-                page = re.sub('_', ' ', i.group('page')).strip()
+                #page = re.sub('_', ' ', i.group('page')).strip()
+                page = i.group('page').strip()
                 #page = wikipedia.url2unicode(page, ensite)
                 if not page:
                     continue
@@ -223,7 +226,7 @@ def main():
     for lang in langs:
         for nm in wikipedia.Site(lang, "wikipedia").namespaces():
             exclusions+=[re.sub(" ", "_", "%s\:" % nm),
-                         re.sub("_", " ", "%s\:" % nm),
+                         re.sub("_", " ", "%s\:" % nm), #meter urllib.quote?
                         ]
     exclusions=sets.Set(exclusions)
     #print exclusions
@@ -318,7 +321,7 @@ def main():
         sum=0
         for page in pre:
             detalles=u''
-            if page.exists():
+            if page.exists() and page.namespace()==0:
                 c+=1
                 ind=c-1
                 sum+=int(pageselection[ind][1])
