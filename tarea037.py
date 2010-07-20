@@ -477,7 +477,7 @@ def main():
             wiii.put(salida, u'BOT - Updating list')
         else:
             print "Error pagina menor de 3KB, fallo algo"
-        #os.system("rm /home/emijrp/temporal/tarea037-%s*" % lang)
+        os.system("rm /home/emijrp/temporal/tarea037-%s*" % lang)
 
 if __name__ == "__main__":
     main()
