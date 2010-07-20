@@ -306,10 +306,13 @@ def main():
                 #strip() para evitar espacios y paginas sin titulo
                 #May 29 at 9:27 http://stackoverflow.com/questions/2934303/having-encoded-a-unicode-string-in-javascript-how-can-i-decode-it-in-python
                 try:
-                    page=re.sub("_", " ", urllib.unquote(page.encode("ascii").decode("utf-8"))).strip() #fallo en de: con page.encode("ascii").decode("utf-8")
+                    page=re.sub("_", " ", urllib.unquote(page.encode("ascii")).decode("utf-8")).strip() #fallo en de: con urllib.unquote(page.encode("ascii")).decode("utf-8")
                 except:
-                    print "Error al hacer unquote", lang, page
-                    #sys.exit()
+                    try:
+                        page=re.sub("_", " ", urllib.unquote(page.encode("ascii"))).strip()
+                    except:
+                        print "Error al hacer unquote", lang, page
+                        #sys.exit()
                 if page=='' or re.search(exclusions_r, page):
                     continue
                 else:
@@ -479,7 +482,7 @@ def main():
             salida+=u"\n%s\n{{%s/end|%d|%d|top={{{top|15}}}|fecha={{subst:CURRENTTIME}} ([[UTC]]) del {{subst:CURRENTDAY2}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}}}}\n|}\n<noinclude>{{documentación de plantilla}}\n%s</noinclude>" % ("}} "*d, exitpage, sum, totalvisits[lang], iws)
         else:
             salida+=u"\n|-\n| &nbsp; || '''Top %d hit sum''' || '''{{formatnum:%d}}''' \n|}\n\n%s" % (limite, sum, iws)
-        wikipedia.output(re.sub(ur"\n", ur" ", salida))
+        #wikipedia.output(re.sub(ur"\n", ur" ", salida))
         if len(salida)>3000:
             wiii=wikipedia.Page(projsite, exitpage)
             wiii.put(salida, u'BOT - Updating list')
