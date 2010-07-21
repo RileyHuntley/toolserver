@@ -32,6 +32,7 @@ import time
 import urllib
 import sets
 import random
+import codecs
 
 import wikipedia
 import pagegenerators
@@ -76,9 +77,9 @@ alllangs.sort()
 if len(sys.argv)>2:
     limite = int(sys.argv[2])
 
-commonexitpage = u'User:Emijrp/Popular articles'
 exitpages = {
 'es': u'Plantilla:Artículos populares',
+'default': u'User:Emijrp/Popular articles',
 }
 
 f = urllib.urlopen('http://dammit.lt/wikistats/')
@@ -98,6 +99,20 @@ wikipedia.output("Elegidos %d fichero(s)..." % len(gzs))
 
 pagesdic = {}
 
+def unquote(line):
+    #strip() para evitar espacios y paginas sin titulo
+    #May 29 at 9:27
+    #http://stackoverflow.com/questions/2934303/having-encoded-a-unicode-string-in-javascript-how-can-i-decode-it-in-python
+    try:
+        line=re.sub("_", " ", urllib.unquote(line.encode("ascii")).decode("utf-8")).strip()
+    except:
+        #line=re.sub("_", " ", urllib.unquote(line.encode("ascii"))).strip()
+        #print "Error al hacer unquote", line
+        #mientras encuentro la forma de decodificarlas... false
+        return False
+        #sys.exit()
+    return line
+
 def loadPageTitles(lang):
     try:
         #las redirecciones también nos interesa cogerlas
@@ -112,28 +127,27 @@ def loadPageTitles(lang):
 
 def getSoftwareRedirect(lang, page):
     wtitle=page.title()
-    try:
-        f=open("/home/emijrp/temporal/tarea037-%s-pagetitles.txt" % lang, "r")
-    except:
+    filepagetitles="/home/emijrp/temporal/tarea037-%s-pagetitles.txt" % lang
+    if not os.path.exists(filepagetitles):
         loadPageTitles(lang)
-        try:
-            f=open("/home/emijrp/temporal/tarea037-%s-pagetitles.txt" % lang, "r")
-        except:
-            print "Error al cargar pagetitles"
-            sys.exit()
+    try:
+        f=codecs.open(filepagetitles, mode="r", encoding="utf-8")
+    except:
+        print "Error al cargar pagetitles"
+        sys.exit()
     l=f.readline()
     if not l: #0 bytes en el fichero?
         f.close()
         loadPageTitles(lang)
         try:
-            f=open("/home/emijrp/temporal/tarea037-%s-pagetitles.txt" % lang, "r")
+            f=codecs.open(filepagetitles, mode="r", encoding="utf-8")
         except:
             print "Error al cargar pagetitles"
             sys.exit()
     c=0
     while l:
         try:
-            l=unicode(l[:-1], "utf-8")
+            l=l[:-1]
             l=re.sub("_", " ", l)
         except:
             print "Error al cargar pagetitles", l
@@ -151,120 +165,91 @@ def getSoftwareRedirect(lang, page):
     f.close()
     return page
 
-def openFiles():
-    fs={}
-    for lang in langs:
-        lang = lang.lower().strip()
-        fs[lang]=open("/home/emijrp/temporal/tarea037-%s.txt" % lang, "w")
-    return fs
-
-def closeFiles(fs):
-    for lang, f, in fs.items(): #cerramos
-        f.close()
-
 def compactar():
     for lang in langs:
-        f=open("/home/emijrp/temporal/tarea037-%s-sorted-page.txt" % lang, "r")
-        g=open("/home/emijrp/temporal/tarea037-%s-compacted.txt" % lang, "w")
+        f=codecs.open("/home/emijrp/temporal/tarea037-%s-sorted-page.txt" % lang, mode="r", encoding="utf-8")
+        g=codecs.open("/home/emijrp/temporal/tarea037-%s-compacted.txt" % lang, mode="w", encoding="utf-8")
         print "Compactando", lang
         pagelang=""
         page=""
         oldpage=None
         times=0
         timessum=0
+        other=0
+        othersum=0
         for line in f:
-            #line=unicode(line, "utf-8")
+            line=line[:-1]
             try:
-                [pagelang, page, times] = line[:-1].split(spliter)
+                pagelang, page, times, other = line.split(" ")
             except:
                 print "Error compactando:", line
                 sys.exit()
             times = int(times)
-            if oldpage==None:
+            other = int(other)
+            if oldpage == None:
                 oldpage = page
             if oldpage != page: #hemos cambiado ya de pagina, compactamos la anterior
-                output="%s%s%s%s%s\n" % (timessum, spliter, pagelang, spliter, oldpage)
-                g.write(output)#.encode("utf-8"))
+                output="%s\n" % (" ".join([str(timessum), pagelang, oldpage]))
+                g.write(output)
                 oldpage = page
                 timessum = 0
+                othersum = 0
             timessum += times
-        output="%s%s%s%s%s\n" % (timessum, spliter, pagelang, spliter, oldpage)
-        g.write(output)#.encode("utf-8"))
-        f.close()
-        g.close()
-        #os.system("rm /home/emijrp/temporal/tarea037-%s-sorted-page.txt" % lang)
+            othersum += other
+        output="%s\n" % (" ".join([str(timessum), pagelang, oldpage]))
+        g.write(output)
+        f.close();g.close()
 
-def analizarPageViewsLogs(fs, exclusions_r):
-    totalvisits={}
-    ensite=wikipedia.Site("en", "wikipedia") #todos tienen utf-8, este me vale
+def analizarPageViewsLogs():
+    totalvisits = {}
+    for lang in langs:
+        totalvisits[lang]=0
+        txtfile='/home/emijrp/temporal/tarea037-%s.txt' % lang
+        if os.path.exists(txtfile):
+            os.remove(txtfile)
     for gz in gzs:
         print '-'*50, '\n', gz, '\n', '-'*50
-        try:
-            f = gzip.open('/mnt/user-store/stats/%s' % gz, 'r')
-        except:
+        gzpath='/mnt/user-store/stats/%s' % gz
+        if not os.path.exists(gzpath):
             #os.system('wget http://dammit.lt/wikistats/%s -O /mnt/user-store/stats/%s' % (gz, gz))
-            #f=gzip.open('/mnt/user-store/stats/%s' % gz, 'r')
+            print "No existe el fichero", gzpath
             sys.exit()
         
-        #regex=re.compile(ur'(?im)^([a-z]{2}) (.*?) (\d{1,}) (\d{1,})$') #evitamos aa.b
-        regexp = re.compile(r'(?im)^(?P<pagelang>%s) (?P<page>.+) (?P<times>\d{1,}) (?P<other>\d{1,})$' % '|'.join(langs))
-        
-        c = 0
-        analized = 0
-        errores = 0
-        for line in f:
-            line = unicode(line, 'utf-8')
-            line = line[:-1]
-            """try:
-                pass
-                #line = line.encode('utf-8')
-                #line = urllib.unquote(line)
-            except:
-                try:
-                    line = urllib.unquote(line)
-                except:
-                    errores += 1
-                    print "Error", errores, wikipedia.output(line)
-                    continue"""
-            c+=1
-            if c % 100000 == 0:
-                print "Leidas %d lineas (%d analizadas, %d errores)" % (c, analized, errores)
-                
-            m = regexp.finditer(line)
-            for i in m:
-                pagelang = i.group('pagelang').lower().strip()
-                #page = re.sub('_', ' ', i.group('page')).strip()
-                page = i.group('page').strip().capitalize() #para evitar que salgan duplicadas por minúscula inicial
-                #page = wikipedia.url2unicode(page, ensite)
-                if not page:
-                    continue
-                times = int(i.group('times').strip())
-                other = int(i.group('other').strip())
-                
-                if not totalvisits.has_key(pagelang): #debe ir antes de la exclusión, para contarlas todas
-                    totalvisits[pagelang] = times
-                else:
-                    totalvisits[pagelang] += times
-                
-                if re.search(exclusions_r, page):
-                    continue
-                
-                #guardamos las que no excluimos
-                try:
-                    #no guardamos el other
-                    output="%s%s%s%s%s\n" % (pagelang, spliter, page, spliter, times) #sin la u si no se pone el encode al hacer f.write
-                except:
-                    print "Error al guardar:", page, times
-                #fs[pagelang].write(output.encode("utf-8")) #falla a veces con títulos raros
-                fs[pagelang].write(output) #sin el encode no falla
-                analized += 1
+        for lang in langs:
+            print "Sacando las entradas para %s:" % lang
+            #tiene que ser >> para acumular si es un análisis de varias horas (varios gzips)
+            #pero antes hay que haberlo borrado para que no se acumule en sucesivas ejecuciones
+            os.system('gunzip -c %s | egrep "^%s " >> /home/emijrp/temporal/tarea037-%s.txt' % (gzpath, lang, lang))
+    
+    for lang in langs:
+        descartadas=0
+        c=0
+        max=0
+        print "Haciendo unquote() para", lang
+        f=codecs.open("/home/emijrp/temporal/tarea037-%s.txt" % lang, mode="r", encoding="utf-8")
+        g=codecs.open("/home/emijrp/temporal/tarea037-%s-capitalized.txt" % lang, mode="w", encoding="utf-8")
+        for l in f:
+            t=l[:-1].split(" ")
+            totalvisits[lang]+=int(t[2])
+            if unquote(t[1]):
+                tt=[t[0], re.sub("_", " ", unquote(t[1])).strip().capitalize(), t[2], t[3]]
+                g.write("%s\n" % " ".join(tt))
+                c+=1
+                if c % 100000 == 0:
+                    print "Llevamos", c
+                if max<int(t[2]):
+                    max=int(t[2])
+            else:
+                descartadas+=1
         f.close()
+        g.close()
+        print "Descartadas", lang, descartadas, "la maxima con", max, "visitas"
     return totalvisits
 
 def sortFiles():
-    #formato: pagelang pagetitle times (no incluye other)
+    #formato: pagelang pagetitle times other
     for lang in langs:
-        os.system("sort /home/emijrp/temporal/tarea037-%s.txt > /home/emijrp/temporal/tarea037-%s-sorted-page.txt" % (lang, lang))
+        os.system("sort /home/emijrp/temporal/tarea037-%s-capitalized.txt > /home/emijrp/temporal/tarea037-%s-sorted-page.txt" % (lang, lang))
 
 def sortByPageViews():
     for lang in langs:
@@ -282,14 +267,10 @@ def main():
             exclusions+=[re.sub(" ", "_", "%s\:" % nm),
                          re.sub("_", " ", "%s\:" % nm), #meter urllib.quote?
                         ]
-    exclusions=sets.Set(exclusions)
-    #print exclusions
-    exclusions_r=re.compile(r'(?im)(%s)' % ("|".join(exclusions)))
+    exclusions_r=re.compile(r'(?im)(%s)' % ("|".join(sets.Set(exclusions))))
     
     wikipedia.output("Se van a analizar los idiomas: %s" % ', '.join(langs))
-    fs = openFiles()
-    totalvisits = analizarPageViewsLogs(fs, exclusions_r)
-    closeFiles(fs)
+    totalvisits = analizarPageViewsLogs();#print totalvisits
     sortFiles() #gnu sort
     compactar()
     sortByPageViews() #ordenamos de mas visitas a menos, cada idioma
@@ -303,24 +284,14 @@ def main():
         if tarea000.isExcluded('tarea037', 'wikipedia', lang):
                 continue
         print '-'*50, '\n', lang.upper(), '\n', '-'*50
-        f=open("/home/emijrp/temporal/tarea037-%s-sorted-times.txt" % lang, "r")
+        f=codecs.open("/home/emijrp/temporal/tarea037-%s-sorted-times.txt" % lang, mode="r", encoding="utf-8")
         pageselection=[]
         pagesiter=[]
         
         for line in f:
-            line = line[:len(line)-1]
-            [times, pagelang, page]=line.split(spliter)
-            if len(pagesiter)<=limite*2: #margen de error, pueden no existir las paginas, aunque seria raro
-                #strip() para evitar espacios y paginas sin titulo
-                #May 29 at 9:27 http://stackoverflow.com/questions/2934303/having-encoded-a-unicode-string-in-javascript-how-can-i-decode-it-in-python
-                try:
-                    page=re.sub("_", " ", urllib.unquote(page.encode("ascii")).decode("utf-8")).strip() #fallo en de: con urllib.unquote(page.encode("ascii")).decode("utf-8")
-                except:
-                    try:
-                        page=re.sub("_", " ", urllib.unquote(page.encode("ascii"))).strip()
-                    except:
-                        print "Error al hacer unquote", lang, page
-                        #sys.exit()
+            line = line[:-1]
+            times, pagelang, page=line.split(spliter)
+            if len(pagesiter)<limite*5: #margen de error, pueden no existir las paginas, aunque seria raro
                 if page=='' or re.search(exclusions_r, page):
                     continue
                 else:
@@ -338,12 +309,12 @@ def main():
         if exitpages.has_key(lang):
             exitpage=exitpages[lang]
         else:
-            exitpage=commonexitpage
+            exitpage=exitpages["default"]
         salida=u""
         
         projsite=wikipedia.Site(lang, 'wikipedia')
         watch=u'<div style="float: right;"><small>&#91;[[Special:RecentChangesLinked/{{FULLPAGENAME}}|watch popular articles]]&#93;</small></div>'
-        intro=u"This page was generated at '''{{subst:#time:Y-m-d H:i}} (UTC)'''.\n\nTotal hits to [{{subst:SERVER}} {{subst:SERVERNAME}}] (including all pages): {{formatnum:%d}}.\n\n[[File:Padlock.svg|20px|Full protected]] = Full protected, [[File:Padlock-silver.svg|20px|Semi-protected]] = Semi-protected.\n\nSource: [http://dammit.lt/wikistats dammit.lt/wikistats]. More page views statistics: [http://stats.wikimedia.org/EN/TablesPageViewsMonthly.htm stats.wikimedia.org] and [http://stats.grok.se stats.grok.se].\n\n" % (totalvisits[lang])
+        intro=""#u"This page was generated at '''{{subst:#time:Y-m-d H:i}} (UTC)'''.\n\nTotal hits to [{{subst:SERVER}} {{subst:SERVERNAME}}] (including all pages): {{formatnum:%d}}.\n\n[[File:Padlock.svg|20px|Full protected]] = Full protected, [[File:Padlock-silver.svg|20px|Semi-protected]] = Semi-protected.\n\nSource: [http://dammit.lt/wikistats dammit.lt/wikistats]. More page views statistics: [http://stats.wikimedia.org/EN/TablesPageViewsMonthly.htm stats.wikimedia.org] and [http://stats.grok.se stats.grok.se].\n\n" % (totalvisits[lang]) #todo
         table=u"{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits "
         if lang=='es':
             salida=u"<noinclude>{{%s/begin|{{subst:CURRENTHOUR}}}}</noinclude>\n{| class=\"wikitable sortable\" style=\"text-align: center;\" width=350px \n|+ [[Plantilla:Artículos populares|Artículos populares]] en la última hora \n! # !! Artículo !! Visitas " % exitpage
@@ -484,29 +455,28 @@ def main():
                 if exitpages.has_key(iw):
                     iws+=u'[[%s:%s]]\n' % (iw, exitpages[iw])
                 else:
-                    iws+=u'[[%s:%s]]\n' % (iw, commonexitpage)
+                    iws+=u'[[%s:%s]]\n' % (iw, exitpages["default"])
         #salida+="\n{{/end}}\n%s" % (iws)
         if lang=='es':
-            salida+=u"\n%s\n{{%s/end|%d|%d|top={{{top|15}}}|fecha={{subst:CURRENTTIME}} ([[UTC]]) del {{subst:CURRENTDAY2}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}}}}\n|}\n<noinclude>{{documentación de plantilla}}\n%s</noinclude>" % ("}} "*d, exitpage, sum, totalvisits[lang], iws)
+            pass#todo salida+=u"\n%s\n{{%s/end|%d|%d|top={{{top|15}}}|fecha={{subst:CURRENTTIME}} ([[UTC]]) del {{subst:CURRENTDAY2}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}}}}\n|}\n<noinclude>{{documentación de plantilla}}\n%s</noinclude>" % ("}} "*d, exitpage, sum, totalvisits[lang], iws)
         else:
             salida+=u"\n|-\n| &nbsp; || '''Top %d hit sum''' || '''{{formatnum:%d}}''' \n|}\n\n%s" % (limite, sum, iws)
         #wikipedia.output(re.sub(ur"\n", ur" ", salida))
         if len(salida)>3000:
             wiii=wikipedia.Page(projsite, exitpage)
-            wiii.put(salida, u'BOT - Updating list')
+            #wiii.put(salida, u'BOT - Updating list')
         else:
             print "Error pagina menor de 3KB, fallo algo"
         os.system("rm /home/emijrp/temporal/tarea037-%s.txt" % lang)
         os.system("rm /home/emijrp/temporal/tarea037-%s-compacted.txt" % lang)
         os.system("rm /home/emijrp/temporal/tarea037-%s-sorted-page.txt" % lang)
-        os.system("rm /home/emijrp/temporal/tarea037-%s-sorted-times.txt" % lang)
+        #os.system("rm /home/emijrp/temporal/tarea037-%s-sorted-times.txt" % lang)
         if not random.randint(0,9) or daily:
             #lo renovamos cada 10 ejecuciones más o menos si es el ranking por horas y siempre si es el diario
-            try:
-                #a lo mejor no se creó porque no hizo falta
-                os.system("rm /home/emijrp/temporal/tarea037-%s-pagetitles.txt" % lang)
-            except:
-                pass
+            filepagetitles="/home/emijrp/temporal/tarea037-%s-pagetitles.txt" % lang
+            #a lo mejor no se creó porque no hizo falta
+            if os.path.exists(filepagetitles):
+                os.remove(filepagetitles)
 
 if __name__ == "__main__":
     main()
