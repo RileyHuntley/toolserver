@@ -104,6 +104,7 @@ def unquote(line):
     #May 29 at 9:27
     #http://stackoverflow.com/questions/2934303/having-encoded-a-unicode-string-in-javascript-how-can-i-decode-it-in-python
     try:
+        line=re.sub("%20", "_", line)
         line=urllib.unquote(line.encode("ascii")).decode("utf-8").strip()
     except:
         #mientras encuentro la forma de decodificarlas... false
