@@ -40,8 +40,8 @@ import pagegenerators
 import tareas
 import tarea000
 
-spliter = "\t;;;\t" #tab;tab hay títulos con ; y cosas con tabs individualmente
-spliter = " " #originalmente trae un spliter de espacio, porque no va a funcionar?
+#spliter = "\t;;;\t" #tab;tab hay títulos con ; y cosas con tabs individualmente
+#spliter = " " #originalmente trae un spliter de espacio, porque no va a funcionar?
 limite = 100
 langs = []
 #las listas de langs deben ser mutuamente excluyentes
@@ -104,10 +104,8 @@ def unquote(line):
     #May 29 at 9:27
     #http://stackoverflow.com/questions/2934303/having-encoded-a-unicode-string-in-javascript-how-can-i-decode-it-in-python
     try:
-        line=re.sub("_", " ", urllib.unquote(line.encode("ascii")).decode("utf-8")).strip()
+        line=rrllib.unquote(line.encode("ascii")).decode("utf-8").strip()
     except:
-        #line=re.sub("_", " ", urllib.unquote(line.encode("ascii"))).strip()
-        #print "Error al hacer unquote", line
         #mientras encuentro la forma de decodificarlas... false
         return False
         #sys.exit()
@@ -146,16 +144,11 @@ def getSoftwareRedirect(lang, page):
             sys.exit()
     c=0
     while l:
-        try:
-            l=l[:-1]
-            l=re.sub("_", " ", l)
-        except:
-            print "Error al cargar pagetitles", l
-            l=f.readline()
+        l=l[:-1]
         c+=1
         if c % 250000 == 0:
             print "lower", c
-        if wtitle.lower()==l.lower():
+        if wtitle.strip().lower()==l.strip().lower():
             #sería raro que hubiera dos artículos distintos con diferencia de mayúsculas/minúsculas solo
             #y que uno de ellos fuera muy visitado
             #en el caso que estemos devolviendo una redirección, ya se controla luego que coja el target
@@ -225,6 +218,7 @@ def analizarPageViewsLogs():
         descartadas=0
         c=0
         max=0
+        max2=""
         print "Haciendo unquote() para", lang
         f=codecs.open("/home/emijrp/temporal/tarea037-%s.txt" % lang, mode="r", encoding="utf-8")
         g=codecs.open("/home/emijrp/temporal/tarea037-%s-capitalized.txt" % lang, mode="w", encoding="utf-8")
@@ -232,18 +226,19 @@ def analizarPageViewsLogs():
             t=l[:-1].split(" ")
             totalvisits[lang]+=int(t[2])
             if unquote(t[1]):
-                tt=[t[0], re.sub("_", " ", unquote(t[1])).strip().capitalize(), t[2], t[3]]
+                tt=[t[0], unquote(t[1]).strip().capitalize(), t[2], t[3]]
                 g.write("%s\n" % " ".join(tt))
                 c+=1
                 if c % 100000 == 0:
                     print "Llevamos", c
-                if max<int(t[2]):
-                    max=int(t[2])
             else:
                 descartadas+=1
+                if max<int(t[2]):
+                    max=int(t[2])
+                    max2=t[1]
         f.close()
         g.close()
-        print "Descartadas", lang, descartadas, "la maxima con", max, "visitas"
+        print "Descartadas", lang, descartadas, "la maxima con", max, "visitas", max2
     return totalvisits
 
 def sortFiles():
@@ -290,7 +285,7 @@ def main():
         
         for line in f:
             line = line[:-1]
-            times, pagelang, page=line.split(spliter)
+            times, pagelang, page=line.split(" ")
             if len(pagesiter)<limite*5: #margen de error, pueden no existir las paginas, aunque seria raro
                 if page=='' or re.search(exclusions_r, page):
                     continue
