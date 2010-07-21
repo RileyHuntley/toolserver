@@ -104,7 +104,7 @@ def unquote(line):
     #May 29 at 9:27
     #http://stackoverflow.com/questions/2934303/having-encoded-a-unicode-string-in-javascript-how-can-i-decode-it-in-python
     try:
-        line=rrllib.unquote(line.encode("ascii")).decode("utf-8").strip()
+        line=urllib.unquote(line.encode("ascii")).decode("utf-8").strip()
     except:
         #mientras encuentro la forma de decodificarlas... false
         return False
@@ -309,7 +309,7 @@ def main():
         
         projsite=wikipedia.Site(lang, 'wikipedia')
         watch=u'<div style="float: right;"><small>&#91;[[Special:RecentChangesLinked/{{FULLPAGENAME}}|watch popular articles]]&#93;</small></div>'
-        intro=""#u"This page was generated at '''{{subst:#time:Y-m-d H:i}} (UTC)'''.\n\nTotal hits to [{{subst:SERVER}} {{subst:SERVERNAME}}] (including all pages): {{formatnum:%d}}.\n\n[[File:Padlock.svg|20px|Full protected]] = Full protected, [[File:Padlock-silver.svg|20px|Semi-protected]] = Semi-protected.\n\nSource: [http://dammit.lt/wikistats dammit.lt/wikistats]. More page views statistics: [http://stats.wikimedia.org/EN/TablesPageViewsMonthly.htm stats.wikimedia.org] and [http://stats.grok.se stats.grok.se].\n\n" % (totalvisits[lang]) #todo
+        intro=u"This page was generated at '''{{subst:#time:Y-m-d H:i}} (UTC)'''.\n\nTotal hits to [{{subst:SERVER}} {{subst:SERVERNAME}}] (including all pages): {{formatnum:%d}}.\n\n[[File:Padlock.svg|20px|Full protected]] = Full protected, [[File:Padlock-silver.svg|20px|Semi-protected]] = Semi-protected.\n\nSource: [http://dammit.lt/wikistats dammit.lt/wikistats]. More page views statistics: [http://stats.wikimedia.org/EN/TablesPageViewsMonthly.htm stats.wikimedia.org] and [http://stats.grok.se stats.grok.se].\n\n" % (totalvisits[lang])
         table=u"{| class=\"wikitable sortable\" style=\"text-align: center;\" \n! # !! Article !! Hits "
         if lang=='es':
             salida=u"<noinclude>{{%s/begin|{{subst:CURRENTHOUR}}}}</noinclude>\n{| class=\"wikitable sortable\" style=\"text-align: center;\" width=350px \n|+ [[Plantilla:Artículos populares|Artículos populares]] en la última hora \n! # !! Artículo !! Visitas " % exitpage
@@ -453,7 +453,7 @@ def main():
                     iws+=u'[[%s:%s]]\n' % (iw, exitpages["default"])
         #salida+="\n{{/end}}\n%s" % (iws)
         if lang=='es':
-            pass#todo salida+=u"\n%s\n{{%s/end|%d|%d|top={{{top|15}}}|fecha={{subst:CURRENTTIME}} ([[UTC]]) del {{subst:CURRENTDAY2}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}}}}\n|}\n<noinclude>{{documentación de plantilla}}\n%s</noinclude>" % ("}} "*d, exitpage, sum, totalvisits[lang], iws)
+            salida+=u"\n%s\n{{%s/end|%d|%d|top={{{top|15}}}|fecha={{subst:CURRENTTIME}} ([[UTC]]) del {{subst:CURRENTDAY2}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}}}}\n|}\n<noinclude>{{documentación de plantilla}}\n%s</noinclude>" % ("}} "*d, exitpage, sum, totalvisits[lang], iws)
         else:
             salida+=u"\n|-\n| &nbsp; || '''Top %d hit sum''' || '''{{formatnum:%d}}''' \n|}\n\n%s" % (limite, sum, iws)
         #wikipedia.output(re.sub(ur"\n", ur" ", salida))
