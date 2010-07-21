@@ -89,7 +89,6 @@ gzs = re.findall(ur'(?i)\"(?P<filename>pagecounts\-\d{8}\-\d{6}\.gz)\"', raw)
 gzs.sort()
 if hourly:
     gzs = [gzs[-1]] #nos quedamos con el ultimo que es el mas reciente
-    #gzs = gzs[-2:] #los dos ultimos, para pruebas
 elif test:
     gzs = gzs[-2:] #dos ultimos
 elif daily:
