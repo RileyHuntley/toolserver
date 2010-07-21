@@ -48,11 +48,11 @@ langs = []
 test = False
 testlangs = ['it', 'pl']
 hourly = False
-hourlylangs = ['es', 'en', 'de', 'fr', 'pt', 'da', 'eo', 'hu', 'hr', 
-               'ro', 'sl', 'th', 'tr'] #donde tenga flag
+hourlylangs = ['es', 'en', 'de', 'fr', 'pt', 'da', 'eo', 'hu', 'hr', 'it', 
+               'pt', 'ro', 'sl', 'th', 'tr', 'ar'] #donde tenga flag
 daily = False
-dailylangs = ['it', 'pl', 'nl', 'ru', 'sv', 'zh', 'no', 
-              'ca', 'fi', 'uk', 'cs', 'ko', 'gl'] 
+dailylangs = ['pl', 'nl', 'ru', 'sv', 'zh', 'no', 
+              'ca', 'fi', 'uk', 'cs', 'ko', 'gl', 'mi'] 
               #ir metiendo de mas articulos a menos http://meta.wikimedia.org/wiki/List_of_Wikipedias
 #no filtrar paginas con pocas visitas
 #con la optimización del código no es necesario
