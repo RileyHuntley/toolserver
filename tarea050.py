@@ -29,7 +29,7 @@ def main():
     path = "http://toolserver.org/~vvv/sulutil.php?user="
     salida = u"{{#switch:{{{1|}}}"
     total = 0
-    oldtotal = 0
+    oldtotal = 0 #total anterior
     for user in users:
         url = path + user
         f = urllib.urlopen(url, 'r')
@@ -42,11 +42,11 @@ def main():
 
     editcount = wikipedia.Page(eswiki, u"User:Emijrp/Editcount")
     #evitamos regresiones en el contador
-    editcountold = int(editcount.get().split("Total=")[1].split("\n")[0])
+    oldtotal = int(editcount.get().split("Total=")[1].split("\n")[0])
 
     if total > oldtotal:
-        page = wikipedia.Page(eswiki, u"User:Emijrp/Editcount/Old")
-        page.put(editcount.get(), u"BOT - Datos de la versión anterior de [[User:Emijrp/Editcount]]")    
+        oldpage = wikipedia.Page(eswiki, u"User:Emijrp/Editcount/Old")
+        oldpage.put(editcount.get(), u"BOT - Datos de la versión anterior de [[User:Emijrp/Editcount]]")    
         editcount.put(salida, u"BOT - Actualizando ediciones globales de %s: %d" % (", ".join(users), total))
 
 if __name__ == "__main__":
