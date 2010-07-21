@@ -31,6 +31,7 @@ import sys
 import time
 import urllib
 import sets
+import random
 
 import wikipedia
 import pagegenerators
