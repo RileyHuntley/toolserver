@@ -503,7 +503,11 @@ def main():
         os.system("rm /home/emijrp/temporal/tarea037-%s-sorted-times.txt" % lang)
         if not random.randint(0,9) or daily:
             #lo renovamos cada 10 ejecuciones más o menos si es el ranking por horas y siempre si es el diario
-            os.system("rm /home/emijrp/temporal/tarea037-%s-pagetitles.txt" % lang)
+            try:
+                #a lo mejor no se creó porque no hizo falta
+                os.system("rm /home/emijrp/temporal/tarea037-%s-pagetitles.txt" % lang)
+            except:
+                pass
 
 if __name__ == "__main__":
     main()
