@@ -52,6 +52,6 @@ print "Se van a analizar", len(langs), "idiomas"
 for lang in langs:
     if lang in inactivas or lang in nointeresa:
         continue
-    os.system('python missingimages.py %s' % lang)
+    os.system('python /home/emijrp/python/tareas/missingimages.py %s' % lang)
     os.system('mysql -h sql -e "use u_emijrp_yarrow;delete from imagesforbio where language=\'%s\';"' % lang)
     os.system('mysql -h sql u_emijrp_yarrow < /home/emijrp/temporal/candidatas-%s.sql' % lang)
