@@ -82,7 +82,7 @@ div#wrapper{
 }
 div#content{
 	display:table-cell;vertical-align:middle;
-	background-image: url('wplogoreduced.jpg');
+	background-image: url('wplogoreduced.png');
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 	background-position: center center;
