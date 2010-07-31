@@ -134,7 +134,7 @@ for page in pre:
                 print '-'*50
                 wikipedia.showDiff(wtext, newtext)
                 print '-'*50
-                page.put(newtext, u"BOT - Adding {{%s}} to description: %s" % (lang, desc), botflag=False)
+                page.put(newtext, u"BOT - Adding {{%s}} to description: %s" % (lang, desc), botflag=True)
                 c+=1
                 if time.time()-t1>60:
                     c=0
