@@ -86,7 +86,7 @@ if plantillas.has_key(lang):
             evitar+=u'tl_title=\'%s\' or ' % re.sub(' ', '_', k)
     evitar=evitar[:len(evitar)-4]
 
-print evitar
+wikipedia.output(evitar)
 
 os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_id, page_title from templatelinks, page where tl_from=page_id and page_namespace=0 and page_is_redirect=0 and (%s);" > /home/emijrp/temporal/usocommons.txt' % (lang, lang, evitar.encode('utf-8')))
 f=open('/home/emijrp/temporal/usocommons.txt', 'r')
@@ -109,11 +109,8 @@ print 'Cargados %d pageid/pagetitle de paginas de %s: que ya apuntan a Commons' 
 f.close()
 
 #cuantas imagenes tienen las galerias? merece la pena enlazar?
-try:
-    f=open('/home/emijrp/temporal/commonsgalleries.txt', 'r')
-except:
-    os.system('mysql -h commonswiki-p.db.toolserver.org -e "use commonswiki_p;select il_from from imagelinks where il_from in (select page_id from page where page_namespace=0 and page_is_redirect=0);" > /home/emijrp/temporal/commonsgalleries.txt')
-    f=open('/home/emijrp/temporal/commonsgalleries.txt', 'r')
+os.system('mysql -h commonswiki-p.db.toolserver.org -e "use commonswiki_p;select il_from from imagelinks where il_from in (select page_id from page where page_namespace=0 and page_is_redirect=0);" > /home/emijrp/temporal/commonsgalleries.txt')
+f=open('/home/emijrp/temporal/commonsgalleries.txt', 'r')
 
 c=0
 for line in f:
