@@ -25,8 +25,8 @@ def checkLanguage(desc):
     url="http://ajax.googleapis.com/ajax/services/language/detect?v=1.0&q="
     url+=desc_.encode("utf-8")
     os.system('curl -e http://es.wikipedia.org/wiki/User:Emijrp "%s" > a.txt 2> /dev/null' % url)
-    print "Description:", desc
-    print "Description sent to Google", desc_
+    #print "Description:", desc
+    #print "Description sent to Google", desc_
     #raw= subprocess.Popen(["curl", "-e", "http://es.wikipedia.org/wiki/User:Emijrp", "'%s'" % url], stdout=subprocess.PIPE).communicate[0]
     f=open("a.txt", "r")
     raw=f.read()
@@ -34,7 +34,7 @@ def checkLanguage(desc):
     f=open("a.txt", "w")
     f.write("")
     f.close()
-    print "RAW de Google:", raw
+    #print "RAW de Google:", raw
     time.sleep(0.5)
     n=re.compile(ur'"language":"(?P<lang>[a-z]+)","isReliable":(?P<rel>true|false),"confidence":(?P<con>[0-9\.]+)\}').finditer(raw)
     lang=False
@@ -94,12 +94,10 @@ for page in pre:
     if not page.exists():
         print "No exist"
         continue
-    
-    wikipedia.output(u"%s\n=== %s ===" % ("#"*50, page.title()))    
 
     wtext=page.get()
     if not re.search(ur"(?i)\{\{ *information", wtext):
-        print "No {{Information}} template"
+        #print "No {{Information}} template"
         continue
     
     reg=ur"(?im)(?P<ini>Description *= *)(?P<desc>[^\n\r\{\/\:\<\>]+?)(?P<fin>\r\n *\| *Source *=)" # never templates, no <br>
@@ -121,11 +119,12 @@ for page in pre:
             
         
         if lang in ["en", "de", "fr", "pl", "it", "ja", "es", "nl", "pt", "ru", "sv", "zh"] and rel=="true" and con>0.5:
+            wikipedia.output(u"%s\n=== %s ===\n%s" % ("#"*50, page.title(), desc))
             [lang1, rel1, con1]=checkLanguage(desc[:(len(desc)-1)/2])
             [lang2, rel2, con2]=checkLanguage(desc[(len(desc)-1)/2:])
             if lang and lang1 and lang2 and lang1==lang and lang2==lang and rel1=="true" and rel2=="true":
                 newtext=re.sub(reg, ur"\g<ini>{{%s|1=\g<desc>}}\g<fin>" % lang, wtext)
-                print "Response by Google: Language:", lang, "    isReliable", rel, "    Confidence", con
+                wikipedia.output(u"Response by Google: Language: %s, isReliable %s, Confidence %s" % (lang, rel, con))
                 print '-'*50
                 wikipedia.showDiff(wtext, newtext)
                 print '-'*50
