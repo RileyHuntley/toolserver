@@ -49,38 +49,38 @@ def checkLanguage(desc):
 
 commonswiki=wikipedia.Site("commons", "commons")
 langslist = [
-"english",
-"german", "deutsch", 
-"french", "français", 
-"polish", "polski", 
-"italian", "italiano",
-"japanese", "日本語",
-"spanish", "español",
-"dutch", "nederlands",
-"portuguese", "português",
-"russian", "Русский",
-"swedish", "Svenska",
-"chinese", "中文", 
-"Norwegian (Bokmål)", "Norwegian", "(Bokmål)", "Bokmål", "Norsk",
-"catalan", "Català",
-"finnish", "suomi",
-"ukrainian", "Українська",
-"hungarian", "Magyar", 
-"czech", "Čeština",
-"Romanian", "Română",
-"Turkish", "Türkçe",
-"korean", "한국어", 
-"danish", "Dansk",
-"esperanto",
-"العربية",
-"indonesian", "Bahasa Indonesia",
-"vietnamese", "Tiếng Việt",
-"Volapük",
-"serbian", "Српски \/ Srpski",
-"slovak", "Slovenčina",
-"lithuanian", "Lietuvių",
-"hebrew", "עברית",
-"bulgarian", "Български",
+"english", "en",
+"german", "deutsch", "de", 
+"french", "français", "fr",  
+"polish", "polski", "pl", 
+"italian", "italiano", "it", 
+"japanese", "日本語", "ja", 
+"spanish", "español", "es", 
+"dutch", "nederlands", "nl"
+"portuguese", "português", "pt", 
+"russian", "Русский", "ru", 
+"swedish", "Svenska", "sv", 
+"chinese", "中文", "zh", 
+"Norwegian (Bokmål)", "Norwegian", "(Bokmål)", "Bokmål", "Norsk", "no", 
+"catalan", "Català", "ca", 
+"finnish", "suomi", "fi", 
+"ukrainian", "Українська", "uk", 
+"hungarian", "Magyar", "hu", 
+"czech", "Čeština", "cs", 
+"Romanian", "Română", "ro",
+"Turkish", "Türkçe", "tr", 
+"korean", "한국어", "ko", 
+"danish", "Dansk", "da", 
+"esperanto", "eo", 
+"العربية", "ar", 
+"indonesian", "Bahasa Indonesia", "id", 
+"vietnamese", "Tiếng Việt", "vi", 
+"Volapük", "vo", 
+"serbian", "Српски \/ Srpski", "sr", 
+"slovak", "Slovenčina", "sk", 
+"lithuanian", "Lietuvių", "lt", 
+"hebrew", "עברית", "he", 
+"bulgarian", "Български", "bg"
 ]
 st=u"A" #start page
 
@@ -102,13 +102,15 @@ for page in pre:
         print "No {{Information}} template"
         continue
     
-    reg=ur"(?im)(?P<ini>Description *= *)(?P<desc>[^\n\r\{\/\:\<]+?)(?P<fin>\r\n *\| *Source *=)" # never templates, no <br>
+    reg=ur"(?im)(?P<ini>Description *= *)(?P<desc>[^\n\r\{\/\:\<\>]+?)(?P<fin>\r\n *\| *Source *=)" # never templates, no <br>
     m=re.compile(reg).finditer(wtext)
     for i in m:
         desc=i.group("desc")
-        if len(desc)<100 or len(desc)>4000: #el limite de google es 5000, probar límite inferior
+        if len(desc)<100 or len(desc)>4000:
+            #el limite de google es 5000, probar límite inferior
+            #con 100 no hace tantas queries que generalmente no son conclusivas
             break
-        if re.search(ur"(?i)(%s) ?(\:|\'\'\')" % (langslist), desc):
+        if re.search(ur"(?i)(%s) ?(\:|\'\'\')" % ("|".join(langslist)), desc):
             #cuidado con esto http://commons.wikimedia.org/w/index.php?diff=35687668&oldid=31253617
             continue
         
