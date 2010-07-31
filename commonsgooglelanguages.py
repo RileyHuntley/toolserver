@@ -87,9 +87,13 @@ st=u"A" #start page
 if (len(sys.argv)>=2):
     st=sys.argv[1]
 
+limit=5
+
 gen=pagegenerators.AllpagesPageGenerator(start = st, namespace = 6, includeredirects = False, site = commonswiki)
 pre=pagegenerators.PreloadingGenerator(gen, pageNumber=250, lookahead=250)
 
+c=0
+t1=time.time()
 for page in pre:
     if not page.exists():
         print "No exist"
@@ -108,8 +112,10 @@ for page in pre:
             #el limite de google es 5000, probar límite inferior
             #con 100 no hace tantas queries que generalmente no son conclusivas
             break
-        if re.search(ur"(?i)(%s) ?(\:|\'\'\')" % ("|".join(langslist)), desc):
+        if re.search(ur"(?i)(%s) ?(\:|\'\')" % ("|".join(langslist)), desc):
             #cuidado con esto http://commons.wikimedia.org/w/index.php?diff=35687668&oldid=31253617
+            continue
+        if re.search(ur"(?i)\{\{ *lang", desc): # {{lang|de}}....
             continue
         
         try:
@@ -128,7 +134,13 @@ for page in pre:
                 print '-'*50
                 wikipedia.showDiff(wtext, newtext)
                 print '-'*50
-                page.put(newtext, u"BOT - Adding {{%s}} to description: %s" % (lang, desc))
+                page.put(newtext, u"BOT - Adding {{%s}} to description: %s" % (lang, desc), botflag=False)
+                c+=1
+                if time.time()-t1>60:
+                    c=0
+                    t1=time.time()
+                while c>=limit and time.time()-t1<60:
+                    time.sleep(1)
             else:
                 print "-----> Not conclusive: %s %s %s, %s %s %s, %s %s %s <-----" % (lang, rel, con, lang1, rel1, con1, lang2, rel2, con2)
         break
