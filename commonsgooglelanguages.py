@@ -87,7 +87,7 @@ st=u"A" #start page
 if (len(sys.argv)>=2):
     st=sys.argv[1]
 
-limit=5
+limit=4
 
 gen=pagegenerators.AllpagesPageGenerator(start = st, namespace = 6, includeredirects = False, site = commonswiki)
 pre=pagegenerators.PreloadingGenerator(gen, pageNumber=250, lookahead=250)
