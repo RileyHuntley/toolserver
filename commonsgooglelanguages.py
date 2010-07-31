@@ -48,7 +48,40 @@ def checkLanguage(desc):
     return lang, rel, con
 
 commonswiki=wikipedia.Site("commons", "commons")
-
+langslist = [
+"english",
+"german", "deutsch", 
+"french", "français", 
+"polish", "polski", 
+"italian", "italiano",
+"japanese", "日本語",
+"spanish", "español",
+"dutch", "nederlands",
+"portuguese", "português",
+"russian", "Русский",
+"swedish", "Svenska",
+"chinese", "中文", 
+"Norwegian (Bokmål)", "Norwegian", "(Bokmål)", "Bokmål", "Norsk",
+"catalan", "Català",
+"finnish", "suomi",
+"ukrainian", "Українська",
+"hungarian", "Magyar", 
+"czech", "Čeština",
+"Romanian", "Română",
+"Turkish", "Türkçe",
+"korean", "한국어", 
+"danish", "Dansk",
+"esperanto",
+"العربية",
+"indonesian", "Bahasa Indonesia",
+"vietnamese", "Tiếng Việt",
+"Volapük",
+"serbian", "Српски \/ Srpski",
+"slovak", "Slovenčina",
+"lithuanian", "Lietuvių",
+"hebrew", "עברית",
+"bulgarian", "Български",
+]
 st=u"A" #start page
 
 if (len(sys.argv)>=2):
@@ -75,7 +108,8 @@ for page in pre:
         desc=i.group("desc")
         if len(desc)<100 or len(desc)>4000: #el limite de google es 5000, probar límite inferior
             break
-        if re.search(ur"(?i)(english|french|spanish|portuguese|deutsch|italian)", desc): #cuidado con esto
+        if re.search(ur"(?i)(%s) ?(\:|\'\'\')" % (langslist), desc):
+            #cuidado con esto http://commons.wikimedia.org/w/index.php?diff=35687668&oldid=31253617
             continue
         
         try:
@@ -84,7 +118,7 @@ for page in pre:
             continue
             
         
-        if lang in ["en", "de", "fr", "es", "pt", "it", "nl"] and rel=="true" and con>0.5:
+        if lang in ["en", "de", "fr", "pl", "it", "ja", "es", "nl", "pt", "ru", "sv", "zh"] and rel=="true" and con>0.5:
             [lang1, rel1, con1]=checkLanguage(desc[:(len(desc)-1)/2])
             [lang2, rel2, con2]=checkLanguage(desc[(len(desc)-1)/2:])
             if lang and lang1 and lang2 and lang1==lang and lang2==lang and rel1=="true" and rel2=="true":
