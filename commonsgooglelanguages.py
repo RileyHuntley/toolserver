@@ -131,7 +131,7 @@ for page in pre:
                 print '-'*50
                 page.put(newtext, u"BOT - Adding {{%s}} to description: %s" % (lang, desc))
             else:
-                print "-----> Not conclusive <-----"
+                print "-----> Not conclusive: %s %s %s, %s %s %s, %s %s %s <-----" % (lang, rel, con, lang1, rel1, con1, lang2, rel2, con2)
         break
     
 
