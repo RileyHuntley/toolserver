@@ -73,18 +73,22 @@ for page in pre:
     m=re.compile(reg).finditer(wtext)
     for i in m:
         desc=i.group("desc")
-        if len(desc)<50 or len(desc)>4000: #el limite de google es 5000, probar límite inferior
+        if len(desc)<100 or len(desc)>4000: #el limite de google es 5000, probar límite inferior
             break
+        if re.search(ur"(?i)(english|french|spanish|portuguese|deutsch|italian)", desc): #cuidado con esto
+            continue
         
         try:
             [lang, rel, con]=checkLanguage(desc)
         except:
             continue
-        if rel=="true" and con>0.5:
+            
+        
+        if lang in ["en", "de", "fr", "es", "pt", "it", "nl"] and rel=="true" and con>0.5:
             [lang1, rel1, con1]=checkLanguage(desc[:(len(desc)-1)/2])
             [lang2, rel2, con2]=checkLanguage(desc[(len(desc)-1)/2:])
-            if lang and lang1 and lang2 and lang1==lang and lang2==lang: # and rel1=="true" and rel2=="true":
-                newtext=re.sub(reg, ur"\g<ini>{{%s|\g<desc>}}\g<fin>" % lang, wtext)
+            if lang and lang1 and lang2 and lang1==lang and lang2==lang and rel1=="true" and rel2=="true":
+                newtext=re.sub(reg, ur"\g<ini>{{%s|1=\g<desc>}}\g<fin>" % lang, wtext)
                 print "Response by Google: Language:", lang, "    isReliable", rel, "    Confidence", con
                 print '-'*50
                 wikipedia.showDiff(wtext, newtext)
