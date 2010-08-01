@@ -112,7 +112,7 @@ foreach ($langs_temp as $lang_temp) { array_push($langs, '<a href="?lang='.$lang
 <h1><a href="http://toolserver.org/~emijrp">emijrp's tools</a></h1>
 <hr/>"""
     if tool_title and tool_id:
-        output+=u"<h2>%s (Tool #%s, <a href='http://toolserver.org/~emijrp/archive/tool%s'>archive</a>)</h2>" % (tool_title, tool_id, tool_id)
+        output+=u"<h2>Tool #%s: %s [<a href='http://toolserver.org/~emijrp/archive/tool%s'>archive</a>] [code]</h2>" % (tool_id, tool_title, tool_id)
     return output
 
 def getPHPFooter():
@@ -170,9 +170,9 @@ Here, you can see most of my <b>tools</b>. I hope they are useful:
 <li><a href="tool0022/"></a></li>
 <li><a href="tool0023/"></a></li>
 <li><a href="tool0024/"></a></li>
-<li><a href="tool0025/">Most active users in all projects</a></li>
+<li><a href="tool0025/">Most active users in all projects</a> [archive] [code]</li>
 <li><a href="tool0026/"></a></li>
-<li><a href="tool00027/">Last edit in all projects</a></li>
+<li><a href="tool0027/"><i>Endangered</i> projects</a> [archive] [code]</li>
 <li><a href="tool0028/"></a></li>
 
 </ol>

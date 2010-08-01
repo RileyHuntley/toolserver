@@ -55,18 +55,21 @@ lastedits.sort()
 output=getPHPHeader(tool_id, tool_title)
 output+=u""
 c=0
-output+=u"<center>\n<table>\n<tr><th>#</th><th>Project</th><th>User</th><th>Timestamp</th></tr>\n"
+output+=u"""<center>\n<table class="wikitable">\n<tr><th>#</th><th>Project</th><th>Last user edit</th><th>Timestamp</th><th>Days inactive</th></tr>\n"""
 for timestamp, lang, family, username, oldid in lastedits:
 	if family=="commons":
 		wikiurl="commons.wikimedia.org"
 	elif family in ["wikipedia", "wiktionary", "wikiquote", "wikibooks", "wikisource", "wikinews", "wikiversity"]:
 		wikiurl="%s.%s.org" % (lang, family)
 	else:
-		wikiurl="%s:%s" % (lang, family)
+		continue
+		#wikiurl="%s:%s" % (lang, family)
 	c+=1
 	if c<=limit:
 		date=datetime.datetime(year=int(timestamp[:4]), month=int(timestamp[4:6]), day=int(timestamp[6:8]), hour=int(timestamp[8:10]), minute=int(timestamp[10:12]), second=int(timestamp[12:14]))
 		delta=datetime.datetime.now()-date
+		if delta.days<10:
+			continue
 		output+=u"<tr><td>%s</td><td>%s</td><td><a href='http://%s/wiki/User:%s'>%s</a></td><td><a href='http://%s/w/index.php?oldid=%s&diff=prev'>%s</a></td><td>%s days</td></tr>\n" % (c, wikiurl, wikiurl, username, username, wikiurl, oldid, date.isoformat(), delta.days)
 	else:
 		break
