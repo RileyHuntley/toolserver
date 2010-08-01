@@ -247,7 +247,9 @@ def isExcluded(tarea, family, lang):
 
     excludedprojects={
         'tarea008': {
-            'wikipedia': ['ko', #no les interesa http://es.wikipedia.org/w/index.php?title=Usuario_Discusi%C3%B3n:Emijrp&diff=35727924&oldid=35727631
+            'wikipedia': [
+                'de', #http://de.wikipedia.org/wiki/Wikipedia:L%C3%B6schkandidaten/24._Juli_2010#Benutzer:Emijrp.2FList_of_Wikipedians_by_number_of_edits_.28gel.C3.B6scht.29
+                'ko', #no les interesa http://es.wikipedia.org/w/index.php?title=Usuario_Discusi%C3%B3n:Emijrp&diff=35727924&oldid=35727631
                 'pl', #ya tienen uno http://es.wikipedia.org/w/index.php?title=Usuario_Discusi%C3%B3n:Emijrp&diff=35726268&oldid=35726116
                 'hu', #ya tienen su propio ranking http://hu.wikipedia.org/wiki/Wikip%C3%A9dia:Wikip%C3%A9dist%C3%A1k_list%C3%A1ja_szerkeszt%C3%A9ssz%C3%A1m_szerint lo desactivo porque les recreaba las páginas /begin y /end
                 ],
