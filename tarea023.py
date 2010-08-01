@@ -47,12 +47,12 @@ for lang in ['en', 'es', 'fr', 'de']:
     f=open('/home/emijrp/temporal/protecciondeplantillas', 'r')
     sql=unicode(f.read(), 'utf-8')
     f.close()
-    n=re.compile(ur"(?im)^(.*?)    (.*?)    (.*?)$").finditer(sql)
+    n=re.compile(ur"(?im)^(?P<title>.*?)\s(?P<type>.*?)\s(?P<who>.*?)$").finditer(sql)
     for j in n:
-        title=j.group(1)
+        title=j.group("title")
         title=re.sub(ur'_', ur' ', title)
-        type=j.group(2)
-        who=j.group(3)
+        type=j.group("type")
+        who=j.group("who")
         if type=='edit':
             protectsedit[title]=who
         elif type=='move':

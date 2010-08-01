@@ -72,6 +72,7 @@ table.wikitable, table.prettytable {
     background-color: #f9f9f9;
     border: 1px #aaa solid;
     border-collapse: collapse;
+    text-align: center;
 }
 table.wikitable th, table.wikitable td,
 table.prettytable th, table.prettytable td {

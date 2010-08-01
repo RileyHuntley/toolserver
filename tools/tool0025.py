@@ -58,7 +58,7 @@ users.reverse()
 output=getPHPHeader(tool_id, tool_title)
 output+=u""
 c=0
-output+=u"<center>\n<table>\n<tr><th>#</th><th>Project</th><th>User</th><th>Edits</th><th>%</th></tr>\n"
+output+=u"""<center>\n<table class="wikitable">\n<tr><th>#</th><th>Project</th><th>User</th><th>Edits</th><th>%</th></tr>\n"""
 for edits, lang, family, username in users:
 	if family=="commons":
 		wikiurl="commons.wikimedia.org"
