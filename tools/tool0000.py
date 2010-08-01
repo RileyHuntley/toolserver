@@ -148,13 +148,13 @@ Here, you can see most of my <b>tools</b>. I hope they are useful:
 
 <li><a href="tool0001/">Replicated databases in Toolserver</a> [<a href="archive/tool0001/">archive</a>] [code]</li>
 <li><a href="tool0002/">List of users by article count</a> [<a href="archive/tool0002/">archive</a>] [code]</li>
-<li><a href="tool0003/"></a></li>
-<li><a href="tool0004/"></a></li>
+<li><a href="tool0003/">Revert rates</a> [todo]</li>
+<li><a href="tool0004/">Welcome newbies, they are the future!</a> [todo]</li>
 <li><a href="tool0005/">Active projects and languages in Wikimedia servers</a> [<a href="archive/tool0005/">archive</a>] [code]</li>
-<li><a href="tool0006/"></a></li>
-<li><a href="tool0007/"></a></li>
-<li><a href="tool0008/"></a></li>
-<li><a href="tool0009/"></a></li>
+<li><a href="tool0006/">General activity</a> [todo]</li>
+<li><a href="tool0007/">Most linked external links</a> [todo]</li>
+<li><a href="tool0008/">Pages distribution</a> [todo]</li><!-- porcentaje de redirecciones respecto de artículos (y resto de namespaces)-->
+<li><a href="tool0009/">Most linked Toolserver tools and users</a> [todo :)]</li>
 <li><a href="tool0010/"></a></li>
 <li><a href="tool0011/"></a></li>
 <li><a href="tool0012/"></a></li>
