@@ -92,6 +92,7 @@ table.prettytable caption {
 
 img {
     border: 0px;
+    margin: 5px;
 }
 /*
 estilo para los párrafos.-.
