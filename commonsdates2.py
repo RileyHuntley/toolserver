@@ -132,23 +132,27 @@ def main():
                 metadatadate=""
                 metadatac=0
                 if metadata!=None:
+                    #http://commons.wikimedia.org/w/index.php?title=File:AlexRaphaelMeschini2.jpg&diff=prev&oldid=42074919
+                    #los metadatos no coinciden
                     for metadatadict in metadata:
                         metaname=metadatadict['name']
                         metavalue=metadatadict['value']
                         
                         if metaname in ['DateTime', 'DateTimeOriginal', 'DateTimeDigitized']:
-                            metadatac+=1 #para mas seguridad, pedimos 3 metadatos de fechas
                             #print metaname, metavalue
                             if not metadatadate:
+                                metadatac+=1
                                 metadatadate=metavalue
                             elif metadatadate!=metavalue: # los metadatos arrojan varios valores de fechas
-                                continue #nos vamos
+                                break #nos vamos, no coinciden las fechas
+                            else:
+                                metadatac+=1 #para mas seguridad, pedimos 3 metadatos de fechas
                 #tiene el formato habitual? 2008:04:10 11:41:31
                 metadatadate2=re.findall(ur"(\d{4}):(\d{2}):(\d{2}) \d{2}:\d{2}:\d{2}", metadatadate)
                 #print len(metadatadate)
                 #print metadatadate2
                 if metadatac!=3 or len(metadatadate)!=19 or len(metadatadate2)!=1: #[(u'2008', u'12', u'07')]
-                    continue
+                    continue #no hay 3 metadatos, o las fechas no coinciden
                 
                 #verificamos dd y mm, y sino intercambiamos, y sino saltamos
                 if metadatadate2[0][0]==year and metadatadate2[0][1]==month and metadatadate2[0][2]==day:
