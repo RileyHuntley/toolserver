@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import Gnuplot
 import re
 import urllib
 
@@ -240,6 +241,35 @@ OLD DESIGN
 %s
 """ % (getPHPHeader(), getPHPTools(), getPHPFooter())
     writeToFile("/home/emijrp/public_html/index.php", output)
+
+def printBarsGraph(title, file, headers, rows):
+    xtics = ""
+    for xtic in rows[0]:
+        xtics += '"%s" %s, ' % (xtic, xtic)
+    xtics = xtics[:-2]
+    #print xtics
+    gp = Gnuplot.Gnuplot()
+    gp("set style data boxes")
+    gp("set grid ytics mytics")
+    gp('set title "%s"' % title.encode("utf-8"))
+    gp('set xlabel "%s"' % headers[0].encode("utf-8"))
+    gp('set mytics 2')
+    gp('set ylabel "Edits"')
+    #gp('set xtics rotate by 90')
+    gp('set xtics (%s)' % xtics.encode("utf-8"))
+    c = 1
+    plots = []
+    for row in rows[1:]:
+        plots.append(Gnuplot.PlotItems.Data(rows[c], with_="boxes", title=headers[c].encode("utf-8")))
+        c += 1
+    if len(rows)-1 == 1:
+        gp.plot(plots[0])
+    elif len(rows)-1 == 2:
+        gp.plot(plots[0], plots[1])
+    elif len(rows)-1 == 3:
+        gp.plot(plots[0], plots[1], plots[2])
+    gp.hardcopy(filename=file,terminal="png")
+    gp.close()
 
 createIndex()
 

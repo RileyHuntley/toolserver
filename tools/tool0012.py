@@ -131,4 +131,21 @@ for country, edits in countries.items():
 countries_list.sort()
 countries_list.reverse()
 
+headers = ["Country", "Edits"]
+row0=[]
+row1=[]
+row2=[]
+c=0
+for edits, country in countries_list:
+	row0.append(str(c))
+	row1.append(country)
+	row2.append(edits)
+	c+=1
+	if c>=20:
+		break
 
+rows = [row1, row2]
+
+title = u"Anonymous user edits by location"
+file = "%s/graph.png" % (tool_path)
+printBarsGraph(title=title, file=file, headers=headers, rows=rows)
