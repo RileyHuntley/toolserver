@@ -155,9 +155,9 @@ Here, you can see most of my <b>tools</b>. I hope they are useful:
 <li><a href="tool0007/">Most linked external links</a> [todo]</li>
 <li><a href="tool0008/">Pages distribution</a> [todo]</li><!-- porcentaje de redirecciones respecto de artículos (y resto de namespaces)-->
 <li><a href="tool0009/">Most linked Toolserver tools and users</a> [todo :)]</li>
-<li><a href="tool0010/">Most edited articles by different users in the last day</a></li><!-- count(distinct rc_user_text) -->
-<li><a href="tool0011/"></a></li>
-<li><a href="tool0012/"></a></li>
+<li><a href="tool0010/">Most edited articles by different users in the last day</a> [todo]</li><!-- count(distinct rc_user_text) -->
+<li><a href="tool0011/">Edit activity levels</a> [todo]</li>
+<li><a href="tool0012/">Edits maps</a> [todo]</li>
 <li><a href="tool0013/"></a></li>
 <li><a href="tool0014/"></a></li>
 <li><a href="tool0015/"></a></li>
