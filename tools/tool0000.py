@@ -118,7 +118,7 @@ foreach ($langs_temp as $lang_temp) { array_push($langs, '<a href="?lang='.$lang
 def getPHPFooter():
     return u"""<hr/>
 <div style="float: right;"><a href="http://toolserver.org"><img src="wikimedia-toolserver-button.png" alt="Powered by Toolserver"></a></div>
-<p><i>This page was last modified on <!-- timestamp -->%s<!-- timestamp -->.</i></p>
+<p><i>This page was last modified on <!-- timestamp -->%s<!-- timestamp --> (UTC).</i></p>
 <!-- end content -->
 </body>
 </html>
@@ -157,7 +157,7 @@ Here, you can see most of my <b>tools</b>. I hope they are useful:
 <li><a href="tool0009/">Most linked Toolserver tools and users</a> [todo :)]</li>
 <li><a href="tool0010/">Most edited articles by different users in the last day</a> [todo]</li><!-- count(distinct rc_user_text) -->
 <li><a href="tool0011/">Edit activity levels</a> [todo]</li>
-<li><a href="tool0012/">Edits maps</a> [todo]</li>
+<li><a href="tool0012/">Anonymous edits by location</a> [todo]</li>
 <li><a href="tool0013/"></a></li>
 <li><a href="tool0014/"></a></li>
 <li><a href="tool0015/"></a></li>

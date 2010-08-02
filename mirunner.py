@@ -42,8 +42,9 @@ for t in l:
 f.close()"""
 
 try:
-    os.remove("/mnt/user-store/enwiki-latest-imagelinks.sql.gz")
-    os.remove("/mnt/user-store/enwiki-latest-categorylinks.sql.gz")
+    pass #mientras no salen los dumps nuevos
+    #os.remove("/mnt/user-store/enwiki-latest-imagelinks.sql.gz")
+    #os.remove("/mnt/user-store/enwiki-latest-categorylinks.sql.gz")
 except:
     print "Error: no se pudieron borrar los archivos enwiki-latest-imagelinks.sql.gz y enwiki-latest-categorylinks.sql.gz"
 

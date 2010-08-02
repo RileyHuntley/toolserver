@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import Gnuplot
 import MySQLdb
 import sys
 from tool0000 import *
@@ -122,4 +123,12 @@ f = open("%s/r.script" % tool_path, "w")
 f.write(rscript.encode("utf-8"))
 f.close()
 
-os.system("cat %s/r.script | R --no-save" % (tool_path))
+#os.system("cat %s/r.script | R --no-save" % (tool_path))
+
+countries_list = []
+for country, edits in countries.items():
+	countries_list.append([edits, country])
+countries_list.sort()
+countries_list.reverse()
+
+
