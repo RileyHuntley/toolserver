@@ -35,9 +35,9 @@ def main():
         user_name = unicode(row[0], "utf-8")
         users.append(user_name)
     
-    output = u"La siguiente es una lista con los usuarios que han llegado en los últimos %d días y han editado algunas cosas. Es posible que interese darles la bienvenida después de revisar sus contribuciones. Ejemplo de bienvenida: <code>{<nowiki></nowiki>{su<nowiki></nowiki>bst:Bienvenida condensada}<nowiki></nowiki>} --~~<nowiki></nowiki>~~</code>\n" % (dias)
+    output = u"La siguiente es una lista con los usuarios que han llegado en los últimos %d días y han editado algunas cosas. Es posible que interese darles la bienvenida después de revisar sus contribuciones. Ejemplo de bienvenida: <code>{<nowiki></nowiki>{su<nowiki></nowiki>bst:Usuario:Emijrp/Bienvenida.css}<nowiki></nowiki>} --~~<nowiki></nowiki>~~</code>\n" % (dias)
     for user_name in users:
-        output += u"# [[%s]] ([[Usuario Discusión:%s|discusión]] · [[Special:Contributions/%s|contribuciones]])\n" % (user_name, user_name, user_name)
+        output += u"# [[Usuario:%s|%s]] ([[Usuario Discusión:%s|discusión]] · [[Special:Contributions/%s|contribuciones]])\n" % (user_name, user_name, user_name, user_name)
     novatos = wikipedia.Page(eswiki, u"User:Emijrp/Recién llegados")
     novatos.put(output, u"BOT - Actualizando lista de recién llegados")
 
