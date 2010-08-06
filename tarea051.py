@@ -25,19 +25,21 @@ def main():
     """ Update a list of newbies """
     
     eswiki = wikipedia.Site('es', 'wikipedia')
-    dias=3
+    dias = 7
     conn = MySQLdb.connect(host='sql-s3', db='eswiki_p', read_default_file='~/.my.cnf', use_unicode=True)
     cursor = conn.cursor()
-    cursor.execute("SELECT user_name from user where user_editcount>=10 and user_registration>=date_add(now(), interval -%d day) and user_name not in (select ipb_address from ipblocks) order by user_editcount desc;" % dias)
+    cursor.execute("SELECT user_name from user where user_editcount>=%d and user_registration>=date_add(now(), interval -%d day) and user_name not in (select ipb_address from ipblocks) order by user_editcount desc;" % (dias*2, dias))
     result=cursor.fetchall()
     users = []
     for row in result:
         user_name = unicode(row[0], "utf-8")
         users.append(user_name)
     
-    output = u"La siguiente es una lista con los usuarios que han llegado en los últimos %d días y han editado algunas cosas. Es posible que interese darles la bienvenida después de revisar sus contribuciones. Ejemplo de bienvenida: <code>{<nowiki></nowiki>{su<nowiki></nowiki>bst:Usuario:Emijrp/Bienvenida.css}<nowiki></nowiki>} --~~<nowiki></nowiki>~~</code>\n" % (dias)
+    output = u"La siguiente es una lista con los usuarios que han llegado en los últimos %d días y han editado algunas cosas, pero todavía nadie les ha saludado. Es posible que interese darles la bienvenida después de revisar sus contribuciones. Ejemplo de bienvenida: <code>{<nowiki></nowiki>{su<nowiki></nowiki>bst:Usuario:Emijrp/Bienvenida.css}<nowiki></nowiki>} --~~<nowiki></nowiki>~~</code>\n" % (dias)
     for user_name in users:
-        output += u"# [[Usuario:%s|%s]] ([[Usuario Discusión:%s|discusión]] · [[Special:Contributions/%s|contribuciones]])\n" % (user_name, user_name, user_name, user_name)
+        talk = wikipedia.Page(eswiki, u"User talk:%s" % user_name)
+        if not talk.exists():
+            output += u"# [[Usuario:%s|%s]] ([[Usuario Discusión:%s|discusión]] · [[Special:Contributions/%s|contribuciones]])\n" % (user_name, user_name, user_name, user_name)
     novatos = wikipedia.Page(eswiki, u"User:Emijrp/Recién llegados")
     novatos.put(output, u"BOT - Actualizando lista de recién llegados")
 

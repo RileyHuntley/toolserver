@@ -133,6 +133,7 @@ if (isset($_POST['image']) and isset($_POST['article']) and isset($_POST['lang']
 		case 'sr': $resume="додајем слику са http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'sv': $resume="Lägger till bild från http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'uk': $resume="Додано зображення з http://toolserver.org/~emijrp/imagesforbio/"; break;
+		case 'ug': $resume="Add image from http://toolserver.org/~emijrp/imagesforbio/"; $position="left"; break;
 		case 'ur': $resume="تصاوير http://toolserver.org/~emijrp/imagesforbio/"; $position="left"; break;
 		case 'vi': $resume="Thêm ảnh từ http://toolserver.org/~emijrp/imagesforbio/"; break;
 		case 'zh': $resume="由 http://toolserver.org/~emijrp/imagesforbio/ 加入圖片"; break;
