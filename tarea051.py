@@ -29,7 +29,7 @@ def main():
     limediciones = 3
     conn = MySQLdb.connect(host='sql-s3', db='eswiki_p', read_default_file='~/.my.cnf', use_unicode=True)
     cursor = conn.cursor()
-    cursor.execute("SELECT rc_user_text, count(*) as count from recentchanges where (rc_type=0 or rc_type=1) and rc_namespace=0 and rc_timestamp>=date_add(now(), interval -%d day) and rc_user_text in (select user_name from user where user_registration>=date_add(now(), interval -%d day)) group by rc_user_text order by count desc;" % (dias, dias))
+    cursor.execute("SELECT rc_user_text, count(*) as count from recentchanges where (rc_type=0 or rc_type=1) and rc_namespace=0 and rc_timestamp>=date_add(now(), interval -%d day) and rc_user_text in (select user_name from user where user_registration>=date_add(now(), interval -%d day)) and rc_user_text not in (select ipb_address from ipblocks) group by rc_user_text order by count desc;" % (dias, dias))
     result=cursor.fetchall()
     users = []
     for row in result:
