@@ -71,15 +71,15 @@ for i in m:
     if cafavor+cencontra>0:
         porcentaje=(100.0/(cafavor+cencontra))*cafavor
     if porcentaje>=75:
-        s+="\n|-\n| %s || [[Usuario:%s|%s]] || %s || %s || %s || style='background-color:#D0F0C0;' | %.0f%% || [[%s|%s]]" % (c, candidato, candidato, propuesto, cafavor, cencontra, porcentaje, candidatura, estado)
+        s+=u"\n|-\n| %s || [[Usuario:%s|%s]] || %s || %s || %s || style='background-color:#D0F0C0;' | %.0f%% || [[%s|%s]]" % (c, candidato, candidato, propuesto, cafavor, cencontra, porcentaje, candidatura, estado)
     else:
-        s+="\n|-\n| %s || [[Usuario:%s|%s]] || %s || %s || %s || style='background-color:#FFC0CB;' | %.0f%% || [[%s|%s]]" % (c, candidato, candidato, propuesto, cafavor, cencontra, porcentaje, candidatura, estado)
+        s+=u"\n|-\n| %s || [[Usuario:%s|%s]] || %s || %s || %s || style='background-color:#FFC0CB;' | %.0f%% || [[%s|%s]]" % (c, candidato, candidato, propuesto, cafavor, cencontra, porcentaje, candidatura, estado)
     
     raw+=u"%s;;;%s;;;%s;;;%s;;;%.0f;;;%s;;;%s;;;\n" % (candidato, propuesto, cafavor, cencontra, porcentaje, candidatura, estado)
     send=True
 
 #s+="\n|-\n| colspan=6 | Actualizado a las {{subst:CURRENTTIME}} (UTC) del {{subst:CURRENTDAY}}/{{subst:CURRENTMONTH}}/{{subst:CURRENTYEAR}}"
-s+="\n|}<!-- RAW --><!--\n%s--><!-- RAW --><noinclude>{{documentación}}</noinclude>" % raw
+s+=u"\n|}<!-- RAW --><!--\n%s--><!-- RAW --><noinclude>{{documentación}}</noinclude>" % raw
 
 if send:
     wikipedia.output(s)
