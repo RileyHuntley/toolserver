@@ -206,6 +206,11 @@ Some useful links for developing tools and <i>just for fun</i>:
 <li>MediaWiki Database schema: <a href="http://svn.wikimedia.org/svnroot/mediawiki/trunk/phase3/maintenance/tables.sql">SVN</a> and <a href="http://www.mediawiki.org/wiki/Manual:Database_layout">Manual:Database layout</a> (possibly out of date)</li>
 </ul>
 
+<h2>External links</h2>
+<u><b>NOT</b></u> my tools. But cool ones:
+<ul>
+<li>Counters: <a href="http://www.7is7.com/software/firefox/partycounter.html">Firefox downloads</a>, <a href="http://popacular.com/gigatweet/">Twitter</a></li>
+</ul>
 <?php
 /*
 
