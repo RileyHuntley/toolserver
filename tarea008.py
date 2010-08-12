@@ -119,6 +119,7 @@ tras2={
 # fix: hr
 tt100={'rankingusers':True, 'rankingbots':True, 'limit':100, 'optout':''}
 tt500={'rankingusers':True, 'rankingbots':True, 'limit':500, 'optout':''}
+tt1000={'rankingusers':True, 'rankingbots':True, 'limit':1000, 'optout':''}
 projects={
     'wikinews': {
         'es': tt100,
@@ -128,21 +129,28 @@ projects={
         'arz': tt100,
         'ca': tt500,
         'da': tt500,
-        'en': {'rankingusers':True, 'rankingbots':True, 'limit':500, 'optout':'Wikipedia:List of Wikipedians by number of edits/Anonymous'},
+        'en': {'rankingusers':True, 'rankingbots':True, 'limit':1000, 'optout':'Wikipedia:List of Wikipedians by number of edits/Anonymous'},
         'eo': tt500,
         'es': tt500,
+        'fi': tt500,
         'fr': tt500,
         'gl': tt100,
         'hr': tt500,
         'ht': tt100,
+        'it': tt500,
+        'ja': tt500,
+        'nl': tt500,
+        'no': tt500,
         'pt': tt500,
         'ro': tt500,
+        'ru': tt500,
         'simple': tt500,
         'sl': tt100,
         'sv': tt500,
         'th': tt500,
         'tr': tt500,
         'vi': tt500,
+        'zh': tt500,
         },
     'wiktionary': {
         'es': tt100,
@@ -250,7 +258,7 @@ for family, langs in projects.items():
         wikipedianm=tarea000.getNamespaceName(lang, family, 4)
         articleCount=tarea000.getArticleCount(lang, family)
         print articleCount
-        if (daily and articleCount<dailylimit) or (daily and lang=='vo'):
+        if (daily and articleCount<dailylimit):
             #evitamos actualizar excesivamente proyectos pequeños
             print "Skip"
             continue
