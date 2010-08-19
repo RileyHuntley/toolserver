@@ -355,6 +355,7 @@ def main():
                 pl_title=None
                 try:
                     pl_title=unicode(i[2], 'utf-8')
+                    pl_title=re.sub(ur"\\", ur"", pl_title) #evitamos \ en títulos que tienen comillas protegidas \" en el dump
                 except:
                     pl_title=None
                 
@@ -363,7 +364,7 @@ def main():
                 
                 if pl_title not in allpagetitlesnm0: #el enlace va a un artículo que no existe
                     if pages.has_key(pl_from): #si el enlace surge de un artículo de este wikiproyecto
-                        if redlinks.has_key(pl_title):
+                        if redlinks.has_key(pl_title): #deberíamos almacenar una lista con los ids, para evitar que multiples enlaces desde un mismo artículo sumen como varios, pero bueno...
                             redlinks[pl_title] += 1
                         else:
                             redlinks[pl_title] = 1
@@ -678,8 +679,9 @@ def main():
             redlinks_temp.append([count, redlink])
         redlinks_temp.sort()
         redlinks_temp.reverse()
-        for count, redlink in redlinks_temp[:100]:
-            enlacesrojos+=u'# [[%s]] (%d)\n' % (redlink, count)
+        for count, redlink in redlinks_temp[:500]:
+            if count>=5:
+                enlacesrojos+=u'# [[%s]] (%d)\n' % (redlink, count)
         
         salida=u'== Calidad ==\n'
         subpages=[
