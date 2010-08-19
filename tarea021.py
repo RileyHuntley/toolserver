@@ -176,29 +176,33 @@ def main():
         wikipedia.output(u"A este wikiproyecto pertenecen %d páginas" % len(projectpages))
         
         #Inicializamos diccionario para las páginas de este wikiproyecto
-        conn.query("SELECT page_id, page_title, page_len, page_namespace from page where (page_namespace=0 or page_namespace=104) and page_is_redirect=0;")
+        conn.query("SELECT page_id, page_title, page_len, page_namespace, page_is_redirect from page where (page_namespace=0 or page_namespace=104);")# and page_is_redirect=0;")
         r=conn.use_result()
         row=r.fetch_row(maxrows=1, how=1)
         c=0
         wikipedia.output(u"Cargando páginas del wikiproyecto %s" % (project))
         pages={}
         pagetitle2pageid={}
-        allpagesnm0=sets.Set()
+        allpageidsnm0=sets.Set()
+        allpagetitlesnm0=sets.Set()
         while row:
             if len(row)==1:
                 page_id=int(row[0]['page_id'])
                 page_title=re.sub('_', ' ', unicode(row[0]['page_title'], 'utf-8'))
                 page_len=int(row[0]['page_len'])
                 page_nm=int(row[0]['page_namespace'])
+                page_is_redirect=int(row[0]['page_is_redirect'])
                 page_new=False
                 #hace falta para contar enlaces entrantes provenientes del nm=0
-                allpagesnm0.add(page_id) #meter redirecciones también?
-                if nuevos_dic.has_key(page_title):
-                    page_new=True
-                if page_id in projectpages:
-                    c+=1;percent(c)
-                    pagetitle2pageid[page_title]=page_id
-                    pages[page_id]={'t':page_title, 'l':page_len, 'nm':page_nm, 'i':0, 'c':0, 'cat':0, 'iws':0, 'im':0, 'en':0, 'f':False, 'con':False, 'rel':False, 'wik':False, 'edit':False, 'ref':False, 'obras':False, 'neutral':False, 'trad':False, 'discutido':False, 'nuevo':page_new}
+                allpageidsnm0.add(page_id) #meter redirecciones también? sí, para que no salgan enlaces rojos de más
+                allpagetitlesnm0.add(page_title) #meter redirecciones también? sí, para que no salgan enlaces rojos de más
+                if page_is_redirect == 0: #no creamos perfil de página para las redirecciones
+                    if nuevos_dic.has_key(page_title):
+                        page_new=True
+                    if page_id in projectpages:
+                        c+=1;percent(c)
+                        pagetitle2pageid[page_title]=page_id
+                        pages[page_id]={'t':page_title, 'l':page_len, 'nm':page_nm, 'i':0, 'c':0, 'cat':0, 'iws':0, 'im':0, 'en':0, 'f':False, 'con':False, 'rel':False, 'wik':False, 'edit':False, 'ref':False, 'obras':False, 'neutral':False, 'trad':False, 'discutido':False, 'nuevo':page_new}
             row=r.fetch_row(maxrows=1, how=1)
         wikipedia.output(u"Cargadas %d páginas" % (c))
         
@@ -339,6 +343,7 @@ def main():
             f=gzip.open('/mnt/user-store/%swiki-latest-pagelinks.sql.gz' % lang, 'r')
         c=0
         pagelinks_pattern=re.compile(ur'(?i)\((\d+)\,(0|104)\,\'([^\']*?)\'\)[\,\;]') #104 anexo:
+        redlinks = {}
         for line in f:
             line=line[:len(line)-1] #evitamos \n
             line=re.sub('_', ' ', line)
@@ -352,10 +357,21 @@ def main():
                     pl_title=unicode(i[2], 'utf-8')
                 except:
                     pl_title=None
-                if pl_from in allpagesnm0 and pl_title and pagetitle2pageid.has_key(pl_title): #si el enlace proviene del nm=0 y va hacia un nm=0
-                    page_id=pagetitle2pageid[pl_title]
-                    if pages.has_key(page_id):
-                        pages[page_id]['en']+=1 #+1 entrante, im es importancia
+                
+                if not pl_title or (pl_nm!=0 and pl_nm!=104): #solo nos interesan los enlaces desde nm=0 y hacia nm=0
+                    continue
+                
+                if pl_title not in allpagetitlesnm0: #el enlace va a un artículo que no existe
+                    if pages.has_key(pl_from): #si el enlace surge de un artículo de este wikiproyecto
+                        if redlinks.has_key(pl_title):
+                            redlinks[pl_title] += 1
+                        else:
+                            redlinks[pl_title] = 1
+                else:
+                    if pagetitle2pageid.has_key(pl_title): #el enlace va a un artículo de este wikiproyecto?
+                        pl_to=int(pagetitle2pageid.has_key(pl_title)) #ya tenemos en pl_to hacia qué artículo se dirige el enlace
+                        if pages.has_key(pl_to): #no debería decir false nunca
+                            pages[pl_to]['en'] += 1 #+1 entrante, im es importancia
         wikipedia.output(u"%d enlaces entre páginas" % (c))
         f.close()
         
@@ -632,6 +648,7 @@ def main():
         enobras=avisotoolserver;noneutral=avisotoolserver
         traduccion=avisotoolserver;discutido=avisotoolserver
         nuevos=avisotoolserver
+        enlacesrojos=avisotoolserver
         nuevos_temp=[]
         
         for arttitle, pageid in artstitles:
@@ -656,6 +673,14 @@ def main():
             if nuevos_temp.count(arttitle)!=0:
                 nuevos+=u'# [[%s%s]] (Creado el %s por [[Usuario:%s|%s]])\n' % (artnm_, arttitle, re.sub(ur'\d\d\:\d\d ', ur'', nuevos_dic[arttitle]['date']), nuevos_dic[arttitle]['user'], nuevos_dic[arttitle]['user'])
         
+        redlinks_temp=[]
+        for redlink, count in redlinks.items():
+            redlinks_temp.append([count, redlink])
+        redlinks_temp.sort()
+        redlinks_temp.reverse()
+        for count, redlink in redlinks_temp[:100]:
+            enlacesrojos+=u'# [[%s]] (%d)\n' % (redlink, count)
+        
         salida=u'== Calidad ==\n'
         subpages=[
             [destacados, u'Artículos destacados', u'[[Imagen:Cscr-featured.svg|14px|Artículo destacado]]'],
@@ -673,6 +698,7 @@ def main():
             [traduccion, u'En traducción', u''],
             [discutido, u'Veracidad discutida', u''],
             [nuevos, u'Nuevos', u''],        
+            [enlacesrojos, u'Enlaces rojos', u''],        
         ]
         c=0
         for output, subpage, image in subpages:
