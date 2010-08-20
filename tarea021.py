@@ -632,7 +632,7 @@ def main():
             if pagevalues['iws']>0: alguninterwiki+=1.0;totalinterwikis+=pagevalues['iws']
         
         resumen+=u'Algunos detalles más sobre las %d páginas analizadas:\n' % lenartstitles
-        resumen+=u'* %d tienen alguna imagen (%.1f%%) y %d [[#Sin imágenes|no tienen ninguna]] (%.1f%%). La media de imágenes por página es de %.1f.\n' % (algunaimagen, algunaimagen/(lenartstitles/100.0), lenartstitles-algunaimagen, 100.0-(algunaimagen/(lenartstitles/100.0)), totalimagenes/lenartstitles)
+        resumen+=u'* %d tienen alguna imagen (%.1f%%) y [[Wikipedia:Contenido por wikiproyecto/%s/Sin imágenes|%d no tienen ninguna]] (%.1f%%). La media de imágenes por página es de %.1f.\n' % (algunaimagen, algunaimagen/(lenartstitles/100.0), pr, lenartstitles-algunaimagen, 100.0-(algunaimagen/(lenartstitles/100.0)), totalimagenes/lenartstitles)
         resumen+=u'* %d tienen alguna categoría (%.1f%%) y %d no tienen ninguna (%.1f%%). La media de categorías por página es de %.1f.\n' % (algunacategoria, algunacategoria/(lenartstitles/100.0), lenartstitles-algunacategoria, 100.0-(algunacategoria/(lenartstitles/100.0)), totalcategorias/lenartstitles)
         resumen+=u'* %d tienen algún interwiki (%.1f%%) y %d no tienen ninguno (%.1f%%). La media de interwikis por página es de %.1f.\n' % (alguninterwiki, alguninterwiki/(lenartstitles/100.0), lenartstitles-alguninterwiki, 100.0-(alguninterwiki/(lenartstitles/100.0)), totalinterwikis/lenartstitles)
         #fin detalles
@@ -692,7 +692,10 @@ def main():
         sinimagenes_temp=[]
         for pageid, v in pages.items():
             if v['i'] == 0:
-                sinimagenes_temp.append(v['t'])
+                pagetitle=v['t']
+                if v['nm']!=0:
+                    pagetitle=u"%s%s" % (namespaces_[v['nm']], pagetitle)
+                sinimagenes_temp.append(pagetitle)
         sinimagenes_temp.sort()
         c=0
         for sinimagen in sinimagenes_temp:
