@@ -173,7 +173,7 @@ def main():
                     projectpages.add(cl_from)
                     c+=1;percent(c)
             row=r.fetch_row(maxrows=1, how=1)
-        wikipedia.output(u"A este wikiproyecto pertenecen %d páginas" % len(projectpages))
+        wikipedia.output(u"A este wikiproyecto pertenecen %d páginas (todos los espacios de nombres, incluso categorías)" % len(projectpages))
         
         #Inicializamos diccionario para las páginas de este wikiproyecto
         conn.query("SELECT page_id, page_title, page_len, page_namespace, page_is_redirect from page where (page_namespace=0 or page_namespace=104);")# and page_is_redirect=0;")
@@ -204,7 +204,7 @@ def main():
                         pagetitle2pageid[page_title]=page_id
                         pages[page_id]={'t':page_title, 'l':page_len, 'nm':page_nm, 'i':0, 'c':0, 'cat':0, 'iws':0, 'im':0, 'en':0, 'f':False, 'con':False, 'rel':False, 'wik':False, 'edit':False, 'ref':False, 'obras':False, 'neutral':False, 'trad':False, 'discutido':False, 'nuevo':page_new}
             row=r.fetch_row(maxrows=1, how=1)
-        wikipedia.output(u"Cargadas %d páginas" % (c))
+        wikipedia.output(u"Cargadas %d páginas para analizar, solo nm=0 y nm=104, no redirecciones" % (c))
         
         """#Ranking de usuarios
         conn.query("SELECT rc_cur_id, rc_user_text from recentchanges where (rc_namespace=0 or rc_namespace=104);") #rc no muestra si es redirect, pero la filtramos con pages.has_key
@@ -346,7 +346,6 @@ def main():
         redlinks = {}
         for line in f:
             line=line[:len(line)-1] #evitamos \n
-            line=re.sub('_', ' ', line)
             m=re.findall(pagelinks_pattern, line)
             for i in m:
                 c+=1;percent(c, 1000000)
@@ -354,23 +353,26 @@ def main():
                 pl_nm=int(i[1])
                 pl_title=None
                 try:
-                    pl_title=unicode(i[2], 'utf-8')
+                    pl_title=re.sub('_', ' ', unicode(i[2], 'utf-8'))
                     pl_title=re.sub(ur"\\", ur"", pl_title) #evitamos \ en títulos que tienen comillas protegidas \" en el dump
                 except:
                     pl_title=None
                 
-                if not pl_title or (pl_nm!=0 and pl_nm!=104): #solo nos interesan los enlaces desde nm=0 y hacia nm=0
+                if not pl_title:
+                    continue
+                
+                if pl_nm!=0 and pl_nm!=104: #solo nos interesan los enlaces desde nm=0 y hacia nm=0
                     continue
                 
                 if pl_title not in allpagetitlesnm0: #el enlace va a un artículo que no existe
-                    if pages.has_key(pl_from): #si el enlace surge de un artículo de este wikiproyecto
+                    if pages.has_key(pl_from): #si el enlace surge de un artículo de este wikiproyecto (no vamos a coger todos los rojos)
                         if redlinks.has_key(pl_title): #deberíamos almacenar una lista con los ids, para evitar que multiples enlaces desde un mismo artículo sumen como varios, pero bueno...
                             redlinks[pl_title] += 1
                         else:
                             redlinks[pl_title] = 1
-                else:
+                else: #el enlace va a un artículo que sí existe
                     if pagetitle2pageid.has_key(pl_title): #el enlace va a un artículo de este wikiproyecto?
-                        pl_to=int(pagetitle2pageid.has_key(pl_title)) #ya tenemos en pl_to hacia qué artículo se dirige el enlace
+                        pl_to=pagetitle2pageid[pl_title] #ya tenemos en pl_to hacia qué artículo se dirige el enlace
                         if pages.has_key(pl_to): #no debería decir false nunca
                             pages[pl_to]['en'] += 1 #+1 entrante, im es importancia
         wikipedia.output(u"%d enlaces entre páginas" % (c))
@@ -412,12 +414,10 @@ def main():
         for artentrantes, arttitle, artid in artstitles2:
             if i<qclasea:
                 pages[artid]['im']=1
-                if listqclasea.count(arttitle)==0:
-                    listqclasea.append([artentrantes, arttitle])
+                listqclasea.append([artentrantes, arttitle])
             elif i<qclasea+qclaseb:
                 pages[artid]['im']=2
-                if listqclaseb.count(arttitle)==0:
-                    listqclaseb.append([artentrantes, arttitle])
+                listqclaseb.append([artentrantes, arttitle])
             elif i<qclasea+qclaseb+qclasec:
                 pages[artid]['im']=3
             else:
@@ -429,24 +429,26 @@ def main():
         listqclaseb.sort();listqclaseb.reverse()
         
         #generamos salida de listas de importancia
+        #A
         listqclaseaplana=u''
         for artentrantes, arttitle in listqclasea:
             if pagetitle2pageid.has_key(arttitle):
-                artnm=u''
+                artnm_=u''
                 pageid=pagetitle2pageid[arttitle]
                 if pages.has_key(pageid):
                     if pages[pageid]['nm']!=0:
-                        artnm=namespaces_[pages[pageid]['nm']]
-                    listqclaseaplana+=u'# [[%s%s]] (%d enlaces entrantes)\n' % (artnm, arttitle, artentrantes)
+                        artnm_=namespaces_[pages[pageid]['nm']]
+                    listqclaseaplana+=u'# [[%s%s]] (%d enlaces entrantes)\n' % (artnm_, arttitle, artentrantes)
+        #B
         listqclasebplana=u''
         for artentrantes, arttitle in listqclaseb:
             if pagetitle2pageid.has_key(arttitle):
-                artnm=u''
+                artnm_=u''
                 pageid=pagetitle2pageid[arttitle]
                 if pages.has_key(pageid):
                     if pages[pageid]['nm']!=0:
-                        artnm=namespaces_[pages[pageid]['nm']]
-                    listqclasebplana+=u'# [[%s%s]] (%d enlaces entrantes)\n' % (artnm, arttitle, artentrantes)
+                        artnm_=namespaces_[pages[pageid]['nm']]
+                    listqclasebplana+=u'# [[%s%s]] (%d enlaces entrantes)\n' % (artnm_, arttitle, artentrantes)
         #fin listas importancia
         
         #recorremos los articulos del wikiproyecto
@@ -629,8 +631,8 @@ def main():
             if pagevalues['cat']>0: algunacategoria+=1.0;totalcategorias+=pagevalues['cat']
             if pagevalues['iws']>0: alguninterwiki+=1.0;totalinterwikis+=pagevalues['iws']
         
-        resumen+=u'Algunos detalles sobre las %d páginas analizadas:\n' % lenartstitles
-        resumen+=u'* %d tienen alguna imagen (%.1f%%) y %d no tienen ninguna (%.1f%%). La media de imágenes por página es de %.1f.\n' % (algunaimagen, algunaimagen/(lenartstitles/100.0), lenartstitles-algunaimagen, 100.0-(algunaimagen/(lenartstitles/100.0)), totalimagenes/lenartstitles)
+        resumen+=u'Algunos detalles más sobre las %d páginas analizadas:\n' % lenartstitles
+        resumen+=u'* %d tienen alguna imagen (%.1f%%) y %d [[#Sin imágenes|no tienen ninguna]] (%.1f%%). La media de imágenes por página es de %.1f.\n' % (algunaimagen, algunaimagen/(lenartstitles/100.0), lenartstitles-algunaimagen, 100.0-(algunaimagen/(lenartstitles/100.0)), totalimagenes/lenartstitles)
         resumen+=u'* %d tienen alguna categoría (%.1f%%) y %d no tienen ninguna (%.1f%%). La media de categorías por página es de %.1f.\n' % (algunacategoria, algunacategoria/(lenartstitles/100.0), lenartstitles-algunacategoria, 100.0-(algunacategoria/(lenartstitles/100.0)), totalcategorias/lenartstitles)
         resumen+=u'* %d tienen algún interwiki (%.1f%%) y %d no tienen ninguno (%.1f%%). La media de interwikis por página es de %.1f.\n' % (alguninterwiki, alguninterwiki/(lenartstitles/100.0), lenartstitles-alguninterwiki, 100.0-(alguninterwiki/(lenartstitles/100.0)), totalinterwikis/lenartstitles)
         #fin detalles
@@ -650,6 +652,7 @@ def main():
         traduccion=avisotoolserver;discutido=avisotoolserver
         nuevos=avisotoolserver
         enlacesrojos=avisotoolserver
+        sinimagenes=avisotoolserver
         nuevos_temp=[]
         
         for arttitle, pageid in artstitles:
@@ -670,18 +673,32 @@ def main():
             if pages[pageid]['discutido']: discutido+=u'# [[%s%s]]\n' % (artnm_, arttitle)
             if pages[pageid]['nuevo']: nuevos_temp.append(arttitle) #los almacenamos para despues ordenarlos cronologicamente
         
+        #Nuevos
         for arttitle in nuevos_list:
             if nuevos_temp.count(arttitle)!=0:
                 nuevos+=u'# [[%s%s]] (Creado el %s por [[Usuario:%s|%s]])\n' % (artnm_, arttitle, re.sub(ur'\d\d\:\d\d ', ur'', nuevos_dic[arttitle]['date']), nuevos_dic[arttitle]['user'], nuevos_dic[arttitle]['user'])
         
+        #Enlaces rojos
         redlinks_temp=[]
         for redlink, count in redlinks.items():
             redlinks_temp.append([count, redlink])
         redlinks_temp.sort()
         redlinks_temp.reverse()
         for count, redlink in redlinks_temp[:500]:
-            if count>=5:
+            if count>=3:
                 enlacesrojos+=u'# [[%s]] (%d)\n' % (redlink, count)
+        
+        #Sin imágenes
+        sinimagenes_temp=[]
+        for pageid, v in pages.items():
+            if v['i'] == 0:
+                sinimagenes_temp.append(v['t'])
+        sinimagenes_temp.sort()
+        c=0
+        for sinimagen in sinimagenes_temp:
+            c+=1
+            if c<=500:
+                sinimagenes+=u'# [[%s]]\n' % (sinimagen)
         
         salida=u'== Calidad ==\n'
         subpages=[
@@ -699,8 +716,9 @@ def main():
             [noneutral, u'No neutral', u''],
             [traduccion, u'En traducción', u''],
             [discutido, u'Veracidad discutida', u''],
-            [nuevos, u'Nuevos', u''],        
-            [enlacesrojos, u'Enlaces rojos', u''],        
+            [nuevos, u'Nuevos', u''],
+            [enlacesrojos, u'Enlaces rojos', u''],
+            [sinimagenes, u'Sin imágenes', u''],
         ]
         c=0
         for output, subpage, image in subpages:
