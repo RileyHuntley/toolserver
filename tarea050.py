@@ -17,6 +17,7 @@
 """ Update a template with my user accounts edits """
 
 import re
+import time
 import urllib
 
 import wikipedia
@@ -33,17 +34,22 @@ def main():
     for user in users:
         url = path + user
         f = urllib.urlopen(url, 'r')
-        m = re.compile(ur"Total editcount: <b>(?P<useredits>\d+)</b>").finditer(f.read())
+        raw = f.read()
+        m = re.compile(ur"Total editcount: <b>(?P<useredits>\d+)</b>").finditer(raw)
         for j in m:
             salida += u"\n|%s=%s" % (user, j.group("useredits"))
-            total += int(j.group("useredits"))
+            edits = j.group("useredits")
+            total += int(edits)
         f.close()
+        print user, edits
+        time.sleep(5)
     salida += u"\n|Total=%d\n|%d}}" % (total, total)
 
     editcount = wikipedia.Page(eswiki, u"User:Emijrp/Editcount")
     #evitamos regresiones en el contador
     oldtotal = int(editcount.get().split("Total=")[1].split("\n")[0])
-
+    
+    print "Total:", total, "Oldtotal:", oldtotal
     if total > oldtotal:
         oldpage = wikipedia.Page(eswiki, u"User:Emijrp/Editcount/Old")
         oldpage.put(editcount.get(), u"BOT - Datos de la versión anterior de [[User:Emijrp/Editcount]]")    
