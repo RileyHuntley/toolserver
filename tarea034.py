@@ -14,15 +14,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os, re, wikipedia
+import os, re, wikipedia, sys, sets
 
-lang="es"
+lang=sys.argv[1]
 #pages
-os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_title from page where page_namespace=0 and page_is_redirect=0;" > /home/emijrp/temporal/%swikipage.txt' % (lang, lang, lang))
+os.system("""mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_title from page where page_title>='A' and page_title<'B' and page_namespace=0 and page_is_redirect=0;" > /home/emijrp/temporal/%swikipage.txt""" % (lang, lang, lang))
 f=open('/home/emijrp/temporal/%swikipage.txt' % lang, 'r')
 c=0
 print 'Cargando paginas de %swiki' % lang
-pages={}
+pages=sets.Set()
 for line in f:
     if c==0: #saltamos la primera linea q es el describe de sql
         c+=1
@@ -34,16 +34,16 @@ for line in f:
     if len(trozos)==1:
         c+=1
         page_title=trozos[0]
-        pages[page_title]=False
+        pages.add(page_title)
 print 'Cargadas %d paginas de %swiki' % (c, lang)
 f.close()
 
 #redirects
-os.system('mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_title from page where page_namespace=0 and page_is_redirect=1;" > /home/emijrp/temporal/%swikipage.txt' % (lang, lang, lang))
+os.system("""mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_title from page where page_title>='A' and page_title<'B' and page_namespace=0 and page_is_redirect=1;" > /home/emijrp/temporal/%swikipage.txt""" % (lang, lang, lang))
 f=open('/home/emijrp/temporal/%swikipage.txt' % lang, 'r')
 c=0
 print 'Cargando redirecciones de %swiki' % lang
-reds={}
+redirects=sets.Set()
 for line in f:
     if c==0: #saltamos la primera linea q es el describe de sql
         c+=1
@@ -55,13 +55,13 @@ for line in f:
     if len(trozos)==1:
         c+=1
         page_title=trozos[0]
-        reds[page_title]=False
+        redirects.add(page_title)
 print 'Cargadas %d redirecciones de %swiki' % (c, lang)
 f.close()
 
 c=0
-for page, v in pages.items():
-    if not re.search(ur"(?i)[^a-záéíóúàèìòù0-9\-\. ]", page): #no meter (    ), A (desambiguacion) Pi (pelicula)
+for page in pages:
+    if not re.search(ur"(?i)[^a-záéíóúàèìòù0-9\-\.\,\: ]", page): #no meter (    ), A (desambiguacion) Pi (pelicula)
         page2=page
         page2=re.sub(ur"Á", ur"A", page2)
         page2=re.sub(ur"À", ur"A", page2)
@@ -85,16 +85,16 @@ for page, v in pages.items():
         page2=re.sub(ur"ú", ur"u", page2)
         page2=re.sub(ur"ù", ur"u", page2)
         
-        if page!=page2 and not reds.has_key(page2) and not pages.has_key(page2):
+        if page != page2 and (page2 not in redirects) and (page2 not in pages):
             c+=1
             
-            if c % 50 == 0:
+            if c % 100 == 0:
                 print c
                 wikipedia.output(page)
             
-            page2page=wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), page2)
+            """page2page=wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), page2)
             if not page2page.exists():
                 salida=u"#REDIRECT [[%s]]" % page
                 wikipedia.output(salida)
                 page2page.put(salida, u"BOT - %s" % salida)
-                
+            """
