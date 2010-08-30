@@ -18,7 +18,7 @@ import os, re, wikipedia, sys, sets
 
 lang=sys.argv[1]
 #pages
-os.system("""mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_title from page where page_title>='A' and page_title<'B' and page_namespace=0 and page_is_redirect=0;" > /home/emijrp/temporal/%swikipage.txt""" % (lang, lang, lang))
+os.system("""mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_title from page where page_title>='A' and page_title<'M' and page_namespace=0" > /home/emijrp/temporal/%swikipage.txt""" % (lang, lang, lang))
 f=open('/home/emijrp/temporal/%swikipage.txt' % lang, 'r')
 c=0
 print 'Cargando paginas de %swiki' % lang
@@ -35,28 +35,7 @@ for line in f:
         c+=1
         page_title=trozos[0]
         pages.add(page_title)
-print 'Cargadas %d paginas de %swiki' % (c, lang)
-f.close()
-
-#redirects
-os.system("""mysql -h %swiki-p.db.toolserver.org -e "use %swiki_p;select page_title from page where page_title>='A' and page_title<'B' and page_namespace=0 and page_is_redirect=1;" > /home/emijrp/temporal/%swikipage.txt""" % (lang, lang, lang))
-f=open('/home/emijrp/temporal/%swikipage.txt' % lang, 'r')
-c=0
-print 'Cargando redirecciones de %swiki' % lang
-redirects=sets.Set()
-for line in f:
-    if c==0: #saltamos la primera linea q es el describe de sql
-        c+=1
-        continue
-    line=unicode(line, 'utf-8')
-    line=line[:len(line)-1] #evitamos \n
-    line=re.sub('_', ' ', line)
-    trozos=line.split('    ')
-    if len(trozos)==1:
-        c+=1
-        page_title=trozos[0]
-        redirects.add(page_title)
-print 'Cargadas %d redirecciones de %swiki' % (c, lang)
+print 'Cargadas %d page_titles de %swiki' % (c, lang)
 f.close()
 
 c=0
@@ -85,16 +64,21 @@ for page in pages:
         page2=re.sub(ur"ú", ur"u", page2)
         page2=re.sub(ur"ù", ur"u", page2)
         
-        if page != page2 and (page2 not in redirects) and (page2 not in pages):
+        if page != page2 and (page2 not in pages):
             c+=1
             
             if c % 100 == 0:
                 print c
-                wikipedia.output(page)
+                #wikipedia.output(ur"[[%s]] -> [[%s]]" % (page2, page))
             
-            """page2page=wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), page2)
-            if not page2page.exists():
-                salida=u"#REDIRECT [[%s]]" % page
+            """
+            wpage=wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), page)
+            wpage2=wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), page2)
+            if not wpage2.exists():
+                if wpage.isRedirectPage():
+                    salida=u"#REDIRECT [[%s]] {{R from title without diacritics}}" % wpage.getRedirectTarget().title()
+                else:
+                    salida=u"#REDIRECT [[%s]] {{R from title without diacritics}}" % page
                 wikipedia.output(salida)
-                page2page.put(salida, u"BOT - %s" % salida)
+                wpage2.put(salida, u"BOT - %s" % salida)
             """
