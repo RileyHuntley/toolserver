@@ -26,6 +26,8 @@ countries = {
 'aa': u'Aruba',
 'ac': u'Antigua and Barbuda',
 'av': u'Anguilla',
+'bb': u'Barbados',
+'bd': u'Bermuda',
 'sp': u'Spain',
 }
 
@@ -37,11 +39,12 @@ def main_program(file_name):
     output =u'{{User:Emijrp/GNS/header}}\n'
     #output =u'{{User:Emijrp/GNS/header}}\n{| class="wikitable sortable" \n'
     #output += u'! %s !! Other \n|-\n' % (' !! '.join(header.split('\t'))) 
-    while n<=500 and n<=len(rows) and rows[n]: #evitamos errores con paises con pocos registros, o registro vacio al final
+    while n<=200 and n<=len(rows) and rows[n]: #evitamos errores con paises con pocos registros, o registro vacio al final
         row = unicode(rows[n], 'utf-8')
         row = row.split('\t')
         #19 short form
         name = row[22]
+        search = u"{{Search|%s}}" % (re.sub(ur" ", ur"+", u"%s %s" % (name, countries[countrycode])))
         names = sets.Set()
         names.add(name)
         names.add(row[23])
@@ -50,14 +53,14 @@ def main_program(file_name):
         names.add(u'%s, %s' % (name, countries[countrycode]))
         type = row[9]
         date = row[28]
-        coord = u"{{coord|%s|%s|display=inline}}" % (row[3], row[4])
+        coord = u"{{Coord|%s|%s|display=inline}}" % (row[3], row[4])
         names_=u''
         if len(names)>1:
             names.remove(name)
             names_ = u'[['
             names_ += u']], [['.join(names)
             names_ += u']]'
-        output += u'| %d || [[%s]] || %s || %s || %s || %s \n|-\n' % (n, name, type, coord, date, names_)
+        output += u'| %d || [[%s]] %s || %s || %s || %s || %s \n|-\n' % (n, name, search, type, coord, date, names_)
         n+=1
     #output+=u'|}\n{{User:Emijrp/GNS/footer}}'
     output+=u'{{User:Emijrp/GNS/footer}}'

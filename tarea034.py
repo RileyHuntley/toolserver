@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+# Create redirects without diacrits to articles or redirects with diacritics
+
 import os, re, wikipedia, sys, sets
 
 lang=sys.argv[1]
