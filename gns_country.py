@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #!/usr/bin/python
 #
 # Copyright (C) 2006 Milos Rancic, emijrp
@@ -33,7 +34,7 @@ countries = {
 
 def main_program(file_name):
     countrycode = file_name.split('.')[0]
-    rows = file(file_name).read().split("\r\n")
+    rows = file(file_name).read().splitlines()
     header = rows[0]
     n=1
     output =u'{{User:Emijrp/GNS/header}}\n'
