@@ -365,7 +365,9 @@ def main_program(file_name):
             out = re.sub(ur"\[\[ *\]\]", ur"", out)
             index = offset/limit+1
             page=wikipedia.Page(wikien, u"User:Emijrp/Geonames/Cities1000/%s/%s" % (country, index))
-            page.put(out, u"From http://www.geonames.org")
+            print page.title()
+            if not page.exists():
+                page.put(out, u"From http://www.geonames.org")
             offset += limit
         
     countrylist.sort()
