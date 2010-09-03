@@ -368,7 +368,7 @@ for family, langs in projects.items():
                 s=u"{{/begin|%d}}\n%s{{/end}}\n%s" % (cuantos, s, "\n".join(iws1[family]))
             else: #by default
                 title=tras1[family]['default']
-                s=u"For a list including bots, see [[%s]].\n\nFor a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n\n%s\n\nThis page was last updated in '''{{subst:CURRENTYEAR}}-{{subst:CURRENTMONTH}}-{{subst:CURRENTDAY2}}'''.\n\n%s%s%s\n%s" % (tras2[family]['default'], optouttext, table_header, s, table_footer, "\n".join(iws1[family]))
+                s=u"For a list including bots, see [[%s]].\n\nFor a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n\n%s\n\nExcluding unflagged bots is possible adding them to [[meta:User:Emijrp/List of Wikimedians by number of edits/Unflagged bots]].\n\nThis page was last updated in '''{{subst:CURRENTYEAR}}-{{subst:CURRENTMONTH}}-{{subst:CURRENTDAY2}}'''.\n\n%s%s%s\n%s" % (tras2[family]['default'], optouttext, table_header, s, table_footer, "\n".join(iws1[family]))
             #eliminamos autointerwiki
             s=re.sub(ur"(?im)\[\[%s:.*?\]\](\n|$)" % lang, ur"", s)
             page=wikipedia.Page(site, title)
