@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os, datetime, re, urllib
+import os, datetime, re, urllib, time
 
 inactivas=['aa',]
 nointeresa=['en',]
@@ -43,8 +43,8 @@ f.close()"""
 
 try:
     pass #mientras no salen los dumps nuevos
-    #os.remove("/mnt/user-store/enwiki-latest-imagelinks.sql.gz")
-    #os.remove("/mnt/user-store/enwiki-latest-categorylinks.sql.gz")
+    os.remove("/mnt/user-store/enwiki-latest-imagelinks.sql.gz")
+    os.remove("/mnt/user-store/enwiki-latest-categorylinks.sql.gz")
 except:
     print "Error: no se pudieron borrar los archivos enwiki-latest-imagelinks.sql.gz y enwiki-latest-categorylinks.sql.gz"
 
@@ -53,6 +53,7 @@ print "Se van a analizar", len(langs), "idiomas"
 for lang in langs:
     if lang in inactivas or lang in nointeresa:
         continue
+    time.sleep(1)
     os.system('python /home/emijrp/python/tareas/missingimages.py %s' % lang)
     os.system('mysql -h sql -e "use u_emijrp_yarrow;delete from imagesforbio where language=\'%s\';"' % lang)
     os.system('mysql -h sql u_emijrp_yarrow < /home/emijrp/temporal/candidatas-%s.sql' % lang)
