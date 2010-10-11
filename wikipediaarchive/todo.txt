@@ -1,0 +1,3 @@
+programa para bajarse dumps
+imágenes (al parecer kiwix ya lo hace) en paquetes (por ejemplo, todas las imágenes de wp:en)
+
