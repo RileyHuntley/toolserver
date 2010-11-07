@@ -15,11 +15,17 @@ import wikipedia
 bd_cats = { #birth/death categories
     'an': r'[0-9]+_\\((naixencias|muertes)\\)',
     'az': r'[0-9]+.+(doğulanlar|vəfat_edənlər)',
-    'da': r'(Født_i|Døde_i)_[0-9]+',
+    'da': r'(Født|Døde)_i_[0-9]+',
     'de': r'(Geboren|Gestorben)_[0-9]+',
+    'el': r'(Γεννήσεις_το|Θάνατοι_το)_[0-9]+',
+    'en': r'[0-9]+_(births|deaths)',
+    'eo': r'(Naskiĝintoj|Mortintoj)_en_[0-9]+',
     'es': r'(Nacidos|Fallecidos)_en_[0-9]+',
+    'et': r'(Sündinud|Surnud)_[0-9]+',
     'eu': r'[0-9]+.+_(jaiotzak|heriotzak)',
+    'fr': r'(Naissance|Décès)_en_[0-9]+',
     'it': r'(Nati_nel|Morti_nel)_[0-9]+',
+    'ja': r'[0-9]+_(年生|年没)',
     'pl': r'(Urodzeni_w|Zmarli_w)_[0-9]+',
 }
 
