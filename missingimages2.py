@@ -26,7 +26,10 @@ bd_cats = { #birth/death categories
     'fr': r'(Naissance|Décès)_en_[0-9]+',
     'it': r'(Nati_nel|Morti_nel)_[0-9]+',
     'ja': r'[0-9]+_(年生|年没)',
+    #nl hasn't got?
     'pl': r'(Urodzeni_w|Zmarli_w)_[0-9]+',
+    #pt not
+    'ru': r'(Умершие|Родившиеся)_в_[0-9]+_году',
 }
 
 langs = ['da', 'eo']
@@ -239,23 +242,25 @@ def main():
                                     candidatas[il_image_name] += 1
                                 else:
                                     candidatas[il_image_name] = 1
+        
         #sort and choice the best candidate
-        cand_list = [[v,k] for k,v in candidatas.items()]
-        cand_list.sort()
-        cand_list.reverse()
-        
-        il_image_name = cand_list[0][1]
-        cc += 1
-        il_image_name_ = re.sub(' ', '_', il_image_name)
-        md5_ = md5.new(il_image_name_.encode('utf-8')).hexdigest()
-        salida = "INSERT INTO `imagesforbio` (`id`, `language`, `article`, `image`, `url`, `done`) VALUES (NULL, '%s', '%s', '%s', 'http://upload.wikimedia.org/wikipedia/commons/%s/%s/%s', 0);\n" % (page_lang, page_title, il_image_name, md5_[0], md5_[0:2], il_image_name_)
-        print "Recomendada la imagen '%s' para la bio '%s' de %s:" % (il_image_name, page_title, page_lang)
-        
-        try:
-            f.write(salida.encode('utf-8'))
-        except:
-            print "ERROR while writing to output file"
-        
+        if candidatas:
+            cand_list = [[v,k] for k,v in candidatas.items()]
+            cand_list.sort()
+            cand_list.reverse()
+            
+            il_image_name = cand_list[0][1]
+            cc += 1
+            il_image_name_ = re.sub(' ', '_', il_image_name)
+            md5_ = md5.new(il_image_name_.encode('utf-8')).hexdigest()
+            salida = "INSERT INTO `imagesforbio` (`id`, `language`, `article`, `image`, `url`, `done`) VALUES (NULL, '%s', '%s', '%s', 'http://upload.wikimedia.org/wikipedia/commons/%s/%s/%s', 0);\n" % (page_lang, page_title, il_image_name, md5_[0], md5_[0:2], il_image_name_)
+            print "Recomendada la imagen '%s' para la bio '%s' de %s:" % (il_image_name, page_title, page_lang)
+            
+            try:
+                f.write(salida.encode('utf-8'))
+            except:
+                print "ERROR while writing to output file"
+            
     f.close()
     cursors3.close()
     conns3.close()
