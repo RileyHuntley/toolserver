@@ -23,85 +23,88 @@ import sys
 import time
 
 import wikipedia
+
 import tarea000
 
-lenguajeobjetivo=sys.argv[1] # de momento probar con 1 solo a la vez
-lenguajefuente='en' # mirar nota1 si meto una lista en vez de individual
-family='wikipedia'
+lenguajeobjetivo = sys.argv[1] # de momento probar con 1 solo a la vez
+lenguajefuente = 'en' # mirar nota1 si meto una lista en vez de individual
+family = 'wikipedia'
+imagelinks_pattern = re.compile(ur"\((\d+)\,\'([^\']+?)\'\)")
+ex = ur'(?i)(%s)' % ('|'.join(wikipedia.Page(wikipedia.Site("en", "wikipedia"), u"User:Emijrp/Images for biographies/Exclusions").get().splitlines()))
+exclusion_pattern=re.compile(ex) # los ' y " los filtramos al final
 
 def percent(c, d=1000):
-    if c % d == 0: sys.stderr.write(".") #print '\nLlevamos %d' % c
+    if c % d == 0: sys.stderr.write('.') #print '\nLlevamos %d' % c
+
+def utf8rm_(l):
+    return re.sub('_', ' ', unicode(l, 'utf-8')
 
 def main():
     pagetitle2pageid, pageid2pagetitle, pageid2pagetitle2, pagetitle2pageid2 = {}, {}, {}, {}
-    sinimagenes=set()
-    interwikis={}
-    imagescommons=set()
+    sinimagenes = set()
+    interwikis = {}
+    imagescommons = set()
     
-    imagelinks_pattern=re.compile(ur"\((\d+)\,\'([^\']+?)\'\)")
-    ex=ur'(?i)(%s)' % ('|'.join(wikipedia.Page(wikipedia.Site("en", "wikipedia"), u"User:Emijrp/Images for biographies/Exclusions").get().splitlines()))
-    exclusion_pattern=re.compile(ex) # los ' y " los filtramos al final
-    
-    dbname=tarea000.getDbname(lenguajeobjetivo, family)
-    server=tarea000.getServer(lenguajeobjetivo, family)
+    dbname = tarea000.getDbname(lenguajeobjetivo, family)
+    server = tarea000.getServer(lenguajeobjetivo, family)
     conn = _mysql.connect(host=server, db=dbname, read_default_file='~/.my.cnf')
-    dbname=tarea000.getDbname(lenguajefuente, family)
-    server=tarea000.getServer(lenguajefuente, family)
+    dbname = tarea000.getDbname(lenguajefuente, family)
+    server = tarea000.getServer(lenguajefuente, family)
     conn2 = _mysql.connect(host=server, db=dbname, read_default_file='~/.my.cnf')
     
     #cargamos pageid/pagetitles para lenguajes objetivos
     print '-'*70
-    print 'Cargando pageid/pagetitles para %s.%s.org.' % (lenguajeobjetivo, family)
-    conn.query("select page_id, page_title from page where page_namespace=0 and page_is_redirect=0;")
-    r=conn.use_result()
-    row=r.fetch_row(maxrows=1, how=1)
-    c=0
+    print 'Loading pageid/pagetitles of %s.%s.org.' % (lenguajeobjetivo, family)
+    conn.query("SELECT page_id, page_title FROM page WHERE page_namespace=0 AND page_is_redirect=0")
+    r = conn.use_result()
+    row = r.fetch_row(maxrows=1, how=1)
+    c = 0
     while row:
-        if len(row)==1:
-            pageid=int(row[0]['page_id'])
-            pagetitle=re.sub('_', ' ', unicode(row[0]['page_title'], 'utf-8'))
-            c+=1;percent(c)
+        if len(row) == 1:
+            pageid = int(row[0]['page_id'])
+            pagetitle = utf8rm_(row[0]['page_title'])
+            c += 1;percent(c)
             #pageid2pagetitle[pageid]=pagetitle
-            pagetitle2pageid[pagetitle]=pageid
-        row=r.fetch_row(maxrows=1, how=1)
-    print '\nCargados %d pageid/pagetitle para %s.%s.org.' % (c, lenguajeobjetivo, family)
+            pagetitle2pageid[pagetitle] = pageid
+        row = r.fetch_row(maxrows=1, how=1)
+    print '\nLoaded %d pageid/pagetitle of %s.%s.org.' % (c, lenguajeobjetivo, family)
 
     if c==0: sys.exit()
 
     #ahora rellenamos sinimagenes con page_ids que no tengan ningún imagelink
     print '-'*70
-    print 'Cargando imagelinks de %s.%s.org' % (lenguajeobjetivo, family)
-    conn.query("select page_id from page where page_namespace=0 and page_is_redirect=0 and page_id not in (select distinct il_from from imagelinks inner join page on il_from=page_id where page_namespace=0 and page_is_redirect=0);")
-    r=conn.use_result()
-    row=r.fetch_row(maxrows=1, how=1)
-    c=0
+    print 'Loading imagelinks of %s.%s.org' % (lenguajeobjetivo, family)
+    conn.query("SELECT page_id FROM page WHERE page_namespace=0 AND page_is_redirect=0 AND page_id NOT IN (SELECT DISTINCT il_from FROM imagelinks INNER JOIN page ON il_from=page_id WHERE page_namespace=0 AND page_is_redirect=0)")
+    r = conn.use_result()
+    row = r.fetch_row(maxrows=1, how=1)
+    c = 0
     while row:
-        if len(row)==1:
-            pageid=int(row[0]['page_id'])
+        if len(row) == 1:
+            pageid = int(row[0]['page_id'])
             c+=1;percent(c)
             sinimagenes.add(pageid)
-        row=r.fetch_row(maxrows=1, how=1)
-    wikipedia.output(u"\nSe encontraron %d artículos sin imágenes en %s.%s.org." % (c, lenguajeobjetivo, family)) #sin ninguna, hasta las que tienen commons.svg se excluyen ?
+        row = r.fetch_row(maxrows=1, how=1)
+    wikipedia.output(u"\nFound %d articles without images in %s.%s.org." % (c, lenguajeobjetivo, family)) #todo: sin ninguna, hasta las que tienen commons.svg se excluyen ?
 
     #cargamos interwikis a articulos de lenguajeobjetivo carentes de imagenes
     print '-'*70
-    print 'Cargando interwikis de %s.%s.org hacia %s.%s.org' % (lenguajefuente, family, lenguajeobjetivo, family)
-    conn2.query("select ll_from, page_title, ll_title from langlinks inner join page on ll_from=page_id where ll_lang=\'%s\';" % lenguajeobjetivo)
-    r=conn2.use_result()
-    row=r.fetch_row(maxrows=1, how=1)
-    c=0
+    print 'Loading interwikis from %s.%s.org to %s.%s.org' % (lenguajefuente, family, lenguajeobjetivo, family)
+    conn2.query("SELECT ll_from, page_title, ll_title FROM langlinks INNER JOIN page ON ll_from=page_id WHERE ll_lang=\'%s\';" % lenguajeobjetivo)
+    r = conn2.use_result()
+    row = r.fetch_row(maxrows=1, how=1)
+    c = 0
     while row:
-        pageid=int(row[0]['ll_from'])
-        pagetitle=re.sub('_', ' ', unicode(row[0]['page_title'], 'utf-8'))
-        interwiki=re.sub('_', ' ', unicode(row[0]['ll_title'], 'utf-8'))
+        pageid = int(row[0]['ll_from'])
+        pagetitle = utf8rm_(row[0]['page_title'])
+        interwiki = utf8rm_(row[0]['ll_title'])
         if pagetitle2pageid.has_key(interwiki) and pagetitle2pageid[interwiki] in sinimagenes:
-            c+=1;percent(c)
             #si la pagina a la que apunta el iw existe en el lenguajeobjetivo, y no tiene imagenes...
-            interwikis[pageid]=interwiki
-            pageid2pagetitle2[pageid]=pagetitle
+            c += 1;percent(c)
+            interwikis[pageid] = interwiki
+            pageid2pagetitle2[pageid] = pagetitle
             #pagetitle2pageid2[pagetitle]=pageid
         row=r.fetch_row(maxrows=1, how=1)
-    print '\nCargados %d pageid/pagetitle (y su interwiki a %s:) de %swiki que tienen iw hacia articulos de %s: sin imagenes' % (c, lenguajeobjetivo, lenguajefuente, lenguajeobjetivo)
+    print '\nLoaded %d pageid/pagetitle (y su interwiki a %s:) de %swiki que tienen iw hacia articulos de %s: sin imagenes' % (c, lenguajeobjetivo, lenguajefuente, lenguajeobjetivo)
 
     #cargamos imágenes subidas a la inglesa y que cumplan los filtros
     print '-'*70
@@ -116,16 +119,13 @@ def main():
     c=0
     for line in f:
         try:
-            line=unicode(line, 'utf-8')
+            line = utf8rm_(line[:-1]) #evitamos \n
         except:
             continue
-        line=line[:len(line)-1] #evitamos \n
-        line=re.sub('_', ' ', line)
-        trozos=line.split('    ')
-        if len(trozos)==1:
-            image=trozos[0]
-            #filtro
-            if re.search(exclusion_pattern, image):
+        trozos = line.split('    ')
+        if len(trozos) == 1:
+            image = trozos[0]
+            if re.search(exclusion_pattern, image): #filtro
                 continue
             c+=1;percent(c)
             images.add(image)
