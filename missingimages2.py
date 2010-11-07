@@ -239,7 +239,8 @@ def main():
     conns3.close()
     
     print '\n---->(((((Finalmente se encontraron %d imagenes posiblemente utiles)))))<----' % (cc)
-    os.system('mysql -h sql -e "use u_emijrp_yarrow;delete from imagesforbio where 1;"')
+    for lang in langs:
+        os.system('mysql -h sql -e "use u_emijrp_yarrow;delete from imagesforbio where language=\'%s\';"' % lang)
     os.system('mysql -h sql u_emijrp_yarrow < /home/emijrp/temporal/candidatas.sql')
 
 if __name__ == "__main__":
