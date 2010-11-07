@@ -29,7 +29,7 @@ def createDB(conn=None, cursor=None):
     cursor.execute('''create table pages (page_lang text, page_id integer, page_title text, page_has_images integer)''')
     cursor.execute('''create table imagelinks (il_lang text, il_page integer, il_image_name text)''')
     cursor.execute('''create table langlinks (ll_lang text, ll_page integer, ll_to_lang text, ll_to_title text)''')
-    cursor.execute('''create table templateimages (ti_lang text, ti_page integer, ti_image text)''')
+    cursor.execute('''create table templateimages (ti_lang text, ti_page integer, ti_image_name text)''')
     #todo: indices?
     conn.commit()
 
@@ -80,17 +80,8 @@ def main():
                 WHERE cl_from=page_id AND page_namespace=0 AND cl_to RLIKE '%s'
                 )
                 AND il_to NOT IN (
-                    SELECT DISTINCT il_to
-                    FROM imagelinks
-                    WHERE il_from IN (
-                        SELECT page_id
-                        FROM page
-                        WHERE page_namespace=10
-                        )
-                AND il_to NOT IN (
                     SELECT img_name
                     FROM image
-                    )
                 )
             ''' % (bd_cats[lang]))
         r = conn.use_result()
@@ -174,7 +165,7 @@ def main():
     #check for missing images bios
     result = cursors3.execute(r'SELECT page_lang, page_id, page_title FROM pages WHERE page_has_images=?', (0,))
     cc = 0
-    f = open('/home/emijrp/temporal/candidatas.txt', 'w')
+    f = open('/home/emijrp/temporal/candidatas.sql', 'w')
     for row in result:
         page_lang = row[0]
         page_id = int(row[1])
@@ -187,7 +178,7 @@ def main():
             ll_to_title = row2[1]
             page_id = int(row2[2])
             
-            result3 = cursors32.execute(r'SELECT il_image_name FROM imagelinks WHERE il_lang=? AND il_page=?', (ll_to_lang, page_id))
+            result3 = cursors32.execute(r'SELECT il_image_name FROM imagelinks WHERE il_lang=? AND il_page=? AND il_image_name NOT IN (SELECT ti_image_name FROM templateimages WHERE ti_lang=?)', (ll_to_lang, page_id, ll_to_lang)) #miramos las imágenes que usan las bios de los iws, excepto aquellas que están integradas en plantillas locales
             for row3 in result3:
                 il_image_name = row3[0]
                 #filter unuseful or wrong images or images inserted with templates
