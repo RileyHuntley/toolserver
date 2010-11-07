@@ -29,7 +29,7 @@ bd_cats = { #birth/death categories
     'pl': r'(Urodzeni_w|Zmarli_w)_[0-9]+',
 }
 
-langs = ['it', 'pl']#'eu']
+langs = ['da', 'eo']
 family = 'wikipedia'
 
 def percent(c, d=1000):
