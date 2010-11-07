@@ -15,6 +15,7 @@ import wikipedia
 bd_cats = { #birth/death categories
     'an': r'[0-9]+_\\((naixencias|muertes)\\)',
     'az': r'[0-9]+.+(doğulanlar|vəfat_edənlər)',
+    #ca not
     'da': r'(Født|Døde)_i_[0-9]+',
     'de': r'(Geboren|Gestorben)_[0-9]+',
     'el': r'(Γεννήσεις_το|Θάνατοι_το)_[0-9]+',
@@ -27,9 +28,12 @@ bd_cats = { #birth/death categories
     'it': r'(Nati_nel|Morti_nel)_[0-9]+',
     'ja': r'[0-9]+_(年生|年没)',
     #nl hasn't got?
+    'no': r'(Fødsler|Dødsfall)_i_[0-9]+',
     'pl': r'(Urodzeni_w|Zmarli_w)_[0-9]+',
     #pt not
     'ru': r'(Умершие|Родившиеся)_в_[0-9]+_году',
+    'sv': r'(Födda|Avlidna)_[0-9]+',
+    'zh': r'[0-9]+_(年出生|年逝世)',
 }
 
 langs = ['da', 'eo']
