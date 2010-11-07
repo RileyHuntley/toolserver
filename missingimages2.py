@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import _mysql
+import md5
 import os
 import re
 import sqlite3
 import sys
 
 import tarea000
+import wikipedia
 
 bd_cats = { #birth/death categories
     'an': r'[0-9]+_\\((naixencias|muertes)\\)',
@@ -166,13 +168,18 @@ def main():
         bioswithout = int(row[0])
     print 'There are %d bios without images (%.2f%%)' % (bioswithout, bioswithout/(bios/100.0))
     
+    #filters
+    ex = ur'(?i)(%s)' % ('|'.join(wikipedia.Page(wikipedia.Site("en", "wikipedia"), u"User:Emijrp/Images for biographies/Exclusions").get().splitlines()))
+    exclusion_pattern=re.compile(ex) # los ' y " los filtramos al final
     #check for missing images bios
     result = cursors3.execute(r'SELECT page_lang, page_id, page_title FROM pages WHERE page_has_images=?', (0,))
+    cc = 0
+    f = open('/home/emijrp/temporal/candidatas.txt', 'w')
     for row in result:
         page_lang = row[0]
         page_id = int(row[1])
         page_title = row[2]
-        
+
         result2 = cursors31.execute(r'SELECT ll_to_lang, ll_to_title, page_id FROM langlinks, pages WHERE page_lang=ll_to_lang AND page_title=ll_to_title AND ll_lang=? AND ll_page=?', (page_lang, page_id))
         for row2 in result2:
             #print row2
@@ -184,11 +191,34 @@ def main():
             for row3 in result3:
                 il_image_name = row3[0]
                 #filter unuseful or wrong images or images inserted with templates
-                print "Recomendada la imagen %s de %s: para %s de %s:" % (il_image_name, ll_to_lang, page_title, page_lang)
-                #sys.exit()
-    
+                if re.search(exclusion_pattern, '%s %s' % (page_title, ll_to_title)):
+                    #evitamos imagenes y articulos que no sirven o erroneas que ya se han comprobado en otras actualizacione
+                    continue
+                trocear = ' '.join([page_title, ll_to_title])
+                #para aquellos idiomas como ar: con alfabetos distintos incluimos ambos títulos
+                trozos = '|'.join([trozo for trozo in re.sub(ur'[\(\)]', ur'', trocear).split(' ') if len(trozo) >= 3])
+                if len(re.findall(ur'\|', trozos)) >= 1: #al menos dos palabras para buscar (una|otra)
+                    if not re.search(exclusion_pattern, il_image_name): #evitamos imagenes que no sirven o erroneas que ya se han comprobado en otras actualizaciones
+                        if not re.search(ur'([\'\"]|[^\d]0\d\d[^\d])', ' '.join([page_title, ll_to_title, il_image_name])): #?
+                            if len(re.findall(ur"(?i)(%s)" % trozos, il_image_name)) >= 2: #al menos dos ocurrencias en el nombre del fich
+                                cc += 1
+                                il_image_name_=re.sub(' ', '_', il_image_name)
+                                md5_ = md5.new(il_image_name_.encode('utf-8')).hexdigest()
+                                salida = "INSERT INTO `imagesforbio` (`id`, `language`, `article`, `image`, `url`, `done`) VALUES (NULL, '%s', '%s', '%s', 'http://upload.wikimedia.org/wikipedia/commons/%s/%s/%s', 0);\n" % (page_lang, page_title, il_image_name, md5_[0], md5_[0:2], il_image_name_)
+                                
+                                print "Recomendada la imagen %s de %s: para %s de %s:" % (il_image_name, ll_to_lang, page_title, page_lang)
+                                
+                                try:
+                                    f.write(salida.encode('utf-8'))
+                                except:
+                                    print "ERROR while writing to output file"
+    f.close()
     cursors3.close()
     conns3.close()
+    
+    print '\n---->(((((Finalmente se encontraron %d imagenes posiblemente utiles)))))<----' % (cc)
+    os.system('mysql -h sql -e "use u_emijrp_yarrow;delete from imagesforbio where 1;"')
+    os.system('mysql -h sql u_emijrp_yarrow < /home/emijrp/temporal/candidatas.sql')
 
 if __name__ == "__main__":
     main()
