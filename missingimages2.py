@@ -37,9 +37,12 @@ def main():
     
     conns3 = sqlite3.connect(dbfilename)
     cursors3 = conns3.cursor()
+    cursors31 = conns3.cursor()
+    cursors32 = conns3.cursor()
     createDB(conn=conns3, cursor=cursors3)
     
     for lang in langs:
+        print '==== %s ====' % lang
         dbname = tarea000.getDbname(lang, family)
         server = tarea000.getServer(lang, family)
         conn = _mysql.connect(host=server, db=dbname, read_default_file='~/.my.cnf')
@@ -152,20 +155,29 @@ def main():
         conn.close()
     
     #check for missing images bios
+    bios = 0
+    bioswithout = 0
+    result = cursors3.execute(r'SELECT count(*) FROM pages')
+    for row in result:
+        bios = int(row[0])
+    result = cursors3.execute(r'SELECT count(*) FROM pages WHERE page_has_images=?', (0,))
+    for row in result:
+        bioswithout = int(row[0])
+    print 'There are %d bios without images (%.2f%%)' % (bioswithout, bioswithout/(bios/100.0))
+    
     result = cursors3.execute(r'SELECT page_lang, page_id, page_title FROM pages WHERE page_has_images=?', (0,))
     for row in result:
-        print row
         page_lang = row[0]
         page_id = int(row[1])
         page_title = row[2]
         
-        result2 = cursors3.execute(r'SELECT ll_to_lang, ll_to_title FROM langlinks WHERE ll_lang=? and ll_page=?', (page_lang, page_id))
+        result2 = cursors31.execute(r'SELECT ll_to_lang, ll_to_title FROM langlinks, pages WHERE ll_to_lang=page_lang AND ll_to_title=page_title AND ll_lang=? and ll_page=? AND page_has_images=?', (page_lang, page_id, 1))
         for row2 in result2:
             #print row2
             ll_to_lang = row2[0]
             ll_to_title = row2[1]
             
-            result3 = cursors3.execute(r'SELECT il_image_name FROM imagelinks WHERE il_lang=? and il_page=?', (ll_to_lang, ll_to_title))
+            result3 = cursors32.execute(r'SELECT il_image_name FROM imagelinks WHERE il_lang=? and il_page=?', (ll_to_lang, ll_to_title))
             for row3 in result3:
                 il_image_name = row3[0]
                 #filter unuseful or wrong images or images inserted with templates
