@@ -6,6 +6,8 @@ import os
 import re
 import sqlite3
 import sys
+import MySQLdb
+import time
 
 import tarea000
 import wikipedia
@@ -14,9 +16,11 @@ bd_cats = { #birth/death categories
     'an': r'[0-9]+_\\((naixencias|muertes)\\)',
     'az': r'[0-9]+.+(doğulanlar|vəfat_edənlər)',
     'eu': r'[0-9]+.+_(jaiotzak|heriotzak)',
+    'it': r'(Nati_nel|Morti_nel)_[0-9]+',
+    'pl': r'(Urodzeni_w|Zmarli_w)_[0-9]+',
 }
 
-langs = ['an', 'az', ]#'eu']
+langs = ['it', 'pl']#'eu']
 family = 'wikipedia'
 
 def percent(c, d=1000):
@@ -30,7 +34,17 @@ def createDB(conn=None, cursor=None):
     cursor.execute('''create table imagelinks (il_lang text, il_page integer, il_image_name text)''')
     cursor.execute('''create table langlinks (ll_lang text, ll_page integer, ll_to_lang text, ll_to_title text)''')
     cursor.execute('''create table templateimages (ti_lang text, ti_page integer, ti_image_name text)''')
+    cursor.execute('''create table images (img_lang text, img_name text)''')
     #todo: indices?
+    cursor.execute('''create index ind1 on pages (page_lang)''')
+    cursor.execute('''create index ind2 on pages (page_lang, page_id)''')
+    cursor.execute('''create index ind3 on pages (page_lang, page_id, page_title)''')
+    cursor.execute('''create index ind4 on imagelinks (il_lang)''')
+    cursor.execute('''create index ind5 on imagelinks (il_lang, il_page)''')
+    cursor.execute('''create index ind6 on langlinks (ll_lang)''')
+    cursor.execute('''create index ind7 on langlinks (ll_lang, ll_page)''')
+    cursor.execute('''create index ind8 on templateimages (ti_lang)''')
+    cursor.execute('''create index ind9 on templateimages (ti_lang, ti_page)''')
     conn.commit()
 
 def main():
@@ -48,17 +62,18 @@ def main():
         print '==== %s ====' % lang
         dbname = tarea000.getDbname(lang, family)
         server = tarea000.getServer(lang, family)
-        conn = _mysql.connect(host=server, db=dbname, read_default_file='~/.my.cnf')
+        conn = MySQLdb.connect(host=server, db=dbname, read_default_file='~/.my.cnf')
 
         #bios
+        t1=time.time()
         conn.query(r'''
             SELECT DISTINCT page_id, page_title
             FROM categorylinks, page
             WHERE cl_from=page_id AND page_namespace=0 AND cl_to RLIKE '%s'
             ''' % (bd_cats[lang]))
-        r = conn.use_result()
-        row = r.fetch_row(maxrows=1, how=1)
+        r = conn.store_result()
         c = 0
+        row = r.fetch_row(maxrows=1, how=1)
         while row:
             if len(row) == 1:
                 page_id = int(row[0]['page_id'])
@@ -67,9 +82,10 @@ def main():
                 c += 1;percent(c)
             row = r.fetch_row(maxrows=1, how=1)
         conns3.commit()
-        print '\nLoaded %d bios of %s.%s.org.' % (c, lang, family)
+        print '\nLoaded %d bios of %s.%s.org %f' % (c, lang, family, time.time()-t1)
         
         #imagelinks
+        t1=time.time()
         conn.query(r'''
             SELECT DISTINCT il_from, page_title, il_to
             FROM imagelinks, page
@@ -79,12 +95,8 @@ def main():
                 FROM categorylinks, page
                 WHERE cl_from=page_id AND page_namespace=0 AND cl_to RLIKE '%s'
                 )
-                AND il_to NOT IN (
-                    SELECT img_name
-                    FROM image
-                )
             ''' % (bd_cats[lang]))
-        r = conn.use_result()
+        r = conn.store_result()
         row = r.fetch_row(maxrows=1, how=1)
         c = 0
         while row:
@@ -97,9 +109,10 @@ def main():
                 c += 1;percent(c)
             row = r.fetch_row(maxrows=1, how=1)
         conns3.commit()
-        print '\nLoaded %d imagelinks of %s.%s.org.' % (c, lang, family)
+        print '\nLoaded %d imagelinks of %s.%s.org %f' % (c, lang, family, time.time()-t1)
     
         #interwikis
+        t1=time.time()
         conn.query(r'''
             SELECT DISTINCT ll_from, ll_lang, ll_title
             FROM langlinks
@@ -109,7 +122,7 @@ def main():
                 WHERE cl_from=page_id AND page_namespace=0 AND cl_to RLIKE '%s'
                 )
             ''' % (bd_cats[lang]))
-        r = conn.use_result()
+        r = conn.store_result()
         row = r.fetch_row(maxrows=1, how=1)
         c = 0
         while row:
@@ -121,9 +134,10 @@ def main():
                 c += 1;percent(c)
             row = r.fetch_row(maxrows=1, how=1)
         conns3.commit()
-        print '\nLoaded %d langlinks of %s.%s.org.' % (c, lang, family)
+        print '\nLoaded %d langlinks of %s.%s.org %f' % (c, lang, family, time.time()-t1)
         
         #templateimages
+        t1=time.time()
         conn.query(r'''
             SELECT DISTINCT il_from, il_to
             FROM imagelinks
@@ -133,7 +147,7 @@ def main():
                 WHERE page_namespace=10
                 )
             ''')
-        r = conn.use_result()
+        r = conn.store_result()
         row = r.fetch_row(maxrows=1, how=1)
         c = 0
         while row:
@@ -144,10 +158,27 @@ def main():
                 c += 1;percent(c)
             row = r.fetch_row(maxrows=1, how=1)
         conns3.commit()
-        print '\nLoaded %d templateimages of %s.%s.org.' % (c, lang, family)
+        print '\nLoaded %d templateimages of %s.%s.org %f' % (c, lang, family, time.time()-t1)
+        
+        #images
+        t1=time.time()
+        conn.query(r'''
+            SELECT img_name
+            FROM image
+            ''')
+        r = conn.store_result()
+        row = r.fetch_row(maxrows=1, how=1)
+        c = 0
+        while row:
+            if len(row) == 1:
+                img_name = utf8rm_(row[0]['img_name'])
+                cursors3.execute('INSERT INTO images VALUES (?,?)', (lang, img_name))
+                c += 1;percent(c)
+            row = r.fetch_row(maxrows=1, how=1)
+        conns3.commit()
+        print '\nLoaded %d localimages of %s.%s.org %f' % (c, lang, family, time.time()-t1)
         
         conn.close()
-    
     
     bios = 0
     bioswithout = 0
@@ -178,7 +209,7 @@ def main():
             ll_to_title = row2[1]
             page_id = int(row2[2])
             
-            result3 = cursors32.execute(r'SELECT il_image_name FROM imagelinks WHERE il_lang=? AND il_page=? AND il_image_name NOT IN (SELECT ti_image_name FROM templateimages WHERE ti_lang=?)', (ll_to_lang, page_id, ll_to_lang)) #miramos las imágenes que usan las bios de los iws, excepto aquellas que están integradas en plantillas locales
+            result3 = cursors32.execute(r'SELECT il_image_name FROM imagelinks WHERE il_lang=? AND il_page=? AND il_image_name NOT IN (SELECT ti_image_name FROM templateimages WHERE ti_lang=?) AND il_image_name NOT IN (SELECT img_name FROM images WHERE img_lang=?)', (ll_to_lang, page_id, ll_to_lang, ll_to_lang)) #miramos las imágenes que usan las bios de los iws, excepto aquellas que están integradas en plantillas locales, o son imagenes locales
             for row3 in result3:
                 il_image_name = row3[0]
                 #filter unuseful or wrong images or images inserted with templates
