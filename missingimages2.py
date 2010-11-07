@@ -15,6 +15,9 @@ import wikipedia
 bd_cats = { #birth/death categories
     'an': r'[0-9]+_\\((naixencias|muertes)\\)',
     'az': r'[0-9]+.+(doğulanlar|vəfat_edənlər)',
+    'da': r'(Født_i|Døde_i)_[0-9]+',
+    'de': r'(Geboren|Gestorben)_[0-9]+',
+    'es': r'(Nacidos|Fallecidos)_en_[0-9]+',
     'eu': r'[0-9]+.+_(jaiotzak|heriotzak)',
     'it': r'(Nati_nel|Morti_nel)_[0-9]+',
     'pl': r'(Urodzeni_w|Zmarli_w)_[0-9]+',
@@ -196,20 +199,22 @@ def main():
     #check for missing images bios
     result = cursors3.execute(r'SELECT page_lang, page_id, page_title FROM pages WHERE page_has_images=?', (0,))
     cc = 0
-    f = open('/home/emijrp/temporal/candidatas.sql', 'w')
+    candfile = '/home/emijrp/temporal/candidatas.sql'
+    f = open(candfile, 'w')
     for row in result:
         page_lang = row[0]
         page_id = int(row[1])
         page_title = row[2]
-
+        
+        candidatas = {}
         result2 = cursors31.execute(r'SELECT ll_to_lang, ll_to_title, page_id FROM langlinks, pages WHERE page_lang=ll_to_lang AND page_title=ll_to_title AND ll_lang=? AND ll_page=?', (page_lang, page_id))
         for row2 in result2:
             #print row2
             ll_to_lang = row2[0]
             ll_to_title = row2[1]
-            page_id = int(row2[2])
+            ll_to_page = int(row2[2])
             
-            result3 = cursors32.execute(r'SELECT il_image_name FROM imagelinks WHERE il_lang=? AND il_page=? AND il_image_name NOT IN (SELECT ti_image_name FROM templateimages WHERE ti_lang=?) AND il_image_name NOT IN (SELECT img_name FROM images WHERE img_lang=?)', (ll_to_lang, page_id, ll_to_lang, ll_to_lang)) #miramos las imágenes que usan las bios de los iws, excepto aquellas que están integradas en plantillas locales, o son imagenes locales
+            result3 = cursors32.execute(r'SELECT il_image_name FROM imagelinks WHERE il_lang=? AND il_page=? AND il_image_name NOT IN (SELECT ti_image_name FROM templateimages WHERE ti_lang=?) AND il_image_name NOT IN (SELECT img_name FROM images WHERE img_lang=?)', (ll_to_lang, ll_to_page, ll_to_lang, ll_to_lang)) #miramos las imágenes que usan las bios de los iws, excepto aquellas que están integradas en plantillas locales, o son imagenes locales
             for row3 in result3:
                 il_image_name = row3[0]
                 #filter unuseful or wrong images or images inserted with templates
@@ -223,17 +228,28 @@ def main():
                     if not re.search(exclusion_pattern, il_image_name): #evitamos imagenes que no sirven o erroneas que ya se han comprobado en otras actualizaciones
                         if not re.search(ur'([\'\"]|[^\d]0\d\d[^\d])', ' '.join([page_title, ll_to_title, il_image_name])): #?
                             if len(re.findall(ur"(?i)(%s)" % trozos, il_image_name)) >= 2: #al menos dos ocurrencias en el nombre del fich
-                                cc += 1
-                                il_image_name_=re.sub(' ', '_', il_image_name)
-                                md5_ = md5.new(il_image_name_.encode('utf-8')).hexdigest()
-                                salida = "INSERT INTO `imagesforbio` (`id`, `language`, `article`, `image`, `url`, `done`) VALUES (NULL, '%s', '%s', '%s', 'http://upload.wikimedia.org/wikipedia/commons/%s/%s/%s', 0);\n" % (page_lang, page_title, il_image_name, md5_[0], md5_[0:2], il_image_name_)
-                                
-                                print "Recomendada la imagen %s de %s: para %s de %s:" % (il_image_name, ll_to_lang, page_title, page_lang)
-                                
-                                try:
-                                    f.write(salida.encode('utf-8'))
-                                except:
-                                    print "ERROR while writing to output file"
+                                #ok il_image_name es una buena candidata
+                                if candidatas.has_key(il_image_name):
+                                    candidatas[il_image_name] += 1
+                                else:
+                                    candidatas[il_image_name] = 1
+        #sort and choice the best candidate
+        cand_list = [[v,k] for k,v in candidatas.items()]
+        cand_list.sort()
+        cand_list.reverse()
+        
+        il_image_name = cand_list[0][1]
+        cc += 1
+        il_image_name_ = re.sub(' ', '_', il_image_name)
+        md5_ = md5.new(il_image_name_.encode('utf-8')).hexdigest()
+        salida = "INSERT INTO `imagesforbio` (`id`, `language`, `article`, `image`, `url`, `done`) VALUES (NULL, '%s', '%s', '%s', 'http://upload.wikimedia.org/wikipedia/commons/%s/%s/%s', 0);\n" % (page_lang, page_title, il_image_name, md5_[0], md5_[0:2], il_image_name_)
+        print "Recomendada la imagen '%s' para la bio '%s' de %s:" % (il_image_name, page_title, page_lang)
+        
+        try:
+            f.write(salida.encode('utf-8'))
+        except:
+            print "ERROR while writing to output file"
+        
     f.close()
     cursors3.close()
     conns3.close()
@@ -241,7 +257,7 @@ def main():
     print '\n---->(((((Finalmente se encontraron %d imagenes posiblemente utiles)))))<----' % (cc)
     for lang in langs:
         os.system('mysql -h sql -e "use u_emijrp_yarrow;delete from imagesforbio where language=\'%s\';"' % lang)
-    os.system('mysql -h sql u_emijrp_yarrow < /home/emijrp/temporal/candidatas.sql')
+    os.system('mysql -h sql u_emijrp_yarrow < %s' % candfile)
 
 if __name__ == "__main__":
     main()
