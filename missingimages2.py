@@ -8,12 +8,13 @@ import sys
 
 import tarea000
 
-bd_cats = {
+bd_cats = { #birth/death categories
     'an': r'[0-9]+_\\((naixencias|muertes)\\)',
+    'az': r'[0-9]+.+(doğulanlar|vəfat_edənlər)',
     'eu': r'[0-9]+.+_(jaiotzak|heriotzak)',
 }
 
-langs = ['an', 'eu']
+langs = ['an', 'az', ]#'eu']
 family = 'wikipedia'
 
 def percent(c, d=1000):
@@ -99,7 +100,7 @@ def main():
                 page_title = utf8rm_(row[0]['page_title'])
                 il_to = utf8rm_(row[0]['il_to'])
                 cursors3.execute('INSERT INTO imagelinks VALUES (?,?,?)', (lang, il_from, il_to))
-                cursors3.execute('UPDATE pages SET page_has_images=1 WHERE page_lang=? AND page_id=? AND page_title=?', (lang, il_from, page_title))
+                cursors3.execute('UPDATE pages SET page_has_images=? WHERE page_lang=? AND page_id=? AND page_title=?', (1, lang, il_from, page_title))
                 c += 1;percent(c)
             row = r.fetch_row(maxrows=1, how=1)
         conns3.commit()
@@ -154,7 +155,7 @@ def main():
         
         conn.close()
     
-    #check for missing images bios
+    
     bios = 0
     bioswithout = 0
     result = cursors3.execute(r'SELECT count(*) FROM pages')
@@ -165,24 +166,26 @@ def main():
         bioswithout = int(row[0])
     print 'There are %d bios without images (%.2f%%)' % (bioswithout, bioswithout/(bios/100.0))
     
+    #check for missing images bios
     result = cursors3.execute(r'SELECT page_lang, page_id, page_title FROM pages WHERE page_has_images=?', (0,))
     for row in result:
         page_lang = row[0]
         page_id = int(row[1])
         page_title = row[2]
         
-        result2 = cursors31.execute(r'SELECT ll_to_lang, ll_to_title FROM langlinks, pages WHERE ll_to_lang=page_lang AND ll_to_title=page_title AND ll_lang=? and ll_page=? AND page_has_images=?', (page_lang, page_id, 1))
+        result2 = cursors31.execute(r'SELECT ll_to_lang, ll_to_title, page_id FROM langlinks, pages WHERE page_lang=ll_to_lang AND page_title=ll_to_title AND ll_lang=? AND ll_page=?', (page_lang, page_id))
         for row2 in result2:
             #print row2
             ll_to_lang = row2[0]
             ll_to_title = row2[1]
+            page_id = int(row2[2])
             
-            result3 = cursors32.execute(r'SELECT il_image_name FROM imagelinks WHERE il_lang=? and il_page=?', (ll_to_lang, ll_to_title))
+            result3 = cursors32.execute(r'SELECT il_image_name FROM imagelinks WHERE il_lang=? AND il_page=?', (ll_to_lang, page_id))
             for row3 in result3:
                 il_image_name = row3[0]
                 #filter unuseful or wrong images or images inserted with templates
                 print "Recomendada la imagen %s de %s: para %s de %s:" % (il_image_name, ll_to_lang, page_title, page_lang)
-                sys.exit()
+                #sys.exit()
     
     cursors3.close()
     conns3.close()
