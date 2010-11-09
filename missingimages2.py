@@ -12,6 +12,9 @@ import time
 import tarea000
 import wikipedia
 
+#todo
+#qué hacer con las wikipedias que no tienen categorías de nacimientos y fallecimientos?
+
 bd_cats = { #birth/death categories
     'an': r'[0-9]+_\\((naixencias|muertes)\\)',
     'az': r'[0-9]+.+(doğulanlar|vəfat_edənlər)',
@@ -36,7 +39,7 @@ bd_cats = { #birth/death categories
     'zh': r'[0-9]+_(年出生|年逝世)',
 }
 
-langs = ['da', 'eo']
+langs = ['en', 'de']
 family = 'wikipedia'
 
 def percent(c, d=1000):
@@ -51,6 +54,7 @@ def createDB(conn=None, cursor=None):
     cursor.execute('''create table langlinks (ll_lang text, ll_page integer, ll_to_lang text, ll_to_title text)''')
     cursor.execute('''create table templateimages (ti_lang text, ti_page integer, ti_image_name text)''')
     cursor.execute('''create table images (img_lang text, img_name text)''')
+    cursor.execute('''create table commonsimages (ci_image_name text)''')
     #todo: indices?
     cursor.execute('''create index ind1 on pages (page_lang)''')
     cursor.execute('''create index ind2 on pages (page_lang, page_id)''')
@@ -61,18 +65,54 @@ def createDB(conn=None, cursor=None):
     cursor.execute('''create index ind7 on langlinks (ll_lang, ll_page)''')
     cursor.execute('''create index ind8 on templateimages (ti_lang)''')
     cursor.execute('''create index ind9 on templateimages (ti_lang, ti_page)''')
+    cursor.execute('''create index ind10 on images (img_lang)''')
+    cursor.execute('''create index ind11 on images (img_lang, img_name)''')
+    cursor.execute('''create index ind12 on commonsimages (ci_image_name)''')
     conn.commit()
 
 def main():
-    dbfilename = '/home/emijrp/temporal/missingimages.db'
-    if os.path.exists(dbfilename):
+    delete = False
+    dbfilename = '/mnt/user-store/emijrp/missingimages.db'
+    if delete and os.path.exists(dbfilename):
         os.remove(dbfilename)
     
     conns3 = sqlite3.connect(dbfilename)
     cursors3 = conns3.cursor()
     cursors31 = conns3.cursor()
     cursors32 = conns3.cursor()
-    createDB(conn=conns3, cursor=cursors3)
+    if delete: #creamos estructura
+        createDB(conn=conns3, cursor=cursors3)
+    
+    if not delete: #if we do not delete database to conservate commons images info, empty tables of previous analysis
+        cursors3.execute('''delete from pages where 1''')
+        cursors3.execute('''delete from imagelinks where 1''')
+        cursors3.execute('''delete from langlinks where 1''')
+        cursors3.execute('''delete from templateimages where 1''')
+        cursors3.execute('''delete from images where 1''')
+        cursors3.commit()
+    
+    if delete: #si la hemos borrado, recargamos imagenes de commons
+        #commons images
+        dbname = tarea000.getDbname('en', 'commons')
+        server = tarea000.getServer('en', 'commons')
+        conn = MySQLdb.connect(host=server, db=dbname, read_default_file='~/.my.cnf')
+        t1=time.time()
+        conn.query(r'''
+            SELECT img_name
+            FROM image
+            ''')
+        r = conn.store_result()
+        c = 0
+        row = r.fetch_row(maxrows=1, how=1)
+        while row:
+            if len(row) == 1:
+                img_name = utf8rm_(row[0]['img_name'])
+                cursors3.execute('INSERT INTO commonsimages VALUES (?)', (img_name,))
+                c += 1;percent(c)
+            row = r.fetch_row(maxrows=1, how=1)
+        conns3.commit()
+        print '\nLoaded %d commons images %f' % (c, time.time()-t1)
+        #end commons images
     
     for lang in langs:
         print '==== %s ====' % lang
@@ -214,6 +254,7 @@ def main():
     cc = 0
     candfile = '/home/emijrp/temporal/candidatas.sql'
     f = open(candfile, 'w')
+    t1=time.time()
     for row in result:
         page_lang = row[0]
         page_id = int(row[1])
@@ -227,7 +268,7 @@ def main():
             ll_to_title = row2[1]
             ll_to_page = int(row2[2])
             
-            result3 = cursors32.execute(r'SELECT il_image_name FROM imagelinks WHERE il_lang=? AND il_page=? AND il_image_name NOT IN (SELECT ti_image_name FROM templateimages WHERE ti_lang=?) AND il_image_name NOT IN (SELECT img_name FROM images WHERE img_lang=?)', (ll_to_lang, ll_to_page, ll_to_lang, ll_to_lang)) #miramos las imágenes que usan las bios de los iws, excepto aquellas que están integradas en plantillas locales, o son imagenes locales
+            result3 = cursors32.execute(r'SELECT il_image_name FROM imagelinks WHERE il_lang=? AND il_page=? AND il_image_name NOT IN (SELECT ti_image_name FROM templateimages WHERE ti_lang=?) AND il_image_name NOT IN (SELECT img_name FROM images WHERE img_lang=?) AND il_image_name IN (SELECT ci_image_name FROM commonsimages)', (ll_to_lang, ll_to_page, ll_to_lang, ll_to_lang)) #miramos las imágenes que usan las bios de los iws, excepto aquellas que están integradas en plantillas locales, o son imagenes locales
             for row3 in result3:
                 il_image_name = row3[0]
                 #filter unuseful or wrong images or images inserted with templates
@@ -258,7 +299,7 @@ def main():
             il_image_name_ = re.sub(' ', '_', il_image_name)
             md5_ = md5.new(il_image_name_.encode('utf-8')).hexdigest()
             salida = "INSERT INTO `imagesforbio` (`id`, `language`, `article`, `image`, `url`, `done`) VALUES (NULL, '%s', '%s', '%s', 'http://upload.wikimedia.org/wikipedia/commons/%s/%s/%s', 0);\n" % (page_lang, page_title, il_image_name, md5_[0], md5_[0:2], il_image_name_)
-            print "Recomendada la imagen '%s' para la bio '%s' de %s:" % (il_image_name, page_title, page_lang)
+            #print "Recomendada la imagen '%s' para la bio '%s' de %s:" % (il_image_name, page_title, page_lang)
             
             try:
                 f.write(salida.encode('utf-8'))
@@ -269,7 +310,7 @@ def main():
     cursors3.close()
     conns3.close()
     
-    print '\n---->(((((Finalmente se encontraron %d imagenes posiblemente utiles)))))<----' % (cc)
+    print '\n---->(((((Finalmente se encontraron %d imagenes posiblemente utiles %f)))))<----' % (cc, time.time()-t1)
     for lang in langs:
         os.system('mysql -h sql -e "use u_emijrp_yarrow;delete from imagesforbio where language=\'%s\';"' % lang)
     os.system('mysql -h sql u_emijrp_yarrow < %s' % candfile)
