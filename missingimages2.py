@@ -89,7 +89,7 @@ def main():
         cursors3.execute('''delete from langlinks where 1''')
         cursors3.execute('''delete from templateimages where 1''')
         cursors3.execute('''delete from images where 1''')
-        cursors3.commit()
+        conns3.commit()
     
     if delete: #si la hemos borrado, recargamos imagenes de commons
         #commons images
