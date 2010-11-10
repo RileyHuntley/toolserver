@@ -143,14 +143,9 @@ def main():
         #imagelinks
         t1=time.time()
         conn.query(r'''
-            SELECT DISTINCT il_from, page_title, il_to
-            FROM imagelinks, page
-            WHERE il_from=page_id
-                AND il_from IN (
-                SELECT DISTINCT cl_from
-                FROM categorylinks, page
-                WHERE cl_from=page_id AND page_namespace=0 AND cl_to RLIKE '%s'
-                )
+            SELECT DISTINCT il_from, il_to
+            FROM imagelinks, page, categorylinks
+            WHERE il_from=page_id AND cl_from=page_id AND page_namespace=0 AND cl_to RLIKE '%s'
             ''' % (bd_cats[lang]))
         r = conn.store_result()
         row = r.fetch_row(maxrows=1, how=1)
@@ -158,10 +153,9 @@ def main():
         while row:
             if len(row) == 1:
                 il_from = int(row[0]['il_from'])
-                page_title = utf8rm_(row[0]['page_title'])
                 il_to = utf8rm_(row[0]['il_to'])
                 cursors3.execute('INSERT INTO imagelinks VALUES (?,?,?)', (lang, il_from, il_to))
-                cursors3.execute('UPDATE pages SET page_has_images=? WHERE page_lang=? AND page_id=? AND page_title=?', (1, lang, il_from, page_title))
+                cursors3.execute('UPDATE pages SET page_has_images=? WHERE page_lang=? AND page_id=?', (1, lang, il_from))
                 c += 1;percent(c)
             row = r.fetch_row(maxrows=1, how=1)
         conns3.commit()
@@ -171,12 +165,8 @@ def main():
         t1=time.time()
         conn.query(r'''
             SELECT DISTINCT ll_from, ll_lang, ll_title
-            FROM langlinks
-            WHERE ll_from IN (
-                SELECT DISTINCT page_id
-                FROM categorylinks, page
-                WHERE cl_from=page_id AND page_namespace=0 AND cl_to RLIKE '%s'
-                )
+            FROM langlinks, page, categorylinks
+            WHERE ll_from=page_id AND cl_from=page_id AND page_namespace=0 AND cl_to RLIKE '%s'
             ''' % (bd_cats[lang]))
         r = conn.store_result()
         row = r.fetch_row(maxrows=1, how=1)
@@ -196,12 +186,8 @@ def main():
         t1=time.time()
         conn.query(r'''
             SELECT DISTINCT il_from, il_to
-            FROM imagelinks
-            WHERE il_from IN (
-                SELECT DISTINCT page_id
-                FROM page
-                WHERE page_namespace=10
-                )
+            FROM imagelinks, page
+            WHERE il_from=page_id AND page_namespace=10
             ''')
         r = conn.store_result()
         row = r.fetch_row(maxrows=1, how=1)
