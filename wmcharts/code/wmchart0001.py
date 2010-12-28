@@ -49,6 +49,7 @@ for row in result:
             edits = int(row2[1])
             #print timestamp, edits
             projects[dbname].append([timestamp, edits])
+        projects[dbname] = projects[dbname][1:] #trip first, it is incomplete
         checked += 1
         cursor2.close()
         conn2.close()
@@ -60,7 +61,9 @@ outputfile = 'wmchart0001.html'
 select = ''
 var1 = []
 c = 0
-for project, values in projects.items():
+projects_list = [[k, v] for k, v in projects.items()] # order
+projects_list.sort()
+for project, values in projects_list:
     if project == 'enwiki_p':
         select += '<option value="%d" selected>%s</option>' % (c, project)
     else:
@@ -72,7 +75,7 @@ output = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http
 <html>
  <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Flot Examples</title>
+    <title>wmcharts - Recent changes edit rate</title>
     <link href="layout.css" rel="stylesheet" type="text/css"></link>
     <!--[if IE]><script language="javascript" type="text/javascript" src="lib/flot/excanvas.min.js"></script><![endif]-->
     <script language="javascript" type="text/javascript" src="lib/flot/jquery.js"></script>
@@ -81,8 +84,12 @@ output = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http
     <body>
     <h1>Recent changes edit rate</h1>
 
+    <p>&lt;&lt; <a href="index.html">Back</a></p>
+    
     <div id="placeholder" style="width:600px;height:300px;"></div>
 
+    <p>This chart shows the recent changes edit rate in the last days.</p>
+    
     <p>Choose a project: <select id="projects" onChange="p()">%s</select></p>
 
 <script id="source">
@@ -90,6 +97,7 @@ function p() {
     var d = %s;
     $.plot($("#placeholder"), [d[document.getElementById('projects').selectedIndex]], { xaxis: { mode: "time" } });
 }
+p();
 </script>
 
  </body>
