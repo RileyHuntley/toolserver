@@ -94,7 +94,7 @@ output = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http
 
 <script id="source">
 function p() {
-    var d1 = %s;
+    var d = %s;
     $.plot($("#placeholder"), [d[document.getElementById('projects').selectedIndex]], { xaxis: { mode: "time" } });
 }
 p();
