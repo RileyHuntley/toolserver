@@ -22,9 +22,8 @@ conn = MySQLdb.connect(host='sql-s1', db='toolserver', read_default_file='~/.my.
 cursor = conn.cursor()
 cursor.execute("SELECT lang, family, CONCAT('sql-s', server) AS dbserver, dbname FROM toolserver.wiki WHERE 1;")
 result = cursor.fetchall()
-checked = 0
 families = ["wikibooks", "wikipedia", "wiktionary", "wikimedia", "wikiquote", "wikisource", "wikinews", "wikiversity", "commons", "wikispecies"]
-projects = {}
+projects={}
 for row in result:
     time.sleep(0.1)
     #if checked > 10:
@@ -50,7 +49,6 @@ for row in result:
             #print timestamp, edits
             projects[dbname].append([timestamp, edits])
         projects[dbname] = projects[dbname][1:] #trip first, it is incomplete
-        checked += 1
         cursor2.close()
         conn2.close()
     except:
@@ -95,7 +93,10 @@ output = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http
 <script id="source">
 function p() {
     var d = %s;
-    $.plot($("#placeholder"), [d[document.getElementById('projects').selectedIndex]], { xaxis: { mode: "time" } });
+    var placeholder = $("#placeholder");
+    var data = [d[document.getElementById('projects').selectedIndex]];
+    var options = { xaxis: { mode: "time" }, lines: {show: true}, points: {show: true} };
+    $.plot(placeholder, data, options);
 }
 p();
 </script>
