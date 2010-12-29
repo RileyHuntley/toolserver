@@ -8,22 +8,23 @@ import re
 import sys
 
 def convert2unix(mwtimestamp):
-    year = int(mwtimestamp.split('T')[0].split('-')[0])
-    month = int(mwtimestamp.split('T')[0].split('-')[1])
-    day = int(mwtimestamp.split('T')[0].split('-')[2])
-    hour = int(mwtimestamp.split('T')[1].split('Z')[0].split(':')[0])
-    minute = int(mwtimestamp.split('T')[1].split('Z')[0].split(':')[1])
-    second = int(mwtimestamp.split('T')[1].split('Z')[0].split(':')[2])
+    #2010-12-25T12:12:12Z
+    [year, month, day] = [int(mwtimestamp[0:4]), int(mwtimestamp[5:7]), int(mwtimestamp[8:10])]
+    [hour, minute, second] = [int(mwtimestamp[11:13]), int(mwtimestamp[14:16]), int(mwtimestamp[17:19])]
     d = datetime.datetime(year=year, month=month, day=day, hour=hour, minute=minute, second=second)
-    unix = int((time.mktime(d.timetuple())+1e-6*d.microsecond)*1000)
-    return unix
+    return int((time.mktime(d.timetuple())+1e-6*d.microsecond)*1000)
 
 conn = MySQLdb.connect(host='sql-s1', db='toolserver', read_default_file='~/.my.cnf', use_unicode=True)
 cursor = conn.cursor()
 cursor.execute("SELECT lang, family, CONCAT('sql-s', server) AS dbserver, dbname FROM toolserver.wiki WHERE 1;")
 result = cursor.fetchall()
 families = ["wikibooks", "wikipedia", "wiktionary", "wikimedia", "wikiquote", "wikisource", "wikinews", "wikiversity", "commons", "wikispecies"]
-projects={}
+queries = {
+    "all": "SELECT CONCAT(YEAR(rc_timestamp),'-',LPAD(MONTH(rc_timestamp),2,'0'),'-',LPAD(DAY(rc_timestamp),2,'0'),'T00:00:00Z') AS date, COUNT(*) AS count FROM recentchanges WHERE rc_timestamp>=DATE_ADD(NOW(), INTERVAL -10 DAY) AND rc_type<=1 GROUP BY date ORDER BY date ASC",
+    "bots": "SELECT CONCAT(YEAR(rc_timestamp),'-',LPAD(MONTH(rc_timestamp),2,'0'),'-',LPAD(DAY(rc_timestamp),2,'0'),'T00:00:00Z') AS date, COUNT(*) AS count FROM recentchanges WHERE rc_timestamp>=DATE_ADD(NOW(), INTERVAL -10 DAY) AND rc_type<=1 AND rc_bot=1 GROUP BY date ORDER BY date ASC",
+    "nobots": "SELECT CONCAT(YEAR(rc_timestamp),'-',LPAD(MONTH(rc_timestamp),2,'0'),'-',LPAD(DAY(rc_timestamp),2,'0'),'T00:00:00Z') AS date, COUNT(*) AS count FROM recentchanges WHERE rc_timestamp>=DATE_ADD(NOW(), INTERVAL -10 DAY) AND rc_type<=1 AND rc_bot=0 GROUP BY date ORDER BY date ASC",
+}
+projects = {}
 for row in result:
     time.sleep(0.1)
     #if checked > 10:
@@ -40,15 +41,17 @@ for row in result:
         cursor2 = conn2.cursor()
         print "OK:", dbserver, dbname
         #cursor2.execute("SELECT CONCAT(YEAR(rc_timestamp),'-',LPAD(MONTH(rc_timestamp),2,'0'),'-',LPAD(DAY(rc_timestamp),2,'0'),'T',LPAD(HOUR(rc_timestamp),2,'0'),':00:00Z') AS date, COUNT(*) AS count FROM recentchanges WHERE rc_timestamp>=DATE_ADD(NOW(), INTERVAL -10 DAY) AND rc_type<=1 GROUP BY date ORDER BY date ASC")
-        cursor2.execute("SELECT CONCAT(YEAR(rc_timestamp),'-',LPAD(MONTH(rc_timestamp),2,'0'),'-',LPAD(DAY(rc_timestamp),2,'0'),'T00:00:00Z') AS date, COUNT(*) AS count FROM recentchanges WHERE rc_timestamp>=DATE_ADD(NOW(), INTERVAL -10 DAY) AND rc_type<=1 GROUP BY date ORDER BY date ASC")
-        result2 = cursor2.fetchall()
-        projects[dbname] = []
-        for row2 in result2:
-            timestamp = convert2unix(row2[0])
-            edits = int(row2[1])
-            #print timestamp, edits
-            projects[dbname].append([timestamp, edits])
-        projects[dbname] = projects[dbname][1:] #trip first, it is incomplete
+        projects[dbname] = {}
+        for queryname, query in queries.items():
+            projects[dbname][queryname] = []
+            cursor2.execute(query)
+            result2 = cursor2.fetchall()
+            for row2 in result2:
+                timestamp = convert2unix(row2[0])
+                edits = int(row2[1])
+                #print timestamp, edits
+                projects[dbname][queryname].append([timestamp, edits])
+            projects[dbname][queryname] = projects[dbname][queryname][1:] #trip first, it is incomplete
         cursor2.close()
         conn2.close()
     except:
@@ -58,6 +61,8 @@ path = '..'
 outputfile = 'wmchart0001.html'
 select = ''
 var1 = []
+var2 = []
+var3 = []
 c = 0
 projects_list = [[k, v] for k, v in projects.items()] # order
 projects_list.sort()
@@ -66,7 +71,9 @@ for project, values in projects_list:
         select += '<option value="%d" selected>%s</option>' % (c, project)
     else:
         select += '<option value="%d">%s</option>' % (c, project)
-    var1.append(values)
+    var1.append(values["all"])
+    var2.append(values["bots"])
+    var3.append(values["nobots"])
     c += 1
 
 output = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -92,10 +99,13 @@ output = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http
 
 <script id="source">
 function p() {
-    var d = %s;
+    var d1 = %s;
+    var d2 = %s;
+    var d3 = %s;
     var placeholder = $("#placeholder");
-    var data = [d[document.getElementById('projects').selectedIndex]];
-    var options = { xaxis: { mode: "time" }, lines: {show: true}, points: {show: true} };
+    var selected = document.getElementById('projects').selectedIndex;
+    var data = [{ data: d1[selected], label: "All"}, { data: d2[selected], label: "Bots"}, { data: d3[selected], label: "No bots"}];
+    var options = { xaxis: { mode: "time" }, lines: {show: true}, points: {show: true}, legend: {noColumns: 3}, };
     $.plot(placeholder, data, options);
 }
 p();
@@ -103,7 +113,7 @@ p();
 
  </body>
 </html>
-""" % (select, str(var1))
+""" % (select, str(var1), str(var2), str(var3))
 
 f = open('%s/%s' % (path, outputfile), 'w')
 f.write(output)
