@@ -39,7 +39,8 @@ bd_cats = { #birth/death categories
     'zh': r'[0-9]+_(年出生|年逝世)',
 }
 
-langs = ['de', 'fr']
+#de: is not interested in this tool
+langs = ['da', 'eo', 'no', 'fr', 'ru', 'es', 'it', 'pl']
 family = 'wikipedia'
 
 def percent(c, d=1000):
