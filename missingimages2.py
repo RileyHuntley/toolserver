@@ -18,15 +18,18 @@ import wikipedia
 bd_cats = { #birth/death categories
     'an': r'\d+_\\((naixencias|muertes)\\)',
     #ar no consigo pegarlo por el lr
+    #arz problemas lr
     'az': r'\d+.+(doğulanlar|vəfat_edənlər)',
     'bar': r'(Geboren|Gestorben)_\d+',
     'be': r'Нарадзіліся_ў_\d+_годзе', #no tienen de fallecimientos?
     'be-x-old': r'(Нарадзіліся_ў_\d+_годзе|Памерлі_ў_\d+_годзе)',
     'bg': r'(Родени_през_\d+_година|Починали_през_\d+_година)',
     #bn numeros raros
+    #bpy numeros raros
     'br': r'(Ganedigezhioù|Marvioù)_\d+',
     'bs': r'\d+_(rođenja|smrti)',
     #ca not
+    'crh': r'\d+_senesinde_(doğğanlar|ölgenler)',
     'cs': r'(Narození|Úmrtí)_\d+',
     'cy': r'(Genedigaethau|Marwolaethau)_\d+',
     'da': r'(Født|Døde)_i_\d+',
@@ -39,19 +42,56 @@ bd_cats = { #birth/death categories
     'et': r'(Sündinud|Surnud)_\d+',
     'eu': r'\d+.+_(jaiotzak|heriotzak)',
     #fa numeros raros
+    'fi': r'Vuonna_\d+_(syntyneet|kuolleet)',
     'fr': r'(Naissance|Décès)_en_\d+',
     'ga': r'(Daoine_a_rugadh|Básanna)_i_\d+',
     'gan': r'\d+(年出世|年過世)',
     'hif': r'\d+_(janam|maut)',
+    'hsb': r'(Rodź|Zemr)\._\d+',
+    'hy': r'\d+_(ծնունդներ|մահեր)',
+    'id': r'(Kelahiran|Kematian)_\d+',
+    'is': r'(Fólk_fætt_árið|Fólk_dáið_árið)_\d+',
     'it': r'(Nati_nel|Morti_nel)_\d+',
-    'ja': r'\d+_(年生|年没)',
+    'ja': r'\d+(年生|年没)',
+    'ka': r'(დაბადებული|გარდაცვლილი)_\d+',
+    'kk': r'\d+(жылы_туғандар|жылы_қайтыс_болғандар)',
+    'ko': r'\d+(년 태어남|년 죽음)',
+    'la': r'(Nati|Mortui)_\d',
+    'lb': r'(Gebuer|Gestuerwen)_\d+',
+    'lv': r'\d+\._(gadā_dzimušie|gadā_mirušie)',
+    'mk': r'(Родени_во_\d+_година|Починати_во_\d+_година)',
+    'ml': r'\d+(\-ൽ_ജനിച്ചവർ|\-ൽ മരിച്ചവർ)',
+    #mr numeros raros
+    'mt': r'(Twieldu_fl\-|Mietu_fl\-)\d+',
+    #new numeros raros
     #nl hasn't got?
+    'nn': r'(Fødde|Døde)_i_\d+',
     'no': r'(Fødsler|Dødsfall)_i_\d+',
-    'pl': r'(Urodzeni_w|Zmarli_w)_\d+',
+    'oc': r'(Naissença|Decès)_en_\d+',
+    'pl': r'(Urodzeni|Zmarli)_w_\d+',
     #pt not
+    'qu': r'(Paqarisqa|Wañusqa)_\d+',
+    'ro': r'(Nașteri|Decese)_în_\d+',
     'ru': r'(Умершие|Родившиеся)_в_\d+_году',
+    'sah': r'\d+_(сыллаахха_төрөөбүттэр|сыллаахха_өлбүттэр)',
+    #error por el codigo del lenguaje? 'simple': r'\d+_(births|deaths)',
+    'sh': r'(Rođeni|Umrli)_\d\.',
+    'sk': r'(Narodenia|Úmrtia)_v_\d+',
+    'sl': r'(Rojeni|Umrli)_leta_\d+',
+    'sq': r'(Lindje|Vdekje)_\d+',
+    'sr': r'(Рођени|Умрли)_\d+\.',
     'sv': r'(Födda|Avlidna)_\d+',
-    'zh': r'\d+_(年出生|年逝世)',
+    'sw': r'(Waliozaliwa|Waliofariki)_\d+',
+    'ta': r'\d+_(பிறப்புகள்|இறப்புகள்)',
+    'te': r'\d+_(జననాలు|మరణాలు)',
+    'th': r'(บุคคลที่เกิดในปี_พ\.ศ\.|บุคคลที่เสียชีวิตในปี_พ\.ศ\.)_\d+',
+    'tl': r'(Ipinanganak|Namatay)_noong_\d+',
+    'tr': r'\d+_(doğumlular|yılında_ölenler)',
+    'uk': r'(Народились|Померли)_\d+',
+    'vi': r'(Sinh|Mất)_\d+',
+    'yo': r'(Àwọn_ọjọ́ìbí|Àwọn_ọjọ́aláìsí)_ní_\d+',
+    'zh': r'\d+(年出生|年逝世)',
+    'zh-yue': r'\d+(年出世|年死)',
 }
 
 #EXCLUDED PROJECTS
