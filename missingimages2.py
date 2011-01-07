@@ -16,31 +16,54 @@ import wikipedia
 #qué hacer con las wikipedias que no tienen categorías de nacimientos y fallecimientos?
 
 bd_cats = { #birth/death categories
-    'an': r'[0-9]+_\\((naixencias|muertes)\\)',
-    'az': r'[0-9]+.+(doğulanlar|vəfat_edənlər)',
+    'an': r'\d+_\\((naixencias|muertes)\\)',
+    #ar no consigo pegarlo por el lr
+    'az': r'\d+.+(doğulanlar|vəfat_edənlər)',
+    'bar': r'(Geboren|Gestorben)_\d+',
+    'be': r'Нарадзіліся_ў_\d+_годзе', #no tienen de fallecimientos?
+    'be-x-old': r'(Нарадзіліся_ў_\d+_годзе|Памерлі_ў_\d+_годзе)',
+    'bg': r'(Родени_през_\d+_година|Починали_през_\d+_година)',
+    #bn numeros raros
+    'br': r'(Ganedigezhioù|Marvioù)_\d+',
+    'bs': r'\d+_(rođenja|smrti)',
     #ca not
-    'da': r'(Født|Døde)_i_[0-9]+',
-    'de': r'(Geboren|Gestorben)_[0-9]+',
-    'el': r'(Γεννήσεις_το|Θάνατοι_το)_[0-9]+',
-    'en': r'[0-9]+_(births|deaths)',
-    'eo': r'(Naskiĝintoj|Mortintoj)_en_[0-9]+',
-    'es': r'(Nacidos|Fallecidos)_en_[0-9]+',
-    'et': r'(Sündinud|Surnud)_[0-9]+',
-    'eu': r'[0-9]+.+_(jaiotzak|heriotzak)',
-    'fr': r'(Naissance|Décès)_en_[0-9]+',
-    'it': r'(Nati_nel|Morti_nel)_[0-9]+',
-    'ja': r'[0-9]+_(年生|年没)',
+    'cs': r'(Narození|Úmrtí)_\d+',
+    'cy': r'(Genedigaethau|Marwolaethau)_\d+',
+    'da': r'(Født|Døde)_i_\d+',
+    #de no están interesados, prohiben usar ciertas imágenes de commons (las que no son PD en Alemania, etc)
+    #'de': r'(Geboren|Gestorben)_\d+',
+    'el': r'(Γεννήσεις_το|Θάνατοι_το)_\d+',
+    'en': r'\d+_(births|deaths)',
+    'eo': r'(Naskiĝintoj|Mortintoj)_en_\d+',
+    'es': r'(Nacidos|Fallecidos)_en_\d+',
+    'et': r'(Sündinud|Surnud)_\d+',
+    'eu': r'\d+.+_(jaiotzak|heriotzak)',
+    #fa numeros raros
+    'fr': r'(Naissance|Décès)_en_\d+',
+    'ga': r'(Daoine_a_rugadh|Básanna)_i_\d+',
+    'gan': r'\d+(年出世|年過世)',
+    'hif': r'\d+_(janam|maut)',
+    'it': r'(Nati_nel|Morti_nel)_\d+',
+    'ja': r'\d+_(年生|年没)',
     #nl hasn't got?
-    'no': r'(Fødsler|Dødsfall)_i_[0-9]+',
-    'pl': r'(Urodzeni_w|Zmarli_w)_[0-9]+',
+    'no': r'(Fødsler|Dødsfall)_i_\d+',
+    'pl': r'(Urodzeni_w|Zmarli_w)_\d+',
     #pt not
-    'ru': r'(Умершие|Родившиеся)_в_[0-9]+_году',
-    'sv': r'(Födda|Avlidna)_[0-9]+',
-    'zh': r'[0-9]+_(年出生|年逝世)',
+    'ru': r'(Умершие|Родившиеся)_в_\d+_году',
+    'sv': r'(Födda|Avlidna)_\d+',
+    'zh': r'\d+_(年出生|年逝世)',
 }
 
-#de: is not interested in this tool
+#EXCLUDED PROJECTS
+excluded = ['de']
+#PROJECTS TO ANALYSE
 langs = ['da', 'eo', 'no', 'fr', 'ru', 'es', 'it', 'pl']
+#REMOVING DUPES AND EXCLUDED
+excluded = set(excluded)
+langs = set(langs)
+for exc in excluded:
+	if exc in langs:
+		langs.remove(exc)
 family = 'wikipedia'
 
 def percent(c, d=1000):
