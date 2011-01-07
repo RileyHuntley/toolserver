@@ -95,16 +95,18 @@ bd_cats = { #birth/death categories
 }
 
 #EXCLUDED PROJECTS
-excluded = ['de']
+excluded = set(['de'])
+#ALL PROJECTS
+alllangs = set(bd_cats.keys()) - excluded
 #PROJECTS TO ANALYSE
-langs = ['da', 'eo', 'no', 'fr', 'ru', 'es', 'it', 'pl']
+langs = set(['da', 'eo', 'no', 'fr', 'ru', 'es', 'it', 'pl'])
 #REMOVING DUPES AND EXCLUDED
-excluded = set(excluded)
-langs = set(langs)
-for exc in excluded:
-	if exc in langs:
-		langs.remove(exc)
+langs = langs - excluded
 family = 'wikipedia'
+
+if len(sys.argv) == 2 and sys.argv[1].lower() == 'all':
+	print 'Analysing all available languages'
+	langs = alllangs
 
 def percent(c, d=1000):
     if c % d == 0: sys.stderr.write('.') #print '\nLlevamos %d' % c
