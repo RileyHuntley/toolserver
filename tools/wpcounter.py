@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import time
 import sys
 import os
 import MySQLdb
@@ -17,7 +18,7 @@ round_number_old=int(round_number_old)
 print "timestamp_old =", timestamp_old, "total_old =", total_old, "round_number_old =", round_number_old
 f.close()
 
-timestamp=int(datetime.datetime.now().strftime('%s'))*1000
+timestamp=int('%d' % time.time())*1000
 total=0.0
 
 conn = MySQLdb.connect(host='sql-s1', db='toolserver', read_default_file='~/.my.cnf', use_unicode=True)
