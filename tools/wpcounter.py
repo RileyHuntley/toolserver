@@ -74,7 +74,7 @@ body {
 }
 div#wrapper{
     display:table;
-    width:100%%;
+    width:100%;
 }
 div#content{
     display:table-cell;vertical-align:middle;
@@ -82,14 +82,14 @@ div#content{
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: center center;
-    height:100%%;
+    height:100%;
     }
 span#header {
-    font-size:250%%;
+    font-size:250%;
     font-weight:bold;
     }
 span#counter {
-    font-size:1000%%;
+    font-size:1000%;
     font-weight:bold;
     }
 p#followus, p#translateit {
@@ -116,7 +116,7 @@ p#author {
     right:10;
     }
 p#f11 {
-    left:50%%;
+    left:50%;
     width:40em;
     margin-left:-20em;
     text-align:center;
@@ -182,7 +182,7 @@ p#author {
     right:10;
     }
 p#f11 {
-    left:50%%;
+    left:50%;
     width:40em;
     margin-left:-20em;
     text-align:center;
