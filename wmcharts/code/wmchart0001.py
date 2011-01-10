@@ -60,8 +60,8 @@ for row in result:
             cursor2.execute(query)
             result2 = cursor2.fetchall()
             for row2 in result2:
-                timestamp = convert2unix(row2[0])
-                edits = int(row2[1])
+                timestamp = '%d' % convert2unix(row2[0]) # '%d' to avoid L of long when str()
+                edits = '%d' % int(row2[1])
                 #print timestamp, edits
                 projects[dbname][queryname].append([timestamp, edits])
             projects[dbname][queryname] = projects[dbname][queryname][1:] #trip first, it is incomplete
