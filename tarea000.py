@@ -100,7 +100,7 @@ def unflaggedBotsList(site):
             else:
                 linesupdated.append(line)
         else:
-            print "error", line
+            print "error, bad format,", line
             linesupdated.append(line)
     bots.sort()
     linesupdated.sort()

@@ -374,7 +374,10 @@ for family, langs in projects.items():
             s=re.sub(ur"(?im)\[\[%s:.*?\]\](\n|$)" % lang, ur"", s)
             page=wikipedia.Page(site, title)
             if projects[family][lang]['rankingusers'] and ((not page.exists()) or (not page.isRedirectPage() and not page.isDisambig() and page.get()!=s and int(page.getVersionHistory(revCount=1)[0][1][8:10])!=datetime.datetime.now().day)):# [0][1] es el timestamp de la última versión del historial, [8:10] es el día del mes, evitamos actualizar dos veces el mismo día
-                page.put(s, resume)
+                try:
+                    page.put(s, resume)
+                except:
+                    print "Error, unable to write to", family, lang, "see user-config.py"
                 time.sleep(delay)
         
         #second ranking
