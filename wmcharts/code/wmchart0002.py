@@ -34,9 +34,9 @@ result = cursor.fetchall()
 families = ["wikibooks", "wikipedia", "wiktionary", "wikimedia", "wikiquote", "wikisource", "wikinews", "wikiversity", "commons", "wikispecies"]
 lastdays = 22 #3 weeks
 queries = {
-    "all": "SELECT CONCAT(YEAR(rc_timestamp),'-',LPAD(MONTH(rc_timestamp),2,'0'),'-',LPAD(DAY(rc_timestamp),2,'0'),'T00:00:00Z') AS date, COUNT(*) AS count FROM recentchanges WHERE rc_timestamp>=DATE_ADD(NOW(), INTERVAL -%d DAY) AND rc_type<=1 GROUP BY date ORDER BY date ASC" % (lastdays),
-    "bots": "SELECT CONCAT(YEAR(rc_timestamp),'-',LPAD(MONTH(rc_timestamp),2,'0'),'-',LPAD(DAY(rc_timestamp),2,'0'),'T00:00:00Z') AS date, COUNT(*) AS count FROM recentchanges WHERE rc_timestamp>=DATE_ADD(NOW(), INTERVAL -%d DAY) AND rc_type<=1 AND rc_bot=1 GROUP BY date ORDER BY date ASC" % (lastdays),
-    "nobots": "SELECT CONCAT(YEAR(rc_timestamp),'-',LPAD(MONTH(rc_timestamp),2,'0'),'-',LPAD(DAY(rc_timestamp),2,'0'),'T00:00:00Z') AS date, COUNT(*) AS count FROM recentchanges WHERE rc_timestamp>=DATE_ADD(NOW(), INTERVAL -%d DAY) AND rc_type<=1 AND rc_bot=0 GROUP BY date ORDER BY date ASC" % (lastdays),
+    "all": "SELECT CONCAT(YEAR(rc_timestamp),'-',LPAD(MONTH(rc_timestamp),2,'0'),'-',LPAD(DAY(rc_timestamp),2,'0'),'T00:00:00Z') AS date, COUNT(*) AS count FROM recentchanges WHERE rc_timestamp>=DATE_ADD(NOW(), INTERVAL -%d DAY) AND rc_new=1 AND rc_namespace=0 AND rc_new_len>=100 GROUP BY date ORDER BY date ASC" % (lastdays),
+    "bots": "SELECT CONCAT(YEAR(rc_timestamp),'-',LPAD(MONTH(rc_timestamp),2,'0'),'-',LPAD(DAY(rc_timestamp),2,'0'),'T00:00:00Z') AS date, COUNT(*) AS count FROM recentchanges WHERE rc_timestamp>=DATE_ADD(NOW(), INTERVAL -%d DAY) AND rc_new=1 AND rc_namespace=0 AND rc_new_len>=100 AND rc_bot=1 GROUP BY date ORDER BY date ASC" % (lastdays),
+    "nobots": "SELECT CONCAT(YEAR(rc_timestamp),'-',LPAD(MONTH(rc_timestamp),2,'0'),'-',LPAD(DAY(rc_timestamp),2,'0'),'T00:00:00Z') AS date, COUNT(*) AS count FROM recentchanges WHERE rc_timestamp>=DATE_ADD(NOW(), INTERVAL -%d DAY) AND rc_new=1 AND rc_namespace=0 AND rc_new_len>=100 AND rc_bot=0 GROUP BY date ORDER BY date ASC" % (lastdays),
 }
 projects = {}
 for row in result:
@@ -71,7 +71,7 @@ for row in result:
         print "Error in", dbserver, dbname
 
 path = '..'
-outputfile = 'wmchart0001.html'
+outputfile = 'wmchart0002.html'
 select = ''
 var1 = []
 var2 = []
@@ -106,7 +106,7 @@ output = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http
     
     <div id="placeholder" style="width:800px;height:400px;"></div>
 
-    <p>This chart shows the recent changes edit rate in the last days.</p>
+    <p>This chart shows how many pages have been created in the last days.</p>
     
     <p>Choose a project: <select id="projects" onChange="p()">%s</select></p>
 
