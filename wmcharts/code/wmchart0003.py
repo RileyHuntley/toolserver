@@ -15,85 +15,24 @@
 
 from wmchart0000 import *
 
-conn = MySQLdb.connect(host='sql-s1', db='toolserver', read_default_file='~/.my.cnf', use_unicode=True)
-cursor = conn.cursor()
-cursor.execute("SELECT lang, family, CONCAT('sql-s', server) AS dbserver, dbname FROM toolserver.wiki WHERE 1;")
-result = cursor.fetchall()
-families = ["wikibooks", "wikipedia", "wiktionary", "wikimedia", "wikiquote", "wikisource", "wikinews", "wikiversity", "commons", "wikispecies"]
-lastdays = 22 #3 weeks
-queries = {
-    "uploads": "SELECT CONCAT(YEAR(log_timestamp),'-',LPAD(MONTH(log_timestamp),2,'0'),'-',LPAD(DAY(log_timestamp),2,'0'),'T00:00:00Z') AS date, COUNT(*) AS count FROM logging WHERE log_timestamp>=DATE_ADD(NOW(), INTERVAL -%d DAY) AND log_action='upload' GROUP BY date ORDER BY date ASC" % (lastdays),
-}
-projects = {}
-for row in result:
-    time.sleep(0.1)
-    #if checked > 10:
-    #    break
-    lang = row[0]
-    family = row[1]
-    if family not in families:
-        continue
-    dbserver = row[2]+"-fast"
-    dbname = row[3]
-    
-    try:
-        conn2 = MySQLdb.connect(host=dbserver, db=dbname, read_default_file='~/.my.cnf', use_unicode=True)
-        cursor2 = conn2.cursor()
-        print "OK:", dbserver, dbname
-        projects[dbname] = {}
-        for queryname, query in queries.items():
-            projects[dbname][queryname] = []
-            cursor2.execute(query)
-            result2 = cursor2.fetchall()
-            for row2 in result2:
-                timestamp = '%d' % convert2unix(row2[0]) # '%d' to avoid L of long when str()
-                edits = '%d' % int(row2[1])
-                #print timestamp, edits
-                projects[dbname][queryname].append([timestamp, edits])
-            projects[dbname][queryname] = projects[dbname][queryname][1:] #trip first, it is incomplete
-        cursor2.close()
-        conn2.close()
-    except:
-        print "Error in", dbserver, dbname
-
 path = '..'
-outputfile = 'wmchart0003.html'
-select = ''
+filename = 'wmchart0003.html'
+title = 'File uploads'
+description = "This chart shows how many files have been uploaded in the last days."
+
+projectdbs = getProjectDatabases()
+
+queries = [
+    ["Uploads", "SELECT CONCAT(YEAR(log_timestamp),'-',LPAD(MONTH(log_timestamp),2,'0'),'-',LPAD(DAY(log_timestamp),2,'0'),'T00:00:00Z') AS date, COUNT(*) AS count FROM logging WHERE log_timestamp>=DATE_ADD(NOW(), INTERVAL -%d DAY) AND log_action='upload' GROUP BY date ORDER BY date ASC" % (lastdays)],
+]
+projects = runQueries(projectdbs=projectdbs, queries=queries)
+select = generateHTMLSelect(projects)
+
 var1 = []
-c = 0
-projects_list = [[k, v] for k, v in projects.items()] # order
-projects_list.sort()
-for project, values in projects_list:
-    if project == 'enwiki_p':
-        select += '<option value="%d" selected>%s</option>' % (c, project)
-    else:
-        select += '<option value="%d">%s</option>' % (c, project)
-    var1.append(values["uploads"])
-    c += 1
+for project, values in projects:
+    var1.append(values["Uploads"])
 
-output = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
- <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>wmcharts - File uploads</title>
-    <link href="layout.css" rel="stylesheet" type="text/css"></link>
-    <!--[if IE]><script language="javascript" type="text/javascript" src="lib/flot/excanvas.min.js"></script><![endif]-->
-    <script language="javascript" type="text/javascript" src="lib/flot/jquery.js"></script>
-    <script language="javascript" type="text/javascript" src="lib/flot/jquery.flot.js"></script>
- </head>
-    <body>
-    <h1>File uploads</h1>
-
-    <p>&lt;&lt; <a href="index.html">Back</a></p>
-    
-    <div id="placeholder" style="width:800px;height:350px;"></div>
-
-    <p>This chart shows how many files have been uploaded in the last days.</p>
-    
-    <p>Choose a project: <select id="projects" onChange="p()">%s</select></p>
-
-<script id="source">
-function p() {
+js = """function p() {
     var d1 = %s;
     var placeholder = $("#placeholder");
     var selected = document.getElementById('projects').selectedIndex;
@@ -101,13 +40,7 @@ function p() {
     var options = { xaxis: { mode: "time" }, bars: {show: true}, legend: {noColumns: 1}, };
     $.plot(placeholder, data, options);
 }
-p();
-</script>
+p();""" % (str(var1))
 
- </body>
-</html>
-""" % (select, str(var1))
-
-f = open('%s/%s' % (path, outputfile), 'w')
-f.write(output)
-f.close()
+output = generateHTML(title=title, description=description, select=select, js=js)
+writeHTML(path=path, filename=filename, output=output)
