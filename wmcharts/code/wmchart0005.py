@@ -17,30 +17,34 @@ from wmchart0000 import *
 
 path = '..'
 filename = 'wmchart0005.html'
-title = 'Blocked users'
-description = "This chart shows how many users have been blocked in the last days."
+title = 'Blocks and unblocks'
+description = "This chart shows how many blocks and unblocks were made in the last days."
 
 projectdbs = getProjectDatabases()
 
 queries = [
     ["Blocks", "SELECT CONCAT(YEAR(log_timestamp),'-',LPAD(MONTH(log_timestamp),2,'0'),'-',LPAD(DAY(log_timestamp),2,'0'),'T00:00:00Z') AS date, COUNT(*) AS count FROM logging WHERE log_timestamp>=DATE_ADD(NOW(), INTERVAL -%d DAY) AND log_action='block' GROUP BY date ORDER BY date ASC" % (lastdays)],
+    ["Unblocks", "SELECT CONCAT(YEAR(log_timestamp),'-',LPAD(MONTH(log_timestamp),2,'0'),'-',LPAD(DAY(log_timestamp),2,'0'),'T00:00:00Z') AS date, COUNT(*) AS count FROM logging WHERE log_timestamp>=DATE_ADD(NOW(), INTERVAL -%d DAY) AND log_action='unblock' GROUP BY date ORDER BY date ASC" % (lastdays)],
 ]
 projects = runQueries(projectdbs=projectdbs, queries=queries)
 select = generateHTMLSelect(projects)
 
 var1 = []
+var2 = []
 for project, values in projects:
     var1.append(values["Blocks"])
+    var2.append(values["Unblocks"])
 
 js = """function p() {
     var d1 = %s;
+    var d2 = %s;
     var placeholder = $("#placeholder");
     var selected = document.getElementById('projects').selectedIndex;
-    var data = [{ data: d1[selected], label: "Blocks"}];
-    var options = { xaxis: { mode: "time" }, lines: {show: true}, points: {show: true}, legend: {noColumns: 1}, };
+    var data = [{ data: d1[selected], label: "Blocks"}, { data: d2[selected], label: "Unblocks"}];
+    var options = { xaxis: { mode: "time" }, lines: {show: true}, points: {show: true}, legend: {noColumns: 2}, };
     $.plot(placeholder, data, options);
 }
-p();""" % (str(var1))
+p();""" % (str(var1), str(var2))
 
 output = generateHTML(title=title, description=description, select=select, js=js)
 writeHTML(path=path, filename=filename, output=output)
