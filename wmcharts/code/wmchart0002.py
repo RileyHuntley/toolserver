@@ -20,13 +20,6 @@ import time
 import re
 import sys
 
-def convert2unix(mwtimestamp):
-    #2010-12-25T12:12:12Z
-    [year, month, day] = [int(mwtimestamp[0:4]), int(mwtimestamp[5:7]), int(mwtimestamp[8:10])]
-    [hour, minute, second] = [int(mwtimestamp[11:13]), int(mwtimestamp[14:16]), int(mwtimestamp[17:19])]
-    d = datetime.datetime(year=year, month=month, day=day, hour=hour, minute=minute, second=second)
-    return int((time.mktime(d.timetuple())+1e-6*d.microsecond)*1000)
-
 conn = MySQLdb.connect(host='sql-s1', db='toolserver', read_default_file='~/.my.cnf', use_unicode=True)
 cursor = conn.cursor()
 cursor.execute("SELECT lang, family, CONCAT('sql-s', server) AS dbserver, dbname FROM toolserver.wiki WHERE 1;")
@@ -93,18 +86,18 @@ output = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http
 <html>
  <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>wmcharts - Recent changes edit rate</title>
+    <title>wmcharts - New pages rate</title>
     <link href="layout.css" rel="stylesheet" type="text/css"></link>
     <!--[if IE]><script language="javascript" type="text/javascript" src="lib/flot/excanvas.min.js"></script><![endif]-->
     <script language="javascript" type="text/javascript" src="lib/flot/jquery.js"></script>
     <script language="javascript" type="text/javascript" src="lib/flot/jquery.flot.js"></script>
  </head>
     <body>
-    <h1>Recent changes edit rate</h1>
+    <h1>New pages rate</h1>
 
     <p>&lt;&lt; <a href="index.html">Back</a></p>
     
-    <div id="placeholder" style="width:800px;height:400px;"></div>
+    <div id="placeholder" style="width:800px;height:350px;"></div>
 
     <p>This chart shows how many pages have been created in the last days.</p>
     
