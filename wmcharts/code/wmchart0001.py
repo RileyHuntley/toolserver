@@ -15,7 +15,6 @@
 
 from wmchart0000 import *
 
-path = '..'
 filename = 'wmchart0001.html'
 title = 'Recent changes edit rate'
 description = "This chart shows the recent changes edit rate in the last days."
@@ -51,4 +50,4 @@ js = """function p() {
 p();""" % (str(var1), str(var2), str(var3))
 
 output = generateHTML(title=title, description=description, select=select, js=js)
-writeHTML(path=path, filename=filename, output=output)
+writeHTML(filename=filename, output=output)

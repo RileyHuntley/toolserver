@@ -15,7 +15,6 @@
 
 from wmchart0000 import *
 
-path = '..'
 filename = 'wmchart0004.html'
 title = 'Deletions and restorations'
 description = "This chart shows how many deletions and restorations were made in the last days."
@@ -47,4 +46,4 @@ js = """function p() {
 p();""" % (str(var1), str(var2))
 
 output = generateHTML(title=title, description=description, select=select, js=js)
-writeHTML(path=path, filename=filename, output=output)
+writeHTML(filename=filename, output=output)

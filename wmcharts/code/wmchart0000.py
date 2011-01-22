@@ -15,6 +15,7 @@
 
 import datetime
 import MySQLdb
+import os
 import time
 
 families = ["wikibooks", "wikipedia", "wiktionary", "wikimedia", "wikiquote", "wikisource", "wikinews", "wikiversity", "commons", "wikispecies"]
@@ -109,15 +110,16 @@ def generateHTML(title, description, select, js):
     
     <p>Choose a project: <select id="projects" onChange="p()">%s</select></p>
 
+    <p><i>This page was last updated on <!-- timestamp -->%s<!-- timestamp --> (UTC).</i></p>
 <script id="source">
 %s
 </script>
 
  </body>
 </html>
-""" % (title, title, description, select, js)
+""" % (title, title, description, select, datetime.datetime.now(), js)
 
-def writeHTML(path, filename, output):
-    f = open('%s/%s' % (path, filename), 'w')
+def writeHTML(filename, output):
+    f = open(os.path.expanduser('~/public_html/wmcharts/%s' % (filename)), 'w')
     f.write(output)
     f.close()

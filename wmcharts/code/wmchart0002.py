@@ -15,7 +15,6 @@
 
 from wmchart0000 import *
 
-path = '..'
 filename = 'wmchart0002.html'
 title = 'New pages rate'
 description = "This chart shows how many pages have been created in the last days."
@@ -51,4 +50,4 @@ js = """function p() {
 p();""" % (str(var1), str(var2), str(var3))
 
 output = generateHTML(title=title, description=description, select=select, js=js)
-writeHTML(path=path, filename=filename, output=output)
+writeHTML(filename=filename, output=output)
