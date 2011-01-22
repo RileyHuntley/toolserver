@@ -31,7 +31,7 @@ select = generateHTMLSelect(projects)
 var1 = []
 var2 = []
 for project, values in projects:
-    var1.append(values["Deletes"])
+    var1.append(values["Deletions"])
     var2.append(values["Restorations"])
 
 js = """function p() {
