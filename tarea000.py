@@ -252,6 +252,7 @@ def isExcluded(tarea, family, lang):
                 'ko', #no les interesa http://es.wikipedia.org/w/index.php?title=Usuario_Discusi%C3%B3n:Emijrp&diff=35727924&oldid=35727631
                 'pl', #ya tienen uno http://es.wikipedia.org/w/index.php?title=Usuario_Discusi%C3%B3n:Emijrp&diff=35726268&oldid=35726116
                 'hu', #ya tienen su propio ranking http://hu.wikipedia.org/wiki/Wikip%C3%A9dia:Wikip%C3%A9dist%C3%A1k_list%C3%A1ja_szerkeszt%C3%A9ssz%C3%A1m_szerint lo desactivo porque les recreaba las páginas /begin y /end
+                'ten', #no es idioma, es el wiki de los 10 anyos
                 ],
             'wiktionary': [],
             'wikinews': [],

@@ -142,7 +142,7 @@ projects={
         'ja': tt500,
         'nl': tt500,
         'no': tt500,
-        'pt': tt500,
+        'pt': tt1000,
         'ro': tt500,
         'ru': tt500,
         'simple': tt500,
