@@ -143,8 +143,7 @@ $("#placeholder").bind("plothover", function (event, pos, item) {
             showTooltip(item.pageX, item.pageY,
                         "y = "+Math.round(y));
         }
-    }
-    else {
+    } else {
         $("#tooltip").remove();
         previousPoint = null;            
     }
