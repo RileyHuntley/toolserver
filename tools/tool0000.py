@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import datetime
-import Gnuplot
 import re
 import urllib
 
@@ -43,62 +42,11 @@ def getPHPHeader(tool_id=0, tool_title=""):
 <title>emijrp's tools</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta http-equiv="Content-Style-Type" content="text/css" />
+<link href="style.css" rel="stylesheet" type="text/css"></link>
 <meta name="generator" content="Sitio web hecho a manopla" />
 <meta name="description" content="emijrp tools"/>
 <meta name="keywords" content="emijrp,toolserver,tools,wikipedia,wiki"/> 
 <meta name="author" content="emijrp"/>
-<style>
-body {
-    margin-left: 42px;
-    margin-right: 42px;
-    background: #ffffff;
-    /*color: #002070;*/
-    font-family: Verdana, Arial, Helvetica, sans-serif;
-    font-size: 12px;
-}
-h1 {
-    font-weight: bold;
-    font-size: 16px;
-}
-
-h2 {
-    font-size: 14px;
-}
-
-/* table style from http://es.wikipedia.org/wiki/MediaWiki:Common.css */
-table.wikitable, table.prettytable {
-    margin: 1em 1em 1em 1em;
-    padding: 0.5em;
-    font-size: 95%;
-    background-color: #f9f9f9;
-    border: 1px #aaa solid;
-    border-collapse: collapse;
-    text-align: center;
-}
-table.wikitable th, table.wikitable td,
-table.prettytable th, table.prettytable td {
-    border: 1px #aaa solid;
-    padding: 0.2em;
-}
-table.wikitable th,
-table.prettytable th {
-    background-color: #f2f2f2;
-    text-align: center;
-}
-table.wikitable caption,
-table.prettytable caption {
-    margin-left: inherit;
-    margin-right: inherit;
-}
-
-img {
-    border: 0px;
-    margin: 5px;
-}
-/*
-estilo para los párrafos.-.
-*/
-</style>
 </head>
 <body>
 <!-- start content -->
@@ -132,16 +80,18 @@ ob_end_flush();
 """ % datetime.datetime.now()
 
 def getPHPTools():
-    return u"""<h2>My best tools (or I think so)</h2>
+    return u"""<!--<h2>My best tools (or I think so)</h2>-->
 <ul>
 <li><a href="imagesforbio/"><i>Images for biographies</i></a>: it shows a list of biographies missing images, with image proposals. It helps to include images in <a href="http://toolserver.org/~emijrp/imagesforbio/stats.php">+150 Wikipedia projects</a>, also in the smallest ones. Thousands of images have been included in articles ussing this method. Yay!</li>
 <li><a href="wikimediacounter/">Wikimedia counter</a>: this counter shows the number of edits made in all the Wikimedia Foundation projects (Wikipedia, Wiktionary, Wikibooks, Wikiquote, Wikisource, Wikinews, Wikiversity, Meta, Wikispecies and Commons). The 1,000,000,000 (one billion) milestone was reached in <a href="wikimediacounter/onebillion.png">April 16, 2010</a>. Congratulations!</li>
+<li><a href="wmcharts/">Wmcharts</a>: a lot of charts about Wikimedia projects activity.</li>
 <li><a href="wikimania/">Wikimania TV</a>: this is a mashup developed in a few minutes for Wikimania 2010 in Poland. It shows the video streaming for the rooms, the IRC channel and related tweets. Wikimania 2010 was finished, so, you can't see more streaming : (.</li>
 <li><a href="best/"><i>Best free images</i></a>: a selection of the best Wikimedia Commons images that you can vote.</li>
 <li><a href="tutoriales/">Tutorials</a>: some tutorials in Spanish for Wikipedia beginners.</li>
 <li>(more soon...)</li>
 </ul>
 
+<!--
 <h2>More tools</h2>
 Here, you can see most of my <b>tools</b>. I hope they are useful:
 
@@ -177,13 +127,12 @@ Here, you can see most of my <b>tools</b>. I hope they are useful:
 <li><a href="tool0028/"></a></li>
 
 </ol>
-
+-->
 <h2>Some old and very out-of-date tools</h2>
 
-<ol>
+<ul>
 <li><a href="wikiasearch/">Wikia Search design</a>: a proposed design for Wikia Search search engine that was closed some time ago.</li>
-<li>(more soon... <i>tempus fugit</i>)</li>
-</ol>
+</ul>
 
 """
 
@@ -194,9 +143,8 @@ def writeToFile(filename, output):
 
 def createIndex():
     output=u"""%s
-<h2>Introduction</h2>
 <p><img src="Wikihands.jpg" alt="me" style="clear:right;float:right"/></p>
-<p><b>¡Welcome!</b> This is my userpage in <a href="http://toolserver.org">Toolserver</a> <a href="http://en.wikipedia.org/wiki/Webserver">webserver</a>. My username is <b>emijrp</b> (real name Emilio), I'm from Spain and I usually edit in <a href="http://es.wikipedia.org">Spanish Wikipedia</a> (you can see <a href="http://es.wikipedia.org/wiki/User:Emijrp">my userpage</a> there).</p>
+<p><b>¡Welcome!</b> This is my userpage in <a href="http://toolserver.org">Toolserver</a> <a href="http://en.wikipedia.org/wiki/Webserver">webserver</a>. My username is <b>emijrp</b> (real name Emilio), I'm from Spain and I usually edit in <a href="http://en.wikipedia.org">English Wikipedia</a> (you can see <a href="http://en.wikipedia.org/wiki/User:Emijrp">my userpage</a> there).</p>
 
 %s
 
@@ -247,6 +195,7 @@ OLD DESIGN
 """ % (getPHPHeader(), getPHPTools(), getPHPFooter())
     writeToFile("/home/emijrp/public_html/index.php", output)
 
+"""
 def printBarsGraph(title, file, headers, rows):
     xtics = ""
     for xtic in rows[0]:
@@ -275,6 +224,7 @@ def printBarsGraph(title, file, headers, rows):
         gp.plot(plots[0], plots[1], plots[2])
     gp.hardcopy(filename=file,terminal="png")
     gp.close()
+"""
 
 createIndex()
 

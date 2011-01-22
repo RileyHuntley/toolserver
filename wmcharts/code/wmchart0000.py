@@ -94,15 +94,16 @@ def generateHTML(title, description, select, js):
  <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>wmcharts - %s</title>
-    <link href="layout.css" rel="stylesheet" type="text/css"></link>
+    <link href="../style.css" rel="stylesheet" type="text/css"></link>
     <!--[if IE]><script language="javascript" type="text/javascript" src="lib/flot/excanvas.min.js"></script><![endif]-->
     <script language="javascript" type="text/javascript" src="lib/flot/jquery.js"></script>
     <script language="javascript" type="text/javascript" src="lib/flot/jquery.flot.js"></script>
  </head>
     <body>
-    <h1>%s</h1>
-
-    <p>&lt;&lt; <a href="index.html">Back</a></p>
+    <!-- start content -->
+    <h1><a href="http://toolserver.org/~emijrp">emijrp's tools</a></h1>
+    <hr/>
+    <h2><a href="http://toolserver.org/~emijrp/wmcharts/">wmcharts</a> - %s</h2>
     
     <div id="placeholder" style="width:800px;height:350px;"></div>
 
@@ -110,14 +111,17 @@ def generateHTML(title, description, select, js):
     
     <p>Choose a project: <select id="projects" onChange="p()">%s</select></p>
 
-    <p><i>This page was last updated on <!-- timestamp -->%s<!-- timestamp --> (UTC).</i></p>
 <script id="source">
 %s
 </script>
 
- </body>
+<hr/>
+<div style="float: right;"><a href="http://toolserver.org"><img src="../wikimedia-toolserver-button.png" alt="Powered by Toolserver"></a></div>
+<p><i>This page was last modified on <!-- timestamp -->%s<!-- timestamp --> (UTC).</i></p>
+<!-- end content -->
+</body>
 </html>
-""" % (title, title, description, select, datetime.datetime.now(), js)
+""" % (title, title, description, select, js, datetime.datetime.now())
 
 def writeHTML(filename, output):
     f = open(os.path.expanduser('~/public_html/wmcharts/%s' % (filename)), 'w')
