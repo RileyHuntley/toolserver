@@ -36,8 +36,8 @@ var3 = []
 var4 = []
 for project, values in projects:
     var1.append(values["All"])
-    var2.append(values["Create"])
-    var3.append(values["Autocreate"])
+    var2.append(values["Created"])
+    var3.append(values["Autocreated"])
     var4.append(values["Delegated"])
 
 js = """function p() {
