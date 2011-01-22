@@ -36,7 +36,7 @@ js = """function p() {
     var placeholder = $("#placeholder");
     var selected = document.getElementById('projects').selectedIndex;
     var data = [{ data: d1[selected], label: "Uploads"}];
-    var options = { xaxis: { mode: "time" }, lines: {show: true}, points: {show: true}, legend: {noColumns: 1}, };
+    var options = { xaxis: { mode: "time" }, lines: {show: true}, points: {show: true}, legend: {noColumns: 1}, grid: { hoverable: true }, };
     $.plot(placeholder, data, options);
 }
 p();""" % (str(var1))

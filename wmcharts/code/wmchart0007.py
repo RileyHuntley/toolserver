@@ -48,7 +48,7 @@ js = """function p() {
     var placeholder = $("#placeholder");
     var selected = document.getElementById('projects').selectedIndex;
     var data = [{ data: d1[selected], label: "All"}, { data: d2[selected], label: "Created"}, { data: d3[selected], label: "Autocreated"}, { data: d4[selected], label: "Delegated"}];
-    var options = { xaxis: { mode: "time" }, lines: {show: true}, points: {show: true}, legend: {noColumns: 4}, };
+    var options = { xaxis: { mode: "time" }, lines: {show: true}, points: {show: true}, legend: {noColumns: 4}, grid: { hoverable: true }, };
     $.plot(placeholder, data, options);
 }
 p();""" % (str(var1), str(var2), str(var3), str(var4))
