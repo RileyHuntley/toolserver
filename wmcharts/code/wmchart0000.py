@@ -114,6 +114,7 @@ def generateHTML(title, description, select, js):
 <script id="source">
 %s
 
+//from http://people.iola.dk/olau/flot/examples/interacting.html
 function showTooltip(x, y, contents) {
     $('<div id="tooltip">' + contents + '</div>').css( {
         position: 'absolute',
