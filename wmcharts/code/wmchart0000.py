@@ -34,10 +34,13 @@ def connectDB(dbserver, dbname):
 def createCursor(conn):
     return conn.cursor()
 
-def getProjectDatabases():
+def getProjectDatabases(lang='', family=''):
     conn = connectDB(dbserver='sql-s1', dbname='toolserver')
     cursor = createCursor(conn=conn)
-    cursor.execute("SELECT lang, family, CONCAT('sql-s', server) AS dbserver, dbname FROM toolserver.wiki WHERE 1;")
+    if lang and family:
+        cursor.execute("SELECT lang, family, CONCAT('sql-s', server) AS dbserver, dbname FROM toolserver.wiki WHERE lang='%s' AND family='%s';" % (lang, family))
+    else:
+        cursor.execute("SELECT lang, family, CONCAT('sql-s', server) AS dbserver, dbname FROM toolserver.wiki WHERE 1;")
     result = cursor.fetchall()
     projectdbs = []
     for row in result:
