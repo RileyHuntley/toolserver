@@ -37,14 +37,12 @@ var2 = []
 var3 = []
 var4 = []
 var5 = []
-varother = []
 for project, values in projects:
     var1.append(values["All"])
     var2.append(values["ClueBot NG"])
     var3.append(values["XLinkBot"])
     var4.append(values["Huggle"])
     var5.append(values["Twinkle"])
-    varother.append(values["All"]-(values["ClueBot NG"]+values["XLinkBot"]+values["Huggle"]+values["Twinkle"]))
 
 js = """function p() {
     var d1 = %s;
@@ -52,14 +50,13 @@ js = """function p() {
     var d3 = %s;
     var d4 = %s;
     var d5 = %s;
-    var dother = %s;
     var placeholder = $("#placeholder");
     var selected = document.getElementById('projects').selectedIndex;
-    var data = [{ data: d1[selected], label: "All"}, { data: d2[selected], label: "ClueBot NG"}, { data: d3[selected], label: "XLinkBot"}, { data: d4[selected], label: "Huggle"}, { data: d5[selected], label: "Twinkle"}, { data: dother[selected], label: "Other"}];
-    var options = { xaxis: { mode: "time" }, lines: {show: true}, points: {show: true}, legend: {noColumns: 6}, grid: { hoverable: true }, };
+    var data = [{ data: d1[selected], label: "All"}, { data: d2[selected], label: "ClueBot NG"}, { data: d3[selected], label: "XLinkBot"}, { data: d4[selected], label: "Huggle"}, { data: d5[selected], label: "Twinkle"}];
+    var options = { xaxis: { mode: "time" }, lines: {show: true}, points: {show: true}, legend: {noColumns: 5}, grid: { hoverable: true }, };
     $.plot(placeholder, data, options);
 }
-p();""" % (str(var1), str(var2), str(var3), str(var4), str(var5), str(varother))
+p();""" % (str(var1), str(var2), str(var3), str(var4), str(var5))
 
 output = generateHTML(title=title, description=description, select=select, js=js)
 writeHTML(filename=filename, output=output)
