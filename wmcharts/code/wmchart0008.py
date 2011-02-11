@@ -28,7 +28,8 @@ queries = [
     ["XLinkBot", "SELECT CONCAT(YEAR(rc_timestamp),'-',LPAD(MONTH(rc_timestamp),2,'0'),'-',LPAD(DAY(rc_timestamp),2,'0'),'T00:00:00Z') AS date, COUNT(*) AS count FROM recentchanges WHERE rc_timestamp>=DATE_ADD(NOW(), INTERVAL -%d DAY) AND rc_type=0 AND rc_namespace=0 AND rc_comment rlike '%s' AND rc_user_text='XLinkBot' GROUP BY date ORDER BY date ASC" % (lastdays, undo)],
     ["Huggle", "SELECT CONCAT(YEAR(rc_timestamp),'-',LPAD(MONTH(rc_timestamp),2,'0'),'-',LPAD(DAY(rc_timestamp),2,'0'),'T00:00:00Z') AS date, COUNT(*) AS count FROM recentchanges WHERE rc_timestamp>=DATE_ADD(NOW(), INTERVAL -%d DAY) AND rc_type=0 AND rc_namespace=0 AND rc_comment rlike '%s' AND rc_comment rlike 'WP:HG' GROUP BY date ORDER BY date ASC" % (lastdays, undo)],
     ["Twinkle", "SELECT CONCAT(YEAR(rc_timestamp),'-',LPAD(MONTH(rc_timestamp),2,'0'),'-',LPAD(DAY(rc_timestamp),2,'0'),'T00:00:00Z') AS date, COUNT(*) AS count FROM recentchanges WHERE rc_timestamp>=DATE_ADD(NOW(), INTERVAL -%d DAY) AND rc_type=0 AND rc_namespace=0 AND rc_comment rlike '%s' AND rc_comment rlike 'WP:TW' GROUP BY date ORDER BY date ASC" % (lastdays, undo)],
-    ["STiki", "SELECT CONCAT(YEAR(rc_timestamp),'-',LPAD(MONTH(rc_timestamp),2,'0'),'-',LPAD(DAY(rc_timestamp),2,'0'),'T00:00:00Z') AS date, COUNT(*) AS count FROM recentchanges WHERE rc_timestamp>=DATE_ADD(NOW(), INTERVAL -%d DAY) AND rc_type=0 AND rc_namespace=0 AND rc_comment rlike '%s' AND rc_comment rlike 'Wikipedia:STiki' GROUP BY date ORDER BY date ASC" % (lastdays, undo)],
+    ["STiki", "SELECT CONCAT(YEAR(rc_timestamp),'-',LPAD(MONTH(rc_timestamp),2,'0'),'-',LPAD(DAY(rc_timestamp),2,'0'),'T00:00:00Z') AS date, COUNT(*) AS count FROM recentchanges WHERE rc_timestamp>=DATE_ADD(NOW(), INTERVAL -%d DAY) AND rc_type=0 AND rc_namespace=0 AND rc_comment rlike '%s' AND rc_comment rlike 'WP:STiki' GROUP BY date ORDER BY date ASC" % (lastdays, undo)],
+    ["Igloo", "SELECT CONCAT(YEAR(rc_timestamp),'-',LPAD(MONTH(rc_timestamp),2,'0'),'-',LPAD(DAY(rc_timestamp),2,'0'),'T00:00:00Z') AS date, COUNT(*) AS count FROM recentchanges WHERE rc_timestamp>=DATE_ADD(NOW(), INTERVAL -%d DAY) AND rc_type=0 AND rc_namespace=0 AND rc_comment rlike '%s' AND rc_comment rlike 'GLOO' GROUP BY date ORDER BY date ASC" % (lastdays, undo)],
 ]
 projects = runQueries(projectdbs=projectdbs, queries=queries)
 select = generateHTMLSelect(projects)
@@ -39,6 +40,8 @@ var3 = []
 var4 = []
 var5 = []
 var6 = []
+var7 = []
+varother = []
 for project, values in projects:
     var1.append(values["All"])
     var2.append(values["ClueBot NG"])
@@ -46,6 +49,17 @@ for project, values in projects:
     var4.append(values["Huggle"])
     var5.append(values["Twinkle"])
     var6.append(values["STiki"])
+    var7.append(values["Igloo"])
+    
+    valuesother = []
+    for timestamp, value in values["All"]:
+        add = 0
+        for tool in [values["ClueBot NG"], values["XLinkBot"], values["Huggle"], values["Twinkle"], values["STiki"], values["Igloo"]]:
+            for timestamp2, value2 in tool:
+                if timestamp == timestamp2:
+                    add += value2
+        valuesother.append([timestamp, value-add])
+    varother.append(valuesother)
 
 js = """function p() {
     var d1 = %s;
@@ -54,13 +68,15 @@ js = """function p() {
     var d4 = %s;
     var d5 = %s;
     var d6 = %s;
+    var d7 = %s;
+    var dother = %s;
     var placeholder = $("#placeholder");
     var selected = document.getElementById('projects').selectedIndex;
-    var data = [{ data: d1[selected], label: "All"}, { data: d2[selected], label: "ClueBot NG"}, { data: d3[selected], label: "XLinkBot"}, { data: d4[selected], label: "Huggle"}, { data: d5[selected], label: "Twinkle"}, { data: d5[selected], label: "STiki"}];
-    var options = { xaxis: { mode: "time" }, lines: {show: true}, points: {show: true}, legend: {noColumns: 6}, grid: { hoverable: true }, };
+    var data = [{ data: d1[selected], label: "All"}, { data: d2[selected], label: "ClueBot NG"}, { data: d3[selected], label: "XLinkBot"}, { data: d4[selected], label: "Huggle"}, { data: d5[selected], label: "Twinkle"}, { data: d6[selected], label: "STiki"}, { data: d7[selected], label: "Igloo"}, { data: dother[selected], label: "Other"}];
+    var options = { xaxis: { mode: "time" }, lines: {show: true}, points: {show: true}, legend: {noColumns: 8}, grid: { hoverable: true }, };
     $.plot(placeholder, data, options);
 }
-p();""" % (str(var1), str(var2), str(var3), str(var4), str(var5), str(var6))
+p();""" % (str(var1), str(var2), str(var3), str(var4), str(var5), str(var6), str(var7), str(varother))
 
 output = generateHTML(title=title, description=description, select=select, js=js)
 writeHTML(filename=filename, output=output)
