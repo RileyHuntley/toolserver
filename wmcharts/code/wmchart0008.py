@@ -57,8 +57,8 @@ for project, values in projects:
         for tool in [values["ClueBot NG"], values["XLinkBot"], values["Huggle"], values["Twinkle"], values["STiki"], values["Igloo"]]:
             for timestamp2, value2 in tool:
                 if timestamp == timestamp2:
-                    add += value2
-        valuesother.append([timestamp, value-add])
+                    add += int(value2)
+        valuesother.append([timestamp, int(value)-add])
     varother.append(valuesother)
 
 js = """function p() {
