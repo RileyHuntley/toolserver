@@ -17,7 +17,7 @@ from wmchart0000 import *
 
 filename = 'wmchart0008.html'
 title = 'Reverts'
-description = "This chart shows how many edits were reverted in the last days."
+description = "This chart shows how many edits were reverted in the namespace=0 (articles) in the last days."
 
 projectdbs = getProjectDatabases(lang='en', family='wikipedia')
 
@@ -28,6 +28,7 @@ queries = [
     ["XLinkBot", "SELECT CONCAT(YEAR(rc_timestamp),'-',LPAD(MONTH(rc_timestamp),2,'0'),'-',LPAD(DAY(rc_timestamp),2,'0'),'T00:00:00Z') AS date, COUNT(*) AS count FROM recentchanges WHERE rc_timestamp>=DATE_ADD(NOW(), INTERVAL -%d DAY) AND rc_type=0 AND rc_namespace=0 AND rc_comment rlike '%s' AND rc_user_text='XLinkBot' GROUP BY date ORDER BY date ASC" % (lastdays, undo)],
     ["Huggle", "SELECT CONCAT(YEAR(rc_timestamp),'-',LPAD(MONTH(rc_timestamp),2,'0'),'-',LPAD(DAY(rc_timestamp),2,'0'),'T00:00:00Z') AS date, COUNT(*) AS count FROM recentchanges WHERE rc_timestamp>=DATE_ADD(NOW(), INTERVAL -%d DAY) AND rc_type=0 AND rc_namespace=0 AND rc_comment rlike '%s' AND rc_comment rlike 'WP:HG' GROUP BY date ORDER BY date ASC" % (lastdays, undo)],
     ["Twinkle", "SELECT CONCAT(YEAR(rc_timestamp),'-',LPAD(MONTH(rc_timestamp),2,'0'),'-',LPAD(DAY(rc_timestamp),2,'0'),'T00:00:00Z') AS date, COUNT(*) AS count FROM recentchanges WHERE rc_timestamp>=DATE_ADD(NOW(), INTERVAL -%d DAY) AND rc_type=0 AND rc_namespace=0 AND rc_comment rlike '%s' AND rc_comment rlike 'WP:TW' GROUP BY date ORDER BY date ASC" % (lastdays, undo)],
+    ["STiki", "SELECT CONCAT(YEAR(rc_timestamp),'-',LPAD(MONTH(rc_timestamp),2,'0'),'-',LPAD(DAY(rc_timestamp),2,'0'),'T00:00:00Z') AS date, COUNT(*) AS count FROM recentchanges WHERE rc_timestamp>=DATE_ADD(NOW(), INTERVAL -%d DAY) AND rc_type=0 AND rc_namespace=0 AND rc_comment rlike '%s' AND rc_comment rlike 'Wikipedia:STiki' GROUP BY date ORDER BY date ASC" % (lastdays, undo)],
 ]
 projects = runQueries(projectdbs=projectdbs, queries=queries)
 select = generateHTMLSelect(projects)
@@ -37,12 +38,14 @@ var2 = []
 var3 = []
 var4 = []
 var5 = []
+var6 = []
 for project, values in projects:
     var1.append(values["All"])
     var2.append(values["ClueBot NG"])
     var3.append(values["XLinkBot"])
     var4.append(values["Huggle"])
     var5.append(values["Twinkle"])
+    var6.append(values["STiki"])
 
 js = """function p() {
     var d1 = %s;
@@ -50,13 +53,14 @@ js = """function p() {
     var d3 = %s;
     var d4 = %s;
     var d5 = %s;
+    var d6 = %s;
     var placeholder = $("#placeholder");
     var selected = document.getElementById('projects').selectedIndex;
-    var data = [{ data: d1[selected], label: "All"}, { data: d2[selected], label: "ClueBot NG"}, { data: d3[selected], label: "XLinkBot"}, { data: d4[selected], label: "Huggle"}, { data: d5[selected], label: "Twinkle"}];
-    var options = { xaxis: { mode: "time" }, lines: {show: true}, points: {show: true}, legend: {noColumns: 5}, grid: { hoverable: true }, };
+    var data = [{ data: d1[selected], label: "All"}, { data: d2[selected], label: "ClueBot NG"}, { data: d3[selected], label: "XLinkBot"}, { data: d4[selected], label: "Huggle"}, { data: d5[selected], label: "Twinkle"}, { data: d5[selected], label: "STiki"}];
+    var options = { xaxis: { mode: "time" }, lines: {show: true}, points: {show: true}, legend: {noColumns: 6}, grid: { hoverable: true }, };
     $.plot(placeholder, data, options);
 }
-p();""" % (str(var1), str(var2), str(var3), str(var4), str(var5))
+p();""" % (str(var1), str(var2), str(var3), str(var4), str(var5), str(var6))
 
 output = generateHTML(title=title, description=description, select=select, js=js)
 writeHTML(filename=filename, output=output)
