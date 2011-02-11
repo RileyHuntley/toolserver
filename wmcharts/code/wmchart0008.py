@@ -72,7 +72,7 @@ js = """function p() {
     var dother = %s;
     var placeholder = $("#placeholder");
     var selected = document.getElementById('projects').selectedIndex;
-    var data = [{ data: d1[selected], label: "All"}, { data: d2[selected], label: "ClueBot NG"}, { data: d3[selected], label: "XLinkBot"}, { data: d4[selected], label: "Huggle"}, { data: d5[selected], label: "Twinkle"}, { data: d6[selected], label: "STiki"}, { data: d7[selected], label: "Igloo"}, { data: dother[selected], label: "Other"}];
+    var data = [{ data: d1[selected], label: "All"}, { data: d2[selected], label: "ClueBot NG"}, { data: d3[selected], label: "XLinkBot"}, { data: d4[selected], label: "Huggle"}, { data: d5[selected], label: "Twinkle"}, { data: d6[selected], label: "STiki"}, { data: d7[selected], label: "Igloo"}, { data: dother[selected], label: "Other (probably handy)"}];
     var options = { xaxis: { mode: "time" }, lines: {show: true}, points: {show: true}, legend: {noColumns: 8}, grid: { hoverable: true }, };
     $.plot(placeholder, data, options);
 }
