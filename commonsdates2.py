@@ -65,7 +65,7 @@ def main():
     inicio_own=ur"(?im)^(?P<inicio> *\| *Source *\= *)"
     fin_own=ur"[ \.]*(?P<fin> *[\n\r\|])" #eliminamos . finales que no permiten hacer la conversión
     #CUIDADO con own photograph! http://commons.wikimedia.org/w/index.php?title=File:Teatro_Coccia_chandelier.jpg&diff=next&oldid=19903214
-    #ideas: own photo, own photograph
+    #no reemplazar: own photo, own photograph (en todo caso meterlo entre paréntesis) {{own}} (own photograph)
     own_synonym=[ur"own[ \-]*work", ur"Own[ \-]*work by uploader", ur"Opera creata dall\'uploader \(own work by uploader\)", ur"self[ \-]*made", ur"eie[ \-]*werk", ur"Treballo de qui la cargó", ur"Trabayu propiu", ur"Уласны твор", ur"Собствена творба", ur"Vlastito djelo", ur"Treball propi", ur"Vlastní dílo", ur"Eget arbejde", ur"Eigene Arbeit", ur"Propra verko", ur"Trabajo propio", ur"self[ \-]*made *\/ *foto propia", ur"Üleslaadija oma töö", ur"Oma teos", ur"Travail personnel", ur"Traballo propio", ur"Vlastito djelo postavljača", ur"A feltöltő saját munkája", ur"Karya sendiri", ur"Opera propria", ur"Opus proprium", ur"Mano darbas", ur"Egen Wark", ur"Eigen waark", ur"Eigen werk", ur"Eget arbeide", ur"Trabalh personal", ur"Ejen Woakj", ur"Praca własna", ur"Trabalho próprio", ur"Operă proprie", ur"Vlastné dielo", ur"Lastno delo", ur"Eget arbete", ur"Sariling gawa", ur"Opera creata e caricata dall\'autore \(own work by uploader\)", ur"Own work \- Vlastné dielo"] #no meter  ()
     regexp_own=ur"%s(?P<change>\[?\[?(%s)\]?\]?)%s" % (inicio_own, "|".join(own_synonym), fin_own)
     sub_own=ur"\g<inicio>{{Own}}\g<fin>"
@@ -256,7 +256,7 @@ def main():
                     summary+=u" %s → %s;" % (change_sum, changed_sum)
                 
                 wikipedia.output(summary)
-                #page.put(newtext, summary)
+                page.put(newtext, summary)
                 modif+=1
                 est=total/anal*modif
                 print "%d analysed, %d modified, estimated total edits: %d" % (anal, modif, est)
