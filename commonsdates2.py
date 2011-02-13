@@ -125,7 +125,7 @@ def main():
             if int(day)>12 and int(month)>12: #error
                 print "Error: ambas fechas mayores de 12"
                 log = wikipedia.Page(commonssite, u"User:Emijrp/Commons dates")
-                log.put(u'\n* [[:%s]] (wrong date?)' % (wtitle))
+                log.put(u'%s\n* [[:%s]] (wrong date?)' % (wtext, wtitle), 'BOT - Impossible date')
                 continue
             elif int(day)<=12 and int(month)<=12: #usamos metadatos para evitar ambiguedad
                 continue #revisar esta rama del if, verificar que compara los 3 metadatos posibles y coinciden 
