@@ -27,8 +27,7 @@ import re, urllib, sys, time, getopt
 import wikipedia, catlib, pagegenerators
 
 def main():
-    """Localisation for dates (YYYY-MM-DD) and some usual headings in images descriptions in Commons
-    """
+    """Localisation for dates (YYYY-MM-DD) and some usual headings in images descriptions in Commons"""
     try:
         opts, args = getopt.getopt(sys.argv[1:], "h", ["help"])
     except getopt.error, msg:
@@ -39,7 +38,11 @@ def main():
         if o in ("-h", "--help"):
             print main.__doc__
             sys.exit(0)
-
+    
+    total=8500000
+    modif=0
+    anal=0
+    
     ratelimit=15
     commonssite=wikipedia.Site('commons', 'commons')
     st=u"!"
@@ -51,7 +54,7 @@ def main():
     inicio=ur"(?im)^(?P<inicio> *\| *Date *\= *)"
     # eliminamos . finales que no permiten hacer la conversión de fechas
     # no meter el espacio en [ \.]* al comienzo http://commons.wikimedia.org/w/index.php?title=File:18crown6.2.png&diff=prev&oldid=39395458
-    fin=ur"\.*(?P<fin>[ \.]*[\n\r\|])" 
+    fin=ur"[ \.]*(?P<fin> *[\n\r\|])" 
 
     #dd/mm/aaaa
     separador_ddmmaaaa=[ur" *[\-\/\,\. ] *"]  #cuidado no meter ()
@@ -72,7 +75,7 @@ def main():
     fin_lic=ur"(?P<fin> *[\n\r])"
     lic_synonym=[ur"Licensing", ur"License", ur"\[\[Commons\:Copyright tags\|Licensing\]\]", ur"Licencia", ur"Lizenz", ur"Licence", ur"Licencja", ur"Licença", ur"ライセンス", ur"Лицензирование", ur"Licencado", ur"ترخيص", ur"\[\[Commons\:Copyright tags\|ترخيص\]\]", ur"Licenţiere", ur"Licenza", ur"Licenza d\'uso", ur"Licentie", ur"Llicència", ur"Licenc", ur"Lisenssi", ur"\[\[COM\:TOM\|Lisenssi\]\]"]  #no meter  ()
     regexp_lic=ur"(?im)^%s(?P<h1>\=\=) *(?P<change>\[?\[?(%s)\]?\]? *\:?) *(?P<h2>\=\=)%s" % (inicio_lic, "|".join(lic_synonym), fin_lic)
-    sub_lic=ur"\g<h1> {{int:license}} \g<h2>\g<fin>"
+    sub_lic=ur"\g<h1> {{int:license-header}} \g<h2>\g<fin>"
 
     #== Summary ==
     inicio_sum=ur"" #noseusade momento
@@ -86,27 +89,24 @@ def main():
     regexp_changed=ur"(?m)^ *\| *Date *\= *(?P<changed>\d{4}\-\d{2}\-\d{2})"
     regexp_changed_aaaamm=ur"(?m)^ *\| *Date *\= *(?P<changed>\d{4}\-\d{2})"
     regexp_changed_own=ur"(?m)^ *\| *Source *\= *(?P<changed>\{\{Own\}\})"
-    regexp_changed_lic=ur"(?m)^\=+ *(?P<changed>\{\{int:license\}\}) *\=+"
+    regexp_changed_lic=ur"(?m)^\=+ *(?P<changed>\{\{int:license-header\}\}) *\=+"
     regexp_changed_sum=ur"(?m)^\=+ *(?P<changed>\{\{int:filedesc\}\}) *\=+"
     for page in pre:
         if not page.exists() or page.isRedirectPage() or page.isDisambig():
             continue
-        
+        anal+=1
         wtitle=page.title()
         wtext=newtext=page.get()
     
-        if re.search(ur"(?i)(\{\{ *User\:Tivedshambo\/Information|\<nowiki\>)", wtext): #http://commons.wikimedia.org/wiki/User_talk:Emijrp
-            #nowiki para evitar imágenes con historiales de otras wikis
+        if re.search(ur"(?i)\{\{ *User\:Tivedshambo\/Information", wtext) or \
+           re.search(ur"(?i)\<nowiki\>", wtext): #nowiki para evitar imágenes con historiales de otras wikis
             continue
         
         change=u""
         changed=""
         metadatadate=""
         if len(re.findall(regexp_ddmmaaaa, newtext))==1: # dd mm aaaa ó mm dd aaaa genericos
-            wikipedia.output(wtitle)
-            
             m=re.compile(regexp_ddmmaaaa).finditer(newtext)
-            
             year=month=day=u""
             for i in m:
                 change=i.group("change")
@@ -124,8 +124,11 @@ def main():
             #day <= 12 y month > 12 invertir
             if int(day)>12 and int(month)>12: #error
                 print "Error: ambas fechas mayores de 12"
+                log = wikipedia.Page(commonssite, u"User:Emijrp/Commons dates")
+                log.put(u'\n* [[:%s]] (wrong date?)' % (wtitle))
                 continue
             elif int(day)<=12 and int(month)<=12: #usamos metadatos para evitar ambiguedad
+                continue #revisar esta rama del if, verificar que compara los 3 metadatos posibles y coinciden 
                 #metadatos
                 metadata=wikipedia.query.GetData({'action':'query', 'prop':'imageinfo', 'iiprop':'metadata', 'titles':'%s' % re.sub(" ", "_", page.title())},site=wikipedia.Site('commons','commons'),useAPI=True)
                 metadata=metadata['query']['pages'][metadata['query']['pages'].keys()[0]]['imageinfo'][0]['metadata']
@@ -169,13 +172,14 @@ def main():
                 aux=day
                 day=month
                 month=aux
+            elif int(day)>12:
+                pass #ok
             
             newtext=re.sub(regexp_ddmmaaaa, sub_ddmmaaaa % (year, month, day), newtext, 1)
             m=re.compile(regexp_changed).finditer(newtext)
             for i in m:
                 changed=i.group("changed")
                 break
-   
     
         #{{Own}}
         change_own=u""
@@ -194,7 +198,7 @@ def main():
                     changed_own=i.group("changed")
                     break
     
-        #== {{int:license}} ==
+        #== {{int:license-header}} ==
         change_lic=u""
         changed_lic=u""
         """if True or newtext!=wtext:
@@ -229,6 +233,7 @@ def main():
                     break"""
         
         if newtext!=wtext:
+            wikipedia.output(wtitle)
             wikipedia.showDiff(wtext, newtext)
             #time.sleep(3)
             if c>=ratelimit:
@@ -249,8 +254,12 @@ def main():
                     summary+=u" %s → %s;" % (change_lic, changed_lic)
                 if changed_sum:
                     summary+=u" %s → %s;" % (change_sum, changed_sum)
-            
-                page.put(newtext, summary)
+                
+                wikipedia.output(summary)
+                #page.put(newtext, summary)
+                modif+=1
+                est=total/anal*modif
+                print "%d analysed, %d modified, estimated total edits: %d" % (anal, modif, est)
                 c+=1
             except:
                 pass
