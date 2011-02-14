@@ -33,7 +33,7 @@ plantillas = {
     'de':[u'Commons', u'Commonscat', u'CommonsCat'],
     'eo':[u'Commons', u'Commonscat'],
     'es':[u'Commonscat', u'Commons cat', u'Ccat', u'Commons'],
-    'en':[u'Commons',u'Pic',u'Commonspar',u'Commonspiped',u'Commonsme',u'Siisterlinkswp',u'Wikicommons',u'Commons-gallery',u'Gallery-link',u'Commons cat',u'Commonscat',u'Commons2',u'CommonsCat',u'Cms-catlit-up',u'Catlst commons',u'Commonscategory',u'Commonscat',u'Commonscat-inline',u'Commons cat left',u'Commons cat multi',u'Commons page',u'Commons-inline',u'Commonstiny',u'Commonstmp',u'Sistercommons',u'Sisterlinks',u'Sisterlinks2'],
+    'en':[u'Commons',u'Commons+cat',u'Pic',u'Commonspar',u'Commonspiped',u'Commonsme',u'Siisterlinkswp',u'Wikicommons',u'Commons-gallery',u'Gallery-link',u'Commons cat',u'Commonscat',u'Commons2',u'CommonsCat',u'Cms-catlit-up',u'Catlst commons',u'Commonscategory',u'Commonscat',u'Commonscat-inline',u'Commons cat left',u'Commons cat multi',u'Commons page',u'Commons-inline',u'Commonstiny',u'Commonstmp',u'Sistercommons',u'Sisterlinks',u'Sisterlinks2'],
     'hu':[u'Commons',u'Közvagyonkat',u'Commons-natúr',u'Taxobox'], #taxobox por http://hu.wikipedia.org/w/index.php?title=Szerkeszt%C5%91vita:Syp/Arch%C3%ADv06&diff=next&oldid=4606364#Taxobox_and_BOTijo
     #'it':[u'Commons',u'Commonscat'],
     'pt':[u'Commons',u'Commons1',u'Commonscat',u'Commons2',u'Correlato/commons',u'Correlatos'],
@@ -79,8 +79,8 @@ row = r.fetch_row(maxrows=1, how=1)
 while row:
     if len(row) == 1:
         page_id = int(row[0]['page_id'])
-        page_title = re.sub('_', ' ', utf8rm_(row[0]['page_title']))
-        ll_title = re.sub('_', ' ', utf8rm_(row[0]['ll_title']))
+        page_title = re.sub('_', ' ', unicode(row[0]['page_title'], 'utf-8'))
+        ll_title = re.sub('_', ' ', unicode(row[0]['ll_title'], 'utf-8'))
         commons[page_id] = [page_title, ll_title, 0]
         c += 1;percent(c)
     row = r.fetch_row(maxrows=1, how=1)
@@ -108,7 +108,7 @@ row = r.fetch_row(maxrows=1, how=1)
 while row:
     if len(row) == 1:
         page_id = int(row[0]['page_id'])
-        page_title = re.sub('_', ' ', utf8rm_(row[0]['page_title']))
+        page_title = re.sub('_', ' ', unicode(row[0]['page_title'], 'utf-8'))
         usocommons.add(page_title)
         c += 1;percent(c)
     row = r.fetch_row(maxrows=1, how=1)
