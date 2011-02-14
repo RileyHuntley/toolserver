@@ -167,9 +167,8 @@ for k, v in commons.items():
                     if re.search(regexp[lang], text):
                         newtext=re.sub(regexp[lang], ur'\1\n{{Commons|%s}}' % v[0], text)
                         wikipedia.showDiff(text, newtext)
-                        #page.put(newtext, u'BOT - Adding link to Commons: [[:commons:%s|%s]] (TESTING SOME EDITS, SUPERVISED)' % (v[0], v[0]))
                         page.put(newtext, u'BOT - %s: [[:commons:%s|%s]]' % (summary, v[0], v[0]))
-                        #time.sleep(10)
+                        time.sleep(10)
                         cc += 1
         except:
             pass
