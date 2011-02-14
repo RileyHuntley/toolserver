@@ -127,8 +127,9 @@ row = r.fetch_row(maxrows=1, how=1)
 while row:
     if len(row) == 1:
         il_from = int(row[0]['il_from'])
-        commons[il_from][2] += 1
-        c += 1;percent(c)
+        if commons.has_key(il_from):
+            commons[il_from][2] += 1
+            c += 1;percent(c)
     row = r.fetch_row(maxrows=1, how=1)
 
 print 'Cargadas %d imagenes en galerias' % (c)
