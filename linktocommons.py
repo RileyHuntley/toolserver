@@ -17,6 +17,7 @@
 import wikipedia, os, sys, re, time
 import MySQLdb
 import tarea000
+import random
 
 def percent(c):
     if c % 10000 == 0:
@@ -26,6 +27,9 @@ lang = 'en'
 if len(sys.argv) >= 2:
     lang = sys.argv[1]
 family = 'wikipedia'
+
+sandbox = wikipedia.Page(wikipedia.Site(lang, family), u'User:Emijrp/Sanbox')
+sandbox.put(u'%d' % (random.randint(100,999)), u'BOT - Sanbox')
 
 plantillas = {
     'af':[u'Commons', u'CommonsKategorie', u'Commonscat', u'CommonsKategorie-inlyn'],
@@ -147,9 +151,10 @@ if summaries.has_key(lang):
     summary=summaries[lang]
 
 for k, v in commons.items():
+    time.time(0.1) #para ctrl-c
     if v[1] not in usocommons and v[2]>=5:
         c += 1
-        wikipedia.output(u'%d) %s %s %s [Llevamos %d de %d]' % (c, k, v[0], v[1], cc, c))
+        wikipedia.output(u'%d) %s * %s * %s [Llevamos %d de %d]' % (c, k, v[0], v[1], cc, c))
         
         if re.search(ur'(?i)(atlas)', v[0]):
             continue
