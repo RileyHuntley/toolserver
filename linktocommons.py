@@ -28,8 +28,8 @@ if len(sys.argv) >= 2:
     lang = sys.argv[1]
 family = 'wikipedia'
 
-sandbox = wikipedia.Page(wikipedia.Site(lang, family), u'User:Emijrp/Sanbox')
-sandbox.put(u'%d' % (random.randint(100,999)), u'BOT - Sanbox')
+sandbox = wikipedia.Page(wikipedia.Site(lang, family), u'User:Emijrp/Sandbox')
+sandbox.put(u'%d' % (random.randint(100,999)), u'BOT - Sandbox')
 
 plantillas = {
     'af':[u'Commons', u'CommonsKategorie', u'Commonscat', u'CommonsKategorie-inlyn'],
@@ -151,7 +151,7 @@ if summaries.has_key(lang):
     summary=summaries[lang]
 
 for k, v in commons.items():
-    time.time(0.1) #para ctrl-c
+    time.sleep(0.1) #para ctrl-c
     if v[1] not in usocommons and v[2]>=5:
         c += 1
         wikipedia.output(u'%d) %s * %s * %s [Llevamos %d de %d]' % (c, k, v[0], v[1], cc, c))
