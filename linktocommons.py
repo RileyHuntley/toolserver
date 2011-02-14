@@ -137,7 +137,7 @@ print 'Cargadas %d imagenes en galerias' % (c)
 #salida
 evitar='' #lo dejamos en blanco para que falle si no tenemos plantillas para cierto idioma
 if plantillas.has_key(lang):
-    evitar = '|'.join([re.sub(' ', '_', k2) for k2 in plantillas[lang].keys()])
+    evitar = '|'.join([re.sub(' ', '_', k2) for k2 in plantillas[lang]])
 wikipedia.output(evitar)
 
 c=0
