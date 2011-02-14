@@ -119,7 +119,7 @@ print 'Cargados %d pageid/pagetitle de paginas de %s: que ya apuntan a Commons' 
 conncommons.query(r'''
     SELECT DISTINCT il_from
     FROM imagelinks
-    WHERE il_from IN (SELET page_id FROM page WHERE page_namespace=0 AND page_is_redirect=0);
+    WHERE il_from IN (SELECT page_id FROM page WHERE page_namespace=0 AND page_is_redirect=0);
     ''')
 r = conncommons.store_result()
 c = 0
