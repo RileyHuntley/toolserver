@@ -148,7 +148,7 @@ if summaries.has_key(lang):
     summary=summaries[lang]
 
 for k, v in commons.items():
-    if not usocommons.has_key(v[1]) and v[2]>=5:
+    if v[1] not in usocommons and v[2]>=5:
         c += 1
         wikipedia.output(u'%d) %s %s %s [Llevamos %d de %d]' % (c, k, v[0], v[1], cc, c))
         
