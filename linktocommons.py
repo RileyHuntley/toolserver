@@ -92,10 +92,10 @@ while row:
 print 'Cargados %d pageid/pagetitle/lltitle para commons con interwiki a %s:' % (c, lang)
 
 #que paginas de lang.wikipedia.org tienen ya enlace hacia commons?
-evitar=u'' #lo dejamos en blanco para que falle si no tenemos plantillas para cierto idioma
+evitar=u"""""" #lo dejamos en blanco para que falle si no tenemos plantillas para cierto idioma
 if plantillas.has_key(lang):
     for k in plantillas[lang]:
-        evitar+=u'tl_title=\'%s\' or ' % re.sub(' ', '_', k)
+        evitar+=u'''tl_title='%s' or ''' % re.sub(' ', '_', k)
     evitar=evitar[:len(evitar)-4]
 wikipedia.output(evitar)
 
