@@ -95,10 +95,9 @@ if plantillas.has_key(lang):
     evitar=evitar[:len(evitar)-4]
 wikipedia.output(evitar)
 
-c=0
 usocommons=set()
 connlang.query(r'''
-    SELECT DISTINCT page_id, page_title
+    SELECT DISTINCT page_title
     FROM templatelinks, page
     WHERE tl_from=page_id and page_namespace=0 and page_is_redirect=0 and (%s);
     ''' % (evitar.encode('utf-8')))
@@ -107,7 +106,7 @@ c = 0
 row = r.fetch_row(maxrows=1, how=1)
 while row:
     if len(row) == 1:
-        page_id = int(row[0]['page_id'])
+        #page_id = int(row[0]['page_id'])
         page_title = re.sub('_', ' ', unicode(row[0]['page_title'], 'utf-8'))
         usocommons.add(page_title)
         c += 1;percent(c)
@@ -117,10 +116,10 @@ print 'Cargados %d pageid/pagetitle de paginas de %s: que ya apuntan a Commons' 
 
 #cuantas imagenes tienen las galerias? merece la pena enlazar?
 conncommons.query(r'''
-    SELECT DISTINCT il_from
+    SELECT il_from
     FROM imagelinks
     WHERE il_from IN (SELECT page_id FROM page WHERE page_namespace=0 AND page_is_redirect=0);
-    ''')
+    ''') #no poner distinct
 r = conncommons.store_result()
 c = 0
 row = r.fetch_row(maxrows=1, how=1)
