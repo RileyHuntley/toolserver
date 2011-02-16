@@ -251,8 +251,8 @@ for family, langs in projects.items():
                 if optoutpage.exists() and not optoutpage.isRedirectPage():
                     mm=re.compile(ur"\[\[ *[^\:]+? *\: *(?P<useroptout>[^\]\|]+?) *[\]\|]").finditer(optoutpage.get())
                     for ii in mm:
-                        optouts.append(ii.group("useroptout"))
-        print "Excluidos", optouts
+                        optouts.append(re.sub('_', ' ', ii.group("useroptout")))
+        #print "Excluidos", optouts
         bots+=tarea000.botList(site)
         bots+=tarea000.unflaggedBotsList(site)
         admins=tarea000.adminList(site)
