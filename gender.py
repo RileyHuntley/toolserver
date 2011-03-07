@@ -28,7 +28,10 @@ users = []
 edits = {}
 for row in result:
     if len(users) < limit:
-        nick = nick_ = unicode(row[0], 'utf-8')
+        try:
+            nick = nick_ = unicode(row[0], 'utf-8')
+        except:
+            nick = nick_ = unicode(row[0], 'iso-8859-1')
         nick = re.sub('_', ' ', nick)
         nick_ = re.sub(' ', '_', nick_)
         if nick in bots or nick_ in bots:
@@ -51,7 +54,7 @@ while c < len(users):
     userschunk = users[c-jump:c]
     query = wikipedia.query.GetData({'action':'query', 'list':'users', 'ususers':'|'.join(userschunk), 'usprop':'gender'}, site=site, useAPI=True)
     for user in query['query']['users']:
-        if user['name'] in users:
+        if user['name'] in users and user.has_key('gender'):
             genders[user['name']] = user['gender']
         else:
             print "Error retrieving gender:", user['name']
@@ -61,7 +64,7 @@ male = 0
 female = 0
 unknown = 0
 for user in users:
-    if user not in bots:
+    if user not in bots and genders.has_key(user):
         #print user, genders[user], edits[user]
         if genders[user] == 'male':
             male += 1
