@@ -17,7 +17,7 @@ site = wikipedia.Site(lang, family)
 conn = MySQLdb.connect(host='%s-fast' % server, read_default_file='~/.my.cnf', use_unicode=True)
 cursor = conn.cursor()
 cursor.execute("use %s;" % dbname)
-cursor.execute("select user_name, user_editcount from user where user_editcount!=0 order by user_editcount desc limit %d;" % (limit*2))
+cursor.execute("select user_name, user_editcount from user where user_editcount>=10 order by user_editcount desc limit %d;" % (limit*2))
 result = cursor.fetchall()
 cursor.close()
 conn.close()
@@ -44,7 +44,7 @@ print lang, family, len(users), 'usuarios'
 #genders
 genders = {}
 c = 0
-jump = 25
+jump = 50
 while c < len(users):
     c += jump
     #http://en.wikipedia.org/w/api.php?action=query&list=users&ususers=brion|TimStarling&usprop=groups|editcount|gender
