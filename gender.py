@@ -17,37 +17,45 @@ site = wikipedia.Site(lang, family)
 conn = MySQLdb.connect(host='%s-fast' % server, read_default_file='~/.my.cnf', use_unicode=True)
 cursor = conn.cursor()
 cursor.execute("use %s;" % dbname)
-cursor.execute("select user_name, user_editcount from user where user_editcount!=0 order by user_editcount desc limit %d;" % (limit))
+cursor.execute("select user_name, user_editcount from user where user_editcount!=0 order by user_editcount desc limit %d;" % (limit*2))
 result = cursor.fetchall()
 cursor.close()
 conn.close()
 
+bots = botList(site)
+
 users = []
 edits = {}
 for row in result:
-    nick = nick_ = unicode(row[0], 'utf-8')
-    nick = re.sub('_', ' ', nick)
-    nick_ = re.sub(' ', '_', nick_)
-    ed = int(row[1])
-    users.append(nick)
-    edits[nick] = ed
+    if len(users) < limit:
+        nick = nick_ = unicode(row[0], 'utf-8')
+        nick = re.sub('_', ' ', nick)
+        nick_ = re.sub(' ', '_', nick_)
+        if nick in bots or nick_ in bots:
+            continue
+        ed = int(row[1])
+        users.append(nick)
+        edits[nick] = ed
 
 users.sort()
 users.reverse()
-bots = botList(site)
+print lang, family, len(users), 'usuarios'
 
 #genders
 genders = {}
 c = 0
+jump = 25
 while c < len(users):
-    c += 10
+    c += jump
     #http://en.wikipedia.org/w/api.php?action=query&list=users&ususers=brion|TimStarling&usprop=groups|editcount|gender
-    query = wikipedia.query.GetData({'action':'query', 'list':'users', 'ususers':'|'.join(users[c-10:c]), 'usprop':'gender'}, site=site, useAPI=True)
+    userschunk = users[c-jump:c]
+    query = wikipedia.query.GetData({'action':'query', 'list':'users', 'ususers':'|'.join(userschunk), 'usprop':'gender'}, site=site, useAPI=True)
     for user in query['query']['users']:
         if user['name'] in users:
             genders[user['name']] = user['gender']
         else:
-            print "Error", user['name']
+            print "Error retrieving gender:", user['name']
+            print userschunk
 
 male = 0
 female = 0
@@ -62,6 +70,6 @@ for user in users:
         elif genders[user] == 'unknown':
             unknown += 1
         else:
-            print "Error", user
+            print "Value error for", user
 
 print 'male =', male, ', female =', female, ', unknown =', unknown, ', 1 woman per', male/female, 'men'
