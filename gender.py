@@ -12,7 +12,10 @@ family = sys.argv[2]
 limit = int(sys.argv[3])
 dbname = getDbname(lang, family)
 server = getServer(lang, family)
-site = wikipedia.Site(lang, family)
+if family == 'wikispecies':
+    site = wikipedia.Site(lang, 'species')
+else:
+    site = wikipedia.Site(lang, family)
 
 print lang, family, dbname, server
 conn = MySQLdb.connect(host='%s-fast' % server, read_default_file='~/.my.cnf', use_unicode=True)
