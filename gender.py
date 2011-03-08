@@ -14,6 +14,7 @@ dbname = getDbname(lang, family)
 server = getServer(lang, family)
 site = wikipedia.Site(lang, family)
 
+print lang, family, dbname, server
 conn = MySQLdb.connect(host='%s-fast' % server, read_default_file='~/.my.cnf', use_unicode=True)
 cursor = conn.cursor()
 cursor.execute("use %s;" % dbname)

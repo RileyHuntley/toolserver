@@ -183,9 +183,12 @@ def getNamespaceName(lang, family, nsnumber):
 def getDbname(lang, family):
     if lang=='simple':
         lang='en-simple'
+    multilang = 0
+    if family in ['commons', 'wikispecies']:
+        multilang = 1
     conn = MySQLdb.connect(host='sql', db='toolserver', read_default_file='~/.my.cnf', use_unicode=True)
     cursor = conn.cursor()
-    cursor.execute("SELECT dbname from wiki where family='%s' and lang='%s';" % (family, lang))
+    cursor.execute("SELECT dbname from wiki where family='%s' and lang='%s' and is_multilang=%d;" % (family, lang, multilang))
     result=cursor.fetchall()
     dbname=""
     for row in result:
@@ -199,9 +202,12 @@ def getDbname(lang, family):
 def getServer(lang, family):
     if lang=='simple':
         lang='en-simple'
+    multilang = 0
+    if family in ['commons', 'wikispecies']:
+        multilang = 1
     conn = MySQLdb.connect(host='sql', db='toolserver', read_default_file='~/.my.cnf', use_unicode=True)
     cursor = conn.cursor()
-    cursor.execute("SELECT server from wiki where family='%s' and lang='%s';" % (family, lang))
+    cursor.execute("SELECT server from wiki where family='%s' and lang='%s' and is_multilang=%d;" % (family, lang, multilang))
     result=cursor.fetchall()
     server=""
     for row in result:
