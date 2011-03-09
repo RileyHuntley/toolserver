@@ -12,7 +12,9 @@ import wikipedia
 
 Rlink = re.compile(r'\[\[(?P<title>[^|\[\]]+?)(\|[^\|\[\]]*?)?\]\]') #la original era Rlink = re.compile(r'\[\[(?P<title>[^\]\|\[]*)(\|[^\]]*)?\]\]')
 topics = [
+'Hungary',
 'Spain',
+'Vietnam',
 ]
 lang = 'en'
 family = 'wikipedia'
@@ -76,8 +78,9 @@ for topic in topics:
         category = catlib.Category(site=site, title=cat)
         if not category.exists():
             wikipedia.output('Error, no category %s' % (cat))
+        speed = 250
         talkgen = pagegenerators.CategorizedPageGenerator(category, recurse=False, start=None)
-        talkpre = pagegenerators.PreloadingGenerator(talkgen, pageNumber=250)
+        talkpre = pagegenerators.PreloadingGenerator(talkgen, pageNumber=speed)
         
         pagetitles = []
         for talkpage in talkpre:
@@ -88,7 +91,7 @@ for topic in topics:
                 pass #no talk page, probably template talk: or other, skip
         
         gen = pagegenerators.PagesFromTitlesGenerator(pagetitles, site=site)
-        pre = pagegenerators.PreloadingGenerator(gen, pageNumber=100)
+        pre = pagegenerators.PreloadingGenerator(gen, pageNumber=speed)
         alllinks = {}
         for page in pre:
             if not page.exists() or page.isRedirectPage():
@@ -112,7 +115,7 @@ for topic in topics:
         limit = len(pagetitles)/10
         outputlist = []
         for times, link in linkslist:
-            if c > limit:
+            if c >= limit or c >= 1000: #10% up to 1000 red links per category
                 break
             if not titles.has_key(link):
                 print link, times
@@ -125,5 +128,5 @@ for topic in topics:
         output += '\n{{User:Emijrp/Redlink-end}}'
 
     output += '\n\n{{User:Emijrp/Redlink-footer}}'
-    outputpage = wikipedia.Page(site, 'User:Emijrp/Sandbox')
-    outputpage.put(output, 'BOT - Testing in subpage sandbox')
+    outputpage = wikipedia.Page(site, 'User:Emijrp/Red links/%s' % (topic))
+    outputpage.put(output, 'BOT - Generating red links list for [[%s]]' % (topic))
