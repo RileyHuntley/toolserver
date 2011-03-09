@@ -77,7 +77,7 @@ for topic in topics:
         if not category.exists():
             wikipedia.output('Error, no category %s' % (cat))
         talkgen = pagegenerators.CategorizedPageGenerator(category, recurse=False, start=None)
-        talkpre = pagegenerators.PreloadingGenerator(talkgen, pageNumber=100)
+        talkpre = pagegenerators.PreloadingGenerator(talkgen, pageNumber=250)
         
         pagetitles = []
         for talkpage in talkpre:
