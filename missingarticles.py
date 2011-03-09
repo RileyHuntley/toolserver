@@ -11,7 +11,7 @@ import wikipedia
 # usar una sqlite en vez de un diccionario?
 
 #Rlink = re.compile(r'\[\[(?P<title>[^|\[\]]+?)(\|[^\|\[\]]*?)?\]\]') #la mia
-Rlink = re.compile(r'\[\[(?P<title>[^\]\|\[]*)(\|[^\]]*)?\]\]') #la de wikipedia.py
+Rlink = re.compile(r'\[\[(?P<title>[^\]\|\[\{\}]*)(\|[^\]]*)?\]\]') #la de wikipedia.py
 topics = [
 'Hungary',
 'Spain',
