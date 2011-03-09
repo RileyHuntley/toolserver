@@ -10,7 +10,8 @@ import wikipedia
 #todo: sugerir titulos comparando con .lower() ?
 # usar una sqlite en vez de un diccionario?
 
-Rlink = re.compile(r'\[\[(?P<title>[^|\[\]]+?)(\|[^\|\[\]]*?)?\]\]') #la original era Rlink = re.compile(r'\[\[(?P<title>[^\]\|\[]*)(\|[^\]]*)?\]\]')
+#Rlink = re.compile(r'\[\[(?P<title>[^|\[\]]+?)(\|[^\|\[\]]*?)?\]\]') #la mia
+Rlink = re.compile(r'\[\[(?P<title>[^\]\|\[]*)(\|[^\]]*)?\]\]') #la de wikipedia.py
 topics = [
 'Hungary',
 'Spain',
@@ -36,11 +37,14 @@ def getLinks(wtext):
         if title.startswith("#"): # this is an internal section link
             continue
         if not site.isInterwikiLink(title):
-            title = title.split('#')[0] #removing sections
-            title = '%s%s' % (title[0].upper(), title[1:]) #first up
+            if title.startswith("#"): # [[#intrasection]] same article
+                continue
+            title = title.split('#')[0] # removing sections [[other article#section|blabla]]
+            title = '%s%s' % (title[:1].upper(), title[1:]) #first up
             if title.startswith(":") or title.startswith("File:") or title.startswith("Image:") or title.startswith("Category:"): # files, cats, etc
                 continue
-            if title not in links:
+            title=title.strip()
+            if title and title not in links:
                 links.append(title)
 
     return links
@@ -86,7 +90,8 @@ for topic in topics:
         for talkpage in talkpre:
             try:
                 wtitle = talkpage.title().split('Talk:')[1]
-                pagetitles.append(wtitle)
+                if wtitle not in pagetitles:
+                    pagetitles.append(wtitle)
             except:
                 pass #no talk page, probably template talk: or other, skip
         
@@ -118,7 +123,7 @@ for topic in topics:
             if c >= limit or c >= 1000: #10% up to 1000 red links per category
                 break
             if not titles.has_key(link):
-                print link, times
+                #print link, times
                 outputlist.append([link, times])
                 c += 1
         
