@@ -11,13 +11,8 @@ import wikipedia
 # usar una sqlite en vez de un diccionario?
 
 Rlink = re.compile(r'\[\[(?P<title>[^|\[\]]+?)(\|[^\|\[\]]*?)?\]\]') #la original era Rlink = re.compile(r'\[\[(?P<title>[^\]\|\[]*)(\|[^\]]*)?\]\]')
-cats = [
-'Top-importance Spain articles',
-'High-importance Spain articles',
-#'Mid-importance Spain articles',
-#'Low-importance Spain articles',
-#'NA-importance Spain articles',
-#'Unknown-importance Spain articles',
+topics = [
+'Spain',
 ]
 lang = 'en'
 family = 'wikipedia'
@@ -67,59 +62,68 @@ def getTitles():
 
 titles = getTitles()
 
-output = '{{User:Emijrp/Redlink-intro}}'
-for cat in cats:
-    category = catlib.Category(site=site, title=cat)
-    if not category.exists():
-        wikipedia.output('Error, no category %s' % (cat))
-    talkgen = pagegenerators.CategorizedPageGenerator(category, recurse=False, start=None)
-    talkpre = pagegenerators.PreloadingGenerator(talkgen, pageNumber=100)
-    
-    pagetitles = []
-    for talkpage in talkpre:
-        try:
-            wtitle = talkpage.title().split('Talk:')[1]
-            pagetitles.append(wtitle)
-        except:
-            pass #no talk page, probably template talk: or other, skip
-    
-    gen = pagegenerators.PagesFromTitlesGenerator(pagetitles, site=site)
-    pre = pagegenerators.PreloadingGenerator(gen, pageNumber=100)
-    alllinks = {}
-    for page in pre:
-        if not page.exists() or page.isRedirectPage():
-            continue
-        wtext = page.get()
-        links = getLinks(wtext)
-        #wikipedia.output('%s - %d' % (page.title(), len(links)))
-        links = set(links) #only 1 link per page, no dupes
-        #sum
-        for link in links:
-            if alllinks.has_key(link):
-                alllinks[link] += 1
-            else:
-                alllinks[link] = 1
-    
-    linkslist = [[v, k] for k, v in alllinks.items()]
-    linkslist.sort()
-    linkslist.reverse()
-    
-    c = 0
-    limit = len(pagetitles)/10
-    outputlist = []
-    for times, link in linkslist:
-        if c > limit:
-            break
-        if not titles.has_key(link):
-            print link, times
-            outputlist.append([link, times])
-            c += 1
-    
-    output += '\n\n== Red links from [[:Category:%s|%s]] ==\n{{User:Emijrp/Redlink-start}}' % (cat, cat)
-    for item, times in outputlist:
-        output += '\n* {{User:Emijrp/Redlink|%s|%d}}' % (item, times)
-    output += '\n{{User:Emijrp/Redlink-end}}'
+for topic in topics:
+    output = '{{User:Emijrp/Redlink-intro|%s}}' % (topic)
+    cats = [
+    'Top-importance %s articles' % (topic),
+    'High-importance %s articles' % (topic),
+    'Mid-importance %s articles' % (topic),
+    'Low-importance %s articles' % (topic),
+    'NA-importance %s articles' % (topic),
+    'Unknown-importance %s articles' % (topic),
+    ]
+    for cat in cats:
+        category = catlib.Category(site=site, title=cat)
+        if not category.exists():
+            wikipedia.output('Error, no category %s' % (cat))
+        talkgen = pagegenerators.CategorizedPageGenerator(category, recurse=False, start=None)
+        talkpre = pagegenerators.PreloadingGenerator(talkgen, pageNumber=100)
+        
+        pagetitles = []
+        for talkpage in talkpre:
+            try:
+                wtitle = talkpage.title().split('Talk:')[1]
+                pagetitles.append(wtitle)
+            except:
+                pass #no talk page, probably template talk: or other, skip
+        
+        gen = pagegenerators.PagesFromTitlesGenerator(pagetitles, site=site)
+        pre = pagegenerators.PreloadingGenerator(gen, pageNumber=100)
+        alllinks = {}
+        for page in pre:
+            if not page.exists() or page.isRedirectPage():
+                continue
+            wtext = page.get()
+            links = getLinks(wtext)
+            #wikipedia.output('%s - %d' % (page.title(), len(links)))
+            links = set(links) #only 1 link per page, no dupes
+            #sum
+            for link in links:
+                if alllinks.has_key(link):
+                    alllinks[link] += 1
+                else:
+                    alllinks[link] = 1
+        
+        linkslist = [[v, k] for k, v in alllinks.items()]
+        linkslist.sort()
+        linkslist.reverse()
+        
+        c = 0
+        limit = len(pagetitles)/10
+        outputlist = []
+        for times, link in linkslist:
+            if c > limit:
+                break
+            if not titles.has_key(link):
+                print link, times
+                outputlist.append([link, times])
+                c += 1
+        
+        output += '\n\n== Red links from [[:Category:%s|%s]] ==\n{{User:Emijrp/Redlink-start|%d}}' % (cat, cat, limit)
+        for item, times in outputlist:
+            output += '\n* {{User:Emijrp/Redlink|%s|%d}}' % (item, times)
+        output += '\n{{User:Emijrp/Redlink-end}}'
 
-output += '\n\n{{User:Emijrp/Redlink-footer}}'
-outputpage = wikipedia.Page(site, 'User:Emijrp/Sandbox')
-outputpage.put(output, 'BOT - Testing in subpage sandbox')
+    output += '\n\n{{User:Emijrp/Redlink-footer}}'
+    outputpage = wikipedia.Page(site, 'User:Emijrp/Sandbox')
+    outputpage.put(output, 'BOT - Testing in subpage sandbox')
