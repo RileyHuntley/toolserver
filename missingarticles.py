@@ -13,7 +13,10 @@ import wikipedia
 #Rlink = re.compile(r'\[\[(?P<title>[^|\[\]]+?)(\|[^\|\[\]]*?)?\]\]') #la mia
 Rlink = re.compile(r'\[\[(?P<title>[^\]\|\[\{\}]*)(\|[^\]]*)?\]\]') #la de wikipedia.py
 topics = [
+'Antarctica',
 'Hungary',
+'Lakes',
+'Mountains',
 'Spain',
 'Vietnam',
 ]
@@ -129,7 +132,7 @@ for topic in topics:
         
         output += '\n\n== Red links from [[:Category:%s|%s]] ==\n{{User:Emijrp/Redlink-start|%d}}' % (cat, cat, limit)
         for item, times in outputlist:
-            output += '\n* {{User:Emijrp/Redlink|%s|%d}}' % (item, times)
+            output += '\n* {{User:Emijrp/Redlink|%s|%s|%d}}' % (item, re.sub(' ', '+', item), times)
         output += '\n{{User:Emijrp/Redlink-end}}'
 
     output += '\n\n{{User:Emijrp/Redlink-footer}}'
