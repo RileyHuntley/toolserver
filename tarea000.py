@@ -105,7 +105,9 @@ def unflaggedBotsList(site):
     bots.sort()
     linesupdated.sort()
     #updating page list
-    page.put(u"\n".join(linesupdated), u"BOT - Updating list")
+    output = u"\n".join(linesupdated)
+    if page.get()!=output:
+        page.put(output, u"BOT - Updating list")
     
     return bots
 
@@ -274,5 +276,3 @@ def isExcluded(tarea, family, lang):
                 return True
     
     return False
-
-

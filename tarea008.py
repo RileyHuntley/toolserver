@@ -360,11 +360,17 @@ for family, langs in projects.items():
                 title=u"%s:%s" % (wikipedianm, tras1[family][lang])
                 page=wikipedia.Page(site, u"%s/begin" % title)
                 if projects[family][lang]['rankingusers'] and not page.exists():
-                    page.put(begin, resume)
+                    try:
+                        page.put(begin, resume)
+                    except:
+                        print "Error, unable to write to", family, lang, "see user-config.py"
                     time.sleep(delay)
                 page=wikipedia.Page(site, u"%s/end" % title)
                 if projects[family][lang]['rankingusers'] and not page.exists():
-                    page.put(end, resume)
+                    try:
+                        page.put(end, resume)
+                    except:
+                        print "Error, unable to write to", family, lang, "see user-config.py"
                     time.sleep(delay)
                 s=u"{{/begin|%d}}\n%s{{/end}}\n%s" % (cuantos, s, "\n".join(iws1[family]))
             else: #by default
@@ -387,11 +393,17 @@ for family, langs in projects.items():
                 title=u"%s:%s" % (wikipedianm, tras2[family][lang])
                 page=wikipedia.Page(site, u"%s/begin" % title)
                 if projects[family][lang]['rankingbots'] and not page.exists():
-                    page.put(begin2, resume)
+                    try:
+                        page.put(begin2, resume)
+                    except:
+                        print "Error, unable to write to", family, lang, "see user-config.py"
                     time.sleep(delay)
                 page=wikipedia.Page(site, u"%s/end" % title)
                 if projects[family][lang]['rankingbots'] and not page.exists():
-                    page.put(end2, resume)
+                    try:
+                        page.put(end2, resume)
+                    except:
+                        print "Error, unable to write to", family, lang, "see user-config.py"
                     time.sleep(delay)
                 sbots=u"{{/begin|%d}}\n%s{{/end}}\n%s" % (cuantos, sbots, "\n".join(iws2[family]))
             else: #by defect
@@ -401,7 +413,10 @@ for family, langs in projects.items():
             sbots=re.sub(ur"(?im)\[\[%s:.*?\]\]\n" % lang, ur"", sbots)
             page=wikipedia.Page(site, title)
             if projects[family][lang]['rankingbots'] and ((not page.exists()) or (not page.isRedirectPage() and not page.isDisambig() and page.get()!=sbots and int(page.getVersionHistory(revCount=1)[0][1][8:10])!=datetime.datetime.now().day)):# [0][1] es el timestamp de la última versión del historial, [8:10] es el día del mes, evitamos actualizar dos veces el mismo día
-                page.put(sbots, resume)
+                try:
+                    page.put(sbots, resume)
+                except:
+                    print "Error, unable to write to", family, lang, "see user-config.py"
                 time.sleep(delay)
         
         #otras plantillas
