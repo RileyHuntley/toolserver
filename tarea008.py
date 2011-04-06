@@ -267,6 +267,13 @@ for family, langs in projects.items():
         time.sleep(0.5)
         server=tarea000.getServer(lang, family)
         time.sleep(0.5)
+        
+        #error handling
+        if not dbname or not server:
+            print "Error", lang, family
+            print "Skiping...."
+            continue
+        
         #conn = MySQLdb.connect(host='sql-s%s' % server, read_default_file='~/.my.cnf', use_unicode=True)
         cursor = conns[server].cursor()
         cursor.execute("use %s;" % dbname) #tiene que ser separado en dos lineas
