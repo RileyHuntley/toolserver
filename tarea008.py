@@ -276,7 +276,11 @@ for family, langs in projects.items():
         
         #conn = MySQLdb.connect(host='sql-s%s' % server, read_default_file='~/.my.cnf', use_unicode=True)
         cursor = conns[server].cursor()
-        cursor.execute("use %s;" % dbname) #tiene que ser separado en dos lineas
+        try:
+            cursor.execute("use %s;" % dbname) #tiene que ser separado en dos lineas
+        except:
+            print 'Error, no database', dbname
+            continue
         cursor.execute("select user_name, user_editcount from user where user_editcount!=0 order by user_editcount desc limit 5000;")
         #cursor.execute("select /* SLOW_OK */ rev_user_text, count(*) as count from revision where 1 group by rev_user_text order by count desc limit 5000;")
         result=cursor.fetchall()
