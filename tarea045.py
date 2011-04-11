@@ -29,7 +29,7 @@ import tarea000
 
 wtitle=u"User:Emijrp/List of Wikimedians by number of edits"
 site=wikipedia.Site('meta', 'meta')
-limit=1000
+limit=5000 #users to show in the ranking
 
 def loadUnflaggedBots():
     bots = []
