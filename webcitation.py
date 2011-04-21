@@ -130,7 +130,7 @@ def isURLDead(url=''):
     try:
         f = urllib2.urlopen(url)
     except urllib2.HTTPError, e:
-        code = e.code
+        code = str(e.code)
     if code.startswith(('4', '5')):
         return True
     return False
@@ -222,7 +222,7 @@ def archiveURL(url='', email=''):
 def main():
     limitdays = 700 # oldest allowed ref link
     
-    r_case1 = r'(?P<ref><\s*ref[^>]*>\s*\[*\s*(?P<url>[^>\[\]\s]+)\s*\]*\s*<\s*/\s*ref\s*>)' #only URL, no title
+    r_case1 = r'(?P<ref><\s*ref[^<>]*>\s*\[*\s*(?P<url>[^<>\[\]\s]+)\s*[^<>]*\s*\]*\s*<\s*/\s*ref\s*>)' #only URL, no title
     #<ref>{{cite web|title=CFL.ca <!-- BOT GENERATED TITLE -->|url=http://www.cfl.ca/standings/1985/reg|work=|archiveurl=http://www.webcitation.org/5gbBs41sC|archivedate=2009-05-07|deadurl=no|accessdate=2009-03-28}}</ref>
     r_case1 = re.compile(r_case1)
     r_case2 = r''
