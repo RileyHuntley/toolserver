@@ -222,7 +222,7 @@ def archiveURL(url='', email=''):
 def main():
     limitdays = 700 # oldest allowed ref link
     
-    r_case1 = r'(?P<ref><ref>\s*\[*\s*(?P<url>[^>\[\]\s]+)\s*\]*\s*</ref>)' #only URL, no title
+    r_case1 = r'(?P<ref><\s*ref[^>]*>\s*\[*\s*(?P<url>[^>\[\]\s]+)\s*\]*\s*<\s*/\s*ref\s*>)' #only URL, no title
     #<ref>{{cite web|title=CFL.ca <!-- BOT GENERATED TITLE -->|url=http://www.cfl.ca/standings/1985/reg|work=|archiveurl=http://www.webcitation.org/5gbBs41sC|archivedate=2009-05-07|deadurl=no|accessdate=2009-03-28}}</ref>
     r_case1 = re.compile(r_case1)
     r_case2 = r''
@@ -256,10 +256,11 @@ def main():
         
         references = r_case1.finditer(wtext)
         if references:
-            history = page.fullVersionHistory(getAll=False, reverseOrder=True, revCount=500)
+            history = page.getVersionHistory(getAll=False, reverseOrder=True, revCount=500) #only metadata
             if len(history) >= 500:
                 print 'Too long history, skiping...'
                 continue
+            history = page.fullVersionHistory(getAll=False, reverseOrder=True, revCount=500) #now, load history with content
             
             for reference in references:
                 ref = reference.group('ref')
@@ -299,7 +300,7 @@ def main():
                     print 'Error, no archiveurl or no archivedate retrieved' % (url)
                     continue
                 
-                r_sub1 = '<ref>{{cite web|title=%s <!-- BOT GENERATED TITLE -->|url=%s|work=|archiveurl=%s|archivedate=%s|deadurl=%s|accessdate=%s}}</ref>' % (urltitle, url, archiveurl, archivedate.strftime('%Y-%m-%d'), deadurl, accessdate.strftime('%Y-%m-%d'))
+                r_sub1 = '%s - {{WebCite|url=%s|date=%s}}</ref>' % (ref.split('</ref>')[0], archiveurl, archivedate.strftime('%Y-%m-%d'),)
                 newtext = string.replace(newtext, ref, r_sub1, 1)
             
         if newtext != wtext:
