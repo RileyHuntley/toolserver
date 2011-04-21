@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import os
 import re
 import string
 import sys
@@ -11,6 +12,9 @@ import wikipedia
 
 """
 general doc
+
+http://en.wikipedia.org/wiki/Wikipedia:Bots/Requests_for_approval/WebCiteBOT
+Bestpractices: http://www.webcitation.org/doc/WebCiteBestPracticesGuide.pdf (http://www.webcitation.org/5y73OBWMw)
 
 http://en.wikipedia.org/wiki/User:WebCiteBOT
 http://www.webcitation.org/faq
@@ -42,7 +46,8 @@ do not archive dupes http://en.wikipedia.org/w/index.php?title=!T.O.O.H.!&diff=3
 """
 
 def isURL(url=''):
-    if re.search(r'https?://', url):
+    #page4 bestpractices
+    if url.startswith(('ftp://', 'http://', 'https://')):
         return True
     return False
 
@@ -58,8 +63,13 @@ def undoHTMLEntities(text=''):
 def getURLTitle(url=''):
     #replace \n to ' ' http://www.the-fly.co.uk/words/reviews/album-reviews/1242/the-long-blondes
     title = ''
-    f = urllib.urlopen(url)
-    html = f.read()
+    html = ''
+    try:
+        f = urllib.urlopen(url)
+        html = f.read()
+    except:
+        pass
+    
     try:
         html = unicode(html, 'utf-8')
     except:
@@ -73,90 +83,173 @@ def getURLTitle(url=''):
     if m and len(m) == 1 and len(m[0]) >= 5:
         title = m[0]
     
-    title = re.sub(r'[\r\n]+', ' ', title)
+    title = re.sub(r'(?m)\s+', ' ', title)
     title = undoHTMLEntities(text=title)
     title = re.sub(r'\|', '{{!}}', title) #broke cite web template
     
     return title
 
-def getDateURLFirstTime(history=[], url=''):
+def getDateURLFirstTimeInArticle(history=[], url=''):
     #history = revision ID, edit date/time, user name and content
     date = ''
     if history and url:
         for revid, revdate, revusername, revcontent in history:
             if string.find(revcontent, url) != -1:
-                date = revdate
+                date = datetime.datetime(year=int(revdate[:4]), month=int(revdate[5:7]), day=int(revdate[8:10]))
                 break
-    
-    if date:
-        print date
-        date = datetime.datetime(year=int(date[:4]), month=int(date[5:7]), day=int(date[8:10]))
-        print date
     return date
 
 def isURLDead(url=''):
     #detect 404, 403, etc
+    #fix todo
     return ''
 
-def archiveURL(url='', email=''):
+def recentArchived(url=''):
+    archivedate = ''
     archiveurl = ''
-    if not url or not email:
-        print 'Error not URL or email'
-        sys.exit()
-    url2 = 'http://www.webcitation.org/archive?url=%s&email=%s' % (url, email)
-    f = urllib.urlopen(url2)
-    raw = f.read()
+    
+    webcite = 'http://www.webcitation.org/query?returnxml=true&url=%s' % (urllib.quote(url))
+    f = urllib.urlopen(webcite)
+    xml = f.read()
     f.close()
     
-    if re.search('', raw):
-        archiveurl = ''
+    xml = xml.split('<resultset>')[1].split('</resultset>')[0]
+    chunks = xml.split('<result status="success">')
+    archives = []
+    for chunk in chunks:
+        chunk = chunk.split('</result>')[0]
+        m = re.findall(r'<timestamp>([^<]+)</timestamp>', chunk)
+        if m:
+            archivedate = datetime.datetime(year=int(m[0][:4]), month=int(m[0][5:7]), day=int(m[0][8:10]))
+        m = re.findall(r'<webcite_url>(http://www.webcitation.org/[^<]+)</webcite_url>', chunk)
+        if m:
+            archiveurl = m[0]
+        archives.append([archivedate, archiveurl])
     
-    return archiveurl
-
-r_case1 = r'(?P<all><ref>\s*\[*\s*(?P<url>[^> ]+)\s*\]*\s*</ref>)' #only URL, no title
-#<ref>{{cite web|title=CFL.ca <!-- BOT GENERATED TITLE -->|url=http://www.cfl.ca/standings/1985/reg|work=|archiveurl=http://www.webcitation.org/5gbBs41sC|archivedate=2009-05-07|deadurl=no|accessdate=2009-03-28}}</ref>
-r_case1 = re.compile(r_case1)
-r_case2 = r''
-
-gen = pagegenerators.AllpagesPageGenerator(sys.argv[1], 0, includeredirects=False)
-preload = pagegenerators.PreloadingGenerator(gen)
-email = sys.argv[2]
-
-for page in preload:
-    if not page.exists() or \
-       page.isRedirectPage() or \
-       page.isDisambig():
-        continue
+    if archives:
+        archives.sort() #sort by date
+        archives.reverse()
+        archivedate, archiveurl = archives[0]
     
-    wtitle = page.title()
-    print '='*5, wtitle, '='*5
-    wtext = newtext = page.get()
-    refs = r_case1.finditer(wtext)
-    if refs:
-        history = page.fullVersionHistory(getAll=True, reverseOrder=True)
-        for ref in refs:
-            all = ref.group('all')
-            url = ref.group('url')
-            if not isURL(url=url):
+    return archiveurl, archivedate
+
+def archiveURL(url='', email=''):
+    oldestallowed = 30 #oldest OK archived snapshot
+    archiveurl = ''
+    webciteid = ''
+    archivedate = ''
+    if not url or not email:
+        print 'Error, not URL or email given'
+        sys.exit()
+    
+    archiveurl, archivedate = recentArchived(url=url)
+    if archiveurl and archivedate and (datetime.datetime.now() - archivedate).days <= oldestallowed:
+        #if archived recently, avoid archive it again, else, take another snapshot
+        print 'This URL has been archived recently (%s) at %s' % (archivedate.strftime('%Y-%m-%d'), archiveurl)
+        return archiveurl, archivedate
+    
+    sys.exit()
+    webcite = 'http://www.webcitation.org/archive?returnxml=true&url=%s&email=%s' % (urllib.quote(url), email)
+    f = urllib.urlopen(webcite)
+    xml = f.read()
+    f.close()
+    
+    if re.search(r'<error type="email">', xml):
+        print 'Error, no e-mail address given'
+        sys.exit()
+    
+    if re.search(r'<result status="success">', xml):
+        #it says success, we go to check
+        m = re.findall(r'<webcite_url>(http://www.webcitation.org/[^<]+)</webcite_url>', xml)
+        if m:
+            archiveurl = m[0]
+        
+        #get webcite id
+        m = re.findall(r'<webcite_id>([^<]+)</webcite_id>', xml)
+        if m:
+            webciteid = m[0]
+        
+        #try to load
+        webciteidurl = 'http://www.webcitation.org/query?returnxml=true&id=%s' % (webciteid)
+        f = urllib.urlopen(webciteidurl)
+        xml2 = f.read()
+        f.close()
+        if re.search(r'(?m)<result status="success">\s*<webcite_id>%s</webcite_id>' % (webciteid), xml2): #check if this exactly id is archived successfully
+            archivedate = datetime.datetime.now()
+            print 'Archived it successfully at %s' % (archiveurl)
+        else:
+            archiveurl = '' #removing, it is not archived correctly
+            archivedate = ''
+    
+    return archiveurl, archivedate
+
+def main():
+    limitdays = 700
+    
+    r_case1 = r'(?P<ref><ref>\s*\[*\s*(?P<url>[^>\[\]\s]+)\s*\]*\s*</ref>)' #only URL, no title
+    #<ref>{{cite web|title=CFL.ca <!-- BOT GENERATED TITLE -->|url=http://www.cfl.ca/standings/1985/reg|work=|archiveurl=http://www.webcitation.org/5gbBs41sC|archivedate=2009-05-07|deadurl=no|accessdate=2009-03-28}}</ref>
+    r_case1 = re.compile(r_case1)
+    r_case2 = r''
+    
+    start = '!'
+    namespace = 0
+    email = ''
+    
+    if len(sys.argv) > 1:
+        start = sys.argv[1]
+    if len(sys.argv) > 2:
+        email = sys.argv[2]
+    
+    gen = pagegenerators.AllpagesPageGenerator(start, namespace, includeredirects=False)
+    preload = pagegenerators.PreloadingGenerator(gen)
+
+    for page in preload:
+        if not page.exists() or \
+           page.isRedirectPage() or \
+           page.isDisambig():
+            print 'This page is redirect or disambig, or it does not exist. Skiping...'
+            continue
+        
+        wtitle = page.title()
+        print '='*3, wtitle, '='*3
+        wtext = newtext = page.get()
+        
+        references = r_case1.finditer(wtext)
+        if references:
+            history = page.fullVersionHistory(getAll=False, reverseOrder=True, revCount=500)
+            if len(history) >= 500:
+                print 'Too long history, skiping...'
                 continue
             
-            urltitle = getURLTitle(url=url)
-            deadurl = isURLDead(url=url)
-            accessdate = getDateURLFirstTime(history=history, url=url)
-            if not accessdate:
-                print 'Unknown first URL date, skiping...'
-                continue
-            #ok, archive it
-            archiveurl = archiveURL(url=url, email=email)
-            if not archiveurl:
-                print 'Error while archiving URL', url
-                continue
-            r_sub1 = '<ref>{{cite web|title=%s <!-- BOT GENERATED TITLE -->|url=%s|work=|archiveurl=%s|deadurl=%s|accessdate=%s}}</ref>' % (urltitle, url, archiveurl, deadurl, accessdate.strftime('%Y-%m-%d'))
-            newtext = string.replace(newtext, all, r_sub1)
+            for reference in references:
+                ref = reference.group('ref')
+                url = reference.group('url')
+                if not isURL(url=url):
+                    print 'This is not an URL', url
+                    continue
+                
+                urltitle = getURLTitle(url=url)
+                deadurl = isURLDead(url=url)
+                accessdate = getDateURLFirstTimeInArticle(history=history, url=url)
+                if not accessdate:
+                    print 'Unknown URL date first time in article, skiping...'
+                    continue
+                if (datetime.datetime.now() - accessdate).days > limitdays:
+                    print 'This URL was added long time ago: %d days. Skiping...' % ((datetime.datetime.now() - accessdate).days)
+                    continue
+                
+                archiveurl, archivedate = archiveURL(url=url, email=email)
+                if not archiveurl or not archivedate:
+                    print 'Error while archiving URL %s, no archiveurl or no archivedate retrieved' % (url)
+                    continue
+                
+                r_sub1 = '<ref>{{cite web|title=%s <!-- BOT GENERATED TITLE -->|url=%s|work=|archiveurl=%s|archivedate=%s|deadurl=%s|accessdate=%s}}</ref>' % (urltitle, url, archiveurl, archivedate.strftime('%Y-%m-%d'), deadurl, accessdate.strftime('%Y-%m-%d'))
+                newtext = string.replace(newtext, ref, r_sub1, 1)
+            
+        if newtext != wtext:
+            wikipedia.showDiff(wtext, newtext)
+            summary = 'BOT - Adding link to [[WebCite]] archive for recently added reference(s)'
+            #wikipedia.put(newtext, summary)
         
-    if newtext != wtext:
-        pass
-        wikipedia.showDiff(wtext, newtext)
-        summary = 'BOT - Adding link to [[WebCite]] archive for recently added reference(s)'
-        #wikipedia.put(newtext, summary)
-        
+if __name__ == "__main__":
+    main()
