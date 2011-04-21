@@ -299,7 +299,7 @@ def main():
                     archiveurl, archivedate = archiveURL(url=url, email=email)
                 
                 if not archiveurl or not archivedate:
-                    print 'Error, no archiveurl or no archivedate retrieved' % (url)
+                    print 'Error, no archiveurl or no archivedate retrieved for %s' % (url)
                     continue
                 
                 r_sub1 = '%s - {{WebCite|url=%s|date=%s}}</ref>' % (ref.split('</ref>')[0], archiveurl, archivedate.strftime('%Y-%m-%d'),)
