@@ -152,7 +152,7 @@ def archiveURL(url='', email=''):
         print 'This URL has been archived recently (%s) at %s' % (archivedate.strftime('%Y-%m-%d'), archiveurl)
         return archiveurl, archivedate
     
-    sys.exit()
+    #sys.exit()
     webcite = 'http://www.webcitation.org/archive?returnxml=true&url=%s&email=%s' % (urllib.quote(url), email)
     f = urllib.urlopen(webcite)
     xml = f.read()
