@@ -117,14 +117,17 @@ def recentArchived(url=''):
     chunks = xml.split('<result status="success">')
     archives = []
     for chunk in chunks:
+        archivedatechunk = ''
+        archiveurlchunk = ''
         chunk = chunk.split('</result>')[0]
         m = re.findall(r'<timestamp>([^<]+)</timestamp>', chunk)
         if m:
-            archivedate = datetime.datetime(year=int(m[0][:4]), month=int(m[0][5:7]), day=int(m[0][8:10]))
+            archivedatechunk = datetime.datetime(year=int(m[0][:4]), month=int(m[0][5:7]), day=int(m[0][8:10]))
         m = re.findall(r'<webcite_url>(http://www.webcitation.org/[^<]+)</webcite_url>', chunk)
         if m:
-            archiveurl = m[0]
-        archives.append([archivedate, archiveurl])
+            archiveurlchunk = m[0]
+        if archivedatechunk and archiveurlchunk:
+            archives.append([archivedatechunk, archiveurlchunk])
     
     if archives:
         archives.sort() #sort by date
