@@ -131,6 +131,8 @@ def isURLDead(url=''):
         f = urllib2.urlopen(url)
     except urllib2.HTTPError, e:
         code = str(e.code)
+    except:
+        return True
     if code.startswith(('4', '5')):
         return True
     return False
