@@ -129,25 +129,26 @@ def recentArchived(url=''):
     
     if re.search(r'<resultset>', xml): #archived before or never?
         xml = xml.split('<resultset>')[1].split('</resultset>')[0]
-        chunks = xml.split('<result status="success">')
-        archives = []
-        for chunk in chunks:
-            archivedatechunk = ''
-            archiveurlchunk = ''
-            chunk = chunk.split('</result>')[0]
-            m = re.findall(r'<timestamp>([^<]+)</timestamp>', chunk)
-            if m:
-                archivedatechunk = datetime.datetime(year=int(m[0][:4]), month=int(m[0][5:7]), day=int(m[0][8:10]))
-            m = re.findall(r'<webcite_url>(http://www.webcitation.org/[^<]+)</webcite_url>', chunk)
-            if m:
-                archiveurlchunk = m[0]
-            if archivedatechunk and archiveurlchunk:
-                archives.append([archivedatechunk, archiveurlchunk])
-        
-        if archives:
-            archives.sort() #sort by date
-            archives.reverse()
-            archivedate, archiveurl = archives[0]
+        if re.search(r'<result status="success">', xml):
+            chunks = xml.split('<result status="success">')[1:] # skiping firsts empty or invalid (status!=success) chunk
+            archives = []
+            for chunk in chunks:
+                archivedatechunk = ''
+                archiveurlchunk = ''
+                chunk = chunk.split('</result>')[0]
+                m = re.findall(r'<timestamp>([^<]+)</timestamp>', chunk)
+                if m:
+                    archivedatechunk = datetime.datetime(year=int(m[0][:4]), month=int(m[0][5:7]), day=int(m[0][8:10]))
+                m = re.findall(r'<webcite_url>(http://www.webcitation.org/[^<]+)</webcite_url>', chunk)
+                if m:
+                    archiveurlchunk = m[0]
+                if archivedatechunk and archiveurlchunk:
+                    archives.append([archivedatechunk, archiveurlchunk])
+            
+            if archives:
+                archives.sort() #sort by date
+                archives.reverse()
+                archivedate, archiveurl = archives[0]
     
     return archiveurl, archivedate
 
