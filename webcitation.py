@@ -59,6 +59,12 @@ do not archive dupes http://en.wikipedia.org/w/index.php?title=!T.O.O.H.!&diff=3
 
 """
 
+def allowbots(text, user):
+    #from http://en.wikipedia.org/wiki/Template:Bots#Python
+    if (re.search(r'(?im)\{\{\s*(nobots|bots\|(allow=none|deny=.*?' + user + r'.*?|optout=all|deny=all))\s*\}\}', text)):
+        return False
+    return True
+
 def isURL(url=''):
     #page4 bestpractices
     if url.startswith(('ftp://', 'http://', 'https://')):
@@ -232,6 +238,10 @@ def main():
         wtitle = page.title()
         print '='*3, wtitle, '='*3
         wtext = newtext = page.get()
+        
+        if not allowbots(text=wtext, user='BOTijo'):
+            print 'Skiping by page exclusion compliant'
+            continue
         
         references = r_case1.finditer(wtext)
         if references:
