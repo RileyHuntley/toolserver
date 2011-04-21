@@ -279,19 +279,19 @@ def main():
                 
                 accessdate = getDateURLFirstTimeInArticle(history=history, url=url)
                 if not accessdate:
-                    print 'Unknown URL date first time in article, skiping...'
+                    print 'Unknown URL (%s) date first time in article, skiping...' % (urls)
                     continue
                 if (datetime.datetime.now() - accessdate).days > limitdays:
-                    print 'This URL was added long time ago: %d days. Skiping...' % ((datetime.datetime.now() - accessdate).days)
+                    print 'This URL (%s) was added long time ago: %d days. Skiping...' % (url, (datetime.datetime.now() - accessdate).days)
                     continue
                         
                 if deadurl:
-                    print 'URL is dead, cannot archive it, searching for an archived copy...'
+                    print 'URL is dead (%s), cannot archive it, searching for an archived copy...' % (url)
                     archiveurl, archivedate = recentArchived(url=url)
                     if archiveurl and archivedate:
                         print 'There is an archived copy (%s, %s), YAY!' % (archiveurl, archivedate)
                     else:
-                        print 'No archived copy available in WebCite, skiping...'
+                        print 'No archived copy available in WebCite, skiping this reference...'
                         continue
                 else:
                     archiveurl, archivedate = archiveURL(url=url, email=email)
