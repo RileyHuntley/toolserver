@@ -245,6 +245,9 @@ def main():
                 if not isURL(url=url):
                     print 'This is not an URL', url
                     continue
+                if re.search(r'(web\.archive\.org|webcitation\.org)', url):
+                    print 'URL is an archived URL, skiping...', url
+                    continue
                 
                 urltitle = getURLTitle(url=url)
                 deadurl = isURLDead(url=url)
