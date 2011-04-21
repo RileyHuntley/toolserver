@@ -253,7 +253,7 @@ def main():
         if newtext != wtext:
             wikipedia.showDiff(wtext, newtext)
             summary = 'BOT - Adding link to [[WebCite]] archive for recently added reference(s)'
-            #wikipedia.put(newtext, summary)
+            page.put(newtext, summary)
         
 if __name__ == "__main__":
     main()
