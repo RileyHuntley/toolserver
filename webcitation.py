@@ -20,6 +20,7 @@ import re
 import string
 import sys
 import urllib
+import urllib2
 
 import pagegenerators
 import wikipedia
@@ -121,8 +122,18 @@ def getDateURLFirstTimeInArticle(history=[], url=''):
 
 def isURLDead(url=''):
     #detect 404, 403, etc
-    #fix todo
-    return ''
+    #http://bytes.com/topic/python/answers/30777-404-errors
+    if not url:
+        print 'isURLDead(): No URL given'
+        sys.exit()
+    code = ''
+    try:
+        f = urllib2.urlopen(url)
+    except urllib2.HTTPError, e:
+        code = e.code
+    if code.startswith(('4', '5')):
+        return True
+    return False
 
 def recentArchived(url=''):
     archivedate = ''
@@ -201,7 +212,7 @@ def archiveURL(url='', email=''):
         f.close()
         if re.search(r'(?m)<result status="success">\s*<webcite_id>%s</webcite_id>' % (webciteid), xml2): #check if this exactly id is archived successfully
             archivedate = datetime.datetime.now()
-            print 'Archived it successfully at %s' % (archiveurl)
+            print '%s archived it successfully at %s' % (url, archiveurl)
         else:
             archiveurl = '' #removing, it is not archived correctly
             archivedate = ''
@@ -209,7 +220,7 @@ def archiveURL(url='', email=''):
     return archiveurl, archivedate
 
 def main():
-    limitdays = 700
+    limitdays = 700 # oldest allowed ref link
     
     r_case1 = r'(?P<ref><ref>\s*\[*\s*(?P<url>[^>\[\]\s]+)\s*\]*\s*</ref>)' #only URL, no title
     #<ref>{{cite web|title=CFL.ca <!-- BOT GENERATED TITLE -->|url=http://www.cfl.ca/standings/1985/reg|work=|archiveurl=http://www.webcitation.org/5gbBs41sC|archivedate=2009-05-07|deadurl=no|accessdate=2009-03-28}}</ref>
@@ -262,6 +273,9 @@ def main():
                 
                 urltitle = getURLTitle(url=url)
                 deadurl = isURLDead(url=url)
+                archiveurl = ''
+                archivedate = ''
+                
                 accessdate = getDateURLFirstTimeInArticle(history=history, url=url)
                 if not accessdate:
                     print 'Unknown URL date first time in article, skiping...'
@@ -269,10 +283,20 @@ def main():
                 if (datetime.datetime.now() - accessdate).days > limitdays:
                     print 'This URL was added long time ago: %d days. Skiping...' % ((datetime.datetime.now() - accessdate).days)
                     continue
+                        
+                if deadurl:
+                    print 'URL is dead, cannot archive it, searching for an archived copy...'
+                    archiveurl, archivedate = recentArchived(url=url)
+                    if archiveurl and archivedate:
+                        print 'There is an archived copy (%s, %s), YAY!' % (archiveurl, archivedate)
+                    else:
+                        print 'No archived copy available in WebCite, skiping...'
+                        continue
+                else:
+                    archiveurl, archivedate = archiveURL(url=url, email=email)
                 
-                archiveurl, archivedate = archiveURL(url=url, email=email)
                 if not archiveurl or not archivedate:
-                    print 'Error while archiving URL %s, no archiveurl or no archivedate retrieved' % (url)
+                    print 'Error, no archiveurl or no archivedate retrieved' % (url)
                     continue
                 
                 r_sub1 = '<ref>{{cite web|title=%s <!-- BOT GENERATED TITLE -->|url=%s|work=|archiveurl=%s|archivedate=%s|deadurl=%s|accessdate=%s}}</ref>' % (urltitle, url, archiveurl, archivedate.strftime('%Y-%m-%d'), deadurl, accessdate.strftime('%Y-%m-%d'))
@@ -281,7 +305,7 @@ def main():
         if newtext != wtext:
             wikipedia.showDiff(wtext, newtext)
             summary = 'BOT - Adding link to [[WebCite]] archive for recently added reference(s)'
-            page.put(newtext, summary)
+            #page.put(newtext, summary)
         
 if __name__ == "__main__":
     main()
