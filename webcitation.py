@@ -88,6 +88,7 @@ def getURLTitle(url=''):
     try:
         f = urllib.urlopen(url)
         html = f.read()
+        f.close()
     except:
         pass
     
@@ -98,7 +99,6 @@ def getURLTitle(url=''):
             html = unicode(html, 'iso-8859-1')
         except:
             pass
-    f.close()
     
     m = re.findall(r'<title>([^<>]+)</title>', html)
     if m and len(m) == 1 and len(m[0]) >= 5:
