@@ -181,7 +181,7 @@ def archiveURL(url='', email=''):
     archiveurl, archivedate = recentArchived(url=url)
     if archiveurl and archivedate and (datetime.datetime.now() - archivedate).days <= oldestallowed:
         #if archived recently, avoid archive it again, else, take another snapshot
-        print 'This URL has been archived recently (%s) at %s' % (archivedate.strftime('%Y-%m-%d'), archiveurl)
+        print 'This URL (%s) has been archived recently (%s) at %s' % (url, archivedate.strftime('%Y-%m-%d'), archiveurl)
         return archiveurl, archivedate
     
     #sys.exit()
