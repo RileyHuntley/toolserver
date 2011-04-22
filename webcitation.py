@@ -30,6 +30,8 @@ general doc
 
 http://en.wikipedia.org/wiki/Wikipedia:Bots/Requests_for_approval/WebCiteBOT
 Bestpractices: http://www.webcitation.org/doc/WebCiteBestPracticesGuide.pdf (http://www.webcitation.org/5y73OBWMw)
+http://en.wikipedia.org/wiki/Template:WebCite
+http://en.wikipedia.org/wiki/Template:Cite_web
 
 http://en.wikipedia.org/wiki/User:WebCiteBOT
 http://www.webcitation.org/faq
@@ -227,7 +229,8 @@ def main():
     r_case1 = r'(?P<ref><\s*ref[^<>]*>\s*\[*\s*(?P<url>[^<>\[\]\s]+)\s*[^<>]*\s*\]*\s*<\s*/\s*ref\s*>)' #only URL, no title
     #<ref>{{cite web|title=CFL.ca <!-- BOT GENERATED TITLE -->|url=http://www.cfl.ca/standings/1985/reg|work=|archiveurl=http://www.webcitation.org/5gbBs41sC|archivedate=2009-05-07|deadurl=no|accessdate=2009-03-28}}</ref>
     r_case1 = re.compile(r_case1)
-    r_case2 = r''
+    r_case2 = r'(?P<ref><ref[^<>]*>\s*\{\{\s*cite web(?P<param>\s*\|\s*(?!archiveurl|archivedate)(?P<paramname>url|title|first|last|author|authorlink|coauthors|date|month|year|work|publisher|location|page|pages|at|language|trans_title|format|doi|accessdate|quote|ref|separator|postscript)\s*=\s*(?P<paramvalue>[^<>\|]*))*\s*\}\}\s*</ref>)'
+    r_case2 = re.compile(r_case2)
     
     start = '!'
     namespace = 0
@@ -308,7 +311,7 @@ def main():
         if newtext != wtext:
             wikipedia.showDiff(wtext, newtext)
             summary = 'BOT - Adding link to [[WebCite]] archive for recently added reference(s)'
-            #page.put(newtext, summary)
+            page.put(newtext, summary)
         
 if __name__ == "__main__":
     main()
