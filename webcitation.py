@@ -174,6 +174,8 @@ def recentArchived(url=''):
     return archiveurl, archivedate
 
 def archiveURL(url='', email=''):
+    #fix
+    #I don't like your algorithm for using pre-existing WebCite archives (30 days).  If this archive is different from the one looked at by the editor you will be archiving the wrong thing.  You should only use the pre-existing archive if it is ''younger'' than the date the reference was inserted.  You won't, in any case, end up with duplicated archives at WebCite.  Their software will return the link to the pre-existing page if you attempt to archive a duplicate. 
     oldestallowed = 30 #oldest OK archived snapshot
     archiveurl = ''
     webciteid = ''
@@ -226,10 +228,10 @@ def archiveURL(url='', email=''):
 def main():
     limitdays = 700 # oldest allowed ref link
     
-    r_case1 = r'(?P<ref><\s*ref[^<>]*>\s*\[*\s*(?P<url>[^<>\[\]\s]+)\s*[^<>]*\s*\]*\s*<\s*/\s*ref\s*>)' #only URL, no title
+    r_case1 = r'(?im)(?P<ref><\s*ref[^<>]*>\s*\[*\s*(?P<url>[^<>\[\]\s]+)\s*[^<>]*\s*\]*\s*<\s*/\s*ref\s*>)' #only URL, no title
     #<ref>{{cite web|title=CFL.ca <!-- BOT GENERATED TITLE -->|url=http://www.cfl.ca/standings/1985/reg|work=|archiveurl=http://www.webcitation.org/5gbBs41sC|archivedate=2009-05-07|deadurl=no|accessdate=2009-03-28}}</ref>
     r_case1 = re.compile(r_case1)
-    r_case2 = r'(?P<ref><ref[^<>]*>\s*\{\{\s*cite web(?P<param>\s*\|\s*(?!archiveurl|archivedate)(?P<paramname>url|title|first|last|author|authorlink|coauthors|date|month|year|work|publisher|location|page|pages|at|language|trans_title|format|doi|accessdate|quote|ref|separator|postscript)\s*=\s*(?P<paramvalue>[^<>\|]*))*\s*\}\}\s*</ref>)'
+    r_case2 = r'(?im)(?P<ref><ref[^<>]*>\s*\{\{\s*cite web(?P<param>\s*\|\s*(?!archiveurl|archivedate)(?P<paramname>url|title|first|last|author|authorlink|coauthors|date|month|year|work|publisher|location|page|pages|at|language|trans_title|format|doi|accessdate|quote|ref|separator|postscript)\s*=\s*(?P<paramvalue>[^<>\|]*))*\s*\}\}\s*</ref>)'
     r_case2 = re.compile(r_case2)
     
     start = '!'
@@ -273,7 +275,7 @@ def main():
                 if not isURL(url=url):
                     print 'This is not an URL', url
                     continue
-                if re.search(r'(web\.archive\.org|webcitation\.org)', url):
+                if re.search(r'(archive\.org|webcitation\.org)', url):
                     print 'URL is an archived URL, skiping...', url
                     continue
                 
