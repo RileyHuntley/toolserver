@@ -24,7 +24,7 @@ import subprocess
 import urllib
 import wikipedia
 
-langs = [ 'en', 'fr', 'it', 'pt', 'eo' ]
+langs = [ 'en', 'fr', 'pl', 'it', 'ja', 'ru', 'nl', 'pt', 'sv', 'zh', 'ca', 'no', 'uk', 'fi', 'vi', 'cs', 'hu', 'tr', 'id', 'ko', 'ro', 'da', 'ar', 'eo', 'sr', 'lt', 'fa', 'sk', 'ms', 'vo', 'he', 'bg', 'sl', 'war', ]
 
 for lang in langs:
     print 'Analysing... %s:' % (lang)
@@ -44,7 +44,7 @@ for lang in langs:
         for id in ids:
             articles[id] = True
     g.close()
-    print 'Loaded %d pageids for articles' % (len(articles))
+    print 'Loaded %d pageids for pages in nm = 0 (including redirects)' % (len(articles))
     
     #subprocess.Popen(["""gunzip -c %swiki-latest-externallinks.sql.gz | egrep -o "[0-9],'https?://[^/']+[^\./'][/']" | cut -d "'" -f 2- | sed -r -e "s/['/]$//g" | sed -r -e "s/^(https?):\/\/www\-?[0-9]*\./\1:\/\//g" | sort | uniq -c | sort -nr | head -n 1000 > ranking-%s""" % (lang, lang)], stdout=devnull)
     
@@ -85,7 +85,7 @@ for lang in langs:
     ranking_list_all.sort()
     ranking_list_art.reverse()
     ranking_list_all.reverse()
-    print len(ranking_list_art), 'urls in the ranking for articles'
+    print len(ranking_list_art), 'urls in the ranking for nm = 0'
     print len(ranking_list_all), 'urls in the ranking for all namespaces'
     
     #generate output
