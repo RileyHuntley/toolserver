@@ -24,7 +24,7 @@ import subprocess
 import urllib
 import wikipedia
 
-langs = [ sys.argv[1] ]
+langs = [ 'en', 'fr', 'it', 'pt', 'eo' ]
 
 for lang in langs:
     print 'Analysing... %s:' % (lang)
