@@ -104,7 +104,7 @@ Domains like http://books.google.com are not merged into http://google.com.""" %
     totallinks = 0
     protocols = {}
     for times, domain in ranking_list_art:
-        if c < limit:
+        if c <= limit:
             search = len(re.findall('\.', domain)) == 1 and re.sub(r'http://', 'http://*.', domain) or domain
             tableart += '\n|-\n| %s || %s || %s || [{{fullurl:Special:LinkSearch|target=%s}} Link search] ' % (c, times, domain, search, )
         totallinks += times
@@ -124,7 +124,7 @@ Domains like http://books.google.com are not merged into http://google.com.""" %
     totallinks = 0
     protocols = {}
     for times, domain in ranking_list_all:
-        if c < limit:
+        if c <= limit:
             search = len(re.findall('\.', domain)) == 1 and re.sub(r'http://', 'http://*.', domain) or domain
             tableall += '\n|-\n| %s || %s || %s || [{{fullurl:Special:LinkSearch|target=%s}} Link search] ' % (c, times, domain, search, )
         totallinks += times
