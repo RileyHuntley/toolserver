@@ -39,8 +39,9 @@ for lang in langs:
     #articles
     articles = []
     g = gzip.GzipFile('%swiki-latest-page.sql.gz' % (lang), 'r')
+    id_r = re.compile(r'\((\d+),0,')
     for line in g:
-        ids = re.findall(r'\((\d+),0,', line)
+        ids = re.findall(id_r, line)
         for id in ids:
             articles.append(int(id))
     g.close()
