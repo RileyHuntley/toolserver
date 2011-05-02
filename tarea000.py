@@ -167,8 +167,6 @@ def getLangsByFamily(family, min=0, max=999999999):
     return langs
 
 def getNamespaceName(lang, family, nsnumber):
-    if lang=='simple':
-        lang='en-simple'
     conn = MySQLdb.connect(host='sql', db='toolserver', read_default_file='~/.my.cnf', use_unicode=True)
     cursor = conn.cursor()
     cursor.execute("SELECT ns_name from namespace where dbname='%s' and ns_id=%s;" % (getDbname(lang, family), nsnumber))
@@ -183,14 +181,19 @@ def getNamespaceName(lang, family, nsnumber):
     return nsname
 
 def getDbname(lang, family):
-    if lang=='simple':
-        lang='en-simple'
+    more=""
+    if lang=='en':
+        more = " and domain='%s.%s.org'" % (lang, family)
+    elif lang=='simple':
+        lang='en'
+        more = " and domain='simple.%s.org'" % (family)
+    
     multilang = 0
     if family in ['commons', 'wikispecies']:
         multilang = 1
     conn = MySQLdb.connect(host='sql', db='toolserver', read_default_file='~/.my.cnf', use_unicode=True)
     cursor = conn.cursor()
-    cursor.execute("SELECT dbname from wiki where family='%s' and lang='%s' and is_multilang=%d;" % (family, lang, multilang))
+    cursor.execute("SELECT dbname from wiki where family='%s' and lang='%s' and is_multilang=%d %s;" % (family, lang, multilang, more))
     result=cursor.fetchall()
     dbname=""
     for row in result:
@@ -202,14 +205,18 @@ def getDbname(lang, family):
     return dbname
 
 def getServer(lang, family):
-    if lang=='simple':
-        lang='en-simple'
+    more=""
+    if lang=='en':
+        more = " and domain='%s.%s.org'" % (lang, family)
+    elif lang=='simple':
+        lang='en'
+        more = " and domain='simple.%s.org'" % (family)
     multilang = 0
     if family in ['commons', 'wikispecies']:
         multilang = 1
     conn = MySQLdb.connect(host='sql', db='toolserver', read_default_file='~/.my.cnf', use_unicode=True)
     cursor = conn.cursor()
-    cursor.execute("SELECT server from wiki where family='%s' and lang='%s' and is_multilang=%d;" % (family, lang, multilang))
+    cursor.execute("SELECT server from wiki where family='%s' and lang='%s' and is_multilang=%d %s;" % (family, lang, multilang, more))
     result=cursor.fetchall()
     server=""
     for row in result:
@@ -235,11 +242,15 @@ def getServers():
     return servers
 
 def getArticleCount(lang, family):
-    if lang=='simple':
-        lang='en-simple'
+    more=""
+    if lang=='en':
+        more = " and domain='%s.%s.org'" % (lang, family)
+    elif lang=='simple':
+        lang='en'
+        more = " and domain='simple.%s.org'" % (family)
     conn = MySQLdb.connect(host='sql', db='toolserver', read_default_file='~/.my.cnf', use_unicode=True)
     cursor = conn.cursor()
-    cursor.execute("SELECT size from wiki where family='%s' and lang='%s';" % (family, lang))
+    cursor.execute("SELECT size from wiki where family='%s' and lang='%s' %s;" % (family, lang, more))
     result=cursor.fetchall()
     size=0
     for row in result:

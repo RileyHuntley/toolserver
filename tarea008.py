@@ -261,7 +261,7 @@ for family, langs in projects.items():
         print articleCount
         if (daily and articleCount<dailylimit):
             #evitamos actualizar excesivamente proyectos pequeños
-            print "Skip"
+            print "Skip, only %s articles" % (articleCount)
             continue
         dbname=tarea000.getDbname(lang, family)
         time.sleep(0.5)
