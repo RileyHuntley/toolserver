@@ -89,7 +89,7 @@ for lang in langs:
     print len(ranking_list_all), 'urls in the ranking for all namespaces'
     
     #generate output
-    limit = 10
+    limit = 1000
     output = """'''Top %s most linked domains''' from [[w:en:Wikipedia:External links|external links]] as of '''%s'''. This ranking is [[w:en:public domain|public domain]].
 
 == Technical details ==
@@ -101,17 +101,43 @@ Domains like http://books.google.com are not merged into http://google.com.""" %
     
     tableart = ''
     c = 1
-    for times, domain in ranking_list_art[:limit]:
-        search = len(re.findall('\.', domain)) == 1 and re.sub(r'http://', 'http://*.', domain) or domain
-        tableart += '\n|-\n| %s || %s || %s || [{{fullurl:Special:LinkSearch|target=%s}} Link search] ' % (c, times, domain, search, )
+    totallinks = 0
+    protocols = {}
+    for times, domain in ranking_list_art:
+        if c < limit:
+            search = len(re.findall('\.', domain)) == 1 and re.sub(r'http://', 'http://*.', domain) or domain
+            tableart += '\n|-\n| %s || %s || %s || [{{fullurl:Special:LinkSearch|target=%s}} Link search] ' % (c, times, domain, search, )
+        totallinks += times
+        protocol = domain.split('://')[0]
+        if protocols.has_key(protocol):
+            protocols[protocol] += times
+        else:
+            protocols[protocol] = times
         c += 1
+    protocols_list = [[protocol, times] for protocol, times in protocols.items()]
+    protocols_list.sort()
+    details = ', '.join(['%s (%s)' % (protocol, times) for protocol, times in protocols_list])
+    tableart += "\n|-\n| colspan=4 | <small>''%d links in %d different domains''\n''Link details: %s''</small> " % (totallinks, c, details)
     
     tableall = ''
     c = 1
-    for times, domain in ranking_list_all[:limit]:
-        search = len(re.findall('\.', domain)) == 1 and re.sub(r'http://', 'http://*.', domain) or domain
-        tableall += '\n|-\n| %s || %s || %s || [{{fullurl:Special:LinkSearch|target=%s}} Link search] ' % (c, times, domain, search, )
+    totallinks = 0
+    protocols = {}
+    for times, domain in ranking_list_all:
+        if c < limit:
+            search = len(re.findall('\.', domain)) == 1 and re.sub(r'http://', 'http://*.', domain) or domain
+            tableall += '\n|-\n| %s || %s || %s || [{{fullurl:Special:LinkSearch|target=%s}} Link search] ' % (c, times, domain, search, )
+        totallinks += times
+        protocol = domain.split('://')[0]
+        if protocols.has_key(protocol):
+            protocols[protocol] += times
+        else:
+            protocols[protocol] = times
         c += 1
+    protocols_list = [[protocol, times] for protocol, times in protocols.items()]
+    protocols_list.sort()
+    details = ', '.join(['%s (%s)' % (protocol, times) for protocol, times in protocols_list])
+    tableall += "\n|-\n| colspan=4 | <small>''%d links in %d different domains''\n''Link details: %s''</small> " % (totallinks, c, details)
     
     output += """\n\n== Ranking ==
 {|
@@ -151,6 +177,7 @@ Domains like http://books.google.com are not merged into http://google.com.""" %
            result[2]['edit'].has_key('spamblacklist') and result[2]['edit'].has_key('result'):
             urlspam = result[2]['edit'].has_key('spamblacklist')
             output = string.replace(output, ' %s' % (urlspam), '<nowiki>%s</nowiki>' % (urlspam)) # important blank space before url
+            print '<nowiki> to', urlspam
         else:
             spam = False
     
