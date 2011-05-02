@@ -24,7 +24,7 @@ import subprocess
 import urllib
 import wikipedia
 
-langs = [ 'en', 'fr', 'pl', 'it', 'ja', 'ru', 'nl', 'pt', 'sv', 'zh', 'ca', 'no', 'uk', 'fi', 'vi', 'cs', 'hu', 'tr', 'id', 'ko', 'ro', 'da', 'ar', 'eo', 'sr', 'lt', 'fa', 'sk', 'ms', 'vo', 'he', 'bg', 'sl', 'war', ]
+langs = ['en', 'fr', 'pl', 'it', 'ja', 'ru', 'nl', 'pt', 'sv', 'zh', 'ca', 'no', 'uk', 'fi', 'vi', 'cs', 'hu', 'tr', 'id', 'ko', 'ro', 'da', 'ar', 'eo', 'sr', 'lt', 'fa', 'sk', 'ms', 'vo', 'he', 'bg', 'sl', 'war', ]
 
 for lang in langs:
     print 'Analysing... %s:' % (lang)
@@ -37,12 +37,12 @@ for lang in langs:
     urllib.urlretrieve('http://dumps.wikimedia.org/%swiki/latest/%swiki-latest-page.sql.gz' % (lang, lang), '%swiki-latest-page.sql.gz' % (lang))
     
     #articles
-    articles = {}
+    articles = []
     g = gzip.GzipFile('%swiki-latest-page.sql.gz' % (lang), 'r')
     for line in g:
         ids = re.findall(r'\((\d+),0,', line)
         for id in ids:
-            articles[id] = True
+            articles.append(int(id))
     g.close()
     print 'Loaded %d pageids for pages in nm = 0 (including redirects)' % (len(articles))
     
@@ -61,7 +61,7 @@ for lang in langs:
             #print pageid, url, domain
             
             #only urls in articles
-            if articles.has_key(pageid):
+            if pageid in articles:
                 if ranking_dic_art.has_key(domain):
                     ranking_dic_art[domain] += 1
                 else:
@@ -106,7 +106,7 @@ Domains like http://books.google.com are not merged into http://google.com.""" %
     for times, domain in ranking_list_art:
         if c <= limit:
             search = len(re.findall('\.', domain)) == 1 and re.sub(r'http://', 'http://*.', domain) or domain
-            tableart += '\n|-\n| %s || %s || %s || [{{fullurl:Special:LinkSearch|target=%s}} Link search] ' % (c, times, domain, search, )
+            tableart += '\n|-\n| %s || %s || [{{fullurl:Special:LinkSearch|target=%s}} %s] ' % (c, domain, search, times, )
         totallinks += times
         protocol = domain.split('://')[0]
         if protocols.has_key(protocol):
@@ -117,7 +117,7 @@ Domains like http://books.google.com are not merged into http://google.com.""" %
     protocols_list = [[protocol, times] for protocol, times in protocols.items()]
     protocols_list.sort()
     details = ', '.join(['%s (%s)' % (protocol, times) for protocol, times in protocols_list])
-    tableart += "\n|-\n| colspan=4 | <small>''%d links in %d different domains''\n''Link details: %s''</small> " % (totallinks, c, details)
+    tableart += "\n|-\n| colspan=3 | <small>''%d links in %d different domains''\n''Link details: %s''</small> " % (totallinks, c, details)
     
     tableall = ''
     c = 1
@@ -126,7 +126,7 @@ Domains like http://books.google.com are not merged into http://google.com.""" %
     for times, domain in ranking_list_all:
         if c <= limit:
             search = len(re.findall('\.', domain)) == 1 and re.sub(r'http://', 'http://*.', domain) or domain
-            tableall += '\n|-\n| %s || %s || %s || [{{fullurl:Special:LinkSearch|target=%s}} Link search] ' % (c, times, domain, search, )
+            tableall += '\n|-\n| %s || %s || [{{fullurl:Special:LinkSearch|target=%s}} %s] ' % (c, domain, search, times, )
         totallinks += times
         protocol = domain.split('://')[0]
         if protocols.has_key(protocol):
@@ -137,22 +137,22 @@ Domains like http://books.google.com are not merged into http://google.com.""" %
     protocols_list = [[protocol, times] for protocol, times in protocols.items()]
     protocols_list.sort()
     details = ', '.join(['%s (%s)' % (protocol, times) for protocol, times in protocols_list])
-    tableall += "\n|-\n| colspan=4 | <small>''%d links in %d different domains''\n''Link details: %s''</small> " % (totallinks, c, details)
+    tableall += "\n|-\n| colspan=3 | <small>''%d links in %d different domains''\n''Link details: %s''</small> " % (totallinks, c, details)
     
     output += """\n\n== Ranking ==
 {|
 | valign=top |
 {| class="wikitable sortable" style="text-align: center;"
-! colspan=4 | Only articles (namespace = 0)
+! colspan=3 | Only articles (namespace = 0)
 |-
-! # !! Num. of links !! Domain !! Details
+! # !! Domain !! Num. of links
 %s
 |}
 | valign=top |
 {| class="wikitable sortable" style="text-align: center;"
-! colspan=4 | All pages (all namespaces)
+! colspan=3 | All pages (all namespaces)
 |-
-! # !! Num. of links !! Domain !! Details
+! # !! Domain !! Num. of links
 %s
 |}
 |}""" % (tableart, tableall)
