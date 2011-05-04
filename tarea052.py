@@ -19,6 +19,7 @@
 import gzip
 import os
 import re
+import string
 import sys
 import subprocess
 import urllib
@@ -63,6 +64,7 @@ for lang in langs:
     for line in g:
         m = re.findall(r_urls, line) # 3 chars x.y
         for pageid, url in m:
+            pageid = int(pageid)
             if c % 10000 == 0:
                 print 'Loaded %d external links' % (c)
             #merge subdomains
@@ -91,7 +93,7 @@ for lang in langs:
             ranking_list_art.append([nms_dic[0], url])
         if nms_dic['all'] > 1:
             ranking_list_all.append([nms_dic['all'], url])
-    del ranking_dic
+    #del ranking_dic
     ranking_list_art.sort()
     ranking_list_all.sort()
     ranking_list_art.reverse()
@@ -128,7 +130,7 @@ Domains like http://books.google.com are not merged into http://google.com.""" %
     protocols_list = [[protocol, times] for protocol, times in protocols.items()]
     protocols_list.sort()
     details = ', '.join(['%s (%s)' % (protocol, times) for protocol, times in protocols_list])
-    tableart += "\n|-\n| colspan=3 | <small>''%d links in %d different domains''\n''Link details: %s''</small> " % (totallinks, c, details)
+    tableart += "\n|-\n| colspan=3 | <small>''%d links in %d different domains''\n''Link details: %s''</small> " % (totallinks, c-1, details) #c-1 due to c starts in 1 for the ranking #position
     
     tableall = ''
     c = 1
@@ -148,7 +150,7 @@ Domains like http://books.google.com are not merged into http://google.com.""" %
     protocols_list = [[protocol, times] for protocol, times in protocols.items()]
     protocols_list.sort()
     details = ', '.join(['%s (%s)' % (protocol, times) for protocol, times in protocols_list])
-    tableall += "\n|-\n| colspan=3 | <small>''%d links in %d different domains''\n''Link details: %s''</small> " % (totallinks, c, details)
+    tableall += "\n|-\n| colspan=3 | <small>''%d links in %d different domains''\n''Link details: %s''</small> " % (totallinks, c-1, details)
     
     output += """\n\n== Ranking ==
 {|
@@ -173,25 +175,26 @@ Domains like http://books.google.com are not merged into http://google.com.""" %
         if iw != lang:
             iws += '\n[[%s:User:Emijrp/External Links Ranking]]' % (iw)
     output += '\n%s' % (iws)
+    output += '\n'
     
     #print output
     
     #save and detect spam black list
     s = wikipedia.Site(lang, 'wikipedia')
     p = wikipedia.Page(s, u'User:Emijrp/External Links Ranking')
-    if p.get() != output:
-        spam = True
-        while spam:
-            result = p.put(output, u'BOT - Updating ranking')
-            #(200, 'OK', {u'edit': {u'spamblacklist': u'http://oocities.com', u'result': u'Failure'}})
-            if len(result) > 2 and \
-               result[2].has_key('edit') and \
-               result[2]['edit'].has_key('spamblacklist') and result[2]['edit'].has_key('result'):
-                urlspam = result[2]['edit'].has_key('spamblacklist')
-                output = string.replace(output, ' %s' % (urlspam), '<nowiki>%s</nowiki>' % (urlspam)) # important blank space before url
-                print '<nowiki> to', urlspam
-            else:
-                spam = False
+
+    spam = True
+    while spam:
+        result = p.put(output, u'BOT - Updating ranking')
+        #(200, 'OK', {u'edit': {u'spamblacklist': u'http://oocities.com', u'result': u'Failure'}})
+        if len(result) > 2 and \
+           result[2].has_key('edit') and \
+           result[2]['edit'].has_key('spamblacklist') and result[2]['edit'].has_key('result'):
+            urlspam = result[2]['edit']['spamblacklist']
+            output = string.replace(output, ' %s' % (urlspam), '<nowiki>%s</nowiki>' % (urlspam)) # important blank space before url
+            print '<nowiki> to', urlspam
+        else:
+            spam = False
     
     os.system('rm %swiki-latest-externallinks.sql.gz' % (lang))
     os.system('rm %swiki-latest-page.sql.gz' % (lang))
