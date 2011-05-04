@@ -42,10 +42,14 @@ for lang in langs:
     pages = {}
     g = gzip.GzipFile('%swiki-latest-page.sql.gz' % (lang), 'r')
     id_r = re.compile(r'\((\d+),(0),')
+    c = 0
     for line in g:
         ids = re.findall(id_r, line)
         for id, nm in ids:
-            pages[int(id)] = nm #nm=0 in the regexp, ready to change it to support more nms
+            pages[int(id)] = int(nm) #nm=0 in the regexp, ready to change it to support more nms
+            if c % 10000 == 0:
+                print 'Loaded %d pages' % (c)
+            c += 1
     g.close()
     print 'Loaded %d pageids for pages in nm = 0 (including redirects)' % (len(pages.keys()))
     
@@ -55,9 +59,12 @@ for lang in langs:
     g = gzip.GzipFile('%swiki-latest-externallinks.sql.gz' % (lang), 'r')
     ranking_dic = {}
     r_urls = re.compile(r'\((\d+),\'([a-z]+://[^/\']{3,})[/\']')
+    c = 0
     for line in g:
         m = re.findall(r_urls, line) # 3 chars x.y
         for pageid, url in m:
+            if c % 10000 == 0:
+                print 'Loaded %d external links' % (c)
             #merge subdomains
             domain = re.sub(r'(?im)^([a-z]+)://www\-?[0-9]*\.', r'\1://', url)
             #print pageid, url, domain
@@ -72,16 +79,19 @@ for lang in langs:
                     ranking_dic[domain] = {0: 1, 'all': 1}
                 else:
                     ranking_dic[domain] = {0: 0, 'all': 1}
-    
+            
+            c += 1
     g.close()
     
     #sort
     ranking_list_art = []
     ranking_list_all = []
     for url, nms_dic in ranking_dic.items():
-        if nms_dic[0] > 0:
+        if nms_dic[0] > 1: #discarding links with only 1 occurence
             ranking_list_art.append([nms_dic[0], url])
-        ranking_list_all.append([nms_dic['all'], url])
+        if nms_dic['all'] > 1:
+            ranking_list_all.append([nms_dic['all'], url])
+    del ranking_dic
     ranking_list_art.sort()
     ranking_list_all.sort()
     ranking_list_art.reverse()
@@ -164,23 +174,24 @@ Domains like http://books.google.com are not merged into http://google.com.""" %
             iws += '\n[[%s:User:Emijrp/External Links Ranking]]' % (iw)
     output += '\n%s' % (iws)
     
-    print output
+    #print output
     
     #save and detect spam black list
     s = wikipedia.Site(lang, 'wikipedia')
     p = wikipedia.Page(s, u'User:Emijrp/External Links Ranking')
-    spam = True
-    while spam:
-        result = p.put(output, u'BOT - Updating ranking')
-        #(200, 'OK', {u'edit': {u'spamblacklist': u'http://oocities.com', u'result': u'Failure'}})
-        if len(result) > 2 and \
-           result[2].has_key('edit') and \
-           result[2]['edit'].has_key('spamblacklist') and result[2]['edit'].has_key('result'):
-            urlspam = result[2]['edit'].has_key('spamblacklist')
-            output = string.replace(output, ' %s' % (urlspam), '<nowiki>%s</nowiki>' % (urlspam)) # important blank space before url
-            print '<nowiki> to', urlspam
-        else:
-            spam = False
+    if p.get() != output:
+        spam = True
+        while spam:
+            result = p.put(output, u'BOT - Updating ranking')
+            #(200, 'OK', {u'edit': {u'spamblacklist': u'http://oocities.com', u'result': u'Failure'}})
+            if len(result) > 2 and \
+               result[2].has_key('edit') and \
+               result[2]['edit'].has_key('spamblacklist') and result[2]['edit'].has_key('result'):
+                urlspam = result[2]['edit'].has_key('spamblacklist')
+                output = string.replace(output, ' %s' % (urlspam), '<nowiki>%s</nowiki>' % (urlspam)) # important blank space before url
+                print '<nowiki> to', urlspam
+            else:
+                spam = False
     
     os.system('rm %swiki-latest-externallinks.sql.gz' % (lang))
     os.system('rm %swiki-latest-page.sql.gz' % (lang))
