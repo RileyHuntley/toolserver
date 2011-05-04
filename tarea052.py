@@ -74,13 +74,12 @@ for lang in langs:
             if ranking_dic.has_key(domain):
                 if pages.has_key(pageid) and pages[pageid] == 0:
                     ranking_dic[domain][0] += 1
-                else:
-                    ranking_dic[domain]['all'] += 1
+                ranking_dic[domain]['all'] += 1
             else:
+                ranking_dic[domain] = {0: 0, 'all': 0}
                 if pages.has_key(pageid) and pages[pageid] == 0:
-                    ranking_dic[domain] = {0: 1, 'all': 1}
-                else:
-                    ranking_dic[domain] = {0: 0, 'all': 1}
+                    ranking_dic[domain][0] += 1
+                ranking_dic[domain]['all'] += 1
             
             c += 1
     g.close()
