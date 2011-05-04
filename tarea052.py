@@ -24,7 +24,9 @@ import subprocess
 import urllib
 import wikipedia
 
-langs = ['en', 'fr', 'pl', 'it', 'ja', 'ru', 'nl', 'pt', 'sv', 'zh', 'ca', 'no', 'uk', 'fi', 'vi', 'cs', 'hu', 'tr', 'id', 'ko', 'ro', 'da', 'ar', 'eo', 'sr', 'lt', 'fa', 'sk', 'ms', 'vo', 'he', 'bg', 'sl', 'war', ]
+#langs = ['en', 'fr', 'pl', 'it', 'ja', 'ru', 'nl', 'pt', 'sv', 'zh', 'ca', 'no', 'uk', 'fi', 'vi', 'cs', 'hu', 'tr', 'id', 'ko', 'ro', 'da', 'ar', 'eo', 'sr', 'lt', 'fa', 'sk', 'ms', 'vo', 'he', 'bg', 'sl', 'war', ]
+
+langs = sys.argv[1].split(',')
 
 for lang in langs:
     print 'Analysing... %s:' % (lang)
@@ -36,23 +38,22 @@ for lang in langs:
     urllib.urlretrieve('http://dumps.wikimedia.org/%swiki/latest/%swiki-latest-externallinks.sql.gz' % (lang, lang), '%swiki-latest-externallinks.sql.gz' % (lang))
     urllib.urlretrieve('http://dumps.wikimedia.org/%swiki/latest/%swiki-latest-page.sql.gz' % (lang, lang), '%swiki-latest-page.sql.gz' % (lang))
     
-    #articles
-    articles = []
+    #pages, articles nm=0
+    pages = {}
     g = gzip.GzipFile('%swiki-latest-page.sql.gz' % (lang), 'r')
-    id_r = re.compile(r'\((\d+),0,')
+    id_r = re.compile(r'\((\d+),(0),')
     for line in g:
         ids = re.findall(id_r, line)
-        for id in ids:
-            articles.append(int(id))
+        for id, nm in ids:
+            pages[int(id)] = nm #nm=0 in the regexp, ready to change it to support more nms
     g.close()
-    print 'Loaded %d pageids for pages in nm = 0 (including redirects)' % (len(articles))
+    print 'Loaded %d pageids for pages in nm = 0 (including redirects)' % (len(pages.keys()))
     
     #subprocess.Popen(["""gunzip -c %swiki-latest-externallinks.sql.gz | egrep -o "[0-9],'https?://[^/']+[^\./'][/']" | cut -d "'" -f 2- | sed -r -e "s/['/]$//g" | sed -r -e "s/^(https?):\/\/www\-?[0-9]*\./\1:\/\//g" | sort | uniq -c | sort -nr | head -n 1000 > ranking-%s""" % (lang, lang)], stdout=devnull)
     
     #get urls
     g = gzip.GzipFile('%swiki-latest-externallinks.sql.gz' % (lang), 'r')
-    ranking_dic_art = {}
-    ranking_dic_all = {}
+    ranking_dic = {}
     r_urls = re.compile(r'\((\d+),\'([a-z]+://[^/\']{3,})[/\']')
     for line in g:
         m = re.findall(r_urls, line) # 3 chars x.y
@@ -61,27 +62,26 @@ for lang in langs:
             domain = re.sub(r'(?im)^([a-z]+)://www\-?[0-9]*\.', r'\1://', url)
             #print pageid, url, domain
             
-            #only urls in articles
-            if pageid in articles:
-                if ranking_dic_art.has_key(domain):
-                    ranking_dic_art[domain] += 1
+            if ranking_dic.has_key(domain):
+                if pages.has_key(pageid) and pages[pageid] == 0:
+                    ranking_dic[domain][0] += 1
                 else:
-                    ranking_dic_art[domain] = 1
-            
-            #all pages
-            if ranking_dic_all.has_key(domain):
-                ranking_dic_all[domain] += 1
+                    ranking_dic[domain]['all'] += 1
             else:
-                ranking_dic_all[domain] = 1
+                if pages.has_key(pageid) and pages[pageid] == 0:
+                    ranking_dic[domain] = {0: 1, 'all': 1}
+                else:
+                    ranking_dic[domain] = {0: 0, 'all': 1}
+    
     g.close()
     
     #sort
     ranking_list_art = []
     ranking_list_all = []
-    for url, times in ranking_dic_art.items():
-        ranking_list_art.append([times, url])
-    for url, times in ranking_dic_all.items():
-        ranking_list_all.append([times, url])
+    for url, nms_dic in ranking_dic.items():
+        if nms_dic[0] > 0:
+            ranking_list_art.append([nms_dic[0], url])
+        ranking_list_all.append([nms_dic['all'], url])
     ranking_list_art.sort()
     ranking_list_all.sort()
     ranking_list_art.reverse()
