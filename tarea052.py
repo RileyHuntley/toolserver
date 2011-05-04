@@ -25,7 +25,7 @@ import subprocess
 import urllib
 import wikipedia
 
-#langs = ['en', 'fr', 'pl', 'it', 'ja', 'ru', 'nl', 'pt', 'sv', 'zh', 'ca', 'no', 'uk', 'fi', 'vi', 'cs', 'hu', 'tr', 'id', 'ko', 'ro', 'da', 'ar', 'eo', 'sr', 'lt', 'fa', 'sk', 'ms', 'vo', 'he', 'bg', 'sl', 'war', ]
+iws = ['en', 'fr', 'pl', 'it', 'ja', 'ru', 'nl', 'pt', 'sv', 'zh', 'ca', 'no', 'uk', 'fi', 'vi', 'cs', 'hu', 'tr', 'id', 'ko', 'ro', 'da', 'ar', 'eo', 'sr', 'lt', 'fa', 'sk', 'ms', 'vo', 'he', 'bg', 'sl', 'war', ]
 
 langs = sys.argv[1].split(',')
 
@@ -169,11 +169,11 @@ Domains like http://books.google.com are not merged into http://google.com.""" %
 |}
 |}""" % (tableart, tableall)
     
-    iws = ''
-    for iw in langs:
+    iwsoutput = ''
+    for iw in iws:
         if iw != lang:
-            iws += '\n[[%s:User:Emijrp/External Links Ranking]]' % (iw)
-    output += '\n%s' % (iws)
+            iwsoutput += '\n[[%s:User:Emijrp/External Links Ranking]]' % (iw)
+    output += '\n%s' % (iwsoutput)
     output += '\n'
     
     #print output
