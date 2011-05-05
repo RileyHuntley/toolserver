@@ -46,6 +46,7 @@ for lang in langs:
     id_r = re.compile(r'\((\d+),(0),')
     c = 0
     for line in g:
+        line = unicode(line, 'utf-8')
         ids = re.findall(id_r, line)
         for id, nm in ids:
             pages[int(id)] = int(nm) #nm=0 in the regexp, ready to change it to support more nms
@@ -63,6 +64,7 @@ for lang in langs:
     r_urls = re.compile(r'\((\d+),\'([a-z]+://[^/\']{3,})[/\']')
     c = 0
     for line in g:
+        line = unicode(line, 'utf-8')
         m = re.findall(r_urls, line) # 3 chars x.y
         for pageid, url in m:
             pageid = int(pageid)
