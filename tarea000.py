@@ -191,6 +191,8 @@ def getDbname(lang, family):
     multilang = 0
     if family in ['commons', 'wikispecies']:
         multilang = 1
+    if family == 'commons':
+        more = " and domain='commons.wikimedia.org'"
     conn = MySQLdb.connect(host='sql', db='toolserver', read_default_file='~/.my.cnf', use_unicode=True)
     cursor = conn.cursor()
     cursor.execute("SELECT dbname from wiki where family='%s' and lang='%s' and is_multilang=%d %s;" % (family, lang, multilang, more))
@@ -214,6 +216,8 @@ def getServer(lang, family):
     multilang = 0
     if family in ['commons', 'wikispecies']:
         multilang = 1
+    if family == 'commons':
+        more = " and domain='commons.wikimedia.org'"
     conn = MySQLdb.connect(host='sql', db='toolserver', read_default_file='~/.my.cnf', use_unicode=True)
     cursor = conn.cursor()
     cursor.execute("SELECT server from wiki where family='%s' and lang='%s' and is_multilang=%d %s;" % (family, lang, multilang, more))
