@@ -23,7 +23,10 @@ def convertentity(m):
     return unichr(int(m.group(2)))
 
 def unquotehtml(s):
-    return re.sub(r'&(#?)(\d+?);',convertentity,s) 
+    try:
+        return re.sub(r'&(#?)(\d+?);',convertentity,s) 
+    except:
+        return s
 
 site=wikipedia.Site('meta', 'meta')
 tables=[
@@ -34,17 +37,17 @@ tables=[
 [u"Wikinews/Table", 'http://s23.org/wikistats/wikinews_wiki.php'],
 [u"Wikisource/Table", 'http://s23.org/wikistats/wikisources_wiki.php'],
 [u"Wikiversity/Table", 'http://s23.org/wikistats/wikiversity_wiki.php'],
-[u"List of Wikimedia Projects by Size/Table", 'http://s23.org/wikistats/wikimedias_wiki.php'],
+[u"List of Wikimedia projects by size/Table", 'http://s23.org/wikistats/wikimedias_wiki.php'],
 ]
 for table, url in tables:
     wii=wikipedia.Page(site, table)
     output=urllib.urlopen(url).read()
-    output="{|"+("{|".join(output.split("{|")[1:]))
+    #output="{|"+("{|".join(output.split("{|")[1:]))
     output=re.sub(ur"(?im)(<pre>\n?|\n?</pre>|</?[^>]+?>)", ur"", output)
     output.strip()
     output=unquotehtml(output)
-    if table=="List of Wikipedias/Table":
-        output="=== 1 000 000+ articles ===\n"+output
+    #if table=="List of Wikipedias/Table":
+    #    output="=== 1 000 000+ articles ===\n"+output
     output=output.strip()
     if wii.get()!=output:
         wii.put(output, u"BOT - Updating page")
