@@ -310,6 +310,7 @@ def main():
     f = open(candfile, 'w')
     t1=time.time()
     for row in result:
+        percent(c=cc, d=10)
         page_lang = row[0]
         page_id = int(row[1])
         page_title = row[2]
