@@ -43,6 +43,6 @@ foreach($langs as $lang)
 }
 
 echo "<tr><td>All</td><td>{$c2}</td><td>{$c1}</td><td>".($c1+$c2)."</td><td>".number_format($c1/(($c1+$c2)/100), 2)."%</td></tr>";
-echo "</table></center>";
+echo "</table><br/>This tool has been reset several times. Total images added to articles since 20: XXXX.</center>";
 
 ?>
