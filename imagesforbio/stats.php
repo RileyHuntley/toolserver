@@ -5,7 +5,7 @@ mysql_connect('sql',$toolserver_username,$toolserver_password);
 
 echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><link rel="stylesheet" href="style.css" type="text/css" /></head><body>';
 
-echo "<center><table style='text-align:center;'><tr><td><img src='im1.jpg'></td><td><h1><a href='http://toolserver.org/~emijrp/imagesforbio/'>Images for biographies</a><sup><span style='font-color:#ff0000;'>new!</span></sup></h1></td><td><img src='im2.png'></td></tr><tr><td colspan=3>Some statistics for this amazing tool.</td></tr></table><br/><table border=1 style='text-align: center;'><tr><th>Language</th><th>Uncompleted</th><th>Completed</th><th>Total</th><th>Completed (%)</th></tr>";
+echo "<center><table style='text-align:center;'><tr><td><img src='im1.jpg'></td><td><h1><a href='http://toolserver.org/~emijrp/imagesforbio/'>Images for biographies</a></h1></td><td><img src='im2.png'></td></tr></table></center><br/><center>Some statistics for this amazing tool. Thanks to all users who added any image.</center><br/><center><table id='langs' border=1px style='text-align: center;'><tr><th>Language</th><th>Uncompleted</th><th>Completed</th><th>Total</th><th>Completed (%)</th></tr>";
 
 $langs=array();
 $query="select language from imagesforbio group by language";
@@ -43,6 +43,6 @@ foreach($langs as $lang)
 }
 
 echo "<tr><td>All</td><td>{$c2}</td><td>{$c1}</td><td>".($c1+$c2)."</td><td>".number_format($c1/(($c1+$c2)/100), 2)."%</td></tr>";
-echo "</table>";
+echo "</table></center>";
 
 ?>
