@@ -72,7 +72,7 @@ foreach($langs as $lang)
 }
 echo "<hr/>";
 
-$limit=15;
+$limit=50;
 if ($language)
 {
 	if ($language=="all")
