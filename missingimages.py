@@ -97,7 +97,7 @@ bd_cats = { #birth/death categories
 
 langs = set([])
 #EXCLUDED PROJECTS
-excluded = set(['de']) # de doesn't allow paintings as pics
+excluded = set(['en', 'de']) # en is too large (special case), de doesn't allow paintings as pics
 #ALL PROJECTS
 alllangs = set(bd_cats.keys()) - excluded
 #PROJECTS TO ANALYSE
@@ -120,7 +120,7 @@ if len(sys.argv) == 2:
 #REMOVING DUPES AND EXCLUDED
 langs = langs - excluded
 #REMOVING LANGUAGES WHICH HAVE NOT BIOGRAPHICAL CATEGORY INFO
-langs = langs & set(bd_cats.keys())
+langs = langs & set(bd_cats.keys()) # conjuction
 
 def percent(c, d=1000):
     if c % d == 0: sys.stderr.write('.') #print '\nLlevamos %d' % c

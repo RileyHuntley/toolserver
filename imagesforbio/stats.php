@@ -16,33 +16,44 @@ while($row = mysql_fetch_assoc($result))
 	array_push($langs, $row['language']);
 }
 
-$c1=0;
-$c2=0;
+$totaldone=0;
+$totaltodo=0;
 foreach($langs as $lang)
 {
 	$query="select count(*) from imagesforbio where done=0 and language='{$lang}' group by article";
        $result = mysql_query($query);
        if(!$result) Die("ERROR: No result returned.");
-       $c3=0;
+       $todo=0;
        while($row = mysql_fetch_assoc($result))
        {
-	      $c3+=1;
+	      $todo+=1;
        }
 
        $query="select count(*) from imagesforbio where done=1 and language='{$lang}' group by article";
        $result = mysql_query($query);
        if(!$result) Die("ERROR: No result returned.");
-       $c4=0;
+       $done=0;
        while($row = mysql_fetch_assoc($result))
        {
-	      $c4+=1;
+	      $done+=1;
        }
-	echo "<tr><td><a href=index.php?language={$lang}&show=0>{$lang}</a></td><td>{$c3}</td><td>{$c4}</td><td>".($c3+$c4)."</td><td>".number_format($c4/(($c3+$c4)/100), 2)."%</td></tr>";
-       $c2+=$c3;
-       $c1+=$c4;
+    $percent = number_format($done/(($todo+$done)/100), 2);
+    $color = 'pink';
+    if ($percent < 25) {
+        $color = 'pink';
+    }else if ($percent < 50) {
+        $color = 'orange';
+    }else if ($percent < 75) {
+        $color = 'yellow';
+    }else {
+        $color = 'lightgreen';
+    }
+	echo "<tr><td><a href=index.php?language={$lang}&show=0>{$lang}</a></td><td>{$todo}</td><td>{$done}</td><td>".($todo+$done)."</td><td bgcolor=${color}>".$percent."%</td></tr>";
+       $totaltodo+=$todo;
+       $totaldone+=$done;
 }
 
-echo "<tr><td>All</td><td>{$c2}</td><td>{$c1}</td><td>".($c1+$c2)."</td><td>".number_format($c1/(($c1+$c2)/100), 2)."%</td></tr>";
-echo "</table><br/>This tool has been reset several times. Total images added to articles since 20: XXXX.</center>";
+echo "<tr><td>All</td><td>{$totaltodo}</td><td>{$totaldone}</td><td>".($totaldone+$totaltodo)."</td><td>".number_format($totaldone/(($totaldone+$totaltodo)/100), 2)."%</td></tr>";
+echo "</table><br/>This tool has been reset several times. Total images added to articles since 2010: XXXX.</center>";
 
 ?>
