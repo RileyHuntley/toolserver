@@ -108,8 +108,11 @@ family = 'wikipedia'
 
 if len(sys.argv) == 2:
     if sys.argv[1].lower() == 'all':
-        print 'Analysing all available languages'
+        print 'Analysing all available languages excluding: %s' % (', '.join(excluded))
         langs = alllangs
+    elif sys.argv[1].lower() == 'small':
+        print 'Analysing only small languages'
+        langs = smalllangs
     elif sys.argv[1].lower() == 'test':
         print 'Analysing some minor languages for testing'
         langs = testlangs
@@ -198,6 +201,7 @@ def main():
         print '\nLoaded %d commons images %f' % (c, time.time()-t1)
         #end commons images
     
+    print 'We are going to analyse %d langs: %s' % (len(langs), ', '.join(langs))
     for lang in langs:
         print '==== %s ====' % lang
         dbname = tarea000.getDbname(lang, family)
