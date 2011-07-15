@@ -149,10 +149,16 @@ def createDB(conn=None, cursor=None):
 
 def main():
     delete = False
+    commitlimit = 10000
     dbfilename = '/mnt/user-store/emijrp/missingimages.db'
     if delete and os.path.exists(dbfilename):
         os.remove(dbfilename)
     
+    #filters
+    ex = ur'(?i)(%s)' % ('|'.join(wikipedia.Page(wikipedia.Site("en", "wikipedia"), u"User:Emijrp/Images for biographies/Exclusions").get().splitlines()))
+    exclusion_pattern = re.compile(ex) # los ' y " los filtramos al final
+    
+    #db
     conns3 = sqlite3.connect(dbfilename)
     cursors3 = conns3.cursor()
     cursors31 = conns3.cursor()
@@ -214,6 +220,7 @@ def main():
                 cursors3.execute('INSERT INTO pages VALUES (?,?,?,?)', (lang, page_id, page_title, 0))
                 c += 1;percent(c)
             row = r.fetch_row(maxrows=1, how=1)
+            if c % commitlimit == 0: conns3.commit()
         conns3.commit()
         print '\nLoaded %d bios of %s.%s.org %f' % (c, lang, family, time.time()-t1)
         
@@ -235,6 +242,7 @@ def main():
                 cursors3.execute('UPDATE pages SET page_has_images=? WHERE page_lang=? AND page_id=?', (1, lang, il_from))
                 c += 1;percent(c)
             row = r.fetch_row(maxrows=1, how=1)
+            if c % commitlimit == 0: conns3.commit()
         conns3.commit()
         print '\nLoaded %d imagelinks of %s.%s.org %f' % (c, lang, family, time.time()-t1)
     
@@ -256,6 +264,7 @@ def main():
                 cursors3.execute('INSERT INTO langlinks VALUES (?,?,?,?)', (lang, ll_from, ll_lang, ll_title))
                 c += 1;percent(c)
             row = r.fetch_row(maxrows=1, how=1)
+            if c % commitlimit == 0: conns3.commit()
         conns3.commit()
         print '\nLoaded %d langlinks of %s.%s.org %f' % (c, lang, family, time.time()-t1)
         
@@ -276,6 +285,7 @@ def main():
                 cursors3.execute('INSERT INTO templateimages VALUES (?,?,?)', (lang, il_from, il_to))
                 c += 1;percent(c)
             row = r.fetch_row(maxrows=1, how=1)
+            if c % commitlimit == 0: conns3.commit()
         conns3.commit()
         print '\nLoaded %d templateimages of %s.%s.org %f' % (c, lang, family, time.time()-t1)
         
@@ -294,6 +304,7 @@ def main():
                 cursors3.execute('INSERT INTO images VALUES (?,?)', (lang, img_name))
                 c += 1;percent(c)
             row = r.fetch_row(maxrows=1, how=1)
+            if c % commitlimit == 0: conns3.commit()
         conns3.commit()
         print '\nLoaded %d localimages of %s.%s.org %f' % (c, lang, family, time.time()-t1)
         
@@ -309,15 +320,12 @@ def main():
         bioswithout = int(row[0])
     print 'There are %d bios without images (%.2f%%)' % (bioswithout, bioswithout/(bios/100.0))
     
-    #filters
-    ex = ur'(?i)(%s)' % ('|'.join(wikipedia.Page(wikipedia.Site("en", "wikipedia"), u"User:Emijrp/Images for biographies/Exclusions").get().splitlines()))
-    exclusion_pattern=re.compile(ex) # los ' y " los filtramos al final
     #check for missing images bios
     result = cursors3.execute(r'SELECT page_lang, page_id, page_title FROM pages WHERE page_has_images=?', (0,))
     cc = 0
     candfile = '/home/emijrp/temporal/candidatas.sql'
     f = open(candfile, 'w')
-    t1=time.time()
+    t1 = time.time()
     for row in result:
         percent(c=cc, d=10)
         page_lang = row[0]
@@ -354,7 +362,7 @@ def main():
         
         #sort and choice the best candidate
         if candidatas:
-            cand_list = [[v,k] for k,v in candidatas.items()]
+            cand_list = [[v, k] for k, v in candidatas.items()]
             cand_list.sort()
             cand_list.reverse()
             
