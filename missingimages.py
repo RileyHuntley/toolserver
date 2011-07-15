@@ -55,7 +55,7 @@ bd_cats = { #birth/death categories
     'it': r'(Nati_nel|Morti_nel)_[0-9]+',
     'ja': r'[0-9]+(年生|年没)',
     'ka': r'(დაბადებული|გარდაცვლილი)_[0-9]+',
-    'kk': r'[0-9]+(жылы_туғандар|жылы_қайтыс_болғандар)',
+    'kk': r'[0-9]+_(жылы_туғандар|жылы_қайтыс_болғандар)',
     'ko': r'[0-9]+(년 태어남|년 죽음)',
     'la': r'(Nati|Mortui)_[0-9]+',
     'lb': r'(Gebuer|Gestuerwen)_[0-9]+',
@@ -102,7 +102,7 @@ excluded = set(['de']) # de doesn't allow paintings as pics
 alllangs = set(bd_cats.keys()) - excluded
 #PROJECTS TO ANALYSE
 biglangs = set(['fr', 'it', 'pl', 'es', 'ja', 'nl', 'ru', 'pt', 'sv', 'zh', 'ca', 'no', 'uk', 'fi', 'vi', 'cs', 'hu', 'tr', 'id', 'ko', 'ro', 'fa', 'da', 'ar', 'eo', 'sr', 'lt', 'sk', 'he', 'ms', 'sl', 'vo', 'bg', 'eu', 'war', 'hr', ]) #biggest wikipedias (over 100k articles) except EN, DE
-testlangs = set(['qu', 'yo', 'cy']) #some minor languages for testing
+testlangs = set(['qu', 'yo', 'cy', 'tl', 'kk']) #some minor languages for testing
 smalllangs = alllangs - biglangs
 family = 'wikipedia'
 
