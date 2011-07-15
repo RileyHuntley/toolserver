@@ -331,7 +331,7 @@ def main():
     candfile = '/home/emijrp/temporal/candidatas.sql'
     f = open(candfile, 'w')
     for row in result:
-        percent(c=cc, d=10)
+        percent(c=cc, d=100)
         page_lang = row[0]
         page_id = int(row[1])
         page_title = row[2]
