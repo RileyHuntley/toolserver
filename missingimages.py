@@ -95,20 +95,29 @@ bd_cats = { #birth/death categories
     'zh-yue': r'[0-9]+(年出世|年死)',
 }
 
+langs = set([])
 #EXCLUDED PROJECTS
-excluded = set(['de'])
+excluded = set(['de']) # de doesn't allow paintings as pics
 #ALL PROJECTS
 alllangs = set(bd_cats.keys()) - excluded
 #PROJECTS TO ANALYSE
-langs = set(['da', 'eo', 'no', 'fr', 'ru', 'es', 'it', 'pl', 'fi', 'is', 'ja', 'sl', 'sk', ])
-#['ab', 'af', 'ak', 'als', 'am', 'an', 'ang', 'ar', 'arc', 'arz', 'as', 'ast', 'av', 'ay', 'az', 'ba', 'bar', 'bat-smg', 'bcl', 'be', 'be-x-old', 'bg', 'bh', 'bi', 'bm', 'bn', 'bo', 'bpy', 'br', 'bs', 'bug', 'bxr', 'ca', 'cbk-zam', 'cdo', 'ce', 'ceb', 'ch', 'cho', 'chr', 'chy', 'closed-zh-tw', 'co', 'cr', 'crh', 'cs', 'csb', 'cu', 'cv', 'cy', 'cz', 'da', 'de', 'diq', 'dk', 'dsb', 'dv', 'dz', 'ee', 'el', 'eml', 'en', 'eo', 'epo', 'es', 'et', 'eu', 'ext', 'fa', 'ff', 'fi', 'fiu-vro', 'fj', 'fo', 'fr', 'frp', 'fur', 'fy', 'ga', 'gan', 'gd', 'gl', 'glk', 'gn', 'got', 'gu', 'gv', 'ha', 'hak', 'haw', 'he', 'hi', 'hif', 'ho', 'hr', 'hsb', 'ht', 'hu', 'hy', 'hz', 'ia', 'id', 'ie', 'ig', 'ii', 'ik', 'ilo', 'io', 'is', 'it', 'iu', 'ja', 'jbo', 'jp', 'jv', 'ka', 'kaa', 'kab', 'kg', 'ki', 'kj', 'kk', 'kl', 'km', 'kn', 'ko', 'kr', 'ks', 'ksh', 'ku', 'kv', 'kw', 'ky', 'la', 'lad', 'lb', 'lbe', 'lg', 'li', 'lij', 'lmo', 'ln', 'lo', 'lt', 'lv', 'map-bms', 'mdf', 'mg', 'mh', 'mi', 'minnan', 'mk', 'ml', 'mn', 'mo', 'mr', 'ms', 'mt', 'mus', 'my', 'myv', 'mzn', 'na', 'nah', 'nan', 'nap', 'nb', 'nds', 'nds-nl', 'ne', 'new', 'ng', 'nl', 'nn', 'no', 'nomcom', 'nov', 'nrm', 'nv', 'ny', 'oc', 'om', 'or', 'os', 'pa', 'pag', 'pam', 'pap', 'pdc', 'pi', 'pih', 'pl', 'pms', 'ps', 'pt', 'qu', 'rm', 'rmy', 'rn', 'ro', 'roa-rup', 'roa-tara', 'ru', 'rw', 'sa', 'sah', 'sc', 'scn', 'sco', 'sd', 'se', 'sg', 'sh', 'si', 'simple', 'sk', 'sl', 'sm', 'sn', 'so', 'sq', 'sr', 'srn', 'ss', 'st', 'stq', 'su', 'sv', 'sw', 'szl', 'ta', 'te', 'tet', 'tg', 'th', 'ti', 'tk', 'tl', 'tn', 'to', 'tokipona', 'tp', 'tpi', 'tr', 'ts', 'tt', 'tum', 'tw', 'ty', 'udm', 'ug', 'uk', 'ur', 'uz', 've', 'vec', 'vi', 'vls', 'vo', 'wa', 'war', 'wo', 'wuu', 'xal', 'xh', 'yi', 'yo', 'za', 'zea', 'zh', 'zh-cfr', 'zh-classical', 'zh-min-nan', 'zh-yue', 'zu']
-#REMOVING DUPES AND EXCLUDED
-langs = langs - excluded
+biglangs = set(['fr', 'it', 'pl', 'es', 'ja', 'nl', 'ru', 'pt', 'sv', 'zh', 'ca', 'no', 'uk', 'fi', 'vi', 'cs', 'hu', 'tr', 'id', 'ko', 'ro', 'fa', 'da', 'ar', 'eo', 'sr', 'lt', 'sk', 'he', 'ms', 'sl', 'vo', 'bg', 'eu', 'war', 'hr', ]) #biggest wikipedias (over 100k articles) except EN, DE
+testlangs = set(['qu', 'yo', 'cy']) #some minor languages for testing
+smalllangs = alllangs - biglangs
 family = 'wikipedia'
 
-if len(sys.argv) == 2 and sys.argv[1].lower() == 'all':
-    print 'Analysing all available languages'
-    langs = alllangs
+if len(sys.argv) == 2:
+    if sys.argv[1].lower() == 'all':
+        print 'Analysing all available languages'
+        langs = alllangs
+    elif sys.argv[1].lower() == 'test':
+        print 'Analysing some minor languages for testing'
+        langs = testlangs
+
+#REMOVING DUPES AND EXCLUDED
+langs = langs - excluded
+#REMOVING LANGUAGES WHICH HAVE NOT BIOGRAPHICAL CATEGORY INFO
+langs = langs & set(bd_cats.keys())
 
 def percent(c, d=1000):
     if c % d == 0: sys.stderr.write('.') #print '\nLlevamos %d' % c
@@ -139,7 +148,7 @@ def createDB(conn=None, cursor=None):
     conn.commit()
 
 def main():
-    delete = True
+    delete = False
     dbfilename = '/mnt/user-store/emijrp/missingimages.db'
     if delete and os.path.exists(dbfilename):
         os.remove(dbfilename)
