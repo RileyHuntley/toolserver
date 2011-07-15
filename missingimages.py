@@ -148,6 +148,7 @@ def createDB(conn=None, cursor=None):
     conn.commit()
 
 def main():
+    t1 = time.time()
     delete = False
     commitlimit = 10000
     dbfilename = '/mnt/user-store/emijrp/missingimages.db'
@@ -325,7 +326,6 @@ def main():
     cc = 0
     candfile = '/home/emijrp/temporal/candidatas.sql'
     f = open(candfile, 'w')
-    t1 = time.time()
     for row in result:
         percent(c=cc, d=10)
         page_lang = row[0]
@@ -382,7 +382,7 @@ def main():
     cursors3.close()
     conns3.close()
     
-    print '\n---->(((((Finalmente se encontraron %d imagenes posiblemente utiles %f)))))<----' % (cc, time.time()-t1)
+    print '\n---->(((((Finalmente se encontraron %d imagenes posiblemente utiles %d seconds [%.2f hours])))))<----' % (cc, time.time()-t1, (time.time()-t1)/3600)
     for lang in langs:
         os.system('mysql -h sql -e "use u_emijrp_yarrow;delete from imagesforbio where language=\'%s\';"' % lang)
     os.system('mysql -h sql u_emijrp_yarrow < %s' % candfile)
