@@ -107,12 +107,13 @@ bd_cats = { #birth/death categories
 
 langs = set([])
 #EXCLUDED PROJECTS
-excluded = set(['en', 'de']) # en is too large (special case), de doesn't allow paintings as pics
+excluded = set(['de']) # de doesn't allow paintings as pics
 #ALL PROJECTS
 alllangs = set(bd_cats.keys()) - excluded
 #PROJECTS TO ANALYSE
 biglangs = set(['fr', 'it', 'pl', 'es', 'ja', 'nl', 'ru', 'pt', 'sv', 'zh', 'ca', 'no', 'uk', 'fi', 'vi', 'cs', 'hu', 'tr', 'id', 'ko', 'ro', 'fa', 'da', 'ar', 'eo', 'sr', 'lt', 'sk', 'he', 'ms', 'sl', 'vo', 'bg', 'eu', 'war', 'hr', ]) #biggest wikipedias (over 100k articles) except EN, DE
 testlangs = set(['qu', 'yo', 'cy', 'tl', 'kk']) #some minor languages for testing
+testenlangs = set(['en', 'fr'])
 smalllangs = alllangs - biglangs
 family = 'wikipedia'
 
@@ -129,6 +130,9 @@ if len(sys.argv) == 2:
     elif sys.argv[1].lower() == 'test':
         print 'Analysing some minor languages for testing'
         langs = testlangs
+    elif sys.argv[1].lower() == 'testen':
+        print 'Analysing en: and other language for testing'
+        langs = testenlangs
 
 #REMOVING DUPES AND EXCLUDED
 langs = langs - excluded
@@ -202,6 +206,7 @@ def main():
         conn = MySQLdb.connect(host=server, db=dbname, read_default_file='~/.my.cnf')
         t1=time.time()
         conn.query(r'''
+            /* missingimages.py SLOW_OK */ 
             SELECT img_name
             FROM image
             ''')
@@ -228,6 +233,7 @@ def main():
         #bios
         t1=time.time()
         conn.query(r'''
+            /* missingimages.py SLOW_OK */
             SELECT DISTINCT page_id, page_title
             FROM categorylinks, page
             WHERE cl_from=page_id AND page_namespace=0 AND cl_to RLIKE '%s'
@@ -249,6 +255,7 @@ def main():
         #imagelinks
         t1=time.time()
         conn.query(r'''
+            /* missingimages.py SLOW_OK */
             SELECT DISTINCT il_from, il_to
             FROM imagelinks, page, categorylinks
             WHERE il_from=page_id AND cl_from=page_id AND page_namespace=0 AND cl_to RLIKE '%s'
@@ -271,6 +278,7 @@ def main():
         #interwikis
         t1=time.time()
         conn.query(r'''
+            /* missingimages.py SLOW_OK */
             SELECT DISTINCT ll_from, ll_lang, ll_title
             FROM langlinks, page, categorylinks
             WHERE ll_from=page_id AND cl_from=page_id AND page_namespace=0 AND cl_to RLIKE '%s'
@@ -293,6 +301,7 @@ def main():
         #templateimages
         t1=time.time()
         conn.query(r'''
+            /* missingimages.py SLOW_OK */
             SELECT DISTINCT il_from, il_to
             FROM imagelinks, page
             WHERE il_from=page_id AND page_namespace=10
@@ -314,6 +323,7 @@ def main():
         #images
         t1=time.time()
         conn.query(r'''
+            /* missingimages.py SLOW_OK */
             SELECT img_name
             FROM image
             ''')
