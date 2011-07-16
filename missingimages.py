@@ -120,6 +120,9 @@ if len(sys.argv) == 2:
     if sys.argv[1].lower() == 'all':
         print 'Analysing all available languages excluding: %s' % (', '.join(excluded))
         langs = alllangs
+    elif sys.argv[1].lower() == 'big':
+        print 'Analysing only big languages'
+        langs = biglangs
     elif sys.argv[1].lower() == 'small':
         print 'Analysing only small languages'
         langs = smalllangs
