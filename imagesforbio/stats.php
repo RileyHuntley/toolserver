@@ -45,8 +45,10 @@ foreach($langs as $lang)
         $color = 'orange';
     }else if ($percent < 75) {
         $color = 'yellow';
-    }else {
+    }else if ($percent < 100) {
         $color = 'lightgreen';
+    }else if ($percent == 100) {
+        $color = 'lightblue';
     }
 	echo "<tr><td><a href=index.php?language={$lang}&show=0>{$lang}</a></td><td>{$todo}</td><td>{$done}</td><td>".($todo+$done)."</td><td bgcolor=${color}>".$percent."%</td></tr>";
        $totaltodo+=$todo;
