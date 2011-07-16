@@ -168,8 +168,12 @@ def main():
     delete = False
     commitlimit = 10000
     dbfilename = '/mnt/user-store/emijrp/missingimages.db'
-    if delete and os.path.exists(dbfilename):
-        os.remove(dbfilename)
+    create = False
+    if delete:
+        if os.path.exists(dbfilename):
+            os.remove(dbfilename)
+        else:
+            create = True
     
     #filters
     ex = ur'(?i)(%s)' % ('|'.join(wikipedia.Page(wikipedia.Site("en", "wikipedia"), u"User:Emijrp/Images for biographies/Exclusions").get().splitlines()))
@@ -180,7 +184,7 @@ def main():
     cursors3 = conns3.cursor()
     cursors31 = conns3.cursor()
     cursors32 = conns3.cursor()
-    if delete: #creamos estructura
+    if delete or create: #creamos estructura
         createDB(conn=conns3, cursor=cursors3)
     
     if not delete: #if we do not delete database to conservate commons images info, empty tables of previous analysis
