@@ -397,8 +397,8 @@ def main():
                 trozos = '|'.join([trozo for trozo in re.sub(ur'[\(\)]', ur'', trocear).split(' ') if len(trozo) >= 3])
                 if len(re.findall(ur'\|', trozos)) >= 1: #al menos dos palabras para buscar (una|otra)
                     if not re.search(exclusion_pattern, il_image_name): #evitamos imagenes que no sirven o erroneas que ya se han comprobado en otras actualizaciones
-                        if not re.search(ur'([\'\"]|[^\d]0\d\d[^\d])', ' '.join([page_title, ll_to_title, il_image_name])):
-                            #excluimos imágenes con ' " en el título que causan errores al generar el sql de candidatas, también listados de imágenes 001, 002, 003...
+                        if not re.search(ur'([\'\"\&]|[^\d]0\d\d[^\d])', ' '.join([page_title, ll_to_title, il_image_name])):
+                            #excluimos imágenes con ' " en el título que causan errores al generar el sql de candidatas y & en el PHP, también listados de imágenes 001, 002, 003...
                             if len(re.findall(ur"(?i)(%s)" % trozos, il_image_name)) >= 2: #al menos dos ocurrencias en el nombre del fich
                                 #ok il_image_name es una buena candidata
                                 if candidatas.has_key(il_image_name):
