@@ -411,7 +411,7 @@ def main():
             cand_list.sort()
             cand_list.reverse()
             
-            il_image_name = cand_list[0][1]
+            il_image_name = cand_list[0][1] #we choose the most used image on candidate list
             cc += 1
             il_image_name_ = re.sub(' ', '_', il_image_name)
             md5_ = md5.new(il_image_name_.encode('utf-8')).hexdigest()
