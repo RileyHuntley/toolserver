@@ -372,7 +372,6 @@ def main():
     candfile = '/home/emijrp/temporal/candidatas.sql'
     f = open(candfile, 'w')
     for row in result:
-        percent(c=cc, d=100)
         page_lang = row[0]
         page_id = int(row[1])
         page_title = row[2]
@@ -413,7 +412,7 @@ def main():
             cand_list.reverse()
             
             il_image_name = cand_list[0][1] #we choose the most used image on candidate list
-            cc += 1
+            cc += 1;percent(c=cc, d=10)
             il_image_name_ = re.sub(' ', '_', il_image_name)
             md5_ = md5.new(il_image_name_.encode('utf-8')).hexdigest()
             salida = "INSERT INTO `imagesforbio` (`id`, `language`, `article`, `image`, `url`, `done`) VALUES (NULL, '%s', '%s', '%s', 'http://upload.wikimedia.org/wikipedia/commons/%s/%s/%s', 0);\n" % (page_lang, page_title, il_image_name, md5_[0], md5_[0:2], il_image_name_)
