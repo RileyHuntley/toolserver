@@ -8,7 +8,7 @@ echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www
 echo "<center><table style='text-align:center;'><tr><td><img src='im1.jpg'></td><td><h1><a href='http://toolserver.org/~emijrp/imagesforbio/'>Images for biographies</a></h1></td><td><img src='im2.png'></td></tr></table></center><br/><center>Some statistics for this amazing tool. Thanks to all users who added any image.</center><br/><center><table id='langs' border=1px style='text-align: center;'><tr><th>Language</th><th>To do</th><th>Done</th><th>Total</th><th>Done (%)</th></tr>";
 
 $langs=array();
-$query="select language from imagesforbio group by language";
+$query="select language from imagesforbios group by language";
 $result = mysql_query($query);
 if(!$result) Die("ERROR: No result returned.");
 while($row = mysql_fetch_assoc($result))
@@ -20,7 +20,7 @@ $totaldone=0;
 $totaltodo=0;
 foreach($langs as $lang)
 {
-	$query="select count(*) from imagesforbio where done=0 and language='{$lang}' group by article";
+	$query="select count(*) from imagesforbios where done=0 and language='{$lang}' group by article";
        $result = mysql_query($query);
        if(!$result) Die("ERROR: No result returned.");
        $todo=0;
@@ -29,7 +29,7 @@ foreach($langs as $lang)
 	      $todo+=1;
        }
 
-       $query="select count(*) from imagesforbio where done=1 and language='{$lang}' group by article";
+       $query="select count(*) from imagesforbios where done=1 and language='{$lang}' group by article";
        $result = mysql_query($query);
        if(!$result) Die("ERROR: No result returned.");
        $done=0;

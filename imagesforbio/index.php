@@ -11,13 +11,13 @@ if (isset($_POST['done']))
 	$done=$_POST['done'];
 	$done=intval($done);
 	$query="";
-	$query="update imagesforbio set done=not done where id={$done}";
+	$query="update imagesforbios set done=not done where id={$done}";
 	$result = mysql_query($query);
 	if(!$result) Die("ERROR: No result returned.");
 }
 
 $langs=array();
-$query="select language from imagesforbio group by language";
+$query="select language from imagesforbios group by language";
 $result = mysql_query($query);
 if(!$result) Die("ERROR: No result returned.");
 while($row = mysql_fetch_assoc($result))
@@ -78,14 +78,14 @@ if ($language)
 	if ($language=="all")
 	{
 		if ($show)
-			$query = "select * from imagesforbio LIMIT order by article $limit";
+			$query = "select * from imagesforbios LIMIT order by article $limit";
 		else
-			$query = "select * from imagesforbio where done=0 order by article LIMIT $limit";
+			$query = "select * from imagesforbios where done=0 order by article LIMIT $limit";
 	}else{
 		if ($show)
-			$query = "select * from imagesforbio where language='{$language}' order by article LIMIT $limit";
+			$query = "select * from imagesforbios where language='{$language}' order by article LIMIT $limit";
 		else
-			$query = "select * from imagesforbio where language='{$language}' and done=0 order by article LIMIT $limit";
+			$query = "select * from imagesforbios where language='{$language}' and done=0 order by article LIMIT $limit";
 	}
 	$result = mysql_query($query);
 	if(!$result) Die("ERROR: No result returned.");

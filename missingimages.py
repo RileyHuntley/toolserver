@@ -29,6 +29,17 @@ import wikipedia
 #todo
 #qué hacer con las wikipedias que no tienen categorías de nacimientos y fallecimientos?
 
+#http://en.wikipedia.org/wiki/Category:Rivers_by_country
+river_cats = {
+    'an': r'Ríos_d',
+    'az': r'.+_çayları',
+    'be': r'Рэкі_.+',
+    'en': r'Rivers_of_',
+    'eu': r'.+_ibaiak',
+    'fr': r'Cours_d\'eau_',
+    'zh-min-nan': r'.+_ê_hô',
+}
+
 #no usar \d+ sino [0-9]+
 bd_cats = { #birth/death categories
     'an': r'[0-9]+_\\((naixencias|muertes)\\)',
@@ -119,39 +130,55 @@ bd_cats = { #birth/death categories
     'zh-yue': r'[0-9]+(年出世|年死)',
 }
 
+cats = {}
+subproject = ''
+if len(sys.argv) == 3:
+    if sys.argv[1].lower() == 'bios':
+        cats = bd_cats
+        subproject = 'bios'
+    elif sys.argv[1].lower() == 'rivers':
+        cats = river_cats
+        subproject = 'rivers'
+    else:
+        print 'Missing parameters: python missingimages.py [bios|rivers] [all|big|small|test|testen]'
+        sys.exit()
+
+#http://meta.wikimedia.org/wiki/List_of_Wikipedias
 langs = set([])
 #EXCLUDED PROJECTS
 excluded = set(['de']) # de doesn't allow paintings as pics
 #ALL PROJECTS
-alllangs = set(bd_cats.keys()) - excluded
+alllangs = set(cats.keys()) - excluded
 #PROJECTS TO ANALYSE
-biglangs = set(['fr', 'it', 'pl', 'es', 'ja', 'nl', 'ru', 'pt', 'sv', 'zh', 'ca', 'no', 'uk', 'fi', 'vi', 'cs', 'hu', 'tr', 'id', 'ko', 'ro', 'fa', 'da', 'ar', 'eo', 'sr', 'lt', 'sk', 'he', 'ms', 'sl', 'vo', 'bg', 'eu', 'war', 'hr', ]) #biggest wikipedias (over 100k articles) except EN, DE
+biglangs = set(['en', 'fr', 'it', 'pl', 'es', 'ja', 'nl', 'ru', 'pt', 'sv', 'zh', 'ca', 'no', 'uk', 'fi', 'vi', 'cs', 'hu', 'tr', 'id', 'ko', 'ro', 'fa', 'da', 'ar', 'eo', 'sr', 'lt', 'sk', 'he', 'ms', 'sl', 'vo', 'bg', 'eu', 'war', 'hr', ]) #biggest wikipedias (over 100k articles) except DE
 testlangs = set(['qu', 'yo', 'cy', 'tl', 'kk']) #some minor languages for testing
 testenlangs = set(['en', 'fr'])
 smalllangs = alllangs - biglangs
 family = 'wikipedia'
 
-if len(sys.argv) == 2:
-    if sys.argv[1].lower() == 'all':
-        print 'Analysing all available languages excluding: %s' % (', '.join(excluded))
-        langs = alllangs
-    elif sys.argv[1].lower() == 'big':
-        print 'Analysing only big languages'
-        langs = biglangs
-    elif sys.argv[1].lower() == 'small':
-        print 'Analysing only small languages'
-        langs = smalllangs
-    elif sys.argv[1].lower() == 'test':
-        print 'Analysing some minor languages for testing'
-        langs = testlangs
-    elif sys.argv[1].lower() == 'testen':
-        print 'Analysing en: and other language for testing'
-        langs = testenlangs
+if sys.argv[2].lower() == 'all':
+    print 'Analysing all available languages excluding: %s' % (', '.join(excluded))
+    langs = alllangs
+elif sys.argv[2].lower() == 'big':
+    print 'Analysing only big languages'
+    langs = biglangs
+elif sys.argv[2].lower() == 'small':
+    print 'Analysing only small languages'
+    langs = smalllangs
+elif sys.argv[2].lower() == 'test':
+    print 'Analysing some minor languages for testing'
+    langs = testlangs
+elif sys.argv[2].lower() == 'testen':
+    print 'Analysing en: and other language for testing'
+    langs = testenlangs
+else:
+    print 'Missing parameters: python missingimages.py [bios|rivers] [all|big|small|test|testen]'
+    sys.exit()
 
 #REMOVING DUPES AND EXCLUDED
 langs = langs - excluded
 #REMOVING LANGUAGES WHICH HAVE NOT BIOGRAPHICAL CATEGORY INFO
-langs = langs & set(bd_cats.keys()) # conjuction
+langs = langs & set(cats.keys()) # conjuction
 
 def percent(c, d=1000):
     if c % d == 0: sys.stderr.write('.') #print '\nLlevamos %d' % c
@@ -185,7 +212,7 @@ def main():
     t2 = time.time()
     delete = False
     commitlimit = 10000
-    dbfilename = '/mnt/user-store/emijrp/missingimages.db'
+    dbfilename = '/mnt/user-store/emijrp/missingimages%s.db' % (subproject)
     create = False
     if delete:
         if os.path.exists(dbfilename):
@@ -251,7 +278,7 @@ def main():
             SELECT DISTINCT page_id, page_title
             FROM categorylinks, page
             WHERE cl_from=page_id AND page_namespace=0 AND cl_to RLIKE '%s'
-            ''' % (bd_cats[lang]))
+            ''' % (cats[lang]))
         r = conn.store_result()
         c = 0
         row = r.fetch_row(maxrows=1, how=1)
@@ -264,7 +291,7 @@ def main():
             row = r.fetch_row(maxrows=1, how=1)
             if c % commitlimit == 0: conns3.commit()
         conns3.commit()
-        print '\nLoaded %d bios of %s.%s.org %f' % (c, lang, family, time.time()-t1)
+        print '\nLoaded %d %s of %s.%s.org %f' % (c, subproject, lang, family, time.time()-t1)
         
         #imagelinks
         t1=time.time()
@@ -273,7 +300,7 @@ def main():
             SELECT DISTINCT il_from, il_to
             FROM imagelinks, page, categorylinks
             WHERE il_from=page_id AND cl_from=page_id AND page_namespace=0 AND cl_to RLIKE '%s'
-            ''' % (bd_cats[lang]))
+            ''' % (cats[lang]))
         r = conn.store_result()
         row = r.fetch_row(maxrows=1, how=1)
         c = 0
@@ -296,7 +323,7 @@ def main():
             SELECT DISTINCT ll_from, ll_lang, ll_title
             FROM langlinks, page, categorylinks
             WHERE ll_from=page_id AND cl_from=page_id AND page_namespace=0 AND cl_to RLIKE '%s'
-            ''' % (bd_cats[lang]))
+            ''' % (cats[lang]))
         r = conn.store_result()
         row = r.fetch_row(maxrows=1, how=1)
         c = 0
@@ -356,20 +383,20 @@ def main():
         
         conn.close()
     
-    bios = 0
-    bioswithout = 0
+    arts = 0
+    artswithout = 0
     result = cursors3.execute(r'SELECT count(*) FROM pages')
     for row in result:
-        bios = int(row[0])
+        arts = int(row[0])
     result = cursors3.execute(r'SELECT count(*) FROM pages WHERE page_has_images=?', (0,))
     for row in result:
-        bioswithout = int(row[0])
-    print 'There are %d bios without images (%.2f%%)' % (bioswithout, bioswithout/(bios/100.0))
+        artswithout = int(row[0])
+    print 'There are %d %s without images (%.2f%%)' % (artswithout, subproject, artswithout/(arts/100.0))
     
     #check for missing images bios
     result = cursors3.execute(r'SELECT page_lang, page_id, page_title FROM pages WHERE page_has_images=?', (0,))
     cc = 0
-    candfile = '/home/emijrp/temporal/candidatas.sql'
+    candfile = '/home/emijrp/temporal/candidatas%s.sql' % (subproject)
     f = open(candfile, 'w')
     for row in result:
         page_lang = row[0]
@@ -394,7 +421,11 @@ def main():
                 trocear = ' '.join([page_title, ll_to_title])
                 #para aquellos idiomas como ar: con alfabetos distintos incluimos ambos títulos
                 trozos = '|'.join([trozo for trozo in re.sub(ur'[\(\)]', ur'', trocear).split(' ') if len(trozo) >= 3])
-                if len(re.findall(ur'\|', trozos)) >= 1: #al menos dos palabras para buscar (una|otra)
+                
+                #para bios al menos dos palabras para buscar (una|otra)
+                #para rivers una palabra de 3 o más caracteres
+                if (subproject == 'bios' and len(re.findall(ur'\|', trozos)) >= 1) or \
+                   (subproject == 'rivers' and len(trozos) >= 3): 
                     if not re.search(exclusion_pattern, il_image_name): #evitamos imagenes que no sirven o erroneas que ya se han comprobado en otras actualizaciones
                         if not re.search(ur'([\'\"\&]|[^\d]0\d\d[^\d])', ' '.join([page_title, ll_to_title, il_image_name])):
                             #excluimos imágenes con ' " en el título que causan errores al generar el sql de candidatas y & en el PHP, también listados de imágenes 001, 002, 003...
@@ -415,7 +446,7 @@ def main():
             cc += 1;percent(c=cc, d=10)
             il_image_name_ = re.sub(' ', '_', il_image_name)
             md5_ = md5.new(il_image_name_.encode('utf-8')).hexdigest()
-            salida = "INSERT INTO `imagesforbio` (`id`, `language`, `article`, `image`, `url`, `done`) VALUES (NULL, '%s', '%s', '%s', 'http://upload.wikimedia.org/wikipedia/commons/%s/%s/%s', 0);\n" % (page_lang, page_title, il_image_name, md5_[0], md5_[0:2], il_image_name_)
+            salida = "INSERT INTO `imagesfor%s` (`id`, `language`, `article`, `image`, `url`, `done`) VALUES (NULL, '%s', '%s', '%s', 'http://upload.wikimedia.org/wikipedia/commons/%s/%s/%s', 0);\n" % (subproject, page_lang, page_title, il_image_name, md5_[0], md5_[0:2], il_image_name_)
             #print "Recomendada la imagen '%s' para la bio '%s' de %s:" % (il_image_name, page_title, page_lang)
             
             try:
@@ -429,8 +460,8 @@ def main():
     
     print '\n---->(((((Finalmente se encontraron %d imagenes posiblemente utiles en %d segundos [%.2f horas])))))<----' % (cc, time.time()-t2, (time.time()-t2)/3600)
     for lang in langs:
-        os.system('mysql -h sql -e "use u_emijrp_yarrow;delete from imagesforbio where language=\'%s\';"' % lang)
-    os.system('mysql -h sql u_emijrp_yarrow < %s' % candfile)
+        os.system('mysql -h sql -e "use u_emijrp_yarrow;delete from imagesfor%s where language=\'%s\';"' % (subproject, lang))
+    os.system('mysql -h sql u_emijrp_yarrow < %s' % (candfile))
 
 if __name__ == "__main__":
     main()
