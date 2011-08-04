@@ -156,21 +156,23 @@ for bic, props in bics.items():
     if not props['imagen']:
         missingimages += 1
     
+    articleurl = u'http://es.wikipedia.org/wiki/%s' % (re.sub(ur'([\[\]]|\|.*)', ur'', props['nombre']))
+    articleurl = re.sub(u' ', u'_', articleurl)
     if props['lat'] and props['lon']:
-        output += """
+        output += u"""
         <Placemark>
           <name>%s</name>
           <description>
             <![CDATA[
-              <h1>%s</h1>
-              <p>%s</p>
+              <p>Visit article (if exists): <a href="%s" target="_blank">%s</a></p>
+              <p>Located in: %s</p>
             ]]>
           </description>
           <styleUrl>#%s</styleUrl>
           <Point>
             <coordinates>%s,%s</coordinates>
           </Point>
-        </Placemark>""" % (props['nombrecoor'], props['nombrecoor'], props['municipio'], props['imagen'] and 'imageyes' or 'imageno', props['lon'], props['lat'])
+        </Placemark>""" % (props['nombrecoor'], articleurl, props['nombrecoor'], props['municipio'], props['imagen'] and 'imageyes' or 'imageno', props['lon'], props['lat'])
     else:
         missingcoordinates +=1
 
@@ -192,18 +194,18 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 
 <body>
 <center>
-<h1><a href="http://www.wikilm.es">Wiki <i>Loves</i> Monuments</a></h1>
+<h1><a href="http://www.wikilm.es" target="_blank">Wiki <i>Loves</i> Monuments</a></h1>
 
 <center>
-Total <i><a href="http://es.wikipedia.org/wiki/Bien_de_Inter%C3%A9s_Cultural">BICs</a></i>: %d | Missing coordinates: %d (%.1f%%) | Missing images: %d (%.1f%%)
+Total <i><a href="http://es.wikipedia.org/wiki/Bien_de_Inter%%C3%%A9s_Cultural" target="_blank">BICs</a></i>: %d | Missing coordinates: %d (%.1f%%) | Missing images: %d (%.1f%%)
 <br/>
 Legend: With image <img src="%s" width=20px title="with image" alt="with image"/>, Without image <img src="%s" width=20px title="without image" alt="without image"/>
 <br/>
-Help editing <a href="http://es.wikipedia.org/wiki/Categor%%C3%%ADa:Anexos:Bienes_de_inter%%C3%%A9s_cultural_en_Espa%%C3%%B1a">Anexos:Bienes de interés cultural en España</a>
+Help editing <a href="http://es.wikipedia.org/wiki/Categor%%C3%%ADa:Anexos:Bienes_de_inter%%C3%%A9s_cultural_en_Espa%%C3%%B1a" target="_blank">Anexos:Bienes de interés cultural en España</a>
 <br/>
 
 <iframe width="800" height="550" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fwlm%%2Fwlm.kml%%3Fusecache%%3D0&amp;sll=40.913513,-4.504395&amp;sspn=11.352924,23.269043&amp;ie=UTF8&amp;ll=39.876019,-4.416504&amp;spn=9.271323,17.578125&amp;z=6&amp;output=embed"></iframe><br /><small><a href="http://maps.google.com/maps?f=q&amp;source=embed&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fwlm%%2Fwlm.kml%%3Fusecache%%3D0&amp;sll=40.913513,-4.504395&amp;sspn=11.352924,23.269043&amp;ie=UTF8&amp;ll=39.876019,-4.416504&amp;spn=9.271323,17.578125&amp;z=6" style="color:#0000FF;text-align:left">Ver mapa más grande</a></small>
-
+<br/>
 <i>Last update: %s (UTC)</i>
 </center>
 </body>
