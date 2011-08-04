@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import datetime
+import md5
 import re
 import wikipedia
 
@@ -153,7 +154,14 @@ missingimages = 0
 total = 0
 for bic, props in bics.items():
     total += 1
-    if not props['imagen']:
+    imageurl = ''
+    if props['imagen']:
+        #http://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Toronto_-_ON_-_CN_Tower_bei_Nacht2.jpg/398px-Toronto_-_ON_-_CN_Tower_bei_Nacht2.jpg
+        filename = re.sub(ur'(?im)([\[\]]|File:|Imagen?:|Archivo:|\|.*)', ur'', props['imagen'])
+        filename = re.sub(' ', '_', filename)
+        m5 = md5.new(filename.encode('utf-8')).hexdigest()
+        imageurl = u'http://upload.wikimedia.org/wikipedia/commons/thumb/%s/%s/%s/150px-%s' % (m5[0], m5[:2], filename, filename)
+    else:
         missingimages += 1
     
     articleurl = u'http://es.wikipedia.org/wiki/%s' % (re.sub(ur'([\[\]]|\|.*)', ur'', props['nombre']))
@@ -164,7 +172,8 @@ for bic, props in bics.items():
           <name>%s</name>
           <description>
             <![CDATA[
-              <p>Visit article (if exists): <a href="%s" target="_blank">%s</a></p>
+              <img src="%s" width=150px />
+              <p>Visit article (if exists): <a href="%s">%s</a></p>
               <p>Located in: %s</p>
             ]]>
           </description>
@@ -172,7 +181,7 @@ for bic, props in bics.items():
           <Point>
             <coordinates>%s,%s</coordinates>
           </Point>
-        </Placemark>""" % (props['nombrecoor'], articleurl, props['nombrecoor'], props['municipio'], props['imagen'] and 'imageyes' or 'imageno', props['lon'], props['lat'])
+        </Placemark>""" % (props['nombrecoor'], imageurl, articleurl, props['nombrecoor'], props['municipio'], props['imagen'] and 'imageyes' or 'imageno', props['lon'], props['lat'])
     else:
         missingcoordinates +=1
 
@@ -197,7 +206,7 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 <h1><a href="http://www.wikilm.es" target="_blank">Wiki <i>Loves</i> Monuments</a></h1>
 
 <center>
-Total <i><a href="http://es.wikipedia.org/wiki/Bien_de_Inter%%C3%%A9s_Cultural" target="_blank">BICs</a></i>: %d | Missing coordinates: %d (%.1f%%) | Missing images: %d (%.1f%%)
+Total listed <i><a href="http://es.wikipedia.org/wiki/Bien_de_Inter%%C3%%A9s_Cultural" target="_blank">BICs</a></i>: %d | Missing coordinates: %d (%.1f%%) | Missing images: %d (%.1f%%)
 <br/>
 Legend: With image <img src="%s" width=20px title="with image" alt="with image"/>, Without image <img src="%s" width=20px title="without image" alt="without image"/>
 <br/>
