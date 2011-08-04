@@ -152,28 +152,36 @@ output = u"""<?xml version="1.0" encoding="UTF-8"?>
 missingcoordinates = 0
 missingimages = 0
 total = 0
+imagesize = '150px'
 for bic, props in bics.items():
     total += 1
-    imageurl = ''
+    thumburl = ''
+    commonspage = ''
     if props['imagen']:
         #http://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Toronto_-_ON_-_CN_Tower_bei_Nacht2.jpg/398px-Toronto_-_ON_-_CN_Tower_bei_Nacht2.jpg
         filename = re.sub(ur'(?im)([\[\]]|File:|Imagen?:|Archivo:|\|.*)', ur'', props['imagen'])
         filename = re.sub(' ', '_', filename)
         m5 = md5.new(filename.encode('utf-8')).hexdigest()
-        imageurl = u'http://upload.wikimedia.org/wikipedia/commons/thumb/%s/%s/%s/150px-%s' % (m5[0], m5[:2], filename, filename)
+        thumburl = u'http://upload.wikimedia.org/wikipedia/commons/thumb/%s/%s/%s/%s-%s' % (m5[0], m5[:2], filename, imagesize, filename)
+        commonspage = u'http://commons.wikimedia.org/wiki/File:%s' % (filename)
     else:
         missingimages += 1
     
+    if not thumburl:
+        thumburl = 'http://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Image-missing.svg/%s-Image-missing.svg.png' % (imagesize)
+        commonspage = '#'
+    
     articleurl = u'http://es.wikipedia.org/wiki/%s' % (re.sub(ur'([\[\]]|\|.*)', ur'', props['nombre']))
     articleurl = re.sub(u' ', u'_', articleurl)
+    locatedin = re.sub(ur'([\[\]]|\|.*)', ur'', props['municipio'])
     if props['lat'] and props['lon']:
         output += u"""
         <Placemark>
           <name>%s</name>
           <description>
             <![CDATA[
-              <img src="%s" width=150px />
-              <p>Visit article (if exists): <a href="%s">%s</a></p>
+              <a href="%s" target="_blank"><img src="%s" width=%s /></a>
+              <p>Visit article (if exists): <a href="%s" target="_blank">%s</a></p>
               <p>Located in: %s</p>
             ]]>
           </description>
@@ -181,7 +189,7 @@ for bic, props in bics.items():
           <Point>
             <coordinates>%s,%s</coordinates>
           </Point>
-        </Placemark>""" % (props['nombrecoor'], imageurl, articleurl, props['nombrecoor'], props['municipio'], props['imagen'] and 'imageyes' or 'imageno', props['lon'], props['lat'])
+        </Placemark>""" % (props['nombrecoor'], commonspage, thumburl, imagesize, articleurl, props['nombrecoor'], locatedin, props['imagen'] and 'imageyes' or 'imageno', props['lon'], props['lat'])
     else:
         missingcoordinates +=1
 
