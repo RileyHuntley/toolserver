@@ -157,7 +157,7 @@ for bic, props in bics.items():
     total += 1
     thumburl = ''
     commonspage = ''
-    if props['imagen']:
+    if props['imagen'] and not re.search(ur'(?im)(falta[_ ]imagen|\.svg)', props['imagen']):
         #http://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Toronto_-_ON_-_CN_Tower_bei_Nacht2.jpg/398px-Toronto_-_ON_-_CN_Tower_bei_Nacht2.jpg
         filename = re.sub(ur'(?im)([\[\]]|File:|Imagen?:|Archivo:|\|.*)', ur'', props['imagen'])
         filename = re.sub(' ', '_', filename)
@@ -169,7 +169,7 @@ for bic, props in bics.items():
     
     if not thumburl:
         thumburl = 'http://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Image-missing.svg/%s-Image-missing.svg.png' % (imagesize)
-        commonspage = '#'
+        commonspage = 'http://commons.wikimedia.org/wiki/Commons:Upload'
     
     articleurl = u'http://es.wikipedia.org/wiki/%s' % (re.sub(ur'([\[\]]|\|.*)', ur'', props['nombre']))
     articleurl = re.sub(u' ', u'_', articleurl)
@@ -211,7 +211,8 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 
 <body>
 <center>
-<h1><a href="http://www.wikilm.es" target="_blank">Wiki <i>Loves</i> Monuments</a></h1>
+<span style="position: absolute;top: 10px;left: 10px;"><a href="http://www.wikimedia.org.es/" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Wikimedia-es-logo.svg/100px-Wikimedia-es-logo.svg.png" /></a></span>
+<h2><a href="http://www.wikilm.es" target="_blank">Wiki <i>Loves</i> Monuments</a></h2>
 
 <center>
 Total listed <i><a href="http://es.wikipedia.org/wiki/Bien_de_Inter%%C3%%A9s_Cultural" target="_blank">BICs</a></i>: %d | Missing coordinates: %d (%.1f%%) | Missing images: %d (%.1f%%)
@@ -223,7 +224,11 @@ Help editing <a href="http://es.wikipedia.org/wiki/Categor%%C3%%ADa:Anexos:Biene
 
 <iframe width="800" height="550" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fwlm%%2Fwlm.kml%%3Fusecache%%3D0&amp;sll=40.913513,-4.504395&amp;sspn=11.352924,23.269043&amp;ie=UTF8&amp;ll=39.876019,-4.416504&amp;spn=9.271323,17.578125&amp;z=6&amp;output=embed"></iframe><br /><small><a href="http://maps.google.com/maps?f=q&amp;source=embed&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fwlm%%2Fwlm.kml%%3Fusecache%%3D0&amp;sll=40.913513,-4.504395&amp;sspn=11.352924,23.269043&amp;ie=UTF8&amp;ll=39.876019,-4.416504&amp;spn=9.271323,17.578125&amp;z=6" style="color:#0000FF;text-align:left">Ver mapa más grande</a></small>
 <br/>
+<br/>
 <i>Last update: %s (UTC)</i>
+<br/>
+<br/>
+<a href="http://www.wikilm.es/" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/100px-LUSITANA_WLM_2011_d.svg.png" /></a>
 </center>
 </body>
 
