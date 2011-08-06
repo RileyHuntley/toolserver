@@ -20,10 +20,11 @@ import md5
 import re
 import wikipedia
 
+#subida fácil: http://commons.wikimedia.org/w/index.php?title=Special:Upload&wpDestFile=BBBB.jpg&uploadformstyle=basic&wpUploadDescription={{Information|Description=|Source=|Date=|Author=|Permission=|other_versions=}}
+
 anexos = [
 u'Anexo:Bienes de interés cultural de la provincia de Albacete',
 u'Anexo:Bienes de interés cultural de la provincia de Almería',
-u'Anexo:Bienes de interés cultural de la provincia de Cádiz',
 u'Anexo:Bienes de interés cultural de Asturias',
 u'Anexo:Bienes de interés cultural de la provincia de Ávila',
 u'Anexo:Bienes de interés cultural de la provincia de Badajoz',
@@ -62,8 +63,8 @@ u'Anexo:Bienes de interés cultural de la provincia de Valladolid',
 u'Anexo:Bienes de interés cultural de la provincia de Vizcaya',
 u'Anexo:Bienes de interés cultural de la provincia de Zamora',
 u'Anexo:Bienes de interés cultural de la provincia de Zaragoza',
-u'    Anexo:Bienes de interés cultural de la provincia de Álava',
 ]
+#u'Anexo:Bienes de interés cultural de la provincia de Álava',
 
 """
 <?xml version="1.0" encoding="UTF-8"?>
@@ -101,10 +102,11 @@ u'    Anexo:Bienes de interés cultural de la provincia de Álava',
  | imagen = 
 }}
 """
-regexp = re.compile(ur'(?im)\{\{\s*fila BIC\s*\|\s*nombre\s*=\s*(?P<nombre>[^=]*)\s*\|\s*nombrecoor\s*=\s*(?P<nombrecoor>[^=]*)\s*\|\s*tipobic\s*=\s*(?P<tipobic>[^=]*)\s*\|\s*tipo\s*=\s*(?P<tipo>[^=]*)\s*\|\s*municipio\s*=\s*(?P<municipio>[^=]*)\s*\|\s*lugar\s*=(?P<lugar>[^=]*)\s*\|\s*lat\s*=\s*(?P<lat>[^=]*)\s*\|\s*lon\s*=\s*(?P<lon>[^=]*)\s*\|\s*bic\s*=\s*(?P<bic>[^=]*)\s*\|\s*fecha\s*=\s*(?P<fecha>[^=]*)\s*\|\s*imagen\s*=\s*(?P<imagen>[^=]*)\s*\}\}')
+regexp = re.compile(ur'(?im)\{\{\s*fila BIC\s*\|\s*nombre\s*=\s*(?P<nombre>[^=}]*)\s*\|\s*nombrecoor\s*=\s*(?P<nombrecoor>[^=}]*)\s*\|\s*tipobic\s*=\s*(?P<tipobic>[^=}]*)\s*\|\s*tipo\s*=\s*(?P<tipo>[^=}]*)\s*\|\s*municipio\s*=\s*(?P<municipio>[^=}]*)\s*\|\s*lugar\s*=(?P<lugar>[^=}]*)\s*\|\s*lat\s*=\s*(?P<lat>[^=}]*)\s*\|\s*lon\s*=\s*(?P<lon>[^=}]*)\s*\|\s*bic\s*=\s*(?P<bic>[^=}]*)\s*\|\s*fecha\s*=\s*(?P<fecha>[^=}]*)\s*\|\s*imagen\s*=\s*(?P<imagen>[^=}]*)\s*\}\}')
 s = wikipedia.Site('es', 'wikipedia')
 bics = {}
 for anexo in anexos:
+    print anexo
     p = wikipedia.Page(s, anexo)
     wtext = p.get()
     m = regexp.finditer(wtext)
@@ -180,16 +182,18 @@ for bic, props in bics.items():
           <name>%s</name>
           <description>
             <![CDATA[
-              <a href="%s" target="_blank"><img src="%s" width=%s /></a>
-              <p>Visit article (if exists): <a href="%s" target="_blank">%s</a></p>
-              <p>Located in: %s</p>
+              <table border=0>
+              <tr><td align=right width=80px style="background-color: lightgreen;"><b>BIC:</b></td><td><a href="%s" target="_blank">%s</a></td><td rowspan=3><a href="%s" target="_blank"><img src="%s" width=%s/></a></td></tr>
+              <tr><td align=right style="background-color: lightblue;"><b>Located in:</b></td><td>%s</td></tr>
+              <tr><td align=center colspan=2><b>This BIC has %s<br/>you can upload yours</b><br/><span style="border: 2px solid black;background-color: pink;"><a href="http://commons.wikimedia.org/w/index.php?title=Special:Upload&uploadformstyle=basic&wpDestFile=%s - WLM.jpg" target="_blank">Upload</a></span></td></tr>
+              </table>
             ]]>
           </description>
           <styleUrl>#%s</styleUrl>
           <Point>
             <coordinates>%s,%s</coordinates>
           </Point>
-        </Placemark>""" % (props['nombrecoor'], commonspage, thumburl, imagesize, articleurl, props['nombrecoor'], locatedin, props['imagen'] and 'imageyes' or 'imageno', props['lon'], props['lat'])
+        </Placemark>""" % (props['nombrecoor'], articleurl, props['nombrecoor'], commonspage, thumburl, imagesize, locatedin, props['imagen'] and 'images, but' or 'no images,', props['nombrecoor'], props['imagen'] and 'imageyes' or 'imageno', props['lon'], props['lat'])
     else:
         missingcoordinates +=1
 
@@ -212,6 +216,7 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 <body>
 <center>
 <span style="position: absolute;top: 10px;left: 10px;"><a href="http://www.wikimedia.org.es/" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Wikimedia-es-logo.svg/100px-Wikimedia-es-logo.svg.png" /></a></span>
+<span style="position: absolute;top: 10px;right: 10px;"><a href="http://www.wikilm.es/" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/100px-LUSITANA_WLM_2011_d.svg.png" /></a></span>
 <h2><a href="http://www.wikilm.es" target="_blank">Wiki <i>Loves</i> Monuments</a></h2>
 
 <center>
@@ -227,8 +232,6 @@ Help editing <a href="http://es.wikipedia.org/wiki/Categor%%C3%%ADa:Anexos:Biene
 <br/>
 <i>Last update: %s (UTC)</i>
 <br/>
-<br/>
-<a href="http://www.wikilm.es/" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/100px-LUSITANA_WLM_2011_d.svg.png" /></a>
 </center>
 </body>
 
