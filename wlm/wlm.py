@@ -152,8 +152,23 @@ regexp_gl = re.compile(ur'(?im)\{\{\s*BIC\s*\|\s*nomeoficial\s*=\s*(?P<nombre>[^
  | bic = RI-51-0001114
  | imatge = EIVISSA 03 (1590948910).jpg
 }}
+
+{{filera BCIN
+ | nom = [[Palau dels Barons de Pinós|El Palau]] <br/>''Castell de Bagà''
+ | nomcoor = El Palau (Bagà)
+ | estil = Obra popular, barroc
+ | època = XIII / XVIII
+ | municipi = [[Bagà]]
+ | lloc = Pujada del Palau, 7
+ | lat = 42.253394 | lon = 1.861108
+ | idurl = 576
+ | prot = BCIN
+ | bcin = 497-MH
+ | bic = RI-51-0005193
+ | imatge = 
+}}
 """
-regexp_ca = re.compile(ur'(?im)\{\{\s*filera BIC\s*\|\s*nom\s*=\s*(?P<nombre>[^=}]*)\s*\|\s*nomcoor\s*=\s*(?P<nombrecoor>[^=}]*)\s*\|\s*tipus\s*=\s*(?P<tipobic>[^=}]*)\s*\|\s*municipi\s*=\s*(?P<municipio>[^=}]*)\s*\|\s*lloc\s*=(?P<lugar>[^=}]*)\s*\|\s*lat\s*=\s*(?P<lat>[^=}]*)\s*\|\s*lon\s*=\s*(?P<lon>[^=}]*)\s*\|\s*bic\s*=\s*(?P<bic>[^=}]*)\s*(\|\s*fecha\s*=\s*(?P<fecha>[^=}]*)\s*)?\|\s*imatge\s*=\s*(?P<imagen>[^=}]*)\s*\}\}')
+regexp_ca = re.compile(ur'(?im)\{\{\s*filera BIC\s*\|\s*nom\s*=\s*(?P<nombre>[^=}]*)\s*\|\s*nomcoor\s*=\s*(?P<nombrecoor>[^=}]*)\s*(\|\s*tipus\s*=\s*(?P<tipobic>[^=}]*)\s*)?(\|\s*estil\s*=\s*([^=}]*)\s*)?(\|\s*època\s*=\s*([^=}]*)\s*)?\|\s*municipi\s*=\s*(?P<municipio>[^=}]*)\s*\|\s*lloc\s*=(?P<lugar>[^=}]*)\s*\|\s*lat\s*=\s*(?P<lat>[^=}]*)\s*\|\s*lon\s*=\s*(?P<lon>[^=}]*)\s*(\|\s*idurl\s*=\s*([^=}]*)\s*)?(\|\s*prot\s*=\s*([^=}]*)\s*)?(\|\s*bcin\s*=\s*([^=}]*)\s*)?\|\s*bic\s*=\s*(?P<bic>[^=}]*)\s*(\|\s*fecha\s*=\s*(?P<fecha>[^=}]*)\s*)?\|\s*imatge\s*=\s*(?P<imagen>[^=}]*)\s*\}\}')
 
 
 missingcoordinates = 0
