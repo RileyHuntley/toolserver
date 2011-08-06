@@ -29,6 +29,8 @@ anexos = {
 'asturias': [u'es:Anexo:Bienes de interés cultural de Asturias', ],
 'avila': [u'es:Anexo:Bienes de interés cultural de la provincia de Ávila', ],
 'badajoz': [u'es:Anexo:Bienes de interés cultural de la provincia de Badajoz', ],
+'baleares': [u"ca:Llista de monuments d'Eivissa", u'ca:Llista de monuments de Formentera', ],
+
 'burgos': [u'es:Anexo:Bienes de interés cultural de la provincia de Burgos', ],
 'cantabria': [u'es:Anexo:Bienes de interés cultural de Cantabria', ],
 'ceuta': [u'es:Anexo:Bienes de interés cultural de Ceuta', ],
@@ -124,7 +126,22 @@ regexp_es = re.compile(ur'(?im)\{\{\s*fila BIC\s*\|\s*nombre\s*=\s*(?P<nombre>[^
 """
 
 #el campo idurl no aparece en algunas listas, lo ponemos opcional
-regexp_gl = re.compile(ur'(?im)\{\{\s*BIC\s*\|\s*nomeoficial\s*=\s*(?P<nombre>[^=}]*)\s*\|\s*outrosnomes\s*=\s*(?P<nombrecoor>[^=}]*)\s*\|\s*paxina\s*=\s*(?P<paxina>[^=}]*)\s*(\|\s*idurl\s*=\s*(?P<idurl>[^=}]*)\s*)?\|\s*concello\s*=(?P<lugar>[^=}]*)\|\s*lugar\s*=(?P<municipio>[^=}]*)\s*\|\s*lat\s*=\s*(?P<lat>[^=}]*)\s*\|\s*lon\s*=\s*(?P<lon>[^=}]*)\s*\|\s*id\s*=\s*(?P<bic>[^=}]*)\s*\|\s*data[_ ]declaracion\s*=\s*(?P<fecha>[^=}]*)\s*\|\s*imaxe\s*=\s*(?P<imagen>[^=}]*)\s*\}\}')
+regexp_gl = re.compile(ur'(?im)\{\{\s*BIC\s*\|\s*nomeoficial\s*=\s*(?P<nombre>[^=}]*)\s*\|\s*outrosnomes\s*=\s*(?P<nombrecoor>[^=}]*)\s*(\|\s*paxina\s*=\s*(?P<paxina>[^=}]*)\s*)?(\|\s*idurl\s*=\s*(?P<idurl>[^=}]*)\s*)?\|\s*concello\s*=(?P<lugar>[^=}]*)\|\s*lugar\s*=(?P<municipio>[^=}]*)\s*\|\s*lat\s*=\s*(?P<lat>[^=}]*)\s*\|\s*lon\s*=\s*(?P<lon>[^=}]*)\s*\|\s*id\s*=\s*(?P<bic>[^=}]*)\s*\|\s*data[_ ]declaracion\s*=\s*(?P<fecha>[^=}]*)\s*\|\s*imaxe\s*=\s*(?P<imagen>[^=}]*)\s*\}\}')
+
+"""
+{{filera BIC
+ | nom = [[Murades d'Eivissa|Antigues murades]] i Torre del Campanar
+ | nomcoor = Antigues murades i Torre del Campanar (Eivissa)
+ | tipus = Arquitectura militar
+ | municipi = [[Eivissa (municipi)|Eivissa]]
+ | lloc = Dalt Vila
+ | lat = 38.908252 | lon = 1.436645
+ | bic = RI-51-0001114
+ | imatge = EIVISSA 03 (1590948910).jpg
+}}
+"""
+regexp_ca = re.compile(ur'(?im)\{\{\s*filera BIC\s*\|\s*nom\s*=\s*(?P<nombre>[^=}]*)\s*\|\s*nomcoor\s*=\s*(?P<nombrecoor>[^=}]*)\s*\|\s*tipus\s*=\s*(?P<tipobic>[^=}]*)\s*\|\s*municipi\s*=\s*(?P<municipio>[^=}]*)\s*\|\s*lloc\s*=(?P<lugar>[^=}]*)\s*\|\s*lat\s*=\s*(?P<lat>[^=}]*)\s*\|\s*lon\s*=\s*(?P<lon>[^=}]*)\s*\|\s*bic\s*=\s*(?P<bic>[^=}]*)\s*(\|\s*fecha\s*=\s*(?P<fecha>[^=}]*)\s*)?\|\s*imatge\s*=\s*(?P<imagen>[^=}]*)\s*\}\}')
+
 
 missingcoordinates = 0
 missingimages = 0
@@ -141,21 +158,23 @@ for anexoid, anexolist in anexos.items():
             m = regexp_es.finditer(wtext)
         elif lang == 'gl':
             m = regexp_gl.finditer(wtext)
+        elif lang == 'ca':
+            m = regexp_ca.finditer(wtext)
         if m:
             for i in m:
                 bic = i.group('bic').strip()
                 bics[bic] = {
                     'lang': lang,
-                    'nombre': i.group('nombre').strip(),
+                    'nombre': re.sub(ur'([\[\]]|\|.*)', ur'', i.group('nombre').strip()),
                     #'nombrecoor': i.group('nombrecoor').strip(),
                     #'tipobic': i.group('tipobic').strip(),
                     #'tipo': i.group('tipo').strip(),
-                    'municipio': i.group('municipio').strip(),
-                    'lugar': i.group('lugar').strip(),
+                    'municipio': re.sub(ur'([\[\]]|\|.*)', ur'', i.group('municipio').strip()),
+                    'lugar': re.sub(ur'([\[\]]|\|.*)', ur'', i.group('lugar').strip()),
                     'lat': i.group('lat').strip(),
                     'lon': i.group('lon').strip(),
                     'bic': bic,
-                    'fecha': i.group('fecha').strip(),
+                    #'fecha': i.group('fecha').strip(), #no existe en ca:
                     'imagen': i.group('imagen').strip(),
                 }
 
@@ -206,9 +225,9 @@ for anexoid, anexolist in anexos.items():
             thumburl = 'http://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Image-missing.svg/%s-Image-missing.svg.png' % (imagesize)
             commonspage = ''
         
-        articleurl = u'http://%s.wikipedia.org/wiki/%s' % (props['lang'], re.sub(ur'([\[\]]|\|.*)', ur'', props['nombre']))
+        articleurl = u'http://%s.wikipedia.org/wiki/%s' % (props['lang'], props['nombre'])
         articleurl = re.sub(u' ', u'_', articleurl)
-        locatedin = re.sub(ur'([\[\]]|\|.*)', ur'', props['municipio'])
+        locatedin = props['municipio']
         if props['lat'] and props['lon']:
             output += u"""
 <Placemark>
@@ -249,7 +268,7 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 </head>
 
 <?php
-$places = array("albacete", "almeria", "asturias", "avila", "badajoz", "burgos", "cantabria", "ceuta", "ciudadreal", "coruna", "cuenca", "caceres", "cadiz", "cordoba", "granada", "guadalajara", "guipuzcoa", "huelva", "huesca", "jaen", "laspalmas", "leon", "lugo", "madrid", "melilla", "murcia", "malaga", "navarra", "ourense", "palencia", "larioja", "pontevedra", "salamanca", "tenerife", "segovia", "sevilla", "soria", "teruel", "toledo", "valladolid", "vizcaya", "zamora", "zaragoza", );
+$places = array("albacete", "almeria", "asturias", "avila", "badajoz", "baleares", "burgos", "cantabria", "ceuta", "ciudadreal", "coruna", "cuenca", "caceres", "cadiz", "cordoba", "granada", "guadalajara", "guipuzcoa", "huelva", "huesca", "jaen", "laspalmas", "leon", "lugo", "madrid", "melilla", "murcia", "malaga", "navarra", "ourense", "palencia", "larioja", "pontevedra", "salamanca", "tenerife", "segovia", "sevilla", "soria", "teruel", "toledo", "valladolid", "vizcaya", "zamora", "zaragoza", );
 $place="madrid";
 if (isset($_GET['place']))
 {
@@ -275,7 +294,7 @@ Total listed <i><a href="http://es.wikipedia.org/wiki/Bien_de_Inter%%C3%%A9s_Cul
 <br/>
 Legend: With image <img src="%s" width=20px title="with image" alt="with image"/>, Without image <img src="%s" width=20px title="without image" alt="without image"/>
 <br/>
-Choose a place: <a href="index.php?place=coruna">A Coruña</a>, <a href="index.php?place=albacete">Albacete</a>, <a href="index.php?place=almeria">Almería</a>, <a href="index.php?place=asturias">Asturias</a>, <a href="index.php?place=avila">Ávila</a>, <a href="index.php?place=badajoz">Badajoz</a>, <a href="index.php?place=burgos">Burgos</a>, <a href="index.php?place=cantabria">Cantabria</a>, <a href="index.php?place=ceuta">Ceuta</a>, <a href="index.php?place=ciudadreal">Ciudad Real</a>, <a href="index.php?place=cuenca">Cuenca</a>, <a href="index.php?place=caceres">Cáceres</a>, <a href="index.php?place=cadiz">Cádiz</a>, <a href="index.php?place=cordoba">Córdoba</a>, <a href="index.php?place=granada">Granada</a>, <a href="index.php?place=guadalajara">Guadalajara</a>, <a href="index.php?place=guipuzcoa">Guipuzkoa</a>, <a href="index.php?place=huelva">Huelva</a>, <a href="index.php?place=huesca">Huesca</a>, <a href="index.php?place=jaen">Jaén</a>, <a href="index.php?place=laspalmas">Las Palmas</a>, <a href="index.php?place=leon">León</a>, <a href="index.php?place=madrid">Madrid</a>, <a href="index.php?place=melilla">Melilla</a>, <a href="index.php?place=murcia">Murcia</a>, <a href="index.php?place=malaga">Málaga</a>, <a href="index.php?place=navarra">Navarra</a>, <a href="index.php?place=palencia">Palencia</a>, <a href="index.php?place=larioja">La Rioja</a>, <a href="index.php?place=lugo">Lugo</a>, <a href="index.php?place=ourense">Ourense</a>, <a href="index.php?place=pontevedra">Pontevedra</a>, <a href="index.php?place=salamanca">Salamanca</a>, <a href="index.php?place=tenerife">Tenerife</a>, <a href="index.php?place=segovia">Segovia</a>, <a href="index.php?place=sevilla">Sevilla</a>, <a href="index.php?place=soria">Soria</a>, <a href="index.php?place=teruel">Teruel</a>, <a href="index.php?place=toledo">Toledo</a>, <a href="index.php?place=valladolid">Valladolid</a>, <a href="index.php?place=vizcaya">Vizcaya</a>, <a href="index.php?place=zamora">Zamora</a>, <a href="index.php?place=zaragoza">Zaragoza</a>
+Choose a place: <a href="index.php?place=coruna">A Coruña</a>, <a href="index.php?place=albacete">Albacete</a>, <a href="index.php?place=almeria">Almería</a>, <a href="index.php?place=asturias">Asturias</a>, <a href="index.php?place=avila">Ávila</a>, <a href="index.php?place=badajoz">Badajoz</a>, <a href="index.php?place=burgos">Burgos</a>, <a href="index.php?place=cantabria">Cantabria</a>, <a href="index.php?place=ceuta">Ceuta</a>, <a href="index.php?place=ciudadreal">Ciudad Real</a>, <a href="index.php?place=cuenca">Cuenca</a>, <a href="index.php?place=caceres">Cáceres</a>, <a href="index.php?place=cadiz">Cádiz</a>, <a href="index.php?place=cordoba">Córdoba</a>, <a href="index.php?place=granada">Granada</a>, <a href="index.php?place=guadalajara">Guadalajara</a>, <a href="index.php?place=guipuzcoa">Guipuzkoa</a>, <a href="index.php?place=huelva">Huelva</a>, <a href="index.php?place=huesca">Huesca</a>, <a href="index.php?place=baleares">Illes Balears</a>, <a href="index.php?place=jaen">Jaén</a>, <a href="index.php?place=laspalmas">Las Palmas</a>, <a href="index.php?place=leon">León</a>, <a href="index.php?place=madrid">Madrid</a>, <a href="index.php?place=melilla">Melilla</a>, <a href="index.php?place=murcia">Murcia</a>, <a href="index.php?place=malaga">Málaga</a>, <a href="index.php?place=navarra">Navarra</a>, <a href="index.php?place=palencia">Palencia</a>, <a href="index.php?place=larioja">La Rioja</a>, <a href="index.php?place=lugo">Lugo</a>, <a href="index.php?place=ourense">Ourense</a>, <a href="index.php?place=pontevedra">Pontevedra</a>, <a href="index.php?place=salamanca">Salamanca</a>, <a href="index.php?place=tenerife">Tenerife</a>, <a href="index.php?place=segovia">Segovia</a>, <a href="index.php?place=sevilla">Sevilla</a>, <a href="index.php?place=soria">Soria</a>, <a href="index.php?place=teruel">Teruel</a>, <a href="index.php?place=toledo">Toledo</a>, <a href="index.php?place=valladolid">Valladolid</a>, <a href="index.php?place=vizcaya">Vizcaya</a>, <a href="index.php?place=zamora">Zamora</a>, <a href="index.php?place=zaragoza">Zaragoza</a>
 <br/>
 </td>
 <td>
