@@ -193,7 +193,7 @@ for anexoid, anexolist in anexos.items():
                 bic = i.group('bic').strip()
                 bics[bic] = {
                     'lang': lang,
-                    'nombre': re.sub(ur'([\[\]]|\|.*)', ur'', i.group('nombre').strip()),
+                    'nombre': re.sub(ur'([\[\]]|\|.*)', ur'', re.sub(ur'(?im)<\s*br\s*/?\s*>', ur'-', i.group('nombre').strip())),
                     #'nombrecoor': i.group('nombrecoor').strip(),
                     #'tipobic': i.group('tipobic').strip(),
                     #'tipo': i.group('tipo').strip(),
@@ -280,8 +280,8 @@ for anexoid, anexolist in anexos.items():
             submissingcoordinates +=1
 
     output += u"""
-        </Document>
-    </kml>"""
+    </Document>
+</kml>"""
 
     f = open('/home/emijrp/public_html/wlm/wlm-%s.kml' % (anexoid), 'w')
     f.write(output.encode('utf-8'))
