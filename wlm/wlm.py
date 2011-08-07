@@ -168,7 +168,7 @@ anexos = {
  | imagen = 
 }}
 """
-regexp_es = re.compile(ur'(?im)\{\{\s*fila (BIC|BIC 2)\s*\|\s*nombre\s*=\s*(?P<nombre>[^=}]*?)\s*\|\s*nombrecoor\s*=\s*(?P<nombrecoor>[^=}]*?)\s*\|\s*tipobic\s*=\s*(?P<tipobic>[^=}]*?)\s*\|\s*tipo\s*=\s*(?P<tipo>[^=}]*?)\s*\|\s*municipio\s*=\s*(?P<municipio>[^=}]*?)\s*\|\s*lugar\s*=(?P<lugar>[^=}]*?)\s*\|\s*lat\s*=\s*(?P<lat>[^=}]*?)\s*\|\s*lon\s*=\s*(?P<lon>[^=}]*?)\s*\|\s*bic\s*=\s*(?P<bic>[^=}]*?)\s*(\|\s*id[_ ]aut\s*=\s*(?P<id_aut>[^=}]*?)\s*)?(\|\s*fecha\s*=\s*(?P<fecha>[^=}]*?)\s*)?\|\s*imagen\s*=\s*(?P<imagen>[^=}]*?)\s*\}\}')
+regexp_es = re.compile(ur'(?im)\{\{\s*fila (BIC|BIC 2)\s*\|\s*nombre\s*=\s*(?P<nombre>[^=}]*?)\s*\|\s*nombrecoor\s*=\s*(?P<nombrecoor>[^=}]*?)\s*\|\s*tipobic\s*=\s*(?P<tipobic>[^=}]*?)\s*\|\s*tipo\s*=\s*(?P<tipo>[^=}]*?)\s*\|\s*municipio\s*=\s*(?P<municipio>[^=}]*?)\s*\|\s*lugar\s*=(?P<lugar>[^=}]*?)\s*\|\s*lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)\s*\|\s*lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)\s*\|\s*bic\s*=\s*(?P<bic>[^=}]*?)\s*(\|\s*id[_ ]aut\s*=\s*(?P<id_aut>[^=}]*?)\s*)?(\|\s*fecha\s*=\s*(?P<fecha>[^=}]*?)\s*)?\|\s*imagen\s*=\s*(?P<imagen>[^=}]*?)\s*\}\}')
 
 """
 {{BIC
@@ -186,7 +186,7 @@ regexp_es = re.compile(ur'(?im)\{\{\s*fila (BIC|BIC 2)\s*\|\s*nombre\s*=\s*(?P<n
 """
 
 #el campo idurl no aparece en algunas listas, lo ponemos opcional
-regexp_gl = re.compile(ur'(?im)\{\{\s*BIC\s*\|\s*nomeoficial\s*=\s*(?P<nombre>[^=}]*?)\s*\|\s*outrosnomes\s*=\s*(?P<nombrecoor>[^=}]*?)\s*(\|\s*paxina\s*=\s*(?P<paxina>[^=}]*?)\s*)?(\|\s*idurl\s*=\s*(?P<idurl>[^=}]*?)\s*)?\|\s*concello\s*=(?P<lugar>[^=}]*?)\|\s*lugar\s*=(?P<municipio>[^=}]*?)\s*\|\s*lat\s*=\s*(?P<lat>[^=}]*?)\s*\|\s*lon\s*=\s*(?P<lon>[^=}]*?)\s*\|\s*id\s*=\s*(?P<bic>[^=}]*?)\s*\|\s*data[_ ]declaracion\s*=\s*(?P<fecha>[^=}]*?)\s*\|\s*imaxe\s*=\s*(?P<imagen>[^=}]*?)\s*\}\}')
+regexp_gl = re.compile(ur'(?im)\{\{\s*BIC\s*\|\s*nomeoficial\s*=\s*(?P<nombre>[^=}]*?)\s*\|\s*outrosnomes\s*=\s*(?P<nombrecoor>[^=}]*?)\s*(\|\s*paxina\s*=\s*(?P<paxina>[^=}]*?)\s*)?(\|\s*idurl\s*=\s*(?P<idurl>[^=}]*?)\s*)?\|\s*concello\s*=(?P<lugar>[^=}]*?)\|\s*lugar\s*=(?P<municipio>[^=}]*?)\s*\|\s*lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)\s*\|\s*lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)\s*\|\s*id\s*=\s*(?P<bic>[^=}]*?)\s*\|\s*data[_ ]declaracion\s*=\s*(?P<fecha>[^=}]*?)\s*\|\s*imaxe\s*=\s*(?P<imagen>[^=}]*?)\s*\}\}')
 
 """
 {{filera BIC
@@ -215,7 +215,7 @@ regexp_gl = re.compile(ur'(?im)\{\{\s*BIC\s*\|\s*nomeoficial\s*=\s*(?P<nombre>[^
  | imatge = 
 }}
 """
-regexp_ca = re.compile(ur'(?im)\{\{\s*filera (BIC|BCIN|BIC Val)\s*\|\s*nom\s*=\s*(?P<nombre>[^=}]*?)\s*\|\s*nomcoor\s*=\s*(?P<nombrecoor>[^=}]*?)\s*(\|\s*tipus\s*=\s*(?P<tipobic>[^=}]*?)\s*)?(\|\s*estil\s*=\s*([^=}]*?)\s*)?(\|\s*època\s*=\s*([^=}]*?)\s*)?\|\s*municipi\s*=\s*(?P<municipio>[^=}]*?)\s*\|\s*lloc\s*=(?P<lugar>[^=}]*?)\s*\|\s*lat\s*=\s*(?P<lat>[^=}]*?)\s*\|\s*lon\s*=\s*(?P<lon>[^=}]*?)\s*(\|\s*idurl\s*=\s*([^=}]*?)\s*)?(\|\s*prot\s*=\s*([^=}]*?)\s*)?(\|\s*bcin\s*=\s*([^=}]*?)\s*)?\|\s*bic\s*=\s*(?P<bic>[^=}]*?)\s*(\|\s*fecha\s*=\s*(?P<fecha>[^=}]*?)\s*)?\|\s*imatge\s*=\s*(?P<imagen>[^=}]*?)\s*\}\}')
+regexp_ca = re.compile(ur'(?im)\{\{\s*filera (BIC|BCIN|BIC Val)\s*\|\s*nom\s*=\s*(?P<nombre>[^=}]*?)\s*\|\s*nomcoor\s*=\s*(?P<nombrecoor>[^=}]*?)\s*(\|\s*tipus\s*=\s*(?P<tipobic>[^=}]*?)\s*)?(\|\s*estil\s*=\s*([^=}]*?)\s*)?(\|\s*època\s*=\s*([^=}]*?)\s*)?\|\s*municipi\s*=\s*(?P<municipio>[^=}]*?)\s*\|\s*lloc\s*=(?P<lugar>[^=}]*?)\s*\|\s*lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)\s*\|\s*lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)\s*(\|\s*idurl\s*=\s*([^=}]*?)\s*)?(\|\s*prot\s*=\s*([^=}]*?)\s*)?(\|\s*bcin\s*=\s*([^=}]*?)\s*)?\|\s*bic\s*=\s*(?P<bic>[^=}]*?)\s*(\|\s*fecha\s*=\s*(?P<fecha>[^=}]*?)\s*)?\|\s*imatge\s*=\s*(?P<imagen>[^=}]*?)\s*\}\}')
 
 
 missingcoordinates = 0
