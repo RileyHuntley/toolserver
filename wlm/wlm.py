@@ -219,6 +219,10 @@ regexp_gl = re.compile(ur'(?im)\{\{\s*BIC\s*\|\s*nomeoficial\s*=\s*(?P<nombre>[^
 """
 regexp_ca = re.compile(ur'(?im)\{\{\s*filera (BIC|BCIN|BIC Val)\s*\|\s*nom\s*=\s*(?P<nombre>[^=}]*?)\s*\|\s*nomcoor\s*=\s*(?P<nombrecoor>[^=}]*?)\s*(\|\s*tipus\s*=\s*(?P<tipobic>[^=}]*?)\s*)?(\|\s*estil\s*=\s*([^=}]*?)\s*)?(\|\s*època\s*=\s*([^=}]*?)\s*)?\|\s*municipi\s*=\s*(?P<municipio>[^=}]*?)\s*\|\s*lloc\s*=(?P<lugar>[^=}]*?)\s*\|\s*lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)\s*\|\s*lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)\s*(\|\s*idurl\s*=\s*([^=}]*?)\s*)?(\|\s*prot\s*=\s*([^=}]*?)\s*)?(\|\s*bcin\s*=\s*([^=}]*?)\s*)?\|\s*bic\s*=\s*(?P<bic>[^=}]*?)\s*(\|\s*fecha\s*=\s*(?P<fecha>[^=}]*?)\s*)?\|\s*imatge\s*=\s*(?P<imagen>[^=}]*?)\s*\}\}')
 
+def isvalidimage(img):
+    if img and not re.search(ur'(?im)(falta[_ ]imagen|\.svg)', img):
+        return True
+    return False
 
 missingcoordinates = 0
 missingimages = 0
@@ -289,7 +293,7 @@ for anexoid, anexolist in anexos.items():
         subtotal += 1
         thumburl = ''
         commonspage = ''
-        if props['imagen'] and not re.search(ur'(?im)(falta[_ ]imagen|\.svg)', props['imagen']):
+        if isvalidimage(props['imagen']):
             #http://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Toronto_-_ON_-_CN_Tower_bei_Nacht2.jpg/398px-Toronto_-_ON_-_CN_Tower_bei_Nacht2.jpg
             filename = re.sub(ur'(?im)([\[\]]|File:|Imagen?:|Archivo:|\|.*)', ur'', props['imagen'])
             filename = re.sub(' ', '_', filename)
@@ -325,7 +329,7 @@ for anexoid, anexolist in anexos.items():
 <Point>
 <coordinates>%s,%s</coordinates>
 </Point>
-</Placemark>""" % (props['nombre'], articleurl, props['nombre'], commonspage, thumburl, imagesize, locatedin, props['bic'], props['imagen'] and 'images, but' or 'no images,', props['nombre'], props['bic'], props['nombre'], props['imagen'] and 'imageyes' or 'imageno', props['lon'], props['lat'])
+</Placemark>""" % (props['nombre'], articleurl, props['nombre'], commonspage, thumburl, imagesize, locatedin, props['bic'], isvalidimage(props['imagen']) and 'images, but' or 'no images,', props['nombre'], props['bic'], props['nombre'], isvalidimage(props['imagen']) and 'imageyes' or 'imageno', props['lon'], props['lat'])
         else:
             missingcoordinates +=1
             submissingcoordinates +=1
