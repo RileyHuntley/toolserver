@@ -23,31 +23,31 @@ import wikipedia
 #subida fácil: http://commons.wikimedia.org/w/index.php?title=Special:Upload&wpDestFile=BBBB.jpg&uploadformstyle=basic&wpUploadDescription={{Information|Description=|Source=|Date=|Author=|Permission=|other_versions=}}
 
 placenames = {
-"coruna": "A Coruña", "albacete": "Albacete", "almeria": "Almería", "asturias": "Asturias", "avila": "Ávila",
-"badajoz": "Badajoz", "burgos": "Burgos",
-"cantabria": "Cantabria", "catalunya": "Catalunya", "ceuta": "Ceuta", "ciudadreal": "Ciudad Real", "cuenca": "Cuenca", "caceres": "Cáceres", "cadiz": "Cádiz", "cordoba": "Córdoba",
-"granada": "Granada", "guadalajara": "Guadalajara", "guipuzcoa": "Guipuzkoa",
-"huelva": "Huelva", "huesca": "Huesca",
-"baleares": "Illes Balears",
-"jaen": "Jaén", 
-"laspalmas": "Las Palmas", "leon": "León", "lugo": "Lugo",
-"madrid": "Madrid", "melilla": "Melilla", "murcia": "Murcia", "malaga": "Málaga", 
-"navarra": "Navarra",
-"valencia": "País Valencià", "palencia": "Palencia", "larioja": "La Rioja", "ourense": "Ourense", "pontevedra": "Pontevedra",
-"salamanca": "Salamanca", "tenerife": "Tenerife", "segovia": "Segovia", "sevilla": "Sevilla", "soria": "Soria", 
-"teruel": "Teruel", "toledo": "Toledo", "valladolid": "Valladolid", "vizcaya": "Vizcaya", 
-"zamora": "Zamora", "zaragoza": "Zaragoza",
+"coruna": u"A Coruña", "albacete": u"Albacete", "almeria": u"Almería", "asturias": u"Asturias", "avila": u"Ávila",
+"badajoz": u"Badajoz", "burgos": u"Burgos",
+"cantabria": u"Cantabria", "catalunya": u"Catalunya", "ceuta": u"Ceuta", "ciudadreal": u"Ciudad Real", "cuenca": u"Cuenca", "caceres": u"Cáceres", "cadiz": u"Cádiz", "cordoba": u"Córdoba",
+"granada": u"Granada", "guadalajara": u"Guadalajara", "guipuzcoa": u"Guipuzkoa",
+"huelva": u"Huelva", "huesca": u"Huesca",
+"baleares": u"Illes Balears",
+"jaen": u"Jaén", 
+"laspalmas": u"Las Palmas", "leon": u"León", "lugo": u"Lugo",
+"madrid": u"Madrid", "melilla": u"Melilla", "murcia": u"Murcia", "malaga": u"Málaga", 
+"navarra": u"Navarra",
+"valencia": u"País Valencià", "palencia": u"Palencia", "larioja": u"La Rioja", "ourense": u"Ourense", "pontevedra": u"Pontevedra",
+"salamanca": u"Salamanca", "tenerife": u"Tenerife", "segovia": u"Segovia", "sevilla": u"Sevilla", "soria": u"Soria", 
+"teruel": u"Teruel", "toledo": u"Toledo", "valladolid": u"Valladolid", "vizcaya": u"Vizcaya", 
+"zamora": u"Zamora", "zaragoza": u"Zaragoza",
 }
 
 def colors(percent):
     if percent < 25:
-        return 'pink'
+        return 'red'
     elif percent < 50:
-        return 'orange'
+        return 'pink'
     elif percent < 75:
         return 'yellow'
     elif percent < 100:
-        return 'lightgree'
+        return 'lightgreen'
     elif percent == 100:
         return 'lightblue'
     return 'white'
@@ -320,13 +320,14 @@ for anexoid, anexolist in anexos.items():
     f.write(output.encode('utf-8'))
     f.close()
 
-tablestats = '<table width=800px style="text-align: center;">\n'
-tablestats = '<tr><td>Place</td><td>Total BICs</td><td>With coordinates</td><td>With images</td></tr>\n'
+tablestats = u'<table style="text-align: center;">\n'
+tablestats += u'<tr><th>Place</th><th>Total BICs</th><th>With coordinates</th><th>With images</th></tr>\n'
+provincestats.sort()
 for p, ptotal, pmissingcoordinates, pmissingimages in provincesstats:
     pmcp = ptotal and (ptotal-pmissingcoordinates)/(ptotal/100.0) or 0
     pmip = ptotal and (ptotal-pmissingimages)/(ptotal/100.0) or 0
-    tablestats += '<tr><td align=right>%s</td><td>%d</td><td bgcolor=%s>%d (%.1f%%)</td><td bgcolor=%s>%d (%.1f%%)</td></tr>\n' % (placenames[p], ptotal, colors(pmcp),pmissingcoordinates, pmcp, colors(pmip), pmissingimages, pmip)
-tablestats += '</table>\n'
+    tablestats += u'<tr><td>%s</td><td>%d</td><td bgcolor=%s>%d (%.1f%%)</td><td bgcolor=%s>%d (%.1f%%)</td></tr>\n' % (placenames[p], ptotal, colors(pmcp),pmissingcoordinates, pmcp, colors(pmip), pmissingimages, pmip)
+tablestats += u'</table>\n'
 
 output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
