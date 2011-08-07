@@ -353,7 +353,7 @@ for p, ptotal, pmissingcoordinates, pmissingimages in provincesstats:
     refs = u''
     c = 1
     for i in anexos[p]:
-        refs += u'<a href="http://%s.wikipedia.org/wiki/%s">[%d]</a> ' % (i.split(':')[0], ':'.join(i.split(':')[1:]), c)
+        refs += u'<a href="http://%s.wikipedia.org/wiki/%s" target="_blank">[%d]</a> ' % (i.split(':')[0], ':'.join(i.split(':')[1:]), c)
         c += 1
     refs = u"""[ <a href="javascript:showHide('%s-refs')">Show/Hide</a> ]<div id="%s-refs" style="display: none;"><br/>%s</div>""" % (p, p, refs)
     tablestats += u'<tr><td><a href="index.php?place=%s">%s</a></td><td>%d</td><td bgcolor=%s>%d (%.1f%%)</td><td bgcolor=%s>%d (%.1f%%)</td><td>%s</td></tr>\n' % (p, placenames[p], ptotal, colors(pcoordper),ptotal-pmissingcoordinates, pcoordper, colors(pimageper), ptotal-pmissingimages, pimageper, refs)
