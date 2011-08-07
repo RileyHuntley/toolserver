@@ -22,6 +22,36 @@ import wikipedia
 
 #subida fácil: http://commons.wikimedia.org/w/index.php?title=Special:Upload&wpDestFile=BBBB.jpg&uploadformstyle=basic&wpUploadDescription={{Information|Description=|Source=|Date=|Author=|Permission=|other_versions=}}
 
+placenames = {
+"coruna": "A Coruña", "albacete": "Albacete", "almeria": "Almería", "asturias": "Asturias", "avila": "Ávila",
+"badajoz": "Badajoz", "burgos": "Burgos",
+"cantabria": "Cantabria", "catalunya": "Catalunya", "ceuta": "Ceuta", "ciudadreal": "Ciudad Real", "cuenca": "Cuenca", "caceres": "Cáceres", "cadiz": "Cádiz", "cordoba": "Córdoba",
+"granada": "Granada", "guadalajara": "Guadalajara", "guipuzcoa": "Guipuzkoa",
+"huelva": "Huelva", "huesca": "Huesca",
+"baleares": "Illes Balears",
+"jaen": "Jaén", 
+"laspalmas": "Las Palmas", "leon": "León", "lugo": "Lugo",
+"madrid": "Madrid", "melilla": "Melilla", "murcia": "Murcia", "malaga": "Málaga", 
+"navarra": "Navarra",
+"valencia": "País Valencià", "palencia": "Palencia", "larioja": "La Rioja", "ourense": "Ourense", "pontevedra": "Pontevedra",
+"salamanca": "Salamanca", "tenerife": "Tenerife", "segovia": "Segovia", "sevilla": "Sevilla", "soria": "Soria", 
+"teruel": "Teruel", "toledo": "Toledo", "valladolid": "Valladolid", "vizcaya": "Vizcaya", 
+"zamora": "Zamora", "zaragoza": "Zaragoza",
+}
+
+def colors(percent):
+    if percent < 25:
+        return 'pink'
+    elif percent < 50:
+        return 'orange'
+    elif percent < 75:
+        return 'yellow'
+    elif percent < 100:
+        return 'lightgree'
+    elif percent == 100:
+        return 'lightblue'
+    return 'white'
+
 #mejor no mezclar varios anexos de varios idiomas para una misma provincia
 anexos = {
 'albacete': [u'es:Anexo:Bienes de interés cultural de la provincia de Albacete', ],
@@ -174,6 +204,7 @@ regexp_ca = re.compile(ur'(?im)\{\{\s*filera (BIC|BCIN|BIC Val)\s*\|\s*nom\s*=\s
 missingcoordinates = 0
 missingimages = 0
 total = 0
+provincesstats = []
 for anexoid, anexolist in anexos.items():
     bics = {}
     for anexo in anexolist:
@@ -278,7 +309,9 @@ for anexoid, anexolist in anexos.items():
         else:
             missingcoordinates +=1
             submissingcoordinates +=1
-
+    
+    provincesstats.append([anexoid, subtotal, submissingcoordinates, submissingimages])
+    
     output += u"""
     </Document>
 </kml>"""
@@ -287,8 +320,16 @@ for anexoid, anexolist in anexos.items():
     f.write(output.encode('utf-8'))
     f.close()
 
+tablestats = '<table width=800px style="text-align: center;">\n'
+tablestats = '<tr><td>Place</td><td>Total BICs</td><td>With coordinates</td><td>With images</td></tr>\n'
+for p, ptotal, pmissingcoordinates, pmissingimages in provincesstats:
+    pmcp = ptotal and (ptotal-pmissingcoordinates)/(ptotal/100.0) or 0
+    pmip = ptotal and (ptotal-pmissingimages)/(ptotal/100.0) or 0
+    tablestats += '<tr><td align=right>%s</td><td>%d</td><td bgcolor=%s>%d (%.1f%%)</td><td bgcolor=%s>%d (%.1f%%)</td></tr>\n' % (placenames[p], ptotal, colors(pmcp),pmissingcoordinates, pmcp, colors(pmip), pmissingimages, pmip)
+tablestats += '</table>\n'
+
 output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html lang="es" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>Wiki Loves Monuments</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -318,11 +359,11 @@ if (isset($_GET['place']))
 <h2><a href="http://www.wikilm.es" target="_blank">Wiki <i>Loves</i> Monuments</a></h2>
 
 <center>
-Total listed <i><a href="http://es.wikipedia.org/wiki/Bien_de_Inter%%C3%%A9s_Cultural" target="_blank">BICs</a></i> in Spain: %d | Missing coordinates: %d (%.1f%%) | Missing images: %d (%.1f%%)
+Total registered <i><a href="http://es.wikipedia.org/wiki/Bien_de_Inter%%C3%%A9s_Cultural" target="_blank">BICs</a></i> in Spain: %d | With coordinates: %d (%.1f%%) | With images: %d (%.1f%%)
 <br/>
 Legend: With image <img src="%s" width=20px title="with image" alt="with image"/>, Without image <img src="%s" width=20px title="without image" alt="without image"/>
 <br/>
-Choose a place: <a href="index.php?place=coruna">A Coruña</a>, <a href="index.php?place=albacete">Albacete</a>, <a href="index.php?place=almeria">Almería</a>, <a href="index.php?place=asturias">Asturias</a>, <a href="index.php?place=avila">Ávila</a>, <a href="index.php?place=badajoz">Badajoz</a>, <a href="index.php?place=burgos">Burgos</a>, <a href="index.php?place=cantabria">Cantabria</a>, <a href="index.php?place=catalunya">Catalunya</a>, <a href="index.php?place=ceuta">Ceuta</a>, <a href="index.php?place=ciudadreal">Ciudad Real</a>, <a href="index.php?place=cuenca">Cuenca</a>, <a href="index.php?place=caceres">Cáceres</a>, <a href="index.php?place=cadiz">Cádiz</a>, <a href="index.php?place=cordoba">Córdoba</a>, <a href="index.php?place=granada">Granada</a>, <a href="index.php?place=guadalajara">Guadalajara</a>, <a href="index.php?place=guipuzcoa">Guipuzkoa</a>, <a href="index.php?place=huelva">Huelva</a>, <a href="index.php?place=huesca">Huesca</a>, <a href="index.php?place=baleares">Illes Balears</a>, <a href="index.php?place=jaen">Jaén</a>, <a href="index.php?place=laspalmas">Las Palmas</a>, <a href="index.php?place=leon">León</a>, <a href="index.php?place=madrid">Madrid</a>, <a href="index.php?place=melilla">Melilla</a>, <a href="index.php?place=murcia">Murcia</a>, <a href="index.php?place=malaga">Málaga</a>, <a href="index.php?place=navarra">Navarra</a>, <a href="index.php?place=valencia">País Valencià</a>, <a href="index.php?place=palencia">Palencia</a>, <a href="index.php?place=larioja">La Rioja</a>, <a href="index.php?place=lugo">Lugo</a>, <a href="index.php?place=ourense">Ourense</a>, <a href="index.php?place=pontevedra">Pontevedra</a>, <a href="index.php?place=salamanca">Salamanca</a>, <a href="index.php?place=tenerife">Tenerife</a>, <a href="index.php?place=segovia">Segovia</a>, <a href="index.php?place=sevilla">Sevilla</a>, <a href="index.php?place=soria">Soria</a>, <a href="index.php?place=teruel">Teruel</a>, <a href="index.php?place=toledo">Toledo</a>, <a href="index.php?place=valladolid">Valladolid</a>, <a href="index.php?place=vizcaya">Vizcaya</a>, <a href="index.php?place=zamora">Zamora</a>, <a href="index.php?place=zaragoza">Zaragoza</a>
+Choose a place: <a href="index.php?place=coruna">A Coruña</a>, <a href="index.php?place=albacete">Albacete</a>, <a href="index.php?place=almeria">Almería</a>, <a href="index.php?place=asturias">Asturias</a>, <a href="index.php?place=avila">Ávila</a>, <a href="index.php?place=badajoz">Badajoz</a>, <a href="index.php?place=burgos">Burgos</a>, <a href="index.php?place=cantabria">Cantabria</a>, <a href="index.php?place=catalunya">Catalunya</a>, <a href="index.php?place=ceuta">Ceuta</a>, <a href="index.php?place=ciudadreal">Ciudad Real</a>, <a href="index.php?place=cuenca">Cuenca</a>, <a href="index.php?place=caceres">Cáceres</a>, <a href="index.php?place=cadiz">Cádiz</a>, <a href="index.php?place=cordoba">Córdoba</a>, <a href="index.php?place=granada">Granada</a>, <a href="index.php?place=guadalajara">Guadalajara</a>, <a href="index.php?place=guipuzcoa">Guipuzkoa</a>, <a href="index.php?place=huelva">Huelva</a>, <a href="index.php?place=huesca">Huesca</a>, <a href="index.php?place=baleares">Illes Balears</a>, <a href="index.php?place=jaen">Jaén</a>, <a href="index.php?place=laspalmas">Las Palmas</a>, <a href="index.php?place=leon">León</a>, <a href="index.php?place=lugo">Lugo</a>, <a href="index.php?place=madrid">Madrid</a>, <a href="index.php?place=melilla">Melilla</a>, <a href="index.php?place=murcia">Murcia</a>, <a href="index.php?place=malaga">Málaga</a>, <a href="index.php?place=navarra">Navarra</a>, <a href="index.php?place=valencia">País Valencià</a>, <a href="index.php?place=palencia">Palencia</a>, <a href="index.php?place=larioja">La Rioja</a>, <a href="index.php?place=ourense">Ourense</a>, <a href="index.php?place=pontevedra">Pontevedra</a>, <a href="index.php?place=salamanca">Salamanca</a>, <a href="index.php?place=tenerife">Tenerife</a>, <a href="index.php?place=segovia">Segovia</a>, <a href="index.php?place=sevilla">Sevilla</a>, <a href="index.php?place=soria">Soria</a>, <a href="index.php?place=teruel">Teruel</a>, <a href="index.php?place=toledo">Toledo</a>, <a href="index.php?place=valladolid">Valladolid</a>, <a href="index.php?place=vizcaya">Vizcaya</a>, <a href="index.php?place=zamora">Zamora</a>, <a href="index.php?place=zaragoza">Zaragoza</a>
 <br/>
 </td>
 <td>
@@ -337,6 +378,9 @@ Choose a place: <a href="index.php?place=coruna">A Coruña</a>, <a href="index.p
 <br/>
 Help editing: <a href="http://ca.wikipedia.org/wiki/Categoria:Llistes_de_monuments" target="_blank">ca:Llistes de monuments</a> - <a href="http://es.wikipedia.org/wiki/Categor%%C3%%ADa:Anexos:Bienes_de_inter%%C3%%A9s_cultural_en_Espa%%C3%%B1a" target="_blank">es:Anexos:Bienes de interés cultural en España</a> - <a href="http://gl.wikipedia.org/wiki/Categor%%C3%%ADa:Bens_de_Interese_Cultural_de_Galicia" target="_blank">gl:Bens de Interese Cultural de Galicia</a>
 <br/><br/>
+Statistics
+<br/>
+%s
 <i>Last update: %s (UTC)</i>
 <br/>
 </td>
@@ -347,7 +391,7 @@ Help editing: <a href="http://ca.wikipedia.org/wiki/Categoria:Llistes_de_monumen
 </body>
 
 </html>
-""" % (total, missingcoordinates, missingcoordinates/(total/100.0), missingimages, missingimages/(total/100.0), imageyesurl, imagenourl, datetime.datetime.now())
+""" % (total, total-missingcoordinates, (total-missingcoordinates)/(total/100.0), total-missingimages, (total-missingimages)/(total/100.0), imageyesurl, imagenourl, tablestats, datetime.datetime.now())
 
 f = open('/home/emijrp/public_html/wlm/index.php', 'w')
 f.write(output.encode('utf-8'))
