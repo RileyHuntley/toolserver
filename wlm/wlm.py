@@ -54,6 +54,8 @@ def colors(percent):
 
 #mejor no mezclar varios anexos de varios idiomas para una misma provincia
 anexos = {
+#'alava': [u'Anexo:Bienes de interés cultural de la provincia de Álava', ], 
+
 'albacete': [u'es:Anexo:Bienes de interés cultural de la provincia de Albacete', ],
 'almeria': [u'es:Anexo:Bienes de interés cultural de la provincia de Almería', ],
 'asturias': [u'es:Anexo:Bienes de interés cultural de Asturias', ],
@@ -79,7 +81,9 @@ anexos = {
 'caceres': [u'es:Anexo:Bienes de interés cultural de la provincia de Cáceres', ],
 'cadiz': [u'es:Anexo:Bienes de interés cultural de la provincia de Cádiz', ],
 'cordoba': [u'es:Anexo:Bienes de interés cultural de la provincia de Córdoba', ],
-'granada': [u'es:Anexo:Bienes de interés cultural de la provincia de Granada', ],
+
+#'granada': [u'es:Anexo:Bienes de interés cultural de la provincia de Granada', ],
+
 'guadalajara': [u'es:Anexo:Bienes de interés cultural de la provincia de Guadalajara', ],
 'guipuzcoa': [u'es:Anexo:Bienes de interés cultural de la provincia de Guipúzcoa', ],
 'huelva': [u'es:Anexo:Bienes de interés cultural de la provincia de Huelva', ],
@@ -113,7 +117,6 @@ anexos = {
 'zamora': [u'es:Anexo:Bienes de interés cultural de la provincia de Zamora', ],
 'zaragoza': [u'es:Anexo:Bienes de interés cultural de la provincia de Zaragoza', ],
 }
-#u'Anexo:Bienes de interés cultural de la provincia de Álava',
 
 """
 <?xml version="1.0" encoding="UTF-8"?>
@@ -165,7 +168,7 @@ anexos = {
  | imagen = 
 }}
 """
-regexp_es = re.compile(ur'(?im)\{\{\s*fila (BIC|BIC 2)?\s*\|\s*nombre\s*=\s*(?P<nombre>[^=}]*)\s*\|\s*nombrecoor\s*=\s*(?P<nombrecoor>[^=}]*)\s*\|\s*tipobic\s*=\s*(?P<tipobic>[^=}]*)\s*\|\s*tipo\s*=\s*(?P<tipo>[^=}]*)\s*\|\s*municipio\s*=\s*(?P<municipio>[^=}]*)\s*\|\s*lugar\s*=(?P<lugar>[^=}]*)\s*\|\s*lat\s*=\s*(?P<lat>[^=}]*)\s*\|\s*lon\s*=\s*(?P<lon>[^=}]*)\s*\|\s*bic\s*=\s*(?P<bic>[^=}]*)\s*(\|\s*id_aut\s*=\s*(?P<id_aut>[^=}]*)\s*)?\|\s*fecha\s*=\s*(?P<fecha>[^=}]*)\s*\|\s*imagen\s*=\s*(?P<imagen>[^=}]*)\s*\}\}')
+regexp_es = re.compile(ur'(?im)\{\{\s*fila (BIC|BIC 2)\s*\|\s*nombre\s*=\s*(?P<nombre>[^=}]*?)\s*\|\s*nombrecoor\s*=\s*(?P<nombrecoor>[^=}]*?)\s*\|\s*tipobic\s*=\s*(?P<tipobic>[^=}]*?)\s*\|\s*tipo\s*=\s*(?P<tipo>[^=}]*?)\s*\|\s*municipio\s*=\s*(?P<municipio>[^=}]*?)\s*\|\s*lugar\s*=(?P<lugar>[^=}]*?)\s*\|\s*lat\s*=\s*(?P<lat>[^=}]*?)\s*\|\s*lon\s*=\s*(?P<lon>[^=}]*?)\s*\|\s*bic\s*=\s*(?P<bic>[^=}]*?)\s*(\|\s*id[_ ]aut\s*=\s*(?P<id_aut>[^=}]*?)\s*)?(\|\s*fecha\s*=\s*(?P<fecha>[^=}]*?)\s*)?\|\s*imagen\s*=\s*(?P<imagen>[^=}]*?)\s*\}\}')
 
 """
 {{BIC
@@ -183,7 +186,7 @@ regexp_es = re.compile(ur'(?im)\{\{\s*fila (BIC|BIC 2)?\s*\|\s*nombre\s*=\s*(?P<
 """
 
 #el campo idurl no aparece en algunas listas, lo ponemos opcional
-regexp_gl = re.compile(ur'(?im)\{\{\s*BIC\s*\|\s*nomeoficial\s*=\s*(?P<nombre>[^=}]*)\s*\|\s*outrosnomes\s*=\s*(?P<nombrecoor>[^=}]*)\s*(\|\s*paxina\s*=\s*(?P<paxina>[^=}]*)\s*)?(\|\s*idurl\s*=\s*(?P<idurl>[^=}]*)\s*)?\|\s*concello\s*=(?P<lugar>[^=}]*)\|\s*lugar\s*=(?P<municipio>[^=}]*)\s*\|\s*lat\s*=\s*(?P<lat>[^=}]*)\s*\|\s*lon\s*=\s*(?P<lon>[^=}]*)\s*\|\s*id\s*=\s*(?P<bic>[^=}]*)\s*\|\s*data[_ ]declaracion\s*=\s*(?P<fecha>[^=}]*)\s*\|\s*imaxe\s*=\s*(?P<imagen>[^=}]*)\s*\}\}')
+regexp_gl = re.compile(ur'(?im)\{\{\s*BIC\s*\|\s*nomeoficial\s*=\s*(?P<nombre>[^=}]*?)\s*\|\s*outrosnomes\s*=\s*(?P<nombrecoor>[^=}]*?)\s*(\|\s*paxina\s*=\s*(?P<paxina>[^=}]*?)\s*)?(\|\s*idurl\s*=\s*(?P<idurl>[^=}]*?)\s*)?\|\s*concello\s*=(?P<lugar>[^=}]*?)\|\s*lugar\s*=(?P<municipio>[^=}]*?)\s*\|\s*lat\s*=\s*(?P<lat>[^=}]*?)\s*\|\s*lon\s*=\s*(?P<lon>[^=}]*?)\s*\|\s*id\s*=\s*(?P<bic>[^=}]*?)\s*\|\s*data[_ ]declaracion\s*=\s*(?P<fecha>[^=}]*?)\s*\|\s*imaxe\s*=\s*(?P<imagen>[^=}]*?)\s*\}\}')
 
 """
 {{filera BIC
@@ -212,7 +215,7 @@ regexp_gl = re.compile(ur'(?im)\{\{\s*BIC\s*\|\s*nomeoficial\s*=\s*(?P<nombre>[^
  | imatge = 
 }}
 """
-regexp_ca = re.compile(ur'(?im)\{\{\s*filera (BIC|BCIN|BIC Val)\s*\|\s*nom\s*=\s*(?P<nombre>[^=}]*)\s*\|\s*nomcoor\s*=\s*(?P<nombrecoor>[^=}]*)\s*(\|\s*tipus\s*=\s*(?P<tipobic>[^=}]*)\s*)?(\|\s*estil\s*=\s*([^=}]*)\s*)?(\|\s*època\s*=\s*([^=}]*)\s*)?\|\s*municipi\s*=\s*(?P<municipio>[^=}]*)\s*\|\s*lloc\s*=(?P<lugar>[^=}]*)\s*\|\s*lat\s*=\s*(?P<lat>[^=}]*)\s*\|\s*lon\s*=\s*(?P<lon>[^=}]*)\s*(\|\s*idurl\s*=\s*([^=}]*)\s*)?(\|\s*prot\s*=\s*([^=}]*)\s*)?(\|\s*bcin\s*=\s*([^=}]*)\s*)?\|\s*bic\s*=\s*(?P<bic>[^=}]*)\s*(\|\s*fecha\s*=\s*(?P<fecha>[^=}]*)\s*)?\|\s*imatge\s*=\s*(?P<imagen>[^=}]*)\s*\}\}')
+regexp_ca = re.compile(ur'(?im)\{\{\s*filera (BIC|BCIN|BIC Val)\s*\|\s*nom\s*=\s*(?P<nombre>[^=}]*?)\s*\|\s*nomcoor\s*=\s*(?P<nombrecoor>[^=}]*?)\s*(\|\s*tipus\s*=\s*(?P<tipobic>[^=}]*?)\s*)?(\|\s*estil\s*=\s*([^=}]*?)\s*)?(\|\s*època\s*=\s*([^=}]*?)\s*)?\|\s*municipi\s*=\s*(?P<municipio>[^=}]*?)\s*\|\s*lloc\s*=(?P<lugar>[^=}]*?)\s*\|\s*lat\s*=\s*(?P<lat>[^=}]*?)\s*\|\s*lon\s*=\s*(?P<lon>[^=}]*?)\s*(\|\s*idurl\s*=\s*([^=}]*?)\s*)?(\|\s*prot\s*=\s*([^=}]*?)\s*)?(\|\s*bcin\s*=\s*([^=}]*?)\s*)?\|\s*bic\s*=\s*(?P<bic>[^=}]*?)\s*(\|\s*fecha\s*=\s*(?P<fecha>[^=}]*?)\s*)?\|\s*imatge\s*=\s*(?P<imagen>[^=}]*?)\s*\}\}')
 
 
 missingcoordinates = 0
@@ -222,6 +225,7 @@ provincesstats = []
 for anexoid, anexolist in anexos.items():
     bics = {}
     for anexo in anexolist:
+        print anexo
         lang = anexo.split(':')[0]
         s = wikipedia.Site(lang, 'wikipedia')
         p = wikipedia.Page(s, ':'.join(anexo.split(':')[1:]))
@@ -335,13 +339,18 @@ for anexoid, anexolist in anexos.items():
     f.close()
 
 tablestats = u'<table border=1px style="text-align: center;">\n'
-tablestats += u'<tr><th>Place</th><th>Total BICs</th><th>With coordinates</th><th>With images</th></tr>\n'
+tablestats += u'<tr><th>Place</th><th>Total BICs</th><th>With coordinates</th><th>With images</th><th>Details</th></tr>\n'
 provincesstats.sort()
 for p, ptotal, pmissingcoordinates, pmissingimages in provincesstats:
     pcoordper = ptotal and (ptotal-pmissingcoordinates)/(ptotal/100.0) or 0
     pimageper = ptotal and (ptotal-pmissingimages)/(ptotal/100.0) or 0
-    tablestats += u'<tr><td><a href="index.php?place=%s">%s</a></td><td>%d</td><td bgcolor=%s>%d (%.1f%%)</td><td bgcolor=%s>%d (%.1f%%)</td></tr>\n' % (p, placenames[p], ptotal, colors(pcoordper),ptotal-pmissingcoordinates, pcoordper, colors(pimageper), ptotal-pmissingimages, pimageper)
-tablestats += u'<tr><td><b>Total</b></td><td><b>%d</b></td><td bgcolor=%s><b>%d (%.1f%%)</b></td><td bgcolor=%s><b>%d (%.1f%%)</b></td></tr>\n' % (total, colors((total-missingcoordinates)/(total/100.0)), total-missingcoordinates, (total-missingcoordinates)/(total/100.0), colors((total-missingimages)/(total/100.0)), total-missingimages, (total-missingimages)/(total/100.0))
+    refs = u''
+    c = 1
+    for i in anexos[p]:
+        refs += u'<a href="http://%s.wikipedia.org/wiki/%s">[%d]</a> ' % (i.split[':'][0], ':'.join(i.split[':'][1:]), c)
+        c += 1
+    tablestats += u'<tr><td><a href="index.php?place=%s">%s</a></td><td>%d</td><td bgcolor=%s>%d (%.1f%%)</td><td bgcolor=%s>%d (%.1f%%)</td><td>%s</td></tr>\n' % (p, placenames[p], ptotal, colors(pcoordper),ptotal-pmissingcoordinates, pcoordper, colors(pimageper), ptotal-pmissingimages, pimageper, refs)
+tablestats += u'<tr><td><b>Total</b></td><td><b>%d</b></td><td bgcolor=%s><b>%d (%.1f%%)</b></td><td bgcolor=%s><b>%d (%.1f%%)</b></td><td><a href="http://ca.wikipedia.org/wiki/Categoria:Llistes_de_monuments" target="_blank">[1]</a> <a href="http://es.wikipedia.org/wiki/Categor%%C3%%ADa:Anexos:Bienes_de_inter%%C3%%A9s_cultural_en_Espa%%C3%%B1a" target="_blank">[2]</a> <a href="http://gl.wikipedia.org/wiki/Categor%%C3%%ADa:Bens_de_Interese_Cultural_de_Galicia" target="_blank">[3]</a></td></tr>\n' % (total, colors((total-missingcoordinates)/(total/100.0)), total-missingcoordinates, (total-missingcoordinates)/(total/100.0), colors((total-missingimages)/(total/100.0)), total-missingimages, (total-missingimages)/(total/100.0))
 tablestats += u'</table>\n'
 
 output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -392,8 +401,6 @@ Choose a place: <a href="index.php?place=coruna">A Coruña</a>, <a href="index.p
 <iframe width="1000" height="450" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fwlm%%2Fwlm-<?php echo $place; ?>.kml%%3Fusecache%%3D0&amp;output=embed"></iframe>
 <br/>
 <br/>
-Help editing: <a href="http://ca.wikipedia.org/wiki/Categoria:Llistes_de_monuments" target="_blank">ca:Llistes de monuments</a> - <a href="http://es.wikipedia.org/wiki/Categor%%C3%%ADa:Anexos:Bienes_de_inter%%C3%%A9s_cultural_en_Espa%%C3%%B1a" target="_blank">es:Anexos:Bienes de interés cultural en España</a> - <a href="http://gl.wikipedia.org/wiki/Categor%%C3%%ADa:Bens_de_Interese_Cultural_de_Galicia" target="_blank">gl:Bens de Interese Cultural de Galicia</a>
-<br/><br/>
 <center>
 %s
 </center>
