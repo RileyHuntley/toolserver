@@ -341,7 +341,7 @@ for anexoid, anexolist in anexos.items():
     f.close()
 
 tablestats = u'<table border=1px style="text-align: center;">\n'
-tablestats += u'<tr><th>Place</th><th>Total BICs</th><th>With coordinates</th><th>With images</th><th>Details</th></tr>\n'
+tablestats += u'<tr><th width=100px>Place</th><th width=100px>Total BICs</th><th width=150px>With coordinates</th><th width=100px>With images</th><th width=350px>Details</th></tr>\n'
 provincesstats.sort()
 for p, ptotal, pmissingcoordinates, pmissingimages in provincesstats:
     pcoordper = ptotal and (ptotal-pmissingcoordinates)/(ptotal/100.0) or 0
