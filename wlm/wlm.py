@@ -355,6 +355,7 @@ for p, ptotal, pmissingcoordinates, pmissingimages in provincesstats:
     for i in anexos[p]:
         refs += u'<a href="http://%s.wikipedia.org/wiki/%s">[%d]</a> ' % (i.split(':')[0], ':'.join(i.split(':')[1:]), c)
         c += 1
+    refs = u"""[ <a href="javascript:showHide('%s-refs')">Show/Hide</a> ]<div id="%s-refs" style="display: none;"><br/>%s</div>""" % (p, p, refs)
     tablestats += u'<tr><td><a href="index.php?place=%s">%s</a></td><td>%d</td><td bgcolor=%s>%d (%.1f%%)</td><td bgcolor=%s>%d (%.1f%%)</td><td>%s</td></tr>\n' % (p, placenames[p], ptotal, colors(pcoordper),ptotal-pmissingcoordinates, pcoordper, colors(pimageper), ptotal-pmissingimages, pimageper, refs)
 tablestats += u'<tr><td><b>Total</b></td><td><b>%d</b></td><td bgcolor=%s><b>%d (%.1f%%)</b></td><td bgcolor=%s><b>%d (%.1f%%)</b></td><td><a href="http://ca.wikipedia.org/wiki/Categoria:Llistes_de_monuments" target="_blank">[1]</a> <a href="http://es.wikipedia.org/wiki/Categor%%C3%%ADa:Anexos:Bienes_de_inter%%C3%%A9s_cultural_en_Espa%%C3%%B1a" target="_blank">[2]</a> <a href="http://gl.wikipedia.org/wiki/Categor%%C3%%ADa:Bens_de_Interese_Cultural_de_Galicia" target="_blank">[3]</a></td></tr>\n' % (total, colors((total-missingcoordinates)/(total/100.0)), total-missingcoordinates, (total-missingcoordinates)/(total/100.0), colors((total-missingimages)/(total/100.0)), total-missingimages, (total-missingimages)/(total/100.0))
 tablestats += u'</table>\n'
@@ -365,6 +366,18 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 <title>Wiki Loves Monuments</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta http-equiv="Content-Style-Type" content="text/css" />
+
+<script language="javascript">
+function showHide(id){
+    if (document.getElementById(id).style.display == 'none') {
+        document.getElementById(id).style.display = 'block';
+    }else{
+        document.getElementById(id).style.display = 'none';
+    }
+}
+
+</script>
+
 </head>
 
 <?php
