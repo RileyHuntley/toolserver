@@ -322,11 +322,11 @@ for anexoid, anexolist in anexos.items():
 
 tablestats = u'<table style="text-align: center;">\n'
 tablestats += u'<tr><th>Place</th><th>Total BICs</th><th>With coordinates</th><th>With images</th></tr>\n'
-provincestats.sort()
+provincesstats.sort()
 for p, ptotal, pmissingcoordinates, pmissingimages in provincesstats:
-    pmcp = ptotal and (ptotal-pmissingcoordinates)/(ptotal/100.0) or 0
-    pmip = ptotal and (ptotal-pmissingimages)/(ptotal/100.0) or 0
-    tablestats += u'<tr><td>%s</td><td>%d</td><td bgcolor=%s>%d (%.1f%%)</td><td bgcolor=%s>%d (%.1f%%)</td></tr>\n' % (placenames[p], ptotal, colors(pmcp),pmissingcoordinates, pmcp, colors(pmip), pmissingimages, pmip)
+    pcoordper = ptotal and (ptotal-pmissingcoordinates)/(ptotal/100.0) or 0
+    pimageper = ptotal and (ptotal-pmissingimages)/(ptotal/100.0) or 0
+    tablestats += u'<tr><td>%s</td><td>%d</td><td bgcolor=%s>%d (%.1f%%)</td><td bgcolor=%s>%d (%.1f%%)</td></tr>\n' % (placenames[p], ptotal, colors(pcoordper),ptotal-pmissingcoordinates, pcoordper, colors(pimageper), ptotal-pmissingimages, pimageper)
 tablestats += u'</table>\n'
 
 output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -381,7 +381,9 @@ Help editing: <a href="http://ca.wikipedia.org/wiki/Categoria:Llistes_de_monumen
 <br/><br/>
 Statistics
 <br/>
+<center>
 %s
+</center>
 <i>Last update: %s (UTC)</i>
 <br/>
 </td>
