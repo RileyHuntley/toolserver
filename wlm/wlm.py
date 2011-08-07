@@ -150,8 +150,22 @@ anexos = {
  | fecha = 22-06-1993
  | imagen = 
 }}
+
+{{Fila BIC 2
+ | nombre = [[Archivo Histórico Provincial (Granada)|Archivo Histórico Provincial de Granada]]
+ | nombrecoor = Archivo Histórico Provincial de Granada
+ | tipobic = A
+ | tipo = Archivo
+ | municipio = [[Granada]]
+ | lugar = C/ San Agapito, s/n
+ | lat =  | lon = 
+ | bic = R.I.-AR-0000056-00000
+ | id_aut = 180870383
+ | fecha = 25/06/1985<ref name="Patrimonio">http://www.boe.es/boe/dias/1985/06/29/pdfs/A20342-20352.pdf La Ley de Patrimonio del Estado califica como Bienes de Interés Cultural cuantos edificios estaban declarados con anterioridad como Monumento Nacional</ref>
+ | imagen = 
+}}
 """
-regexp_es = re.compile(ur'(?im)\{\{\s*fila BIC\s*\|\s*nombre\s*=\s*(?P<nombre>[^=}]*)\s*\|\s*nombrecoor\s*=\s*(?P<nombrecoor>[^=}]*)\s*\|\s*tipobic\s*=\s*(?P<tipobic>[^=}]*)\s*\|\s*tipo\s*=\s*(?P<tipo>[^=}]*)\s*\|\s*municipio\s*=\s*(?P<municipio>[^=}]*)\s*\|\s*lugar\s*=(?P<lugar>[^=}]*)\s*\|\s*lat\s*=\s*(?P<lat>[^=}]*)\s*\|\s*lon\s*=\s*(?P<lon>[^=}]*)\s*\|\s*bic\s*=\s*(?P<bic>[^=}]*)\s*\|\s*fecha\s*=\s*(?P<fecha>[^=}]*)\s*\|\s*imagen\s*=\s*(?P<imagen>[^=}]*)\s*\}\}')
+regexp_es = re.compile(ur'(?im)\{\{\s*fila (BIC|BIC 2)?\s*\|\s*nombre\s*=\s*(?P<nombre>[^=}]*)\s*\|\s*nombrecoor\s*=\s*(?P<nombrecoor>[^=}]*)\s*\|\s*tipobic\s*=\s*(?P<tipobic>[^=}]*)\s*\|\s*tipo\s*=\s*(?P<tipo>[^=}]*)\s*\|\s*municipio\s*=\s*(?P<municipio>[^=}]*)\s*\|\s*lugar\s*=(?P<lugar>[^=}]*)\s*\|\s*lat\s*=\s*(?P<lat>[^=}]*)\s*\|\s*lon\s*=\s*(?P<lon>[^=}]*)\s*\|\s*bic\s*=\s*(?P<bic>[^=}]*)\s*(\|\s*id_aut\s*=\s*(?P<id_aut>[^=}]*)\s*)?\|\s*fecha\s*=\s*(?P<fecha>[^=}]*)\s*\|\s*imagen\s*=\s*(?P<imagen>[^=}]*)\s*\}\}')
 
 """
 {{BIC
