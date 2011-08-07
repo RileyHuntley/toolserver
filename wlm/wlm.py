@@ -320,7 +320,7 @@ for anexoid, anexolist in anexos.items():
     f.write(output.encode('utf-8'))
     f.close()
 
-tablestats = u'<table style="text-align: center;">\n'
+tablestats = u'<table border=1px style="text-align: center;">\n'
 tablestats += u'<tr><th>Place</th><th>Total BICs</th><th>With coordinates</th><th>With images</th></tr>\n'
 provincesstats.sort()
 for p, ptotal, pmissingcoordinates, pmissingimages in provincesstats:
@@ -379,8 +379,6 @@ Choose a place: <a href="index.php?place=coruna">A Coruña</a>, <a href="index.p
 <br/>
 Help editing: <a href="http://ca.wikipedia.org/wiki/Categoria:Llistes_de_monuments" target="_blank">ca:Llistes de monuments</a> - <a href="http://es.wikipedia.org/wiki/Categor%%C3%%ADa:Anexos:Bienes_de_inter%%C3%%A9s_cultural_en_Espa%%C3%%B1a" target="_blank">es:Anexos:Bienes de interés cultural en España</a> - <a href="http://gl.wikipedia.org/wiki/Categor%%C3%%ADa:Bens_de_Interese_Cultural_de_Galicia" target="_blank">gl:Bens de Interese Cultural de Galicia</a>
 <br/><br/>
-Statistics
-<br/>
 <center>
 %s
 </center>
