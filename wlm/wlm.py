@@ -341,6 +341,7 @@ for p, ptotal, pmissingcoordinates, pmissingimages in provincesstats:
     pcoordper = ptotal and (ptotal-pmissingcoordinates)/(ptotal/100.0) or 0
     pimageper = ptotal and (ptotal-pmissingimages)/(ptotal/100.0) or 0
     tablestats += u'<tr><td><a href="index.php?place=%s">%s</a></td><td>%d</td><td bgcolor=%s>%d (%.1f%%)</td><td bgcolor=%s>%d (%.1f%%)</td></tr>\n' % (p, placenames[p], ptotal, colors(pcoordper),ptotal-pmissingcoordinates, pcoordper, colors(pimageper), ptotal-pmissingimages, pimageper)
+tablestats += u'<tr><td><b>Total</b></td><td><b>%d</b></td><td bgcolor=%s><b>%d (%.1f%%)</b></td><td bgcolor=%s><b>%d (%.1f%%)</b></td></tr>\n' % (total, colors((total-missingcoordinates)/(total/100.0)), total-missingcoordinates, (total-missingcoordinates)/(total/100.0), colors((total-missingimages)/(total/100.0)), total-missingimages, (total-missingimages)/(total/100.0))
 tablestats += u'</table>\n'
 
 output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
