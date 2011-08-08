@@ -23,17 +23,17 @@ import wikipedia
 #subida fácil: http://commons.wikimedia.org/w/index.php?title=Special:Upload&wpDestFile=BBBB.jpg&uploadformstyle=basic&wpUploadDescription={{Information|Description=|Source=|Date=|Author=|Permission=|other_versions=}}
 
 placenames = {
-"coruna": u"A Coruña", "albacete": u"Albacete", "almeria": u"Almería", "asturias": u"Asturias", "avila": u"Ávila",
+"coruna": u"A&nbsp;Coruña", "albacete": u"Albacete", "almeria": u"Almería", "asturias": u"Asturias", "avila": u"Ávila",
 "badajoz": u"Badajoz", "burgos": u"Burgos",
-"cantabria": u"Cantabria", "catalunya": u"Catalunya", "ceuta": u"Ceuta", "ciudadreal": u"Ciudad Real", "cuenca": u"Cuenca", "caceres": u"Cáceres", "cadiz": u"Cádiz", "cordoba": u"Córdoba",
+"cantabria": u"Cantabria", "catalunya": u"Catalunya", "ceuta": u"Ceuta", "ciudadreal": u"Ciudad&nbsp;Real", "cuenca": u"Cuenca", "caceres": u"Cáceres", "cadiz": u"Cádiz", "cordoba": u"Córdoba",
 "granada": u"Granada", "guadalajara": u"Guadalajara", "guipuzcoa": u"Guipuzkoa",
 "huelva": u"Huelva", "huesca": u"Huesca",
-"baleares": u"Illes Balears",
+"baleares": u"Illes&nbsp;Balears",
 "jaen": u"Jaén", 
-"laspalmas": u"Las Palmas", "leon": u"León", "lugo": u"Lugo",
+"laspalmas": u"Las&nbsp;Palmas", "leon": u"León", "lugo": u"Lugo",
 "madrid": u"Madrid", "melilla": u"Melilla", "murcia": u"Murcia", "malaga": u"Málaga", 
 "navarra": u"Navarra",
-"valencia": u"País Valencià", "palencia": u"Palencia", "larioja": u"La Rioja", "ourense": u"Ourense", "pontevedra": u"Pontevedra",
+"valencia": u"País&nbsp;Valencià", "palencia": u"Palencia", "larioja": u"La Rioja", "ourense": u"Ourense", "pontevedra": u"Pontevedra",
 "salamanca": u"Salamanca", "tenerife": u"Tenerife", "segovia": u"Segovia", "sevilla": u"Sevilla", "soria": u"Soria", 
 "teruel": u"Teruel", "toledo": u"Toledo", "valladolid": u"Valladolid", "vizcaya": u"Vizcaya", 
 "zamora": u"Zamora", "zaragoza": u"Zaragoza",
@@ -224,6 +224,11 @@ def isvalidimage(img):
         return True
     return False
 
+def clean(t):
+    t = re.sub(ur'(?i)([\[\]]|\|.*|\<ref.*)', ur'', t).strip()
+    t = re.sub(ur'(?im)<\s*br\s*/?\s*>', ur'-', t).strip()
+    return t
+
 missingcoordinates = 0
 missingimages = 0
 total = 0
@@ -248,12 +253,12 @@ for anexoid, anexolist in anexos.items():
                 bic = i.group('bic').strip()
                 bics[bic] = {
                     'lang': lang,
-                    'nombre': re.sub(ur'([\[\]]|\|.*)', ur'', re.sub(ur'(?im)<\s*br\s*/?\s*>', ur'-', i.group('nombre').strip())),
+                    'nombre': clean(i.group('nombre').strip()),
                     #'nombrecoor': i.group('nombrecoor').strip(),
                     #'tipobic': i.group('tipobic').strip(),
                     #'tipo': i.group('tipo').strip(),
-                    'municipio': re.sub(ur'([\[\]]|\|.*)', ur'', i.group('municipio').strip()),
-                    'lugar': re.sub(ur'([\[\]]|\|.*)', ur'', i.group('lugar').strip()),
+                    'municipio': clean(i.group('municipio').strip()),
+                    'lugar': clean(i.group('lugar').strip()),
                     'lat': i.group('lat').strip(),
                     'lon': i.group('lon').strip(),
                     'bic': bic,
@@ -360,6 +365,9 @@ for p, ptotal, pmissingcoordinates, pmissingimages in provincesstats:
 tablestats += u'<tr><td><b>Total</b></td><td><b>%d</b></td><td bgcolor=%s><b>%d (%.1f%%)</b></td><td bgcolor=%s><b>%d (%.1f%%)</b></td><td><a href="http://ca.wikipedia.org/wiki/Categoria:Llistes_de_monuments" target="_blank">[1]</a> <a href="http://es.wikipedia.org/wiki/Categor%%C3%%ADa:Anexos:Bienes_de_inter%%C3%%A9s_cultural_en_Espa%%C3%%B1a" target="_blank">[2]</a> <a href="http://gl.wikipedia.org/wiki/Categor%%C3%%ADa:Bens_de_Interese_Cultural_de_Galicia" target="_blank">[3]</a></td></tr>\n' % (total, colors((total-missingcoordinates)/(total/100.0)), total-missingcoordinates, (total-missingcoordinates)/(total/100.0), colors((total-missingimages)/(total/100.0)), total-missingimages, (total-missingimages)/(total/100.0))
 tablestats += u'</table>\n'
 
+anexoskeys = anexos.keys()
+anexoskeys.sort()
+
 output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -381,7 +389,7 @@ function showHide(id){
 </head>
 
 <?php
-$places = array("albacete", "almeria", "asturias", "avila", "badajoz", "baleares", "burgos", "catalunya", "cantabria", "ceuta", "ciudadreal", "coruna", "cuenca", "caceres", "cadiz", "cordoba", "granada", "guadalajara", "guipuzcoa", "huelva", "huesca", "jaen", "laspalmas", "leon", "lugo", "madrid", "melilla", "murcia", "malaga", "navarra", "ourense", "palencia", "larioja", "pontevedra", "salamanca", "tenerife", "segovia", "sevilla", "soria", "teruel", "toledo", "valencia", "valladolid", "vizcaya", "zamora", "zaragoza", );
+$places = array(%s );
 $place="madrid";
 if (isset($_GET['place']))
 {
@@ -400,15 +408,13 @@ if (isset($_GET['place']))
 <a href="http://www.wikimedia.org.es/" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Wikimedia-es-logo.svg/100px-Wikimedia-es-logo.svg.png" /></a>
 </td>
 <td>
-<h2><a href="http://www.wikilm.es" target="_blank">Wiki <i>Loves</i> Monuments</a></h2>
+<h1><a href="http://www.wikilm.es" target="_blank">Wiki <i>Loves</i> Monuments</a></h1>
+<center><span style="margin-top: -10px;"><b>Spain, September 1–30, 2011</b></span></center>
 
 <center>
 Total registered <i><a href="http://es.wikipedia.org/wiki/Bien_de_Inter%%C3%%A9s_Cultural" target="_blank">BICs</a></i> in Spain: %d | With coordinates: %d (%.1f%%) | With images: %d (%.1f%%)
 <br/>
 Legend: With image <img src="%s" width=20px title="with image" alt="with image"/>, Without image <img src="%s" width=20px title="without image" alt="without image"/>
-<br/>
-Choose a place: <a href="index.php?place=coruna">A Coruña</a>, <a href="index.php?place=albacete">Albacete</a>, <a href="index.php?place=almeria">Almería</a>, <a href="index.php?place=asturias">Asturias</a>, <a href="index.php?place=avila">Ávila</a>, <a href="index.php?place=badajoz">Badajoz</a>, <a href="index.php?place=burgos">Burgos</a>, <a href="index.php?place=cantabria">Cantabria</a>, <a href="index.php?place=catalunya">Catalunya</a>, <a href="index.php?place=ceuta">Ceuta</a>, <a href="index.php?place=ciudadreal">Ciudad Real</a>, <a href="index.php?place=cuenca">Cuenca</a>, <a href="index.php?place=caceres">Cáceres</a>, <a href="index.php?place=cadiz">Cádiz</a>, <a href="index.php?place=cordoba">Córdoba</a>, <a href="index.php?place=granada">Granada</a>, <a href="index.php?place=guadalajara">Guadalajara</a>, <a href="index.php?place=guipuzcoa">Guipuzkoa</a>, <a href="index.php?place=huelva">Huelva</a>, <a href="index.php?place=huesca">Huesca</a>, <a href="index.php?place=baleares">Illes Balears</a>, <a href="index.php?place=jaen">Jaén</a>, <a href="index.php?place=laspalmas">Las Palmas</a>, <a href="index.php?place=leon">León</a>, <a href="index.php?place=lugo">Lugo</a>, <a href="index.php?place=madrid">Madrid</a>, <a href="index.php?place=melilla">Melilla</a>, <a href="index.php?place=murcia">Murcia</a>, <a href="index.php?place=malaga">Málaga</a>, <a href="index.php?place=navarra">Navarra</a>, <a href="index.php?place=valencia">País Valencià</a>, <a href="index.php?place=palencia">Palencia</a>, <a href="index.php?place=larioja">La Rioja</a>, <a href="index.php?place=ourense">Ourense</a>, <a href="index.php?place=pontevedra">Pontevedra</a>, <a href="index.php?place=salamanca">Salamanca</a>, <a href="index.php?place=tenerife">Tenerife</a>, <a href="index.php?place=segovia">Segovia</a>, <a href="index.php?place=sevilla">Sevilla</a>, <a href="index.php?place=soria">Soria</a>, <a href="index.php?place=teruel">Teruel</a>, <a href="index.php?place=toledo">Toledo</a>, <a href="index.php?place=valladolid">Valladolid</a>, <a href="index.php?place=vizcaya">Vizcaya</a>, <a href="index.php?place=zamora">Zamora</a>, <a href="index.php?place=zaragoza">Zaragoza</a>
-<br/>
 </td>
 <td>
 <a href="http://www.wikilm.es/" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/100px-LUSITANA_WLM_2011_d.svg.png" /></a>
@@ -416,6 +422,7 @@ Choose a place: <a href="index.php?place=coruna">A Coruña</a>, <a href="index.p
 </tr>
 <tr>
 <td colspan=3>
+Select a place: %s
 
 <iframe width="1000" height="450" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fwlm%%2Fwlm-<?php echo $place; ?>.kml%%3Fusecache%%3D0&amp;output=embed"></iframe>
 <br/>
@@ -433,7 +440,7 @@ Choose a place: <a href="index.php?place=coruna">A Coruña</a>, <a href="index.p
 </body>
 
 </html>
-""" % (total, total-missingcoordinates, (total-missingcoordinates)/(total/100.0), total-missingimages, (total-missingimages)/(total/100.0), imageyesurl, imagenourl, tablestats, datetime.datetime.now())
+""" % (', '.join(['"%s"' % (i) for i in anexoskeys]), total, total-missingcoordinates, (total-missingcoordinates)/(total/100.0), total-missingimages, (total-missingimages)/(total/100.0), imageyesurl, imagenourl, ', '.join(['<a href="index.php?place=%s">%s</a>' % (i, placenames[i]) for i in anexoskeys]), tablestats, datetime.datetime.now())
 
 f = open('/home/emijrp/public_html/wlm/index.php', 'w')
 f.write(output.encode('utf-8'))
