@@ -415,7 +415,7 @@ if (isset($_GET['place']))
 <br/>
 Total registered <i><a href="http://es.wikipedia.org/wiki/Bien_de_Inter%%C3%%A9s_Cultural" target="_blank">BICs</a></i> in Spain: %d | With coordinates: %d (%.1f%%) | With images: %d (%.1f%%)
 <br/>
-Legend: With image <img src="%s" width=20px title="with image" alt="with image"/>, Without image <img src="%s" width=20px title="without image" alt="without image"/>
+Legend: With image <img src="%s" width=20px title="With image" alt="With image"/>, Without image <img src="%s" width=20px title="Without image" alt="Without image"/>
 </td>
 <td>
 <a href="http://www.wikilm.es/" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/100px-LUSITANA_WLM_2011_d.svg.png" /></a>
