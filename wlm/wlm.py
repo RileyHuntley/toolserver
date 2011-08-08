@@ -326,7 +326,7 @@ for anexoid, anexolist in anexos.items():
 <tr><td align=right width=80px style="background-color: lightgreen;"><b>BIC:</b></td><td><a href="%s" target="_blank">%s</a></td><td rowspan=4><a href="%s" target="_blank"><img src="%s" width=%s/></a></td></tr>
 <tr><td align=right style="background-color: lightblue;"><b>Located in:</b></td><td>%s</td></tr>
 <tr><td align=right style="background-color: yellow;"><b>ID:</b></td><td>%s</td></tr>
-<tr><td align=center colspan=2><br/><b>This BIC has %s<br/>you can upload yours. Thanks!</b><br/><br/><span style="border: 2px solid black;background-color: pink;padding: 3px;"><a href="http://commons.wikimedia.org/w/index.php?title=Special:Upload&uploadformstyle=basic&wpDestFile=%s - %s - WLM.jpg&wpUploadDescription={{Information%%0D%%0A| Description = %s%%0D%%0A| Source = {{Own}}%%0D%%0A| Date = %%0D%%0A| Author = [[User:{{subst:REVISIONUSER}}|{{subst:REVISIONUSER}}]]%%0D%%0A| Permission = %%0D%%0A| other_versions = %%0D%%0A}}" target="_blank"><b>Upload</b></a></span></td></tr>
+<tr><td align=center colspan=2><br/><b>This BIC has %s<br/>you can upload yours. Thanks!</b><br/><br/><span style="border: 2px solid black;background-color: pink;padding: 3px;"><a href="http://commons.wikimedia.org/w/index.php?title=Special:Upload&uploadformstyle=basic&wpDestFile=%s - %s - WLM.jpg&wpUploadDescription={{Information%%0D%%0A| Description = %s%%0D%%0A| Source = {{Own}}%%0D%%0A| Date = %%0D%%0A| Author = [[User:{{subst:REVISIONUSER}}|{{subst:REVISIONUSER}}]]%%0D%%0A| Permission = %%0D%%0A| other_versions = %%0D%%0A}}%%0D%%0A{{Selected for WLM 2011 ES|%s}}" target="_blank"><b>Upload</b></a></span></td></tr>
 </table>
 ]]>
 </description>
@@ -334,7 +334,7 @@ for anexoid, anexolist in anexos.items():
 <Point>
 <coordinates>%s,%s</coordinates>
 </Point>
-</Placemark>""" % (props['nombre'], articleurl, props['nombre'], commonspage, thumburl, imagesize, locatedin, props['bic'], isvalidimage(props['imagen']) and 'images, but' or 'no images,', props['nombre'], props['bic'], props['nombre'], isvalidimage(props['imagen']) and 'imageyes' or 'imageno', props['lon'], props['lat'])
+</Placemark>""" % (props['nombre'], articleurl, props['nombre'], commonspage, thumburl, imagesize, locatedin, props['bic'], isvalidimage(props['imagen']) and 'images, but' or 'no images,', props['nombre'], props['bic'], props['nombre'], props['bic'], isvalidimage(props['imagen']) and 'imageyes' or 'imageno', props['lon'], props['lat'])
         else:
             missingcoordinates +=1
             submissingcoordinates +=1
