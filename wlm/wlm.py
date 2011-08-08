@@ -412,7 +412,7 @@ if (isset($_GET['place']))
 <big><big><big><b><a href="http://www.wikilm.es" target="_blank">Wiki <i>Loves</i> Monuments</a></b></big></big></big>
 <br/>
 <b>Spain, September 1–30, 2011</b>
-
+<br/>
 Total registered <i><a href="http://es.wikipedia.org/wiki/Bien_de_Inter%%C3%%A9s_Cultural" target="_blank">BICs</a></i> in Spain: %d | With coordinates: %d (%.1f%%) | With images: %d (%.1f%%)
 <br/>
 Legend: With image <img src="%s" width=20px title="with image" alt="with image"/>, Without image <img src="%s" width=20px title="without image" alt="without image"/>
