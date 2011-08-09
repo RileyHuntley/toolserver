@@ -23,6 +23,7 @@ import wikipedia
 #subida fácil: http://commons.wikimedia.org/w/index.php?title=Special:Upload&wpDestFile=BBBB.jpg&uploadformstyle=basic&wpUploadDescription={{Information|Description=|Source=|Date=|Author=|Permission=|other_versions=}}
 
 placenames = {
+"alava": u"Álava",
 "coruna": u"A&nbsp;Coruña", "albacete": u"Albacete", "almeria": u"Almería", "asturias": u"Asturias", "avila": u"Ávila",
 "badajoz": u"Badajoz", "burgos": u"Burgos",
 "cantabria": u"Cantabria", "catalunya": u"Catalunya", "ceuta": u"Ceuta", "ciudadreal": u"Ciudad&nbsp;Real", "cuenca": u"Cuenca", "caceres": u"Cáceres", "cadiz": u"Cádiz", "cordoba": u"Córdoba",
@@ -54,7 +55,7 @@ def colors(percent):
 
 #mejor no mezclar varios anexos de varios idiomas para una misma provincia
 anexos = {
-#'alava': [u'Anexo:Bienes de interés cultural de la provincia de Álava', ], 
+'alava': [u'es:Anexo:Bienes de interés cultural de la provincia de Álava', ], 
 
 'albacete': [u'es:Anexo:Bienes de interés cultural de la provincia de Albacete', ],
 'almeria': [u'es:Anexo:Bienes de interés cultural de la provincia de Almería', ],
@@ -82,12 +83,12 @@ anexos = {
 'cadiz': [u'es:Anexo:Bienes de interés cultural de la provincia de Cádiz', ],
 'cordoba': [u'es:Anexo:Bienes de interés cultural de la provincia de Córdoba', ],
 
-#'granada': [u'es:Anexo:Bienes de interés cultural de la provincia de Granada', ],
+'granada': [u'es:Anexo:Bienes de interés cultural de la provincia de Granada', ],
 
 'guadalajara': [u'es:Anexo:Bienes de interés cultural de la provincia de Guadalajara', ],
 'guipuzcoa': [u'es:Anexo:Bienes de interés cultural de la provincia de Guipúzcoa', ],
 
-#'huelva': [u'es:Anexo:Bienes de interés cultural de la provincia de Huelva', ],
+'huelva': [u'es:Anexo:Bienes de interés cultural de la provincia de Huelva', ],
 
 'huesca': [u'es:Anexo:Bienes de interés cultural de la provincia de Huesca', ],
 'jaen': [u'es:Anexo:Bienes de interés cultural de la provincia de Jaén', ],
@@ -229,6 +230,11 @@ def clean(t):
     t = re.sub(ur'(?im)<\s*br\s*/?\s*>', ur'-', t).strip()
     return t
 
+def removerefs(t):
+    t = re.sub(ur"(?im)\{\{\s*(?!(fila (BIC|BIC 2)|BIC|filera (BIC|BCIN|BIC Val)))\s*\|[^}]*?\}\}", ur"", t)
+    t = re.sub(ur"(?im)<\s*ref[^>]*?\s*>[^<]*?<\s*/\s*ref\s*>", ur"", t)
+    return t
+
 missingcoordinates = 0
 missingimages = 0
 total = 0
@@ -238,7 +244,7 @@ totalerrors = 0
 for anexoid, anexolist in anexos.items():
     bics = {}
     if not errors.has_key(anexoid):
-        errors[anexoid] = ''
+        errors[anexoid] = '&nbsp;'
     for anexo in anexolist:
         print anexo
         lang = anexo.split(':')[0]
@@ -246,6 +252,8 @@ for anexoid, anexolist in anexos.items():
         wtitle = ':'.join(anexo.split(':')[1:])
         p = wikipedia.Page(s, wtitle)
         wtext = p.get()
+        wtext = removerefs(wtext)
+        
         m = ''
         if lang == 'es':
             m = regexp_es.finditer(wtext)
