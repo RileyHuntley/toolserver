@@ -231,8 +231,8 @@ def clean(t):
     return t
 
 def removerefs(t):
-    t = re.sub(ur"(?im)\{\{\s*(?!(fila (BIC|BIC 2)|BIC|filera (BIC|BCIN|BIC Val)))\s*\|[^}]*?\}\}", ur"", t)
-    t = re.sub(ur"(?im)<\s*ref[^>]*?\s*>[^<]*?<\s*/\s*ref\s*>", ur"", t)
+    t = re.sub(ur"(?im)\{\{\s*(?!(fila (BIC|BIC 2)|BIC|filera (BIC|BCIN|BIC Val)))\s*\|[^{}]*?\}\}", ur"", t)
+    t = re.sub(ur"(?im)<\s*ref[^<>]*?\s*>[^<>]*?<\s*/\s*ref\s*>", ur"", t)
     return t
 
 missingcoordinates = 0
