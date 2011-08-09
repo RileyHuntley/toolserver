@@ -170,7 +170,7 @@ anexos = {
  | imagen = 
 }}
 """
-regexp_es = re.compile(ur'(?im)\{\{\s*fila (BIC|BIC 2)\s*\|\s*nombre\s*=\s*(?P<nombre>[^=}]*?)\s*\|\s*nombrecoor\s*=\s*(?P<nombrecoor>[^=}]*?)\s*\|\s*tipobic\s*=\s*(?P<tipobic>[^=}]*?)\s*\|\s*tipo\s*=\s*(?P<tipo>[^=}]*?)\s*\|\s*municipio\s*=\s*(?P<municipio>[^=}]*?)\s*\|\s*lugar\s*=(?P<lugar>[^=}]*?)\s*\|\s*lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)\s*\|\s*lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)\s*\|\s*bic\s*=\s*(?P<bic>[^=}]*?)\s*(\|\s*id[_ ]aut\s*=\s*(?P<id_aut>[^=}]*?)\s*)?(\|\s*fecha\s*=\s*(?P<fecha>[^=}]*?)\s*)?\|\s*imagen\s*=\s*(?P<imagen>[^=}]*?)\s*\}\}')
+regexp_es = re.compile(ur"""(?im)\{\{\s*fila (BIC|BIC 2)\s*(\|\s*(nombre\s*=\s*(?P<nombre>[^=}]*?)|nombrecoor\s*=\s*(?P<nombrecoor>[^=}]*?)|tipobic\s*=\s*(?P<tipobic>[^=}]*?)|tipo\s*=\s*(?P<tipo>[^=}]*?)|municipio\s*=\s*(?P<municipio>[^=}]*?)|lugar\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)|bic\s*=\s*(?P<bic>[^=}]*?)|id[_ ]aut\s*=\s*(?P<id_aut>[^=}]*?)|fecha\s*=\s*(?P<fecha>[^=}]*?)|imagen\s*=\s*(?P<imagen>[^=}]*?))\s*)+\s*\|*\s*\}\}""")
 
 """
 {{BIC
@@ -188,7 +188,7 @@ regexp_es = re.compile(ur'(?im)\{\{\s*fila (BIC|BIC 2)\s*\|\s*nombre\s*=\s*(?P<n
 """
 
 #el campo idurl no aparece en algunas listas, lo ponemos opcional
-regexp_gl = re.compile(ur'(?im)\{\{\s*BIC\s*\|\s*nomeoficial\s*=\s*(?P<nombre>[^=}]*?)\s*\|\s*outrosnomes\s*=\s*(?P<nombrecoor>[^=}]*?)\s*(\|\s*paxina\s*=\s*(?P<paxina>[^=}]*?)\s*)?(\|\s*idurl\s*=\s*(?P<idurl>[^=}]*?)\s*)?\|\s*concello\s*=(?P<lugar>[^=}]*?)\|\s*lugar\s*=(?P<municipio>[^=}]*?)\s*\|\s*lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)\s*\|\s*lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)\s*\|\s*id\s*=\s*(?P<bic>[^=}]*?)\s*\|\s*data[_ ]declaracion\s*=\s*(?P<fecha>[^=}]*?)\s*\|\s*imaxe\s*=\s*(?P<imagen>[^=}]*?)\s*\}\}')
+regexp_gl = re.compile(ur"""(?im)\{\{\s*BIC\s*(\|\s*(nomeoficial\s*=\s*(?P<nombre>[^=}]*?)|\s*outrosnomes\s*=\s*(?P<nombrecoor>[^=}]*?)|\s*paxina\s*=\s*(?P<paxina>[^=}]*?)|idurl\s*=\s*(?P<idurl>[^=}]*?)|concello\s*=(?P<lugar>[^=}]*?)|lugar\s*=(?P<municipio>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)|id\s*=\s*(?P<bic>[^=}]*?)|data[_ ]declaracion\s*=\s*(?P<fecha>[^=}]*?)|imaxe\s*=\s*(?P<imagen>[^=}]*?))\s*)+\s*\|*\s*\}\}""")
 
 """
 {{filera BIC
@@ -217,7 +217,7 @@ regexp_gl = re.compile(ur'(?im)\{\{\s*BIC\s*\|\s*nomeoficial\s*=\s*(?P<nombre>[^
  | imatge = 
 }}
 """
-regexp_ca = re.compile(ur'(?im)\{\{\s*filera (BIC|BCIN|BIC Val)\s*\|\s*nom\s*=\s*(?P<nombre>[^=}]*?)\s*\|\s*nomcoor\s*=\s*(?P<nombrecoor>[^=}]*?)\s*(\|\s*tipus\s*=\s*(?P<tipobic>[^=}]*?)\s*)?(\|\s*estil\s*=\s*([^=}]*?)\s*)?(\|\s*època\s*=\s*([^=}]*?)\s*)?\|\s*municipi\s*=\s*(?P<municipio>[^=}]*?)\s*\|\s*lloc\s*=(?P<lugar>[^=}]*?)\s*\|\s*lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)\s*\|\s*lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)\s*(\|\s*idurl\s*=\s*([^=}]*?)\s*)?(\|\s*prot\s*=\s*([^=}]*?)\s*)?(\|\s*bcin\s*=\s*([^=}]*?)\s*)?\|\s*bic\s*=\s*(?P<bic>[^=}]*?)\s*(\|\s*fecha\s*=\s*(?P<fecha>[^=}]*?)\s*)?\|\s*imatge\s*=\s*(?P<imagen>[^=}]*?)\s*\}\}')
+regexp_ca = re.compile(ur"""(?im)\{\{\s*filera (BIC|BCIN|BIC Val)\s*(\|\s*(nom\s*=\s*(?P<nombre>[^=}]*?)|nomcoor\s*=\s*(?P<nombrecoor>[^=}]*?)|tipus\s*=\s*(?P<tipobic>[^=}]*?)|estil\s*=\s*([^=}]*?)|època\s*=\s*([^=}]*?)|municipi\s*=\s*(?P<municipio>[^=}]*?)|lloc\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)|idurl\s*=\s*([^=}]*?)|prot\s*=\s*([^=}]*?)|bcin\s*=\s*([^=}]*?)|bic\s*=\s*(?P<bic>[^=}]*?)|fecha\s*=\s*(?P<fecha>[^=}]*?)|imatge\s*=\s*(?P<imagen>[^=}]*?))\s*)+\s*\|*\s*\}\}""")
 
 def isvalidimage(img):
     if img and not re.search(ur'(?im)(falta[_ ]imagen|\.svg)', img):
@@ -239,7 +239,8 @@ for anexoid, anexolist in anexos.items():
         print anexo
         lang = anexo.split(':')[0]
         s = wikipedia.Site(lang, 'wikipedia')
-        p = wikipedia.Page(s, ':'.join(anexo.split(':')[1:]))
+        wtitle = ':'.join(anexo.split(':')[1:])
+        p = wikipedia.Page(s, wtitle)
         wtext = p.get()
         m = ''
         if lang == 'es':
@@ -250,21 +251,24 @@ for anexoid, anexolist in anexos.items():
             m = regexp_ca.finditer(wtext)
         if m:
             for i in m:
-                bic = i.group('bic').strip()
-                bics[bic] = {
-                    'lang': lang,
-                    'nombre': clean(i.group('nombre').strip()),
-                    #'nombrecoor': i.group('nombrecoor').strip(),
-                    #'tipobic': i.group('tipobic').strip(),
-                    #'tipo': i.group('tipo').strip(),
-                    'municipio': clean(i.group('municipio').strip()),
-                    'lugar': clean(i.group('lugar').strip()),
-                    'lat': i.group('lat').strip(),
-                    'lon': i.group('lon').strip(),
-                    'bic': bic,
-                    #'fecha': i.group('fecha').strip(), #no existe en ca:
-                    'imagen': i.group('imagen').strip(),
-                }
+                try:
+                    bic = i.group('bic').strip()
+                    bics[bic] = {
+                        'lang': lang,
+                        'nombre': clean(i.group('nombre').strip()),
+                        #'nombrecoor': i.group('nombrecoor').strip(),
+                        #'tipobic': i.group('tipobic').strip(),
+                        #'tipo': i.group('tipo').strip(),
+                        'municipio': clean(i.group('municipio').strip()),
+                        'lugar': clean(i.group('lugar').strip()),
+                        'lat': i.group('lat').strip(),
+                        'lon': i.group('lon').strip(),
+                        'bic': bic,
+                        #'fecha': i.group('fecha').strip(), #no existe en ca:
+                        'imagen': i.group('imagen').strip(),
+                    }
+                except:
+                    print wtitle, bic
 
     imageyesurl = 'http://maps.google.com/mapfiles/kml/paddle/red-stars.png'
     imagenourl = 'http://maps.google.com/mapfiles/kml/paddle/wht-blank.png'
@@ -360,7 +364,7 @@ for p, ptotal, pmissingcoordinates, pmissingimages in provincesstats:
     for i in anexos[p]:
         refs += u'<a href="http://%s.wikipedia.org/wiki/%s" target="_blank">[%d]</a> ' % (i.split(':')[0], ':'.join(i.split(':')[1:]), c)
         c += 1
-    refs = u"""[ <a href="javascript:showHide('%s-refs')">Show/Hide</a> ]<div id="%s-refs" style="display: none;"><br/>%s</div>""" % (p, p, refs)
+    refs = u"""[ <a href="javascript:showHide('%s-refs')">Show/Hide</a> ]<div id="%s-refs" style="display: none;">%s</div>""" % (p, p, refs)
     tablestats += u'<tr><td><a href="index.php?place=%s">%s</a></td><td>%d</td><td bgcolor=%s>%d (%.1f%%)</td><td bgcolor=%s>%d (%.1f%%)</td><td>%s</td></tr>\n' % (p, placenames[p], ptotal, colors(pcoordper),ptotal-pmissingcoordinates, pcoordper, colors(pimageper), ptotal-pmissingimages, pimageper, refs)
 tablestats += u'<tr><td><b>Total</b></td><td><b>%d</b></td><td bgcolor=%s><b>%d (%.1f%%)</b></td><td bgcolor=%s><b>%d (%.1f%%)</b></td><td><a href="http://ca.wikipedia.org/wiki/Categoria:Llistes_de_monuments" target="_blank">[1]</a> <a href="http://es.wikipedia.org/wiki/Categor%%C3%%ADa:Anexos:Bienes_de_inter%%C3%%A9s_cultural_en_Espa%%C3%%B1a" target="_blank">[2]</a> <a href="http://gl.wikipedia.org/wiki/Categor%%C3%%ADa:Bens_de_Interese_Cultural_de_Galicia" target="_blank">[3]</a></td></tr>\n' % (total, colors((total-missingcoordinates)/(total/100.0)), total-missingcoordinates, (total-missingcoordinates)/(total/100.0), colors((total-missingimages)/(total/100.0)), total-missingimages, (total-missingimages)/(total/100.0))
 tablestats += u'</table>\n'
