@@ -23,10 +23,10 @@ import wikipedia
 #subida fácil: http://commons.wikimedia.org/w/index.php?title=Special:Upload&wpDestFile=BBBB.jpg&uploadformstyle=basic&wpUploadDescription={{Information|Description=|Source=|Date=|Author=|Permission=|other_versions=}}
 
 placenames = {
-"alava": u"Álava",
+"alava": u"Álava", "alicante": "Alicante",
 "coruna": u"A&nbsp;Coruña", "albacete": u"Albacete", "almeria": u"Almería", "asturias": u"Asturias", "avila": u"Ávila",
 "badajoz": u"Badajoz", "burgos": u"Burgos",
-"cantabria": u"Cantabria", "catalunya": u"Catalunya", "ceuta": u"Ceuta", "ciudadreal": u"Ciudad&nbsp;Real", "cuenca": u"Cuenca", "caceres": u"Cáceres", "cadiz": u"Cádiz", "cordoba": u"Córdoba",
+"cantabria": u"Cantabria", "castellon": "Castellón", "catalunya": u"Catalunya", "ceuta": u"Ceuta", "ciudadreal": u"Ciudad&nbsp;Real", "cuenca": u"Cuenca", "caceres": u"Cáceres", "cadiz": u"Cádiz", "cordoba": u"Córdoba",
 "granada": u"Granada", "guadalajara": u"Guadalajara", "guipuzcoa": u"Guipuzkoa",
 "huelva": u"Huelva", "huesca": u"Huesca",
 "baleares": u"Illes&nbsp;Balears",
@@ -34,7 +34,7 @@ placenames = {
 "laspalmas": u"Las&nbsp;Palmas", "leon": u"León", "lugo": u"Lugo",
 "madrid": u"Madrid", "melilla": u"Melilla", "murcia": u"Murcia", "malaga": u"Málaga", 
 "navarra": u"Navarra",
-"valencia": u"País&nbsp;Valencià", "palencia": u"Palencia", "larioja": u"La Rioja", "ourense": u"Ourense", "pontevedra": u"Pontevedra",
+"valencia": u"Valencia", "palencia": u"Palencia", "larioja": u"La Rioja", "ourense": u"Ourense", "pontevedra": u"Pontevedra",
 "salamanca": u"Salamanca", "tenerife": u"Tenerife", "segovia": u"Segovia", "sevilla": u"Sevilla", "soria": u"Soria", 
 "teruel": u"Teruel", "toledo": u"Toledo", "valladolid": u"Valladolid", "vizcaya": u"Vizcaya", 
 "zamora": u"Zamora", "zaragoza": u"Zaragoza",
@@ -112,8 +112,12 @@ anexos = {
 'teruel': [u'es:Anexo:Bienes de Interés Cultural de la provincia de Teruel', ],
 'toledo': [u'es:Anexo:Bienes de interés cultural de la provincia de Toledo', ],
 
-'valencia': [u"ca:Llista de monuments de l'Alacantí", u"ca:Llista de monuments de l'Alcalatén", 
-    u"ca:Llista de monuments de l'Alcoià", u"ca:Llista de monuments de l'Alt Maestrat", u"ca:Llista de monuments de l'Alt Millars", u"ca:Llista de monuments de l'Alt Palància", u"ca:Llista de monuments de l'Alt Vinalopó", u"ca:Llista de monuments del Baix Maestrat", u"ca:Llista de monuments del Baix Segura", u"ca:Llista de monuments del Baix Vinalopó", u"ca:Llista de monuments del Camp de Morvedre", u"ca:Llista de monuments del Camp de Túria", u"ca:Llista de monuments de la Canal de Navarrés", u"ca:Llista de monuments del Comtat", u"ca:Llista de monuments de la Costera", u"ca:Llista de monuments de la Foia de Bunyol", u"ca:Llista de monuments de l'Horta Nord", u"ca:Llista de monuments de l'Horta Oest", u"ca:Llista de monuments de l'Horta Sud", u"ca:Llista de monuments de la Marina Alta", u"ca:Llista de monuments de la Marina Baixa", u"ca:Llista de monuments de la Plana Alta", u"ca:Llista de monuments de la Plana Baixa", u"ca:Llista de monuments de la Plana d'Utiel", u"ca:Llista de monuments dels Ports", u"ca:Llista de monuments del Racó d'Ademús", u"ca:Llista de monuments de la Ribera Alta", u"ca:Llista de monuments de la Ribera Baixa", u"ca:Llista de monuments de la Safor", u"ca:Llista de monuments dels Serrans", u"ca:Llista de monuments de València", u"ca:Llista de monuments de la Vall d'Albaida", u"ca:Llista de monuments de la Vall de Cofrents", u"ca:Llista de monuments del Vinalopó Mitjà", ],
+#país valenciá
+    'alicante': [u"ca:Llista de monuments de l'Alacantí", u"ca:Llista de monuments de l'Alcoià", u"ca:Llista de monuments de l'Alt Vinalopó", u"ca:Llista de monuments del Baix Segura", u"ca:Llista de monuments del Baix Vinalopó", u"ca:Llista de monuments del Comtat", u"ca:Llista de monuments de la Marina Alta", u"ca:Llista de monuments de la Marina Baixa", u"ca:Llista de monuments del Vinalopó Mitjà", ],
+    
+    'castellon': [u"ca:Llista de monuments de l'Alcalatén", u"ca:Llista de monuments de l'Alt Maestrat", u"ca:Llista de monuments de l'Alt Millars", u"ca:Llista de monuments de l'Alt Palància", u"ca:Llista de monuments del Baix Maestrat", u"ca:Llista de monuments dels Ports", u"ca:Llista de monuments de la Plana Alta", u"ca:Llista de monuments de la Plana Baixa", ],
+
+    'valencia': [u"ca:Llista de monuments del Camp de Morvedre", u"ca:Llista de monuments del Camp de Túria", u"ca:Llista de monuments de la Canal de Navarrés", u"ca:Llista de monuments de la Costera", u"ca:Llista de monuments de la Foia de Bunyol", u"ca:Llista de monuments de l'Horta Nord", u"ca:Llista de monuments de l'Horta Oest", u"ca:Llista de monuments de l'Horta Sud",  u"ca:Llista de monuments de la Plana d'Utiel",  u"ca:Llista de monuments del Racó d'Ademús", u"ca:Llista de monuments de la Ribera Alta", u"ca:Llista de monuments de la Ribera Baixa", u"ca:Llista de monuments de la Safor", u"ca:Llista de monuments dels Serrans", u"ca:Llista de monuments de València", u"ca:Llista de monuments de la Vall d'Albaida", u"ca:Llista de monuments de la Vall de Cofrents", ],
 
 'valladolid': [u'es:Anexo:Bienes de interés cultural de la provincia de Valladolid', ],
 'vizcaya': [u'es:Anexo:Bienes de interés cultural de la provincia de Vizcaya', ],
