@@ -281,9 +281,12 @@ for anexoid, anexolist in anexos.items():
                         'lat': i.group('lat').strip(),
                         'lon': i.group('lon').strip(),
                         'bic': bic,
-                        #'fecha': i.group('fecha').strip(), #no existe en ca:
                         'imagen': i.group('imagen').strip(),
                     }
+                    try:
+                        bics[bic]['fecha'] = i.group('fecha').strip() #no existe en ca: 
+                    except:
+                        pass
                 except:
                     totalerrors += 1
                     print anexoid, wtitle, bic
@@ -371,6 +374,89 @@ for anexoid, anexolist in anexos.items():
     f = open('/home/emijrp/public_html/wlm/wlm-%s.kml' % (anexoid), 'w')
     f.write(output.encode('utf-8'))
     f.close()
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    #beta, enwp: article creator helper
+    'nombre''municipio''lugar''lat''lon''bic''imagen'
+    if anexoid == 'madrid':
+        output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
+        <head>
+        <title>enwp: article creator helper</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+        <script type="text/javascript">
+        function SelectAll(id)
+        {
+            document.getElementById(id).focus();
+            document.getElementById(id).select();
+        }
+        </script>
+
+        <body>"""
+        for bic, props in bics.items():
+            if not props['imagen'] or not props['lat'] or not props['lon'] or not props['fecha']:
+                continue
+            bic_ = bic
+            bic_ = re.sub(ur"(?im)[\.\(\) ]", "", bic_)
+            if not re.search(ur'(?im)^RI-51-\d{7}$', bic_):
+                continue
+            name_ = props['nombre']
+            name_ = re.sub(ur"(?im) +\(.*$", ur"", name_)
+            output+=u"""<h4><a href="http://en.wikipedia.org/w/index.php?title=%s&action=edit" target="_blank">%s</a> (<a href="http://en.wikipedia.org/w/index.php?title=Talk:%s&action=edit" target="_blank">Talk</a>: <tt>{{WikiProject Spain|class=stub|importance=}}</tt>)</h4>
+<textarea id='%s-textarea' rows=5 cols=80 onClick="SelectAll('%s-textarea');">{{Infobox Historic Site
+| name = %s
+| native_name = %s
+| native_language = Spanish
+| image = %s
+| caption = 
+| locmapin = Spain
+| latitude = %s
+| longitude = %s
+| location = [[%s]], [[Spain]]
+| area = 
+| built = 
+| architect = 
+| architecture = 
+| governing_body = 
+| designation1 = Spain
+| designation1_offname = %s
+| designation1_type = Non-movable
+| designation1_criteria = Monument
+| designation1_date = %s<ref name="bic" />
+| designation1_number = %s
+}}
+
+The '''%s''' ([[Spanish language|Spanish]]: ''%s'') is a XXXXX located in [[%s]], [[Spain]]. It was declared ''[[Bien de Interés Cultural]]'' in %s.<ref name="bic">{{Bien de Interés Cultural}}</ref>
+
+== References ==
+{{reflist}}
+
+{{Spain-struct-stub}}
+</textarea>
+    """ % (props['nombre'], props['nombre'], props['nombre'], bic_, bic_, name_, name_, props['imagen'], props['lat'], props['lon'], props['municipio'], name_, props['fecha'], bic_, name_, name_, props['municipio'], props['fecha'])
+        output += u"""</body></html>"""
+        f = open('/home/emijrp/public_html/wlm/helper.html', 'w')
+        f.write(output.encode('utf-8'))
+        f.close()
+
+
+
+
+
+
+
+
+
 
 tablestats = u'<table border=1px style="text-align: center;">\n'
 tablestats += u'<tr><th width=100px>Place</th><th width=100px>Total BICs</th><th width=150px>With coordinates</th><th width=100px>With images</th><th width=175px>Details</th><th width=175px>Errors</th></tr>\n'
