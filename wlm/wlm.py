@@ -250,7 +250,7 @@ for anexoid, anexolist in anexos.items():
     if not errors.has_key(anexoid):
         errors[anexoid] = u'&nbsp;'
     for anexo in anexolist:
-        print anexo
+        #print anexo #da problemas cuando se ejecuta con cron
         lang = anexo.split(':')[0]
         s = wikipedia.Site(lang, 'wikipedia')
         wtitle = ':'.join(anexo.split(':')[1:])
