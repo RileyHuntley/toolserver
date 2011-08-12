@@ -289,7 +289,7 @@ for anexoid, anexolist in anexos.items():
                         pass
                 except:
                     totalerrors += 1
-                    print anexoid, wtitle, bic
+                    #print anexoid, wtitle, bic
                     errors[anexoid] += u'<a href="http://%s.wikipedia.org/wiki/%s" target="_blank">%s</a>, \n' % (lang, wtitle, bic)
 
     imageyesurl = u'http://maps.google.com/mapfiles/kml/paddle/red-stars.png'
