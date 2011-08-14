@@ -63,7 +63,7 @@ def runQueries(projectdbs, queries):
             projects[dbname] = {}
             for queryname, query in queries:
                 projects[dbname][queryname] = []
-                cursor.execute(query)
+                cursor.execute('/* wmcharts SLOW_OK */ %s' % (query))
                 result = cursor.fetchall()
                 for row in result:
                     timestamp = '%d' % convert2unix(row[0]) # '%d' to avoid L of long when str()

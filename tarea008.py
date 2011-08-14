@@ -118,6 +118,7 @@ tras2={
 #do not want: nl, simple 
 # fix: hr
 tt100={'rankingusers':True, 'rankingbots':True, 'limit':100, 'optout':''}
+tt200={'rankingusers':True, 'rankingbots':True, 'limit':200, 'optout':''}
 tt500={'rankingusers':True, 'rankingbots':True, 'limit':500, 'optout':''}
 tt1000={'rankingusers':True, 'rankingbots':True, 'limit':1000, 'optout':''}
 projects={
@@ -132,6 +133,7 @@ projects={
         'en': {'rankingusers':True, 'rankingbots':True, 'limit':1000, 'optout':'Wikipedia:List of Wikipedians by number of edits/Anonymous'},
         'eo': tt500,
         'es': tt500,
+        'fa': tt200,
         'fi': tt500,
         'fr': tt500,
         'gl': tt100,
