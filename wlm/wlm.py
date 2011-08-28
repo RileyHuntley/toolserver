@@ -387,32 +387,40 @@ for anexoid, anexolist in anexos.items():
     
     #beta, enwp: article creator helper
     'nombre''municipio''lugar''lat''lon''bic''imagen'
-    if anexoid == 'madrid':
-        output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-        <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
-        <head>
-        <title>enwp: article creator helper</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+    <title>enwp: article creator helper</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-        <script type="text/javascript">
-        function SelectAll(id)
-        {
-            document.getElementById(id).focus();
-            document.getElementById(id).select();
-        }
-        </script>
+    <script type="text/javascript">
+    function SelectAll(id)
+    {
+        document.getElementById(id).focus();
+        document.getElementById(id).select();
+    }
+    </script>
 
-        <body>"""
-        for bic, props in bics.items():
-            if not props['imagen'] or not props['lat'] or not props['lon'] or not props['fecha']:
-                continue
-            bic_ = bic
-            bic_ = re.sub(ur"(?im)[\.\(\) ]", "", bic_)
-            if not re.search(ur'(?im)^RI-51-\d{7}$', bic_):
-                continue
-            name_ = props['nombre']
-            name_ = re.sub(ur"(?im) +\(.*$", ur"", name_)
-            output+=u"""<h4><a href="http://en.wikipedia.org/w/index.php?title=%s&action=edit" target="_blank">%s</a> (<a href="http://en.wikipedia.org/w/index.php?title=Talk:%s&action=edit" target="_blank">Talk</a>: <tt>{{WikiProject Spain|class=stub|importance=}}</tt>)</h4>
+    <body>"""
+    for bic, props in bics.items():
+        if not props.has_key('imagen') or not props['imagen'] or \
+           not props.has_key('lat') or not props['lat'] or \
+           not props.has_key('lon') or not props['lon'] or \
+           not props.has_key('fecha') or not props['fecha']:
+            continue
+        bic_ = bic
+        bic_ = re.sub(ur"(?im)[\.\(\) ]", "", bic_)
+        if not re.search(ur'(?im)^RI-51-\d{7}$', bic_):
+            continue
+        name_ = props['nombre']
+        name_ = re.sub(ur"(?im) +\(.*$", ur"", name_)
+        fecha_ = props['fecha']
+        if len(fecha_) == 10 and re.search('-', fecha_):
+            fecha_ = fecha_.split('-')[2]
+        municipio_ = props['municipio']
+        if re.search(ur" \(", municipio_):
+            municipio_ = u"%s|%s" % (municipio_, municipio_.split(' (')[0])
+        output+=u"""<h4><a href="http://en.wikipedia.org/w/index.php?title=%s&action=edit" target="_blank">%s</a> (<a href="http://en.wikipedia.org/w/index.php?title=Talk:%s&action=edit" target="_blank">Talk</a>: <tt>{{WikiProject Spain|class=stub|importance=}}</tt>)</h4>
 <textarea id='%s-textarea' rows=5 cols=80 onClick="SelectAll('%s-textarea');">{{Infobox Historic Site
 | name = %s
 | native_name = %s
@@ -436,19 +444,19 @@ for anexoid, anexolist in anexos.items():
 | designation1_number = %s
 }}
 
-The '''%s''' ([[Spanish language|Spanish]]: ''%s'') is a XXXXX located in [[%s]], [[Spain]]. It was declared ''[[Bien de Interés Cultural]]'' in %s.<ref name="bic">{{Bien de Interés Cultural}}</ref>
+The '''%s''' ([[Spanish language|Spanish]]: ''%s'') is a XYZ located in [[%s]], [[Spain]]. It was declared ''[[Bien de Interés Cultural]]'' in %s.<ref name="bic">{{Bien de Interés Cultural}}</ref>
 
 == References ==
 {{reflist}}
 
 {{Spain-struct-stub}}
 </textarea>
-    """ % (props['nombre'], props['nombre'], props['nombre'], bic_, bic_, name_, name_, props['imagen'], props['lat'], props['lon'], props['municipio'], name_, props['fecha'], bic_, name_, name_, props['municipio'], props['fecha'])
-        output += u"""</body></html>"""
-        f = open('/home/emijrp/public_html/wlm/helper.html', 'w')
-        f.write(output.encode('utf-8'))
-        f.close()
-
+""" % (props['nombre'], props['nombre'], props['nombre'], bic_, bic_, name_, name_, props['imagen'], props['lat'], props['lon'], municipio_, name_, fecha_, bic_, name_, name_, municipio_, fecha_)
+    output += u"""</body></html>"""
+    f = open('/home/emijrp/public_html/wlm/helper-%s.html' % (anexoid), 'w')
+    f.write(output.encode('utf-8'))
+    f.close()
+    #beta, end enwp: article creator helper
 
 
 
