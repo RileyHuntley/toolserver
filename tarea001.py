@@ -99,7 +99,7 @@ def main():
 
     percent = totalblue * 1.0 / (totalred + totalblue) * 100
     output += u"|%.2f" % (percent)
-    output += u"}}<noinclude>{{documentación de plantilla}}</noinclude>"
+    output += u"}}<noinclude>{{documentación}}</noinclude>"
     page = wikipedia.Page(wikies, "Plantilla:ProgresoEncarta")
     page.put(output, "BOT - Actualizando plantilla %.2f%%" % (percent))
 

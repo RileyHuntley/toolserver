@@ -46,7 +46,7 @@ for i in [u'Acontecimientos futuros', u'Actualidad', u'Wikipedia:Artículos con 
 salida=u"{{subst:Plantilla:TablaMantenimiento/subst"
 for i in resultado:
     salida+=u"|%s" % str(i)
-salida+=u"}}<noinclude>{{documentación de plantilla}}</noinclude>"
+salida+=u"}}<noinclude>{{documentación}}</noinclude>"
 
 wiii = wikipedia.Page(wikipedia.Site("es", "wikipedia"), u"Plantilla:TablaMantenimiento")
 wiii.put(u"%s" % salida, u"BOT - Actualizando plantilla")

@@ -115,7 +115,7 @@ def main():
      
     percent = contt1 * 1.0/ (contt1 + contt2) * 100
     progress += u"|%.2f" % percent
-    progress += u"}}<noinclude>{{documentación de plantilla}}</noinclude>"
+    progress += u"}}<noinclude>{{documentación}}</noinclude>"
     wiii = wikipedia.Page(wikies, u"Plantilla:Progreso1911")
     wiii.put(progress, u"BOT - Actualizando plantilla")
 
