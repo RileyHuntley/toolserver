@@ -500,7 +500,7 @@ pre = pagegenerators.PreloadingGenerator(gen, pageNumber=50)
 usersranking = {}
 for image in pre:
     #(datetime, username, resolution, size, comment)
-    datetime, username, resolution, size, comment = image.getFileVersionHistory()[-1]
+    date, username, resolution, size, comment = image.getFileVersionHistory()[-1]
     if usersranking.has_key(username):
         usersranking[username].append(image.title())
     else:
