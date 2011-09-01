@@ -230,8 +230,8 @@ def isvalidimage(img):
     return False
 
 def clean(t):
-    t = re.sub(ur'(?i)([\[\]]|\|.*|\<ref.*)', ur'', t).strip()
-    t = re.sub(ur'(?im)<\s*br\s*/?\s*>', ur'-', t).strip()
+    t = re.sub(ur'(?i)([\[\]]|\|.*|\<ref.*)', ur'', t).strip() #quitamos enlaces, refs, etc
+    t = re.sub(ur'(?im)<\s*/?\s*[^<>]+\s*/?\s*>', ur'-', t).strip() #fuera etiquetas HTML </br> <br/> (las refs las hemos quitado antes)
     return t
 
 def removerefs(t):
