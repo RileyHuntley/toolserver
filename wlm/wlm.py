@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import catlib
+import pagegenerators
 import datetime
 import md5
 import re
@@ -246,6 +248,7 @@ def removerefs(t):
     t = re.sub(ur"(?im)<\s*ref[^<>]*?\s*>[^<>]*?<\s*/\s*ref\s*>", ur"", t)
     return t
 
+
 missingcoordinates = 0
 missingimages = 0
 total = 0
@@ -468,14 +471,9 @@ The '''%s''' ([[Spanish language|Spanish]]: ''%s'') is a XYZ located in [[%s]], 
 
 
 
-
-
-
-
-
-
+#table bic stats
 tablestats = u'<table border=1px style="text-align: center;">\n'
-tablestats += u'<tr><th width=100px>Place</th><th width=100px>Total BICs</th><th width=150px>With coordinates</th><th width=100px>With images</th><th width=175px>Details</th><th width=175px>Errors</th></tr>\n'
+tablestats += u'<tr><th width=100px>Place</th><th width=100px>BICs</th><th width=150px>With coordinates</th><th width=100px>With images</th><th width=150px>Details</th><th width=150px>Errors</th></tr>\n'
 provincesstats.sort()
 for p, ptotal, pmissingcoordinates, pmissingimages in provincesstats:
     pcoordper = ptotal and (ptotal-pmissingcoordinates)/(ptotal/100.0) or 0
@@ -491,6 +489,30 @@ for p, ptotal, pmissingcoordinates, pmissingimages in provincesstats:
 
 tablestats += u'<tr><td><b>Total</b></td><td><b>%d</b></td><td bgcolor=%s><b>%d (%.1f%%)</b></td><td bgcolor=%s><b>%d (%.1f%%)</b></td><td><a href="http://ca.wikipedia.org/wiki/Categoria:Llistes_de_monuments" target="_blank">[1]</a> <a href="http://es.wikipedia.org/wiki/Categor%%C3%%ADa:Anexos:Bienes_de_inter%%C3%%A9s_cultural_en_Espa%%C3%%B1a" target="_blank">[2]</a> <a href="http://gl.wikipedia.org/wiki/Categor%%C3%%ADa:Bens_de_Interese_Cultural_de_Galicia" target="_blank">[3]</a></td><td>%d</td></tr>\n' % (total, colors((total-missingcoordinates)/(total/100.0)), total-missingcoordinates, (total-missingcoordinates)/(total/100.0), colors((total-missingimages)/(total/100.0)), total-missingimages, (total-missingimages)/(total/100.0), totalerrors)
 tablestats += u'</table>\n'
+#end table stats
+
+#table user stats
+tableuserstats = u'<table border=1px style="text-align: center;">\n'
+tableuserstats += u'<tr><th width=100px>User</th><th width=100px>Files</th></tr>\n'
+cat = catlib.Category(wikipedia.Site("commons", "commons"), u"Category:Images from Wiki Loves Monuments 2011 in Spain")
+gen = pagegenerators.CategorizedPageGenerator(cat, start="!")
+pre = pagegenerators.PreloadingGenerator(gen, pageNumber=50)
+usersranking = {}
+for image in pre:
+    #(datetime, username, resolution, size, comment)
+    datetime, username, resolution, size, comment = image.getFileVersionHistory()[-1]
+    if usersranking.has_key(username):
+        usersranking[username].append(image.title())
+    else:
+        usersranking[username] = [image.title()]
+usersranking_list = [[len(v), k] for k, v in usersranking.items()]
+usersranking_list.sort()
+usersranking_list.reverse()
+for num, username in usersranking_list:
+    tableuserstats += u'<tr><td><a href="http://commons.wikimedia.org/wiki/User:%s" target="_blank">%s</a></td><td><a href="http://commons.wikimedia.org/w/index.php?title=Special:ListFiles&user=%s" target="_blank">%d</a></td></tr>\n' % (username, username, username, num)
+tableuserstats += u'</table>\n'
+#end table user stats
+
 
 anexoskeys = anexos.keys()
 anexoskeys.sort()
@@ -557,7 +579,9 @@ Select a place: %s
 <br/>
 <br/>
 <center>
-%s
+<table border=0>
+<tr><td valign=top>%s</td><td valign=top>%s</td></tr>
+</table>
 </center>
 <i>Last update: %s (UTC)</i>
 <br/>
@@ -569,7 +593,7 @@ Select a place: %s
 </body>
 
 </html>
-""" % (', '.join(['"%s"' % (i) for i in anexoskeys]), total, total-missingcoordinates, (total-missingcoordinates)/(total/100.0), total-missingimages, (total-missingimages)/(total/100.0), imageyesurl, imagenourl, ', '.join(['<a href="index.php?place=%s">%s</a>' % (i, placenames[i]) for i in anexoskeys]), tablestats, datetime.datetime.now())
+""" % (', '.join(['"%s"' % (i) for i in anexoskeys]), total, total-missingcoordinates, (total-missingcoordinates)/(total/100.0), total-missingimages, (total-missingimages)/(total/100.0), imageyesurl, imagenourl, ', '.join(['<a href="index.php?place=%s">%s</a>' % (i, placenames[i]) for i in anexoskeys]), tablestats, tableuserstats, datetime.datetime.now())
 
 f = open('/home/emijrp/public_html/wlm/index.php', 'w')
 f.write(output.encode('utf-8'))
