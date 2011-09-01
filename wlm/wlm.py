@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright (C) 2009 emijrp <emijrp@gmail.com>
+# Copyright (C) 2011 emijrp <emijrp@gmail.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -24,19 +24,20 @@ import wikipedia
 
 placenames = {
 "alava": u"Álava", "alicante": u"Alicante",
+"barcelona": u"Barcelona",
 "coruna": u"A&nbsp;Coruña", "albacete": u"Albacete", "almeria": u"Almería", "asturias": u"Asturias", "avila": u"Ávila",
 "badajoz": u"Badajoz", "burgos": u"Burgos",
 "cantabria": u"Cantabria", "castellon": u"Castellón", "catalunya": u"Catalunya", "ceuta": u"Ceuta", "ciudadreal": u"Ciudad&nbsp;Real", "cuenca": u"Cuenca", "caceres": u"Cáceres", "cadiz": u"Cádiz", "cordoba": u"Córdoba",
-"granada": u"Granada", "guadalajara": u"Guadalajara", "guipuzcoa": u"Guipuzkoa",
+"girona": u"Girona", "granada": u"Granada", "guadalajara": u"Guadalajara", "guipuzcoa": u"Guipuzkoa",
 "huelva": u"Huelva", "huesca": u"Huesca",
 "baleares": u"Illes&nbsp;Balears",
 "jaen": u"Jaén", 
-"laspalmas": u"Las&nbsp;Palmas", "leon": u"León", "lugo": u"Lugo",
+"laspalmas": u"Las&nbsp;Palmas", "leon": u"León", "lleida": u"Lleida", "lugo": u"Lugo",
 "madrid": u"Madrid", "melilla": u"Melilla", "murcia": u"Murcia", "malaga": u"Málaga", 
 "navarra": u"Navarra",
 "valencia": u"Valencia", "palencia": u"Palencia", "larioja": u"La&nbsp;Rioja", "ourense": u"Ourense", "pontevedra": u"Pontevedra",
 "salamanca": u"Salamanca", "tenerife": u"Tenerife", "segovia": u"Segovia", "sevilla": u"Sevilla", "soria": u"Soria", 
-"teruel": u"Teruel", "toledo": u"Toledo", "valladolid": u"Valladolid", "vizcaya": u"Vizcaya", 
+"tarragona": u"Tarragona", "teruel": u"Teruel", "toledo": u"Toledo", "valladolid": u"Valladolid", "vizcaya": u"Vizcaya", 
 "zamora": u"Zamora", "zaragoza": u"Zaragoza",
 }
 
@@ -71,9 +72,15 @@ anexos = {
 'burgos': [u'es:Anexo:Bienes de interés cultural de la provincia de Burgos', ],
 'cantabria': [u'es:Anexo:Bienes de interés cultural de Cantabria', ],
 
-'catalunya': [u"ca:Llista de monuments de l'Alt Camp", u"ca:Llista de monuments de l'Alt Empordà", u"ca:Llista de monuments de l'Alt Penedès", 
-    u"ca:Llista de monuments de l'Alt Urgell", u"ca:Llista de monuments de l'Alta Ribagorça", u"ca:Llista de monuments de l'Anoia", u"ca:Llista de monuments del Bages", u"ca:Llista de monuments del Baix Camp", u"ca:Llista de monuments del Baix Ebre", u"ca:Llista de monuments del Baix Empordà", u"ca:Llista de monuments del Baix Llobregat", u"ca:Llista de monuments del Baix Penedès", u"ca:Llista de monuments de la Baixa Cerdanya", u"ca:Llista de monuments del Barcelonès", u"ca:Llista de monuments del Berguedà", u"ca:Llista de monuments de la Conca de Barberà", u"ca:Llista de monuments del Garraf", u"ca:Llista de monuments de les Garrigues", u"ca:Llista de monuments de la Garrotxa", u"ca:Llista de monuments del Gironès", u"ca:Llista de monuments del Maresme", u"ca:Llista de monuments del Montsià", u"ca:Llista de monuments de la Noguera", u"ca:Llista de monuments d'Osona", u"ca:Llista de monuments del Pallars Jussà", u"ca:Llista de monuments del Pallars Sobirà", u"ca:Llista de monuments del Pla de l'Estany", u"ca:Llista de monuments del Pla d'Urgell", u"ca:Llista de monuments del Priorat", u"ca:Llista de monuments de la Ribera d'Ebre", u"ca:Llista de monuments del Ripollès", u"ca:Llista de monuments de la Segarra", u"ca:Llista de monuments del Segrià", u"ca:Llista de monuments de la Selva", u"ca:Llista de monuments del Solsonès", u"ca:Llista de monuments del Tarragonès", u"ca:Llista de monuments de la Terra Alta", u"ca:Llista de monuments de l'Urgell", u"ca:Llista de monuments de la Vall d'Aran", u"ca:Llista de monuments del Vallès Occidental", u"ca:Llista de monuments del Vallès Oriental", 
-    ],
+#catalunya
+    'barcelona': [u"ca:Llista de monuments de l'Alt Penedès", u"ca:Llista de monuments de l'Anoia", u"ca:Llista de monuments del Bages", u"ca:Llista de monuments del Baix Llobregat", u"ca:Llista de monuments del Barcelonès", u"ca:Llista de monuments del Berguedà",  u"ca:Llista de monuments del Garraf", u"ca:Llista de monuments del Maresme", u"ca:Llista de monuments d'Osona", u"ca:Llista de monuments del Vallès Occidental", u"ca:Llista de monuments del Vallès Oriental", ],
+
+    'girona': [u"ca:Llista de monuments de l'Alt Empordà", u"ca:Llista de monuments del Baix Empordà", u"ca:Llista de monuments de la Garrotxa", u"ca:Llista de monuments del Gironès", u"ca:Llista de monuments del Pla de l'Estany", u"ca:Llista de monuments del Ripollès", u"ca:Llista de monuments de la Selva", ],
+
+    'lleida': [u"ca:Llista de monuments de l'Alt Urgell", u"ca:Llista de monuments de l'Alta Ribagorça", u"ca:Llista de monuments de la Baixa Cerdanya", u"ca:Llista de monuments de les Garrigues", u"ca:Llista de monuments de la Noguera", u"ca:Llista de monuments del Pallars Jussà", u"ca:Llista de monuments del Pallars Sobirà", u"ca:Llista de monuments del Pla d'Urgell", u"ca:Llista de monuments de la Segarra", u"ca:Llista de monuments del Segrià", u"ca:Llista de monuments del Solsonès", u"ca:Llista de monuments de l'Urgell", u"ca:Llista de monuments de la Vall d'Aran", ],
+
+    'tarragona': [u"ca:Llista de monuments de l'Alt Camp", u"ca:Llista de monuments del Baix Camp", u"ca:Llista de monuments del Baix Ebre", u"ca:Llista de monuments del Baix Penedès", u"ca:Llista de monuments de la Conca de Barberà", u"ca:Llista de monuments del Montsià", u"ca:Llista de monuments del Priorat", u"ca:Llista de monuments de la Ribera d'Ebre", u"ca:Llista de monuments del Tarragonès", u"ca:Llista de monuments de la Terra Alta",  ],
+
 
 'ceuta': [u'es:Anexo:Bienes de interés cultural de Ceuta', ],
 'ciudadreal': [u'es:Anexo:Bienes de interés cultural de la provincia de Ciudad Real', ],
