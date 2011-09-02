@@ -473,7 +473,7 @@ The '''%s''' ([[Spanish language|Spanish]]: ''%s'') is a XYZ located in [[%s]], 
 
 #table bic stats
 tablestats = u'<table border=1px style="text-align: center;">\n'
-tablestats += u'<tr><th width=100px>Place</th><th width=100px>BICs</th><th width=150px>With coordinates</th><th width=100px>With images</th><th width=150px>Details</th><th width=150px>Errors</th></tr>\n'
+tablestats += u'<tr><th width=100px>Place</th><th width=100px>BICs</th><th width=150px>With coordinates</th><th width=100px>With images</th><th width=100px>Details</th><th width=100px>Errors</th></tr>\n'
 provincesstats.sort()
 for p, ptotal, pmissingcoordinates, pmissingimages in provincesstats:
     pcoordper = ptotal and (ptotal-pmissingcoordinates)/(ptotal/100.0) or 0
@@ -493,7 +493,7 @@ tablestats += u'</table>\n'
 
 #table user stats
 tableuserstats = u'<table border=1px style="text-align: center;">\n'
-tableuserstats += u'<tr><th width=100px>User</th><th width=100px>Files</th></tr>\n'
+tableuserstats += u'<tr><th width=100px>User</th><th width=60px>Files</th><th width=60px>MBytes</th></tr>\n'
 cat = catlib.Category(wikipedia.Site("commons", "commons"), u"Category:Images from Wiki Loves Monuments 2011 in Spain")
 gen = pagegenerators.CategorizedPageGenerator(cat, start="!")
 pre = pagegenerators.PreloadingGenerator(gen, pageNumber=50)
@@ -502,17 +502,20 @@ for image in pre:
     #(datetime, username, resolution, size, comment)
     date, username, resolution, size, comment = image.getFileVersionHistory()[-1]
     if usersranking.has_key(username):
-        usersranking[username].append(image.title())
+        usersranking[username][0].append(image.title())
+        usersranking[username][1] += size
     else:
-        usersranking[username] = [image.title()]
-usersranking_list = [[len(v), k] for k, v in usersranking.items()]
+        usersranking[username] = [[image.title()], size]
+usersranking_list = [[len(v[0]), k, v[1]] for k, v in usersranking.items()]
 usersranking_list.sort()
 usersranking_list.reverse()
-totalnum = 0
-for num, username in usersranking_list:
-    totalnum += num
-    tableuserstats += u'<tr><td><a href="http://commons.wikimedia.org/wiki/User:%s" target="_blank">%s</a></td><td><a href="http://commons.wikimedia.org/w/index.php?title=Special:ListFiles&user=%s" target="_blank">%d</a></td></tr>\n' % (username, username, username, num)
-tableuserstats += u'<tr><td><b>Total</b></td><td><b><a href="http://commons.wikimedia.org/wiki/Category:Images_from_Wiki_Loves_Monuments_2011_in_Spain" target="_blank">%d</a></b></td></tr>\n' % (totalnum)
+totalnumpics = 0
+totalnumbytes = 0
+for numpics, username, numbytes in usersranking_list:
+    totalnumpics += numpics
+    totalnumbytes += numbytes
+    tableuserstats += u'<tr><td><a href="http://commons.wikimedia.org/wiki/User:%s" target="_blank">%s</a></td><td><a href="http://commons.wikimedia.org/w/index.php?title=Special:ListFiles&user=%s" target="_blank">%d</a></td><td>%.2f</td></tr>\n' % (username, username, username, numpics, float(numbytes)/(1024*1024))
+tableuserstats += u'<tr><td><b>Total</b></td><td><b><a href="http://commons.wikimedia.org/wiki/Category:Images_from_Wiki_Loves_Monuments_2011_in_Spain" target="_blank">%d</a></b></td><td><b>%.2f</b></td></tr>\n' % (totalnumpics, float(totalnumbytes)/(1024*1024))
 tableuserstats += u'</table>\n'
 #end table user stats
 
