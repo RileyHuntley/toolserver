@@ -512,7 +512,7 @@ totalnum = 0
 for num, username in usersranking_list:
     totalnum += num
     tableuserstats += u'<tr><td><a href="http://commons.wikimedia.org/wiki/User:%s" target="_blank">%s</a></td><td><a href="http://commons.wikimedia.org/w/index.php?title=Special:ListFiles&user=%s" target="_blank">%d</a></td></tr>\n' % (username, username, username, num)
-tableuserstats += u'<tr><td>Total</td><td><a href="http://commons.wikimedia.org/wiki/Category:Images_from_Wiki_Loves_Monuments_2011_in_Spain" target="_blank">%d</a></td></tr>\n' % (totalnum)
+tableuserstats += u'<tr><td><b>Total</b></td><td><b><a href="http://commons.wikimedia.org/wiki/Category:Images_from_Wiki_Loves_Monuments_2011_in_Spain" target="_blank">%d</a></b></td></tr>\n' % (totalnum)
 tableuserstats += u'</table>\n'
 #end table user stats
 
