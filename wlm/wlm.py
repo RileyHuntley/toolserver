@@ -508,8 +508,11 @@ for image in pre:
 usersranking_list = [[len(v), k] for k, v in usersranking.items()]
 usersranking_list.sort()
 usersranking_list.reverse()
+totalnum = 0
 for num, username in usersranking_list:
+    totalnum += num
     tableuserstats += u'<tr><td><a href="http://commons.wikimedia.org/wiki/User:%s" target="_blank">%s</a></td><td><a href="http://commons.wikimedia.org/w/index.php?title=Special:ListFiles&user=%s" target="_blank">%d</a></td></tr>\n' % (username, username, username, num)
+tableuserstats += u'<tr><td>Total</td><td><a href="http://commons.wikimedia.org/wiki/Category:Images_from_Wiki_Loves_Monuments_2011_in_Spain" target="_blank">%d</a></td></tr>\n' % (totalnum)
 tableuserstats += u'</table>\n'
 #end table user stats
 
