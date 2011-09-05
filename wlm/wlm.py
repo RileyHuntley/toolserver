@@ -473,7 +473,7 @@ The '''%s''' ([[Spanish language|Spanish]]: ''%s'') is a XYZ located in [[%s]], 
 
 #table bic stats
 tablestats = u'<table border=1px style="text-align: center;">\n'
-tablestats += u'<tr><th width=100px>Place</th><th width=100px>BICs</th><th width=150px>With coordinates</th><th width=100px>With images</th><th width=100px>Details</th><th width=100px>Errors</th></tr>\n'
+tablestats += u'<tr><th width=100px>Place</th><th width=60px>BICs</th><th width=140px>With coordinates</th><th width=100px>With images</th><th width=100px>Details</th><th width=100px>Errors</th></tr>\n'
 provincesstats.sort()
 for p, ptotal, pmissingcoordinates, pmissingimages in provincesstats:
     pcoordper = ptotal and (ptotal-pmissingcoordinates)/(ptotal/100.0) or 0

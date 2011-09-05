@@ -1,6 +1,20 @@
 #!/usr/bin/env python2.5
 # -*- coding: utf-8 -*-
 
+# Copyright (C) 2011 emijrp <emijrp@gmail.com>
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import catlib
 import os
 import pagegenerators
@@ -12,17 +26,14 @@ import wikipedia
 
 #Rlink = re.compile(r'\[\[(?P<title>[^|\[\]]+?)(\|[^\|\[\]]*?)?\]\]') #la mia
 Rlink = re.compile(r'\[\[(?P<title>[^\]\|\[\{\}]*)(\|[^\]]*)?\]\]') #la de wikipedia.py
-topics = [
-'Antarctica',
-'Hungary',
-'Lakes',
-'Mountains',
-'Spain',
-'Vietnam',
-]
+topics = []
 lang = 'en'
 family = 'wikipedia'
 site = wikipedia.Site(lang, family)
+
+topicspage = wikipedia.Page(site, u'User:Emijrp/Red links/topics')
+topics = topicspage.get().split('\n')
+print 'We are going to analyse', len(topics), 'topics'
 
 def getLinks(wtext):
     #adapted from linkedPages() http://svn.wikimedia.org/svnroot/pywikipedia/trunk/pywikipedia/wikipedia.py
@@ -44,9 +55,9 @@ def getLinks(wtext):
                 continue
             title = title.split('#')[0] # removing sections [[other article#section|blabla]]
             title = '%s%s' % (title[:1].upper(), title[1:]) #first up
+            title=title.strip()
             if title.startswith(":") or title.startswith("File:") or title.startswith("Image:") or title.startswith("Category:"): # files, cats, etc
                 continue
-            title=title.strip()
             if title and title not in links:
                 links.append(title)
 
@@ -54,7 +65,7 @@ def getLinks(wtext):
 
 def getTitles():
     path = '/home/emijrp/titles.txt'
-    #os.system("""mysql -h enwiki-p.db.toolserver.org -e "use enwiki_p;select page_title from page where page_namespace=0;" > %s""" % path)
+    os.system("""mysql -h sql-s1 -e "use enwiki_p;select page_title from page where page_namespace=0;" > %s""" % path)
     f = open(path, 'r')
     titles = {}
     c = 0
@@ -110,6 +121,8 @@ for topic in topics:
             links = set(links) #only 1 link per page, no dupes
             #sum
             for link in links:
+                if not link:
+                    continue
                 if alllinks.has_key(link):
                     alllinks[link] += 1
                 else:
@@ -120,10 +133,9 @@ for topic in topics:
         linkslist.reverse()
         
         c = 0
-        limit = len(pagetitles)/10
         outputlist = []
         for times, link in linkslist:
-            if c >= limit or c >= 1000: #10% up to 1000 red links per category
+            if times < 2 or c >= 200: #10% up to X red links per category
                 break
             if not titles.has_key(link):
                 #print link, times
