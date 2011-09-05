@@ -142,7 +142,7 @@ for topic in topics:
                 outputlist.append([link, times])
                 c += 1
         
-        output += '\n\n== Red links from [[:Category:%s|%s]] ==\n{{User:Emijrp/Redlink-start|%d}}' % (cat, cat, limit)
+        output += '\n\n== Red links from [[:Category:%s|%s]] ==\n{{User:Emijrp/Redlink-start|%d}}' % (cat, cat, c)
         for item, times in outputlist:
             output += '\n* {{User:Emijrp/Redlink|%s|%s|%d}}' % (item, re.sub(' ', '+', item), times)
         output += '\n{{User:Emijrp/Redlink-end}}'
