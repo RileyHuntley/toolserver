@@ -188,10 +188,14 @@ projects={
         },
 
 """
-
+skiplangs = [
+u'gsw', #por lo visto la cerraron
+]
 #metemos el resto de idiomas
 #descomentar cuando arregle el fallo de _mysql_exceptions.OperationalError: (1040, 'Too many connections')
 for lang in tarea000.getLangsByFamily('wikipedia'):
+    if lang in skiplangs:
+        continue
     if lang=='en-simple':
         lang='simple'
     if not projects['wikipedia'].has_key(lang):
@@ -283,6 +287,8 @@ for family, langs in projects.items():
         except:
             print 'Error, no database', dbname
             continue
+        #poner slow ok ralentiza demasiado? más de 24h?
+        #poner un try except aquí no conviene porque al fallar un wiki, falsea el ranking global de wikimedias
         cursor.execute("select user_name, user_editcount from user where user_editcount!=0 order by user_editcount desc limit 5000;")
         #cursor.execute("select /* SLOW_OK */ rev_user_text, count(*) as count from revision where 1 group by rev_user_text order by count desc limit 5000;")
         result=cursor.fetchall()

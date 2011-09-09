@@ -265,6 +265,8 @@ for anexoid, anexolist in anexos.items():
         s = wikipedia.Site(lang, 'wikipedia')
         wtitle = ':'.join(anexo.split(':')[1:])
         p = wikipedia.Page(s, wtitle)
+        if p.isRedirectPage():
+            p = p.getRedirectTarget()
         wtext = p.get()
         wtext = removerefs(wtext)
         
