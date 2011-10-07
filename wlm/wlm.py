@@ -81,7 +81,7 @@ anexos = {
 
     'lleida': [u"ca:Llista de monuments de l'Alt Urgell", u"ca:Llista de monuments de l'Alta Ribagorça", u"ca:Llista de monuments de la Baixa Cerdanya", u"ca:Llista de monuments de les Garrigues", u"ca:Llista de monuments de la Noguera", u"ca:Llista de monuments del Pallars Jussà", u"ca:Llista de monuments del Pallars Sobirà", u"ca:Llista de monuments del Pla d'Urgell", u"ca:Llista de monuments de la Segarra", u"ca:Llista de monuments del Segrià", u"ca:Llista de monuments del Solsonès", u"ca:Llista de monuments de l'Urgell", u"ca:Llista de monuments de la Vall d'Aran", ],
 
-    'tarragona': [u"ca:Llista de monuments de l'Alt Camp", u"ca:Llista de monuments del Baix Camp", u"ca:Llista de monuments del Baix Ebre", u"ca:Llista de monuments del Baix Penedès", u"ca:Llista de monuments de la Conca de Barberà", u"ca:Llista de monuments del Montsià", u"ca:Llista de monuments del Priorat", u"ca:Llista de monuments de la Ribera d'Ebre", u"ca:Llista de monuments del Tarragonès", u"ca:Llista de monuments de la Terra Alta",  ],
+    #'tarragona': [u"ca:Llista de monuments de l'Alt Camp", u"ca:Llista de monuments del Baix Camp", u"ca:Llista de monuments del Baix Ebre", u"ca:Llista de monuments del Baix Penedès", u"ca:Llista de monuments de la Conca de Barberà", u"ca:Llista de monuments del Montsià", u"ca:Llista de monuments del Priorat", u"ca:Llista de monuments de la Ribera d'Ebre", u"ca:Llista de monuments del Tarragonès", u"ca:Llista de monuments de la Terra Alta",  ],
 
 
 'ceuta': [u'es:Anexo:Bienes de interés cultural de Ceuta', ],
@@ -245,7 +245,8 @@ def clean(t):
 
 def removerefs(t):
     t = re.sub(ur"(?im)\{\{\s*(?!(fila (BIC|BIC 2)|BIC|filera (BIC|BCIN|BIC Val)))\s*\|[^{}]*?\}\}", ur"", t)
-    t = re.sub(ur"(?im)<\s*ref[^<>]*?\s*>[^<>]*?<\s*/\s*ref\s*>", ur"", t)
+    t = re.sub(ur"(?im)<\s*ref[^<>]*?\s*>[^<>]*?<\s*/\s*ref\s*>", ur"", t) # <ref></ref> <ref name=""></ref>
+    t = re.sub(ur"(?im)<\s*ref\s+name[^<>]+?\s*/\s*>", ur"", t) # <ref name="" />
     return t
 
 
@@ -498,7 +499,7 @@ tableuserstats = u'<table border=1px style="text-align: center;">\n'
 tableuserstats += u'<tr><th width=100px>User</th><th width=60px>Files</th><th width=60px>MBytes</th></tr>\n'
 cat = catlib.Category(wikipedia.Site("commons", "commons"), u"Category:Images from Wiki Loves Monuments 2011 in Spain")
 gen = pagegenerators.CategorizedPageGenerator(cat, start="!")
-pre = pagegenerators.PreloadingGenerator(gen, pageNumber=50)
+pre = pagegenerators.PreloadingGenerator(gen, pageNumber=250)
 usersranking = {}
 for image in pre:
     #(datetime, username, resolution, size, comment)

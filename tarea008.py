@@ -391,10 +391,10 @@ for family, langs in projects.items():
                     except:
                         print "Error, unable to write to", family, lang, "see user-config.py"
                     time.sleep(delay)
-                s=u"{{/begin|%d}}\n%s{{/end}}\n{{nobots}}\n%s" % (cuantos, s, "\n".join(iws1[family]))
+                s=u"{{/begin|%d}}\n%s{{/end}}\n{{nobots|allow=BOTijo}}\n%s" % (cuantos, s, "\n".join(iws1[family]))
             else: #by default
                 title=tras1[family]['default']
-                s=u"For a list including bots, see [[%s]].\n\nFor a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n\n%s\n\nExcluding unflagged bots is possible adding them to [[meta:User:Emijrp/List of Wikimedians by number of edits/Unflagged bots]].\n\nThis page was last updated in '''{{subst:CURRENTYEAR}}-{{subst:CURRENTMONTH}}-{{subst:CURRENTDAY2}}'''.\n\n%s%s%s\n{{nobots}}\n%s" % (tras2[family]['default'], optouttext, table_header, s, table_footer, "\n".join(iws1[family]))
+                s=u"For a list including bots, see [[%s]].\n\nFor a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n\n%s\n\nExcluding unflagged bots is possible adding them to [[meta:User:Emijrp/List of Wikimedians by number of edits/Unflagged bots]].\n\nThis page was last updated in '''{{subst:CURRENTYEAR}}-{{subst:CURRENTMONTH}}-{{subst:CURRENTDAY2}}'''.\n\n%s%s%s\n{{nobots|allow=BOTijo}}\n%s" % (tras2[family]['default'], optouttext, table_header, s, table_footer, "\n".join(iws1[family]))
             #eliminamos autointerwiki
             s=re.sub(ur"(?im)\[\[%s:.*?\]\](\n|$)" % lang, ur"", s)
             page=wikipedia.Page(site, title)
@@ -424,10 +424,10 @@ for family, langs in projects.items():
                     except:
                         print "Error, unable to write to", family, lang, "see user-config.py"
                     time.sleep(delay)
-                sbots=u"{{/begin|%d}}\n%s{{/end}}\n{{nobots}}\n%s" % (cuantos, sbots, "\n".join(iws2[family]))
+                sbots=u"{{/begin|%d}}\n%s{{/end}}\n{{nobots|allow=BOTijo}}\n%s" % (cuantos, sbots, "\n".join(iws2[family]))
             else: #by defect
                 title=tras2[family]['default']
-                sbots=u"For a list excluding bots, see [[%s]].\n\nFor a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n\n%s\n\nThis page was last updated in '''{{subst:CURRENTYEAR}}-{{subst:CURRENTMONTH}}-{{subst:CURRENTDAY2}}'''.\n\n%s%s%s\n{{nobots}}\n%s" % (tras1[family]['default'], optouttext, table_header, sbots, table_footer, "\n".join(iws2[family]))
+                sbots=u"For a list excluding bots, see [[%s]].\n\nFor a global list, see [[meta:User:Emijrp/List of Wikimedians by number of edits]].\n\n%s\n\nThis page was last updated in '''{{subst:CURRENTYEAR}}-{{subst:CURRENTMONTH}}-{{subst:CURRENTDAY2}}'''.\n\n%s%s%s\n{{nobots|allow=BOTijo}}\n%s" % (tras1[family]['default'], optouttext, table_header, sbots, table_footer, "\n".join(iws2[family]))
             #eliminamos autointerwiki
             sbots=re.sub(ur"(?im)\[\[%s:.*?\]\]\n" % lang, ur"", sbots)
             page=wikipedia.Page(site, title)
