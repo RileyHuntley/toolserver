@@ -139,7 +139,7 @@ def main():
     namespaces={104:u'Anexo'}
     namespaces_={104:u'Anexo:'}
     limitenuevos=2000
-    avisotoolserver=u'<noinclude>{{aviso|Esta página se actualiza automáticamente. No hagas cambios aquí. Si hay errores avisa a {{u|emijrp}}.}}</noinclude>\n'
+    avisotoolserver=u'<noinclude>{{aviso|Esta página se actualiza automáticamente. No hagas cambios aquí.}}</noinclude>\n'
     nohay=u':No hay contenido con estas características.'
     
     conn = _mysql.connect(host='sql-s3', db='%swiki_p' % lang, read_default_file='~/.my.cnf')
