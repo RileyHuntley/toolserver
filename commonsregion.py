@@ -61,6 +61,7 @@ for page in pre:
     newtext = wtext
     
     print '\n', wtitle, 'https://commons.wikimedia.org/wiki/%s' % (wtitle)
+    #solo plantillas que tengan 2 parámetros (lat y lon) y el tercero esté vacío
     m = re.finditer(ur"(?im)((?P<template>\{\{\s*(Location dec|Object location dec)\s*\|\s*(?P<lat>[\d\.\-\+]+)\s*\|\s*(?P<lon>[\d\.\-\+]+))\s*\|?\s*\}\})", wtext)
     if not m:
         print 'Skiping...'
@@ -72,20 +73,21 @@ for page in pre:
         countrycode, iso = '', ''
         
         if lat and lon:
-            print 'Calculating region for %s,%s' % (lat, lon)
+            latlon = '%s,%s' % (lat, lon)
+            print 'Calculating region for %s' % (latlon)
         else:
             break
         
-        if archive.has_key('%s-%s' % (lat, lon)):
-            print 'Region was calculated before...'
-            countrycode, iso = archive['%s-%s' % (lat, lon)]
+        if archive.has_key(latlon):
+            print 'Region for %s was calculated before...' % (latlon)
+            countrycode, iso = archive[latlon]
         else:
             f = urllib.urlopen("http://api.geonames.org/countrySubdivision?lat=%s&lng=%s&username=%s" % (lat, lon, geonamesusername))
             raw = f.read()
             countrycode = re.findall(ur"<countryCode>([A-Z]{2})</countryCode>", raw)[0]
             iso = re.findall(ur'<code type="ISO3166-2">([A-Z]{2,3})</code>', raw)[0]
             if countrycode and iso:
-                archive['%s-%s' % (lat, lon)] = [countrycode, iso]
+                archive[latlon] = [countrycode, iso]
         
         if countrycode and iso:
             region = '%s-%s' % (countrycode, iso)
