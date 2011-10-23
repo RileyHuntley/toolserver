@@ -379,7 +379,7 @@ switchtraslations = u"""switch(lang){
         spliter='.';
         donate='<a href="http://wikimediafoundation.org/wiki/Donazioni">Fai una donazione a Wikimedia Foundation</a>';
         f11='Premi F11 per passare a schermo intero';
-        author='Sviluppato da <a href="http://toolserver.org/~emijrp/">emijrp</a> (ispirato a <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
+        author='Sviluppato da <a href="http://toolserver.org/~emijrp/">emijrp</a> (ispirato da <a href="http://www.7is7.com/software/firefox/partycounter.html">7is7</a>)';
         break;
     case "ja":
         header='<a href="http://www.wikimedia.org">ウィキメディア・プロジェクト</a>の総編集回数';
@@ -478,9 +478,11 @@ Chat with us at <a href="http://webchat.freenode.net/?randomnick=1&channels=wiki
 
 <p id="translateit"><a href="http://en.wikipedia.org/wiki/User:Emijrp/Wikimedia_projects_edits_counter">Translate it</a>!</p>
 
-<span id="header">Total edits in <a href="http://www.wikimedia.org">Wikimedia projects</a>:</span>
+<span id="header">Total edits in <a href="http://www.wikimedia.org">Wikimedia projects</a>:</span><br/>
 
-<span id='counter'>&nbsp;</span>
+<span id='counter'>&nbsp;</span><br/>
+
+<span id="header"><a href="http://en.wikipedia.org/wiki/Wikipedia:There_is_a_deadline">There is a deadline</a></span><br/>
 
 <p id="donate"><a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Donate to Wikimedia Foundation</a></p>
 <p id="f11">Press F11 for fullscreen</p>
