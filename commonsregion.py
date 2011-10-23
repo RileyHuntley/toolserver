@@ -49,6 +49,7 @@ pre = pagegenerators.PreloadingGenerator(gen, pageNumber=100)
 
 archive = {}
 
+#pre = [wikipedia.Page(commonssite, u"User:Emijrp/Sandbox")]
 for page in pre:
     time.sleep(0.1)
     if not page.exists() or page.isRedirectPage() or page.isDisambig():
@@ -62,7 +63,7 @@ for page in pre:
     
     print '\n', wtitle, 'https://commons.wikimedia.org/wiki/%s' % (wtitle)
     #solo plantillas que tengan 2 parámetros (lat y lon) y el tercero esté vacío
-    m = re.finditer(ur"(?im)((?P<template>\{\{\s*(Location dec|Object location dec)\s*\|\s*(?P<lat>[\d\.\-\+]+)\s*\|\s*(?P<lon>[\d\.\-\+]+))\s*\|?\s*\}\})", wtext)
+    m = re.finditer(ur"(?im)((?P<templatebegin>\{\{\s*(Location dec|Object location dec)\s*\|\s*(?P<lat>[\d\.\-\+]+)\s*\|\s*(?P<lon>[\d\.\-\+]+))(?P<templateend>\s*\|?\s*\}\}))", wtext)
     if not m:
         print 'Skiping...'
         continue
@@ -84,14 +85,17 @@ for page in pre:
         else:
             f = urllib.urlopen("http://api.geonames.org/countrySubdivision?lat=%s&lng=%s&username=%s" % (lat, lon, geonamesusername))
             raw = f.read()
-            countrycode = re.findall(ur"<countryCode>([A-Z]{2})</countryCode>", raw)[0]
-            iso = re.findall(ur'<code type="ISO3166-2">([A-Z]{2,3})</code>', raw)[0]
+            try:
+                countrycode = re.findall(ur"<countryCode>([A-Z]{2})</countryCode>", raw)[0]
+                iso = re.findall(ur'<code type="ISO3166-2">([A-Z]{2,3})</code>', raw)[0]
+            except:
+                pass
             if countrycode and iso:
                 archive[latlon] = [countrycode, iso]
         
         if countrycode and iso:
             region = '%s-%s' % (countrycode, iso)
-            newtext = newtext.replace(i.group('template'), u"%s|region:%s" % (i.group('template'), region), 1)
+            newtext = newtext.replace(u"%s%s" % (i.group('templatebegin'), i.group('templateend')), u"%s|region:%s%s" % (i.group('templatebegin'), region, i.group('templateend'))) #replace all occurences for this exact templatebegin and templateend, it doesn't touch templates with more parameters (see 'abc' here  https://commons.wikimedia.org/w/index.php?title=User%3AEmijrp%2FSandbox&action=historysubmit&diff=61477235&oldid=61477216)
             summary.append(u'region ([[:en:ISO 3166-2:%s|%s]]-[[:en:ISO 3166-2:%s|%s]]) to coordinates (%s,%s)' % (countrycode, countrycode, region, iso, lat, lon))
     
     if newtext != wtext:
