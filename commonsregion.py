@@ -61,7 +61,7 @@ for page in pre:
     wtext = page.get()
     newtext = wtext
     
-    print '\n', wtitle, 'https://commons.wikimedia.org/wiki/%s' % (wtitle)
+    print wtitle, 'https://commons.wikimedia.org/wiki/%s' % (wtitle)
     
     m = re.finditer(ur"(?im)(?P<all>(?P<templatebegin>\{\{\s*(Location dec|Object location dec)\s*\|\s*(?P<lat>[\d\.\-\+]+)\s*\|\s*(?P<lon>[\d\.\-\+]+)\s*)\|?(?P<otherparams>\s*(_?scala:_?\d+_?|_?heading:_?[\dNSEW]+_?){0,2}\s*)(?P<templateend>\}\}))", wtext)
     if not m:
