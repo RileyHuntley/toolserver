@@ -190,17 +190,6 @@ projects={
 """
 skiplangs = [
 u'gsw', #por lo visto la cerraron
-u'en', #falla el sort, a lo mejor han tocado otra vez los límites para las queries
-
-"""line 292, in <module>
-   cursor.execute("select user_name, user_editcount from user where user_editcount!=0 order by user_editcount desc limit 5000;")
- File "/opt/ts/python/2.7/lib/python2.7/site-packages/MySQLdb/cursors.py", line 173, in execute
-   self.errorhandler(self, exc, value)
- File "/opt/ts/python/2.7/lib/python2.7/site-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
-   raise errorclass, errorvalue
-_mysql_exceptions.OperationalError: (1028, 'Sort aborted')
-"""
-
 ]
 #metemos el resto de idiomas
 #descomentar cuando arregle el fallo de _mysql_exceptions.OperationalError: (1040, 'Too many connections')
@@ -300,8 +289,8 @@ for family, langs in projects.items():
             continue
         #poner slow ok ralentiza demasiado? más de 24h?
         #poner un try except aquí no conviene porque al fallar un wiki, falsea el ranking global de wikimedias
-        cursor.execute("select user_name, user_editcount from user where user_editcount!=0 order by user_editcount desc limit 5000;")
-        #cursor.execute("select /* SLOW_OK */ rev_user_text, count(*) as count from revision where 1 group by rev_user_text order by count desc limit 5000;")
+        #cursor.execute("select user_name, user_editcount from user where user_editcount!=0 order by user_editcount desc limit 5000;")
+        cursor.execute("select /* SLOW_OK */ rev_user_text, count(*) as count from revision where 1 group by rev_user_text order by count desc limit 5000;")
         result=cursor.fetchall()
         cursor.close()
         #conn.close()

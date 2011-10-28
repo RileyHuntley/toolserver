@@ -62,8 +62,8 @@ for page in pre:
     newtext = wtext
     
     print '\n', wtitle, 'https://commons.wikimedia.org/wiki/%s' % (wtitle)
-    #solo plantillas que tengan 2 parámetros (lat y lon) y el tercero esté vacío
-    m = re.finditer(ur"(?im)((?P<templatebegin>\{\{\s*(Location dec|Object location dec)\s*\|\s*(?P<lat>[\d\.\-\+]+)\s*\|\s*(?P<lon>[\d\.\-\+]+))(?P<templateend>\s*\|?\s*\}\}))", wtext)
+    
+    m = re.finditer(ur"(?im)(?P<all>(?P<templatebegin>\{\{\s*(Location dec|Object location dec)\s*\|\s*(?P<lat>[\d\.\-\+]+)\s*\|\s*(?P<lon>[\d\.\-\+]+)\s*)\|?(?P<otherparams>\s*(_?scala:_?\d+_?|_?heading:_?[\dNSEW]+_?){0,2}\s*)(?P<templateend>\}\}))", wtext)
     if not m:
         print 'Skiping...'
         continue
@@ -81,7 +81,11 @@ for page in pre:
         
         if archive.has_key(latlon):
             print 'Region for %s was calculated before...' % (latlon)
-            countrycode, iso = archive[latlon]
+            if archive[latlon]:
+                countrycode, iso = archive[latlon]
+            else:
+                print '...and failed'
+                pass #countrycode and iso are blank so, the next if must fail, there is no replace, and exit
         else:
             f = urllib.urlopen("http://api.geonames.org/countrySubdivision?lat=%s&lng=%s&username=%s" % (lat, lon, geonamesusername))
             raw = f.read()
@@ -90,13 +94,22 @@ for page in pre:
                 iso = re.findall(ur'<code type="ISO3166-2">([A-Z]{2,3})</code>', raw)[0]
             except:
                 pass
-            if countrycode and iso:
-                archive[latlon] = [countrycode, iso]
+            if countrycode:
+                archive[latlon] = [countrycode, iso] #iso may be blank
+            else:
+                archive[latlon] = []
         
-        if countrycode and iso:
-            region = '%s-%s' % (countrycode, iso)
-            newtext = newtext.replace(u"%s%s" % (i.group('templatebegin'), i.group('templateend')), u"%s|region:%s%s" % (i.group('templatebegin'), region, i.group('templateend'))) #replace all occurences for this exact templatebegin and templateend, it doesn't touch templates with more parameters (see 'abc' here  https://commons.wikimedia.org/w/index.php?title=User%3AEmijrp%2FSandbox&action=historysubmit&diff=61477235&oldid=61477216)
-            summary.append(u'region ([[:en:ISO 3166-2:%s|%s]]-[[:en:ISO 3166-2:%s|%s]]) to coordinates (%s,%s)' % (countrycode, countrycode, region, iso, lat, lon))
+        if countrycode:
+            if iso:
+                region = '%s-%s' % (countrycode, iso)
+            else:
+                region = countrycode
+            print "Region: %s" % (region)
+            rep = i.group('all')
+            sub = u"%s|region:%s%s%s" % (i.group('templatebegin'), region, i.group('otherparams') and '_%s' % (i.group('otherparams')) or '', i.group('templateend'))
+            #print rep, '\n', sub
+            newtext = newtext.replace(rep, sub) #replace all occurences for this exact templatebegin and templateend, it doesn't touch templates with more parameters (see 'abc' here  https://commons.wikimedia.org/w/index.php?title=User%3AEmijrp%2FSandbox&action=historysubmit&diff=61477235&oldid=61477216)
+            summary.append(u'region ([[:en:ISO 3166-2:%s|%s]]%s) to coordinates (%s,%s)' % (countrycode, countrycode, iso and '-[[:en:ISO 3166-2:%s|%s]]' % (region, iso) or '', lat, lon))
     
     if newtext != wtext:
         wikipedia.showDiff(wtext, newtext)
