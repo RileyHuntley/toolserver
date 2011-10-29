@@ -27,7 +27,7 @@ commonssite = wikipedia.Site("commons", "commons")
 locationdecpage = wikipedia.Page(commonssite, u"Template:Location dec")
 
 gen = pagegenerators.ReferringPageGenerator(locationdecpage, onlyTemplateInclusion=True)
-pre = pagegenerators.PreloadingGenerator(gen, pageNumber=100)
+pre = pagegenerators.PreloadingGenerator(gen, pageNumber=250)
 
 #http://api.geonames.org/countrySubdivision?lat=52.0893&lng=5.1102&username=demo
 """
@@ -51,7 +51,7 @@ archive = {}
 
 #pre = [wikipedia.Page(commonssite, u"User:Emijrp/Sandbox")]
 for page in pre:
-    time.sleep(0.1)
+    time.sleep(0.001)
     if not page.exists() or page.isRedirectPage() or page.isDisambig():
         continue
     if page.namespace() != 6:
