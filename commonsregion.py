@@ -27,7 +27,7 @@ commonssite = wikipedia.Site("commons", "commons")
 locationdecpage = wikipedia.Page(commonssite, u"Template:Location dec")
 
 gen = pagegenerators.ReferringPageGenerator(locationdecpage, onlyTemplateInclusion=True)
-pre = pagegenerators.PreloadingGenerator(gen, pageNumber=250)
+pre = pagegenerators.PreloadingGenerator(gen, pageNumber=100)
 
 #http://api.geonames.org/countrySubdivision?lat=52.0893&lng=5.1102&username=demo
 """
@@ -91,7 +91,8 @@ for page in pre:
             raw = f.read()
             try:
                 countrycode = re.findall(ur"<countryCode>([A-Z]{2})</countryCode>", raw)[0]
-                iso = re.findall(ur'<code type="ISO3166-2">([A-Z]{2,3})</code>', raw)[0]
+                #ISO3166-2 puede ser números también (https://en.wikipedia.org/wiki/ISO_3166-2#Format), como en Austria AT-7 http://api.geonames.org/countrySubdivision?lat=47.46125&lng=10.8343&username=demo o una única letra como en Francia FR-P http://api.geonames.org/countrySubdivision?lat=49.1836302&lng=-0.361433&username=demo
+                iso = re.findall(ur'<code type="ISO3166-2">([A-Z\d]{1,3})</code>', raw)[0]
             except:
                 pass
             if countrycode:
