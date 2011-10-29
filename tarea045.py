@@ -72,7 +72,7 @@ def main():
             t1 = time.time()
             conn2 = MySQLdb.connect(host='sql-s%s' % server, db=dbname, read_default_file='~/.my.cnf', use_unicode=True)
             cursor2 = conn2.cursor()
-            cursor2.execute("select user_name, user_editcount from user where user_editcount!=0 order by user_editcount desc limit %s;" % limit)
+            cursor2.execute("select /* SLOW_OK */ user_name, user_editcount from user where user_editcount!=0 order by user_editcount desc limit %s;" % limit)
             result2 = cursor2.fetchall()
             print domain, time.time()-t1, "seconds"
         
