@@ -23,6 +23,10 @@ import sys
 import wikipedia
 import xmlreader
 
+def cleantitle(title):
+    title = re.sub(ur"[&]", ur"-", title)
+    return title
+
 dumppath = ''
 if len(sys.argv) == 2:
     dumpfilename = sys.argv[1]
@@ -34,6 +38,7 @@ os.system('wget -c http://dumps.wikimedia.org/commonswiki/latest/commonswiki-lat
 
 xml = xmlreader.XmlDump('%s%s' % (dumppath and '%s/' % dumppath or '', dumpfilename), allrevisions=False)
 errors = 0
+minplaces = 5 #min places to show for year
 c = 0
 s = 0
 coord_dec_r = re.compile(ur"(?im)(?P<all>{{\s*(Location dec|Object location dec)\s*\|\s*(?P<lat>[\d\.\-\+]+)\s*\|\s*(?P<lon>[\d\.\-\+]+)\s*\|?\s*[^\|\}]*\s*}})")
@@ -55,7 +60,7 @@ for x in xml.parse(): #parsing the whole dump
         date = i.group('date')
         year = int(date[:4])
     
-    if not date or year >= 2000:
+    if not date or year >= 2000 or year < 1825:
         continue
     
     #coord
@@ -94,15 +99,15 @@ for x in xml.parse(): #parsing the whole dump
     #print x.title, coord, date
     s += 1
     if images_by_year.has_key(year):
-        images_by_year[year].append([x.title, coord[0], coord[1]])
+        images_by_year[year].append([x.title, coord[0], coord[1], date])
     else:
-        images_by_year[year] = [[x.title, coord[0], coord[1]]]
+        images_by_year[year] = [[x.title, coord[0], coord[1], date]]
 
     if s and s % 10 == 0:
         print 'Total images', c, 'With useful metadata', s, 'Percent', s/(c/100.0),'%'
 
-    if s and s % 200 == 0:
-        break
+    """if s and s % 20 == 0:
+        break"""
 
 kmlini = u"""<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
@@ -116,8 +121,11 @@ kmlend = u"""
 
 #generating KMLs by year
 for year, images in images_by_year.items():
+    if len(images) < minplaces:
+        continue
+    
     output = kmlini
-    for title, lat, lon in images:
+    for title, lat, lon, date in images:
         imagesize = '180px'
         filename = re.sub('File:', ur'', title)
         filename = re.sub(' ', '_', filename)
@@ -130,16 +138,16 @@ for year, images in images_by_year.items():
 <description>
 <![CDATA[
 <div style="clear: right; float: right;"><a href="%s" target="_blank"><img src="%s" width=%s/></a></div>
-<ul>
-<li><b>Longitude:</b></li><li>%s</li>
-<li><b>Latitude:</b></li><li>%s</li>
-</ul>
+<table>
+<tr><td><b>Coordinates:</b></td><td>%s, %s</td></tr>
+<tr><td><b>Date:</b></td><td>%s</td></tr>
+</table>
 ]]>
 </description>
 <Point>
 <coordinates>%s,%s</coordinates>
 </Point>
-</Placemark>""" % (title, commonspage, thumburl, imagesize, lon, lat, lon, lat)
+</Placemark>""" % (cleantitle(title), commonspage, thumburl, imagesize, lon, lat, date, lon, lat)
     
     output += kmlend
     f = open('/home/emijrp/public_html/commonsexplorer/%s.kml' % (year), 'w')
@@ -150,7 +158,7 @@ for year, images in images_by_year.items():
 #generating index.php
 years = []
 for year, v in images_by_year.items():
-    if len(v) >= 10:
+    if len(v) >= minplaces:
         years.append(year)
 years.sort()
 
@@ -196,7 +204,7 @@ if (isset($_GET['year']))
 <td colspan=3>
 <b>Select a place:</b> %s
 
-<iframe width="1200" height="550" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fcommonsexplorer%%2F<?php echo $year; ?>.kml%%3Fusecache%%3D0&amp;output=embed"></iframe>
+<iframe width="1200" height="500" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fcommonsexplorer%%2F<?php echo $year; ?>.kml%%3Fusecache%%3D0&amp;output=embed"></iframe>
 <br/>
 
 <i>Last update: %s (UTC)</i>
