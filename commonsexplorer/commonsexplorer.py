@@ -38,8 +38,10 @@ os.system('wget -c http://dumps.wikimedia.org/commonswiki/latest/commonswiki-lat
 
 xml = xmlreader.XmlDump('%s%s' % (dumppath and '%s/' % dumppath or '', dumpfilename), allrevisions=False)
 errors = 0
-minpics = 50 #min pics to show for year
-maximages = 100000 #max images to show in the sum all years
+minpics = 1 #min pics to show for year
+maximages = 10 #max images to show in the sum all years
+maxyear = 2000
+minyear = 1900
 c = 0
 s = 0
 coord_dec_r = re.compile(ur"(?im)(?P<all>{{\s*(Location dec|Object location dec)\s*\|\s*(?P<lat>[\d\.\-\+]+)\s*\|\s*(?P<lon>[\d\.\-\+]+)\s*\|?\s*[^\|\}]*\s*}})")
@@ -61,7 +63,7 @@ for x in xml.parse(): #parsing the whole dump
         date = i.group('date')
         year = int(date[:4])
     
-    if not date or year >= 2000 or year < 1825:
+    if not date or year >= maxyear or year < minyear:
         continue
     
     #coord
@@ -156,7 +158,7 @@ for year, images in images_by_year.items():
     <Point>
         <coordinates>%s,%s</coordinates>
     </Point>
-    </Placemark>""" % (cleantitle(title), lon, lat, commonspage, thumburl, imagesize, date, description and description or '?', lon, lat)
+    </Placemark>""" % (cleantitle(title), description and description or '?', commonspage, thumburl, imagesize, date, lon, lat, lon, lat)
     
     output += kmlend
     f = open('/home/emijrp/public_html/commonsexplorer/kml/%s.kml' % (year), 'w')
@@ -233,6 +235,11 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
                     })
                 })
             });
+            if (years[i] == '1950') {
+                mylayer.setVisibility(true);
+            }else{
+                mylayer.setVisibility(false);
+            }
             mylayers = mylayers.concat([mylayer]);
         }
         
