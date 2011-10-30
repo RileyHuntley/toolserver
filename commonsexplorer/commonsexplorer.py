@@ -23,6 +23,13 @@ import sys
 import wikipedia
 import xmlreader
 
+def splitcalculator(year):
+    #group pics by X years, 1900-1909,...1950-1955...
+    if year < 1950:
+        return 10
+    else:
+        return 5
+
 def cleantitle(title):
     title = re.sub(ur"[&]", ur"-", title)
     return title
@@ -39,23 +46,29 @@ os.system('wget -c http://dumps.wikimedia.org/commonswiki/latest/commonswiki-lat
 xml = xmlreader.XmlDump('%s%s' % (dumppath and '%s/' % dumppath or '', dumpfilename), allrevisions=False)
 errors = 0
 minpics = 1 #min pics to show for year
-maximages = 100000 #max images to show in the sum all years
+maximages = 100 #max images to show in the sum all years
 maxyear = 2000
 minyear = 1850
-split = 10 #group pics by X years, 1900-1909,...
 c = 0
 s = 0
 coord_dec_r = re.compile(ur"(?im)(?P<all>{{\s*(Location dec|Object location dec)\s*\|\s*(?P<lat>[\d\.\-\+]+)\s*\|\s*(?P<lon>[\d\.\-\+]+)\s*\|?\s*[^\|\}]*\s*}})")
 coord_r = re.compile(ur"(?im)(?P<all>{{\s*(Location|Object location)\s*\|\s*(?P<lat_d>[\d\.\-\+]+)\s*\|\s*(?P<lat_m>[\d\.\-\+]+)\s*\|\s*(?P<lat_s>[\d\.\-\+]+)\s*\|\s*(?P<lat>[NS])\s*\|\s*(?P<lon_d>[\d\.\-\+]+)\s*\|\s*(?P<lon_m>[\d\.\-\+]+)\s*\|\s*(?P<lon_s>[\d\.\-\+]+)\s*\|\s*(?P<lon>[EW])\s*\|?\s*[^\|\}]*\s*}})")
 date_r = re.compile(ur"(?im)^\s*\|\s*Date\s*=\s*(?P<date>(\d{4}(-\d{2}-\d{2})?))\D")
 description_r = re.compile(ur"(?im)\{\{\s*en\s*\|\s*(1\s*\=)?\s*(?P<description>[^\{\}]{10,300})\s*\}\}")
+exclude_images_r = re.compile(ur"(?im)\b(maps?|mapa)\b")
 
 images_by_year = {}
 for x in xml.parse(): #parsing the whole dump
-    if not x.title.startswith('File:'):
+    if not x.title.strip().startswith('File:'):
         continue
     c += 1
     coord, date, description = [], '', ''
+    
+    #exclude maps, pngs, etc
+    if not x.title.strip().lower().endswith('.jpg') and not x.title.strip().lower().endswith('.jpeg'):
+        continue
+    if re.search(exclude_images_r, x.title.strip()):
+        continue
     
     #date
     m = re.finditer(date_r, x.text)
@@ -106,11 +119,13 @@ for x in xml.parse(): #parsing the whole dump
         description = i.group('description')
         description = re.sub(ur"\[\[[^\[\]\|]*\|([^\[\]\|]*)\]\]", ur"\1", description)
         description = re.sub(ur"\[\[([^\[\]\|]*)\]\]", ur"\1", description)
+        #description = re.sub(ur"\[\[\s*(Image|File):\s*([^\[\]\|]*)\]\]", ur"", description) mejorar regexp
         description = re.sub(ur"\'{2,3}", ur"", description)
         break
     
     #print x.title, coord, date
     s += 1
+    split = splitcalculator(year)
     if images_by_year.has_key(year/split*split):
         images_by_year[year/split*split].append([x.title, coord[0], coord[1], date, description])
     else:
@@ -139,27 +154,29 @@ for year, images in images_by_year.items():
     
     output = kmlini
     for title, lat, lon, date, description in images:
+        title_clean = cleantitle(title)
         imagesize = '150px'
         filename = re.sub('File:', ur'', title)
         filename = re.sub(' ', '_', filename)
         m5 = md5.new(filename.encode('utf-8')).hexdigest()
         thumburl = u'https://upload.wikimedia.org/wikipedia/commons/thumb/%s/%s/%s/%s-%s' % (m5[0], m5[:2], filename, imagesize, filename)
         commonspage = u'https://commons.wikimedia.org/wiki/File:%s' % (filename)
-        output += u"""  <Placemark>
+        output += u"""
+    <Placemark>
     <name>%s</name>
     <description>
-    <![CDATA[
-    <table width=350px>
-    <tr><td><b>Description:</b><br/>%s</td><td rowspan=3><a href="%s" target="_blank"><img src="%s" width=%s align=right/></a></td></tr>
-    <tr><td><b>Date:</b><br/>%s</td></tr>
-    <tr><td><b>Coord:</b><br/>%s, %s</td></tr>
-    </table>
-    ]]>
+        <![CDATA[
+        <table width=350px>
+        <tr><td><b>Description:</b><br/>%s</td><td rowspan=3><a href="%s" target="_blank"><img src="%s" width=%s align=right/></a></td></tr>
+        <tr><td><b>Date:</b><br/>%s</td></tr>
+        <tr><td><b>Coord:</b><br/>%s, %s</td></tr>
+        </table>
+        ]]>
     </description>
     <Point>
         <coordinates>%s,%s</coordinates>
     </Point>
-    </Placemark>""" % (cleantitle(title), description and description or '?', commonspage, thumburl, imagesize, date, lon, lat, lon, lat)
+    </Placemark>""" % (len(title_clean) > 47 and '%s...' % (title_clean[:47]) or title_clean, description and description or '?', commonspage, thumburl, imagesize, date, lon, lat, lon, lat)
     
     output += kmlend
     f = open('/home/emijrp/public_html/commonsexplorer/kml/%s.kml' % (year), 'w')
@@ -297,7 +314,7 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 
 </body>
 </html>
-""" % (', '.join(['"%s"' % (year) for year in years]), ', '.join(['"%s-%s <i>(%s images)</i>"' % (year, year+split-1, len(images_by_year[year])) for year in years]))
+""" % (', '.join(['"%s"' % (year) for year in years]), ', '.join(['"%s-%s <i>(%s images)</i>"' % (year, year+splitcalculator(year)-1, len(images_by_year[year])) for year in years]))
 
 f = open('/home/emijrp/public_html/commonsexplorer/index.php', 'w')
 f.write(output.encode('utf-8'))
