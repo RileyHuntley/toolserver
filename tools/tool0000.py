@@ -82,59 +82,60 @@ ob_end_flush();
 def getPHPTools():
     return u"""<!--<h2>My best tools (or I think so)</h2>-->
 <ul>
-<li><a href="imagesforbio/"><i>Images for biographies</i></a>: it shows a list of biographies missing images, with image proposals. It helps to include images in <a href="http://toolserver.org/~emijrp/imagesforbio/stats.php">+150 Wikipedia projects</a>, also in the smallest ones. Thousands of images have been included in articles ussing this method. Yay!</li>
+<li><a href="imagesforbio/">Images for biographies</a>: it shows a list of biographies missing images, with image proposals. It helps to include images in <a href="http://toolserver.org/~emijrp/imagesforbio/stats.php">+150 Wikipedia projects</a>, also in the smallest ones. Thousands of images have been included in articles ussing this method. Yay!</li>
+<li><a href="wlm/">Wiki <i>Loves</i> Monuments</a>: a map for the Spanish edition of Wiki Loves Monuments.</li>
+<li><a href="commonsexplorer/">Wikimedia Commons Explorer</a>: a map to explore geocoded Wikimedia Commons images by date.</li>
 <li><a href="wikimediacounter/">Wikimedia counter</a>: this counter shows the number of edits made in all the Wikimedia Foundation projects (Wikipedia, Wiktionary, Wikibooks, Wikiquote, Wikisource, Wikinews, Wikiversity, Meta, Wikispecies and Commons). The 1,000,000,000 (one billion) milestone was reached in <a href="wikimediacounter/onebillion.png">April 16, 2010</a>. Congratulations!</li>
 <li><a href="wmcharts/">Wmcharts</a>: a lot of charts about Wikimedia projects activity.</li>
-<li><a href="wikimania/">Wikimania TV</a>: this is a mashup developed in a few minutes for Wikimania 2010 in Poland. It shows the video streaming for the rooms, the IRC channel and related tweets. Wikimania 2010 was finished, so, you can't see more streaming : (.</li>
+<li><a href="wikimania/">Wikimania TV</a> (<a href="wikimania/2010/">2010</a>): this is a mashup developed in a few minutes for Wikimania 2010 in Poland. It shows the video streaming for the rooms, the IRC channel and related tweets. Wikimania 2010 was finished, so, you can't see more streaming : (.</li>
 <li><a href="best/"><i>Best free images</i></a>: a selection of the best Wikimedia Commons images that you can vote.</li>
 <li><a href="tutoriales/">Tutorials</a>: some tutorials in Spanish for Wikipedia beginners.</li>
 <li>(more soon...)</li>
 </ul>
 
-<!--
-<h2>More tools</h2>
-Here, you can see most of my <b>tools</b>. I hope they are useful:
-
-<ol>
-
-<li><a href="tool0001/">Replicated databases in Toolserver</a> [<a href="archive/tool0001/">archive</a>] [code]</li>
-<li><a href="tool0002/">List of users by article count</a> [<a href="archive/tool0002/">archive</a>] [code]</li>
-<li><a href="tool0003/">Revert rates</a> [todo]</li>
-<li><a href="tool0004/">Welcome newbies, they are the future!</a> [todo]</li>
-<li><a href="tool0005/">Active projects and languages in Wikimedia servers</a> [<a href="archive/tool0005/">archive</a>] [code]</li>
-<li><a href="tool0006/">General activity</a> [todo]</li>
-<li><a href="tool0007/">Most linked external links</a> [todo]</li>
-<li><a href="tool0008/">Pages distribution</a> [todo]</li><!-- porcentaje de redirecciones respecto de artículos (y resto de namespaces)-->
-<li><a href="tool0009/">Most linked Toolserver tools and users</a> [todo :)]</li>
-<li><a href="tool0010/">Most edited articles by different users in the last day</a> [todo]</li><!-- count(distinct rc_user_text) -->
-<li><a href="tool0011/">Edit activity levels</a> [todo]</li>
-<li><a href="tool0012/">Anonymous edits by location</a> [todo]</li>
-<li><a href="tool0013/"></a></li>
-<li><a href="tool0014/"></a></li>
-<li><a href="tool0015/"></a></li>
-<li><a href="tool0016/"></a></li>
-<li><a href="tool0017/"></a></li>
-<li><a href="tool0018/"></a></li>
-<li><a href="tool0019/"></a></li>
-<li><a href="tool0020/"></a></li>
-<li><a href="tool0021/"></a></li>
-<li><a href="tool0022/"></a></li>
-<li><a href="tool0023/"></a></li>
-<li><a href="tool0024/"></a></li>
-<li><a href="tool0025/">Most active users in all projects</a> [archive] [code]</li>
-<li><a href="tool0026/"></a></li>
-<li><a href="tool0027/"><i>Endangered</i> projects</a> [archive] [code]</li>
-<li><a href="tool0028/"></a></li>
-
-</ol>
--->
 <h2>Some old and very out-of-date tools</h2>
 
 <ul>
 <li><a href="wikiasearch/">Wikia Search design</a>: a proposed design for Wikia Search search engine that was closed some time ago.</li>
 </ul>
-
 """
+
+    """<h2>More tools</h2>
+    Here, you can see most of my <b>tools</b>. I hope they are useful:
+
+    <ol>
+
+    <li><a href="tool0001/">Replicated databases in Toolserver</a> [<a href="archive/tool0001/">archive</a>] [code]</li>
+    <li><a href="tool0002/">List of users by article count</a> [<a href="archive/tool0002/">archive</a>] [code]</li>
+    <li><a href="tool0003/">Revert rates</a> [todo]</li>
+    <li><a href="tool0004/">Welcome newbies, they are the future!</a> [todo]</li>
+    <li><a href="tool0005/">Active projects and languages in Wikimedia servers</a> [<a href="archive/tool0005/">archive</a>] [code]</li>
+    <li><a href="tool0006/">General activity</a> [todo]</li>
+    <li><a href="tool0007/">Most linked external links</a> [todo]</li>
+    <li><a href="tool0008/">Pages distribution</a> [todo]</li><!-- porcentaje de redirecciones respecto de artículos (y resto de namespaces)-->
+    <li><a href="tool0009/">Most linked Toolserver tools and users</a> [todo :)]</li>
+    <li><a href="tool0010/">Most edited articles by different users in the last day</a> [todo]</li><!-- count(distinct rc_user_text) -->
+    <li><a href="tool0011/">Edit activity levels</a> [todo]</li>
+    <li><a href="tool0012/">Anonymous edits by location</a> [todo]</li>
+    <li><a href="tool0013/"></a></li>
+    <li><a href="tool0014/"></a></li>
+    <li><a href="tool0015/"></a></li>
+    <li><a href="tool0016/"></a></li>
+    <li><a href="tool0017/"></a></li>
+    <li><a href="tool0018/"></a></li>
+    <li><a href="tool0019/"></a></li>
+    <li><a href="tool0020/"></a></li>
+    <li><a href="tool0021/"></a></li>
+    <li><a href="tool0022/"></a></li>
+    <li><a href="tool0023/"></a></li>
+    <li><a href="tool0024/"></a></li>
+    <li><a href="tool0025/">Most active users in all projects</a> [archive] [code]</li>
+    <li><a href="tool0026/"></a></li>
+    <li><a href="tool0027/"><i>Endangered</i> projects</a> [archive] [code]</li>
+    <li><a href="tool0028/"></a></li>
+
+    </ol>
+    """
 
 def writeToFile(filename, output):
     f=open(filename, "w")
