@@ -38,8 +38,8 @@ os.system('wget -c http://dumps.wikimedia.org/commonswiki/latest/commonswiki-lat
 
 xml = xmlreader.XmlDump('%s%s' % (dumppath and '%s/' % dumppath or '', dumpfilename), allrevisions=False)
 errors = 0
-minplaces = 1 #min places to show for year
-maximages = 50 #max images to show in the sum all years
+minpics = 5 #min pics to show for year
+maximages = 100 #max images to show in the sum all years
 c = 0
 s = 0
 coord_dec_r = re.compile(ur"(?im)(?P<all>{{\s*(Location dec|Object location dec)\s*\|\s*(?P<lat>[\d\.\-\+]+)\s*\|\s*(?P<lon>[\d\.\-\+]+)\s*\|?\s*[^\|\}]*\s*}})")
@@ -122,7 +122,7 @@ kmlend = u"""
 
 #generating KMLs by year
 for year, images in images_by_year.items():
-    if len(images) < minplaces:
+    if len(images) < minpics:
         continue
     
     output = kmlini
@@ -133,25 +133,23 @@ for year, images in images_by_year.items():
         m5 = md5.new(filename.encode('utf-8')).hexdigest()
         thumburl = u'https://upload.wikimedia.org/wikipedia/commons/thumb/%s/%s/%s/%s-%s' % (m5[0], m5[:2], filename, imagesize, filename)
         commonspage = u'https://commons.wikimedia.org/wiki/File:%s' % (filename)
-        output += u"""
-<Placemark>
-<name>%s</name>
-<description>
-<![CDATA[
-<a href="%s" target="_blank"><img src="%s" width=%s align=right/></a>
-<table>
-<tr><td><b>Coord:</b></td><td>%s, %s</td></tr>
-<tr><td><b>Date:</b></td><td>%s</td></tr>
-</table>
-]]>
-</description>
-<Point>
-<coordinates>%s,%s</coordinates>
-</Point>
-</Placemark>""" % (cleantitle(title), commonspage, thumburl, imagesize, lon, lat, date, lon, lat)
+        output += u"""  <Placemark>
+    <name>%s</name>
+    <description>
+    <![CDATA[
+    <table>
+    <tr><td><b>Coord:</b></td><td>%s, %s</td><td rowspan=2><a href="%s" target="_blank"><img src="%s" width=%s align=right/></a></td></tr>
+    <tr><td><b>Date:</b></td><td>%s</td></tr>
+    </table>
+    ]]>
+    </description>
+    <Point>
+        <coordinates>%s,%s</coordinates>
+    </Point>
+    </Placemark>""" % (cleantitle(title), lon, lat, commonspage, thumburl, imagesize, date, lon, lat)
     
     output += kmlend
-    f = open('/home/emijrp/public_html/commonsexplorer/%s.kml' % (year), 'w')
+    f = open('/home/emijrp/public_html/commonsexplorer/kml/%s.kml' % (year), 'w')
     f.write(output.encode('utf-8'))
     f.close()
 
@@ -159,7 +157,7 @@ for year, images in images_by_year.items():
 #generating index.php
 years = []
 for year, v in images_by_year.items():
-    if len(v) >= minplaces:
+    if len(v) >= minpics:
         years.append(year)
 years.sort()
 decade = ''
@@ -178,58 +176,109 @@ for year in years:
 output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>Wikimedia Commons Explorer</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>Wikimedia Commons Explorer</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style>
+        html,body {
+            height: 98%%;
+            width: 99%%;
+        }
+        #map {
+            width: 100%%;
+            height: 100%%;
+        }
+    </style>
+    <script src='http://openlayers.org/api/OpenLayers.js'></script>
+</head>
+<body onload="init()">
+<!-- Code adapted from OpenLayers example http://openlayers.org/dev/examples/sundials-spherical-mercator.html -->
 
-<script language="javascript">
-function showHide(id){
-    if (document.getElementById(id).style.display == 'none') {
-        document.getElementById(id).style.display = 'block';
-    }else{
-        document.getElementById(id).style.display = 'none';
+<script type="text/javascript">
+    var map, select;
+
+    function init(){
+        var options = {
+            projection: new OpenLayers.Projection("EPSG:900913"),
+            displayProjection: new OpenLayers.Projection("EPSG:4326"),
+            units: "m",
+            maxResolution: 156543.0339,
+            maxExtent: new OpenLayers.Bounds(-20037508.34, -20037508.34,
+                                             20037508.34, 20037508.34),
+        };
+        map = new OpenLayers.Map('map', options);
+        
+        var mapnik = new OpenLayers.Layer.OSM("OpenStreetMap (Mapnik)");
+        //var gmap = new OpenLayers.Layer.Google("Google", {sphericalMercator:true});
+        mylayers = [];
+        years = [%s];
+        for (i=0;i<years.length;i++){
+            var mylayer = new OpenLayers.Layer.Vector(years[i], {
+                projection: map.displayProjection,
+                strategies: [new OpenLayers.Strategy.Fixed()],
+                protocol: new OpenLayers.Protocol.HTTP({
+                    url: "http://toolserver.org/~emijrp/commonsexplorer/kml/"+years[i]+".kml",
+                    format: new OpenLayers.Format.KML({
+                        extractStyles: true,
+                        extractAttributes: true
+                    })
+                })
+            });
+            mylayers = mylayers.concat([mylayer]);
+        }
+        
+        layers = [mapnik];
+        map.addLayers(layers.concat(mylayers));
+
+        select = new OpenLayers.Control.SelectFeature(mylayers);
+        
+        for (i=1;i<mylayers.length;i++){
+            mylayers[i].events.on({
+                "featureselected": onFeatureSelect,
+                "featureunselected": onFeatureUnselect
+            });
+        }
+
+        map.addControl(select);
+        select.activate();   
+
+        map.addControl(new OpenLayers.Control.LayerSwitcher());
+
+        map.zoomToExtent(
+            new OpenLayers.Bounds(
+                -100, -70, 100, 70
+            ).transform(map.displayProjection, map.projection)
+        );
     }
-}
-
+    function onPopupClose(evt) {
+        select.unselectAll();
+    }
+    function onFeatureSelect(event) {
+        var feature = event.feature;
+        var selectedFeature = feature;
+        var popup = new OpenLayers.Popup.FramedCloud("chicken", 
+            feature.geometry.getBounds().getCenterLonLat(),
+            new OpenLayers.Size(100,100),
+            "<h4>"+feature.attributes.name + "</h4>" + feature.attributes.description,
+            null, true, onPopupClose
+        );
+        feature.popup = popup;
+        map.addPopup(popup);
+    }
+    function onFeatureUnselect(event) {
+        var feature = event.feature;
+        if(feature.popup) {
+            map.removePopup(feature.popup);
+            feature.popup.destroy();
+            delete feature.popup;
+        }
+    }
 </script>
 
-</head>
-
-<?php
-$years = array(%s );
-$year="1949";
-if (isset($_GET['year']))
-{
-	$temp = $_GET['year'];
-	if (in_array($temp, $years))
-		$year = $temp;
-}
-
-?>
-
-<body>
-
-<center>
-<big><big><big><b>Wikimedia Commons Explorer</b></big></big></big>
-<br/>
-
-<tr>
-<td colspan=3>
-<b>Select a year:</b> %s
-
-<br/>
-
-<iframe width="1200" height="500" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fcommonsexplorer%%2F<?php echo $year; ?>.kml%%3Fusecache%%3D0&amp;output=embed"></iframe>
-<br/>
-
-<i>Last update: %s (UTC)</i>
-
-</center>
+<div id="map" class="smallmap"></div>
 
 </body>
-
 </html>
-""" % (', '.join(['"%s"' % (year) for year in years]), ', '.join(select), datetime.datetime.now())
+""" % (', '.join(['"%s"' % (year) for year in years]))
 
 f = open('/home/emijrp/public_html/commonsexplorer/index.php', 'w')
 f.write(output.encode('utf-8'))
