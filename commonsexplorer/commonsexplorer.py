@@ -45,17 +45,17 @@ s = 0
 coord_dec_r = re.compile(ur"(?im)(?P<all>{{\s*(Location dec|Object location dec)\s*\|\s*(?P<lat>[\d\.\-\+]+)\s*\|\s*(?P<lon>[\d\.\-\+]+)\s*\|?\s*[^\|\}]*\s*}})")
 coord_r = re.compile(ur"(?im)(?P<all>{{\s*(Location|Object location)\s*\|\s*(?P<lat_d>[\d\.\-\+]+)\s*\|\s*(?P<lat_m>[\d\.\-\+]+)\s*\|\s*(?P<lat_s>[\d\.\-\+]+)\s*\|\s*(?P<lat>[NS])\s*\|\s*(?P<lon_d>[\d\.\-\+]+)\s*\|\s*(?P<lon_m>[\d\.\-\+]+)\s*\|\s*(?P<lon_s>[\d\.\-\+]+)\s*\|\s*(?P<lon>[EW])\s*\|?\s*[^\|\}]*\s*}})")
 date_r = re.compile(ur"(?im)^\s*\|\s*Date\s*=\s*(?P<date>(\d{4}(-\d{2}-\d{2})?))\D")
+description_r = re.compile(ur"(?im)\{\{\s*en\s*\|\s*(1\s*\=)?\s*(?P<description>[^\{\}]{10,300})\s*\}\}")
 
 images_by_year = {}
 for x in xml.parse(): #parsing the whole dump
     if not x.title.startswith('File:'):
         continue
     c += 1
-    coord, date = [], ''
-    x_text_encoded = x.text.encode('utf-8')
+    coord, date, description = [], '', ''
     
     #date
-    m = re.finditer(date_r, x_text_encoded)
+    m = re.finditer(date_r, x.text)
     year = ''
     for i in m:
         date = i.group('date')
@@ -65,14 +65,14 @@ for x in xml.parse(): #parsing the whole dump
         continue
     
     #coord
-    m = re.finditer(coord_dec_r, x_text_encoded)
+    m = re.finditer(coord_dec_r, x.text)
     for i in m:
         coord = [float(i.group('lat')), float(i.group('lon'))]
         #print date, i.group('all'), coord
         break
     
     if not coord:
-        m = re.finditer(coord_r, x_text_encoded)
+        m = re.finditer(coord_r, x.text)
         for i in m:
             lat = abs(float(i.group('lat_d'))) + abs(float(i.group('lat_m')))/60.0 + abs(float(i.group('lat_s')))/3600.0
             if i.group('lat').strip().upper() == 'N':
@@ -97,12 +97,21 @@ for x in xml.parse(): #parsing the whole dump
     if not coord:
         continue
     
+    #description
+    m = re.finditer(description_r, x.text)
+    for i in m:
+        description = i.group('description')
+        description = re.sub(ur"\[\[[^\[\]\|]*\|([^\[\]\|]*)\]\]", ur"\1", description)
+        description = re.sub(ur"\[\[([^\[\]\|]*)\]\]", ur"\1", description)
+        description = re.sub(ur"\'{2,3}", ur"", description)
+        break
+    
     #print x.title, coord, date
     s += 1
     if images_by_year.has_key(year):
-        images_by_year[year].append([x.title, coord[0], coord[1], date])
+        images_by_year[year].append([x.title, coord[0], coord[1], date, description])
     else:
-        images_by_year[year] = [[x.title, coord[0], coord[1], date]]
+        images_by_year[year] = [[x.title, coord[0], coord[1], date, description]]
 
     if s and s % 10 == 0:
         print 'Total images', c, 'With useful metadata', s, 'Percent', s/(c/100.0),'%'
@@ -126,7 +135,7 @@ for year, images in images_by_year.items():
         continue
     
     output = kmlini
-    for title, lat, lon, date in images:
+    for title, lat, lon, date, description in images:
         imagesize = '150px'
         filename = re.sub('File:', ur'', title)
         filename = re.sub(' ', '_', filename)
@@ -137,16 +146,17 @@ for year, images in images_by_year.items():
     <name>%s</name>
     <description>
     <![CDATA[
-    <table>
-    <tr><td><b>Coord:</b></td><td>%s, %s</td><td rowspan=2><a href="%s" target="_blank"><img src="%s" width=%s align=right/></a></td></tr>
+    <table width=350px>
+    <tr><td><b>Coord:</b></td><td>%s, %s</td><td rowspan=3><a href="%s" target="_blank"><img src="%s" width=%s align=right/></a></td></tr>
     <tr><td><b>Date:</b></td><td>%s</td></tr>
+    <tr><td><b>Description:</b></td><td>%s</td></tr>
     </table>
     ]]>
     </description>
     <Point>
         <coordinates>%s,%s</coordinates>
     </Point>
-    </Placemark>""" % (cleantitle(title), lon, lat, commonspage, thumburl, imagesize, date, lon, lat)
+    </Placemark>""" % (cleantitle(title), lon, lat, commonspage, thumburl, imagesize, date, description and description or '?', lon, lat)
     
     output += kmlend
     f = open('/home/emijrp/public_html/commonsexplorer/kml/%s.kml' % (year), 'w')
