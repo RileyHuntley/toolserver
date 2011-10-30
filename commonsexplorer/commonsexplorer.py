@@ -39,9 +39,10 @@ os.system('wget -c http://dumps.wikimedia.org/commonswiki/latest/commonswiki-lat
 xml = xmlreader.XmlDump('%s%s' % (dumppath and '%s/' % dumppath or '', dumpfilename), allrevisions=False)
 errors = 0
 minpics = 1 #min pics to show for year
-maximages = 10 #max images to show in the sum all years
+maximages = 100000 #max images to show in the sum all years
 maxyear = 2000
-minyear = 1900
+minyear = 1850
+split = 10 #group pics by X years, 1900-1909,...
 c = 0
 s = 0
 coord_dec_r = re.compile(ur"(?im)(?P<all>{{\s*(Location dec|Object location dec)\s*\|\s*(?P<lat>[\d\.\-\+]+)\s*\|\s*(?P<lon>[\d\.\-\+]+)\s*\|?\s*[^\|\}]*\s*}})")
@@ -110,10 +111,10 @@ for x in xml.parse(): #parsing the whole dump
     
     #print x.title, coord, date
     s += 1
-    if images_by_year.has_key(year):
-        images_by_year[year].append([x.title, coord[0], coord[1], date, description])
+    if images_by_year.has_key(year/split*split):
+        images_by_year[year/split*split].append([x.title, coord[0], coord[1], date, description])
     else:
-        images_by_year[year] = [[x.title, coord[0], coord[1], date, description]]
+        images_by_year[year/split*split] = [[x.title, coord[0], coord[1], date, description]]
 
     if s and s % 10 == 0:
         print 'Total images', c, 'With useful metadata', s, 'Percent', s/(c/100.0),'%'
@@ -223,8 +224,9 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
         //var gmap = new OpenLayers.Layer.Google("Google", {sphericalMercator:true});
         mylayers = [];
         years = [%s];
+        years_label = [%s];
         for (i=0;i<years.length;i++){
-            var mylayer = new OpenLayers.Layer.Vector(years[i], {
+            var mylayer = new OpenLayers.Layer.Vector(years_label[i], {
                 projection: map.displayProjection,
                 strategies: [new OpenLayers.Strategy.Fixed()],
                 protocol: new OpenLayers.Protocol.HTTP({
@@ -295,7 +297,7 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 
 </body>
 </html>
-""" % (', '.join(['"%s"' % (year) for year in years]))
+""" % (', '.join(['"%s"' % (year) for year in years]), ', '.join(['"%s-%s <i>(%s images)</i>"' % (year, year+split-1, len(images_by_year[year])) for year in years]))
 
 f = open('/home/emijrp/public_html/commonsexplorer/index.php', 'w')
 f.write(output.encode('utf-8'))
