@@ -38,7 +38,8 @@ os.system('wget -c http://dumps.wikimedia.org/commonswiki/latest/commonswiki-lat
 
 xml = xmlreader.XmlDump('%s%s' % (dumppath and '%s/' % dumppath or '', dumpfilename), allrevisions=False)
 errors = 0
-minplaces = 5 #min places to show for year
+minplaces = 1 #min places to show for year
+maximages = 50 #max images to show in the sum all years
 c = 0
 s = 0
 coord_dec_r = re.compile(ur"(?im)(?P<all>{{\s*(Location dec|Object location dec)\s*\|\s*(?P<lat>[\d\.\-\+]+)\s*\|\s*(?P<lon>[\d\.\-\+]+)\s*\|?\s*[^\|\}]*\s*}})")
@@ -106,8 +107,8 @@ for x in xml.parse(): #parsing the whole dump
     if s and s % 10 == 0:
         print 'Total images', c, 'With useful metadata', s, 'Percent', s/(c/100.0),'%'
 
-    """if s and s % 20 == 0:
-        break"""
+    if s and s % maximages == 0:
+        break
 
 kmlini = u"""<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
@@ -126,7 +127,7 @@ for year, images in images_by_year.items():
     
     output = kmlini
     for title, lat, lon, date in images:
-        imagesize = '180px'
+        imagesize = '150px'
         filename = re.sub('File:', ur'', title)
         filename = re.sub(' ', '_', filename)
         m5 = md5.new(filename.encode('utf-8')).hexdigest()
@@ -137,9 +138,9 @@ for year, images in images_by_year.items():
 <name>%s</name>
 <description>
 <![CDATA[
-<div style="clear: right; float: right;"><a href="%s" target="_blank"><img src="%s" width=%s/></a></div>
+<a href="%s" target="_blank"><img src="%s" width=%s align=right/></a>
 <table>
-<tr><td><b>Coordinates:</b></td><td>%s, %s</td></tr>
+<tr><td><b>Coord:</b></td><td>%s, %s</td></tr>
 <tr><td><b>Date:</b></td><td>%s</td></tr>
 </table>
 ]]>
@@ -161,6 +162,18 @@ for year, v in images_by_year.items():
     if len(v) >= minplaces:
         years.append(year)
 years.sort()
+decade = ''
+decadeyears = []
+select = []
+for year in years:
+    decadeyears.append(year)
+    if not decade:
+        decade = year / 10 * 10
+    if decade != year / 10 * 10:
+        decadeyears.sort()
+        select.append("""<a href="javascript:showHide('%ss-years')"><b>%ss</b></a><span id="%ss-years" style="display: none;">%s</span>""" % (decade, decade, decade, ', '.join(['<a href="index.php?year=%s">%s</a>' % (decadeyear, decadeyear) for decadeyear in decadeyears])))
+        decade = year / 10 * 10
+        decadeyears = [year]
 
 output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
@@ -202,7 +215,9 @@ if (isset($_GET['year']))
 
 <tr>
 <td colspan=3>
-<b>Select a place:</b> %s
+<b>Select a year:</b> %s
+
+<br/>
 
 <iframe width="1200" height="500" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fcommonsexplorer%%2F<?php echo $year; ?>.kml%%3Fusecache%%3D0&amp;output=embed"></iframe>
 <br/>
@@ -214,7 +229,7 @@ if (isset($_GET['year']))
 </body>
 
 </html>
-""" % (', '.join(['"%s"' % (year) for year in years]), ', '.join(['<a href="index.php?year=%s">%s</a>' % (year, year) for year in years]), datetime.datetime.now())
+""" % (', '.join(['"%s"' % (year) for year in years]), ', '.join(select), datetime.datetime.now())
 
 f = open('/home/emijrp/public_html/commonsexplorer/index.php', 'w')
 f.write(output.encode('utf-8'))
