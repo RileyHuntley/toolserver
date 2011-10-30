@@ -44,6 +44,7 @@ dumpfilename = 'commonswiki-latest-pages-articles.xml.bz2'
 os.system('wget -c http://dumps.wikimedia.org/commonswiki/latest/commonswiki-latest-pages-articles.xml.bz2 -O %s/%s' % (dumppath, dumpfilename))
 
 xml = xmlreader.XmlDump('%s%s' % (dumppath and '%s/' % dumppath or '', dumpfilename), allrevisions=False)
+path = '/home/emijrp/public_html/commonsexplorer'
 errors = 0
 minpics = 1 #min pics to show for year
 maximages = 100 #max images to show in the sum all years
@@ -176,10 +177,10 @@ for year, images in images_by_year.items():
     <Point>
         <coordinates>%s,%s</coordinates>
     </Point>
-    </Placemark>""" % (len(title_clean) > 47 and '%s...' % (title_clean[:47]) or title_clean, description and description or '?', commonspage, thumburl, imagesize, date, lon, lat, lon, lat)
+    </Placemark>""" % (len(title_clean) > 37 and '%s...' % (title_clean[:37]) or title_clean, description and description or '?', commonspage, thumburl, imagesize, date, lon, lat, lon, lat)
     
     output += kmlend
-    f = open('/home/emijrp/public_html/commonsexplorer/kml/%s.kml' % (year), 'w')
+    f = open('%s/kml/%s.kml' % (path, year), 'w')
     f.write(output.encode('utf-8'))
     f.close()
 
@@ -316,6 +317,6 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 </html>
 """ % (', '.join(['"%s"' % (year) for year in years]), ', '.join(['"%s-%s <i>(%s images)</i>"' % (year, year+splitcalculator(year)-1, len(images_by_year[year])) for year in years]))
 
-f = open('/home/emijrp/public_html/commonsexplorer/index.php', 'w')
+f = open('%s/index.php' % (path), 'w')
 f.write(output.encode('utf-8'))
 f.close()
