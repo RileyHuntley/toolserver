@@ -38,8 +38,8 @@ os.system('wget -c http://dumps.wikimedia.org/commonswiki/latest/commonswiki-lat
 
 xml = xmlreader.XmlDump('%s%s' % (dumppath and '%s/' % dumppath or '', dumpfilename), allrevisions=False)
 errors = 0
-minpics = 5 #min pics to show for year
-maximages = 100 #max images to show in the sum all years
+minpics = 50 #min pics to show for year
+maximages = 100000 #max images to show in the sum all years
 c = 0
 s = 0
 coord_dec_r = re.compile(ur"(?im)(?P<all>{{\s*(Location dec|Object location dec)\s*\|\s*(?P<lat>[\d\.\-\+]+)\s*\|\s*(?P<lon>[\d\.\-\+]+)\s*\|?\s*[^\|\}]*\s*}})")
@@ -147,9 +147,9 @@ for year, images in images_by_year.items():
     <description>
     <![CDATA[
     <table width=350px>
-    <tr><td><b>Coord:</b></td><td>%s, %s</td><td rowspan=3><a href="%s" target="_blank"><img src="%s" width=%s align=right/></a></td></tr>
-    <tr><td><b>Date:</b></td><td>%s</td></tr>
-    <tr><td><b>Description:</b></td><td>%s</td></tr>
+    <tr><td><b>Description:</b><br/>%s</td><td rowspan=3><a href="%s" target="_blank"><img src="%s" width=%s align=right/></a></td></tr>
+    <tr><td><b>Date:</b><br/>%s</td></tr>
+    <tr><td><b>Coord:</b><br/>%s, %s</td></tr>
     </table>
     ]]>
     </description>
@@ -190,8 +190,8 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <style>
         html,body {
-            height: 98%%;
-            width: 99%%;
+            height: 98.5%%;
+            width: 99.5%%;
         }
         #map {
             width: 100%%;
