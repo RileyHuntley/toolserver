@@ -144,9 +144,9 @@ def writeToFile(filename, output):
 
 def createIndex():
     output=u"""%s
-<p><img src="Wikihands.jpg" alt="me" style="clear:right;float:right"/></p>
-<p><b>¡Welcome!</b> This is my userpage in <a href="http://toolserver.org">Toolserver</a> <a href="http://en.wikipedia.org/wiki/Webserver">webserver</a>. My username is <b>emijrp</b> (real name Emilio), I'm from Spain and I usually edit in <a href="http://en.wikipedia.org">English Wikipedia</a> (you can see <a href="http://en.wikipedia.org/wiki/User:Emijrp">my userpage</a> there).</p>
+<p><b>Welcome!</b> This is my userpage in the <a href="http://toolserver.org">Toolserver</a> <a href="http://en.wikipedia.org/wiki/Webserver">webserver</a>. My username is <b>emijrp</b>, I'm from Spain and I use to edit <a href="http://en.wikipedia.org">English Wikipedia</a> (you can see <a href="http://en.wikipedia.org/wiki/User:Emijrp">my userpage</a> there).</p>
 
+<p><img src="Wikihands.jpg" alt="me" style="clear:right;float:right"/></p>
 %s
 
 <h2>Useful links</h2>
@@ -158,7 +158,7 @@ Some useful links for developing tools and <i>just for fun</i>:
 <h2>External links</h2>
 <u><b>NOT</b></u> my tools. But cool ones:
 <ul>
-<li>Counters: <a href="http://www.7is7.com/software/firefox/partycounter.html">Firefox downloads</a>, <a href="http://popacular.com/gigatweet/">Twitter</a></li>
+<li>Counters: <a href="http://www.7is7.com/software/firefox/partycounter.html">Firefox downloads</a>, <a href="http://gigatweeter.com/counter">Twitter</a></li>
 </ul>
 <?php
 /*
