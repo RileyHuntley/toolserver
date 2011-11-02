@@ -47,7 +47,11 @@ def main():
     dumppath = ''
     if len(sys.argv) == 2:
         dumpfilename = sys.argv[1]
-
+    if len(sys.argv) == 3: #en1, fr1, etc, regexps
+        mode = sys.argv[2]
+    else:
+        mode = 'en1'
+    
     xml = xmlreader.XmlDump('%s%s' % (dumppath and '%s/' % dumppath or '', dumpfilename), allrevisions=False)
     c = 0
     
@@ -55,28 +59,39 @@ def main():
         if not x.title.strip().startswith('File:'):
             continue
         c += 1
+        #print x.title
         
         #regexps
-        regexp_r = ur"(?im)^(?P<all>\s*\|\s*Date\s*=\s*(?P<date>(?P<day>[1-9]|1[0-9]|2[0-9]|3[0-1])\s*(?P<month>January|Jan|February|Feb|March|Mar|April|Apr|May|June|Jun|July|Jul|August|Aug|September|Sept?|October|Oct|November|Nov|December|Dec)\s*(?P<year>\d{4}))\s*)$"
+        regexp_r = {
+            'en1': ur"(?im)^(?P<all>(?P<ini>\s*\|\s*Date\s*=\s*)(?P<date>(?P<day>[1-9]|1[0-9]|2[0-9]|3[0-1])\s*(?P<month>January|Jan|February|Feb|March|Mar|April|Apr|May|June|Jun|July|Jul|August|Aug|September|Sept?|October|Oct|November|Nov|December|Dec)\s*(?P<year>\d{4}))(?P<end>\s*))$",
+            
+        }
         
-        m = re.findall(regexp_r, x.text) #check dump text
+        m = re.findall(regexp_r[mode], x.text) #check dump text
         if m:
+            print 'DUMP SAYS: ', x.title
             page = wikipedia.Page(wikipedia.Site("commons", "commons"), x.title)
             wtext = page.get()
             newtext = wtext
-            m = re.finditer(regexp_r, wtext) # check live text
+            m = re.finditer(regexp_r[mode], wtext) # check live text
             for i in m:
-                print x.title
+                print '   LIVE TEXT NEED TRANSLATION:', x.title
                 
                 #replacement
-                regexp_rep = i.group('date')
-                regexp_sub = ur"%s-%s-%02d" % (i.group('year'), month2number[i.group('month').strip().lower()], int(i.group('day')))
+                regexp_rep = {
+                    'en1': i.group('all'),
+                    
+                }
+                regexp_sub = { 
+                    'en1': ur"%s%s-%s-%02d%s" % (i.group('ini'), i.group('year'), month2number[i.group('month').strip().lower()], int(i.group('day')), i.group('end')),
+                    
+                }
                 
-                newtext = newtext.replace(regexp_rep, regexp_sub, 1)
+                newtext = newtext.replace(regexp_rep[mode], regexp_sub[mode], 1)
                 
                 if wtext != newtext:
                     wikipedia.showDiff(wtext, newtext)
-                    page.put(newtext, u"BOT - Changes to allow localization: %s → %s" % (regexp_rep, regexp_sub))
+                    page.put(newtext, u"BOT - Changes to allow localization: %s → %s" % (regexp_rep[mode], regexp_sub[mode]))
                 
 if __name__ == "__main__":
     main()
