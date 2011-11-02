@@ -67,7 +67,7 @@ def main():
             
         }
         
-        m = re.findall(regexp_r[mode], x.text) #check dump text
+        m = re.findall(regexp_r[mode], x.text) # check dump text
         if m:
             print 'DUMP SAYS: ', x.title
             page = wikipedia.Page(wikipedia.Site("commons", "commons"), x.title)
@@ -82,6 +82,7 @@ def main():
                     'en1': i.group('all'),
                     
                 }
+                #sub
                 regexp_sub = { 
                     'en1': ur"%s%s-%s-%02d%s" % (i.group('ini'), i.group('year'), month2number[i.group('month').strip().lower()], int(i.group('day')), i.group('end')),
                     
@@ -92,6 +93,8 @@ def main():
                 if wtext != newtext:
                     wikipedia.showDiff(wtext, newtext)
                     page.put(newtext, u"BOT - Changes to allow localization: %s → %s" % (regexp_rep[mode], regexp_sub[mode]))
+                
+                break #only one replacement and break
                 
 if __name__ == "__main__":
     main()
