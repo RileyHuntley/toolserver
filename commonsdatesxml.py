@@ -63,7 +63,7 @@ def main():
     dumppath = ''
     dumpfilename = ''
     mode = ''
-    skip = ''#'File:Lagothrix lagotricha.jpg'
+    skip = 'File:Itanos R03.jpg' #'File:Lagothrix lagotricha.jpg'
     if len(sys.argv) >= 2:
         dumpfilename = sys.argv[1]
     if len(sys.argv) >= 3: #en1, fr1, etc, regexps
