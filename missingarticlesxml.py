@@ -134,16 +134,6 @@ def main():
         if not image_cand:
             continue
         
-        #cats
-        m = cats_r.finditer(x.text)
-        cats = []
-        for cat in m:
-            #print cat.group('catname')
-            transcat = translatecat(cat.group('catname'), lang)
-            if transcat:
-                cats.append(transcat)
-        #print cats
-        
         #description
         desc = re.findall(ur"(?im)^(\'{3}\s*%s[^\n\r\<]+)[\n\r]"  % (x.title), x.text)
         if not desc:
@@ -174,6 +164,16 @@ def main():
             break
         
         if desc and len(desc) < 1000 and birthdate and deathdate:
+            #cats, esto es lo más costoso en tiempo, entonces lo dejamos para este último if justo antes de generar el output
+            m = cats_r.finditer(x.text)
+            cats = []
+            for cat in m:
+                #print cat.group('catname')
+                transcat = translatecat(cat.group('catname'), lang)
+                if transcat:
+                    cats.append(transcat)
+            #print cats
+            
             output  = u"""\n<br clear="all"/>\n==== [[%s]] ([[:%s:%s|%s]]) ====""" % (x.title, lang, x.title, lang)
             output += u"""\n[[File:%s|thumb|right|120px|%s]]""" % (image_cand, x.title)
             output += u"""\n<small>%s</small>""" % (linkstoiws(desc, lang).strip())
