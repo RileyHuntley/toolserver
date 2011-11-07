@@ -97,7 +97,7 @@ def main():
                         ur"Category|" #en
                         ur"Categoría" #es
                         ur")\s*:\s*(?P<catname>[^\]\|]+)\s*[\]\|]")
-    dates_r = re.compile(ur"(?im)\(\s*[^\(\)\d]*?\s*\[?\[?(?P<birthday>\d+)\s+de\s+(?P<birthmonth>%s)\]?\]?\s+de\s+\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,5}\s*[^\(\)\d]*?\s*\[?\[?(?P<deathday>\d+)\s+de\s+(?P<deathmonth>%s)\]?\]?\s+de\s+\[?\[?(?P<deathyear>\d{4})\]?\]?\s*\)" % ('|'.join(months['es']), '|'.join(months['es'])))
+    dates_r = re.compile(ur"(?im)\(\s*[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)\s*de\s*(?P<birthmonth>%s)\]?\]?\s*de)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,5}\s*[^\(\)\d]*?\s*(\[?\[?(?P<deathday>\d+)\s*de\s*(?P<deathmonth>%s)\]?\]?\s*de)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?\s*\)" % ('|'.join(months['es']), '|'.join(months['es'])))
     defaultsort_r = re.compile(ur"(?im)\{\{\s*(DEFAULTSORT|ORDENAR)\s*:\s*(?P<defaultsort>[^\{\}]+?)\s*\}\}")
     for x in xml.parse(): #parsing the whole dump
         if re.search(title_ex_r, x.title) or \
@@ -127,19 +127,21 @@ def main():
         images = re.findall(ur"(?im)[\s\/\:\|\=]+([^\/\:\|\=]+\.jpe?g)[\s\|]", x.text)
         image_cand = ''
         if images:
+            continue #temp
             for image in images:
                 if len(re.findall(ur"(%s)" % ('|'.join(trozos)), image)) >= 2:
                     image_cand = image
                     break
-        if not image_cand:
-            continue
+        #temp
+        #if not image_cand:
+        #    continue
         
         #description
         desc = re.findall(ur"(?im)^(\'{3}\s*%s[^\n\r\<]+)[\n\r]"  % (x.title), x.text)
         if not desc:
             continue
         desc = desc[0]
-        print desc
+        #print desc
         
         #birth and death dates
         m = dates_r.finditer(desc)
@@ -147,13 +149,23 @@ def main():
         deathdate = ''
         for dates in m:
             birthmonth = ''
-            if monthstoen.has_key(dates.group('birthmonth').lower()):
-                birthmonth = monthstoen[dates.group('birthmonth').lower()]
+            if dates.group('birthday') and dates.group('birthmonth'):
+                if monthstoen.has_key(dates.group('birthmonth').lower()):
+                    birthmonth = monthstoen[dates.group('birthmonth').lower()]
             deathmonth = ''
-            if monthstoen.has_key(dates.group('deathmonth').lower()):
-                deathmonth = monthstoen[dates.group('deathmonth').lower()]
-            birthdate = u'%s %s, %s' % (birthmonth, dates.group('birthday'), dates.group('birthyear'))
-            deathdate = u'%s %s, %s' % (deathmonth, dates.group('deathday'), dates.group('deathyear'))
+            if dates.group('deathday') and dates.group('deathmonth'):
+                if monthstoen.has_key(dates.group('deathmonth').lower()):
+                    deathmonth = monthstoen[dates.group('deathmonth').lower()]
+            if birthmonth:
+                #continue #temp
+                birthdate = u'%s %s, %s' % (birthmonth, dates.group('birthday'), dates.group('birthyear'))
+            else:
+                birthdate = u'%s' % (dates.group('birthyear'))
+            if deathmonth:
+                #continue #temp
+                deathdate = u'%s %s, %s' % (deathmonth, dates.group('deathday'), dates.group('deathyear'))
+            else:
+                deathdate = u'%s' % (dates.group('deathyear'))
             break
         
         #defaultsort
@@ -172,14 +184,14 @@ def main():
                 transcat = translatecat(cat.group('catname'), lang)
                 if transcat:
                     cats.append(transcat)
-            #print cats
             
+            #la salida para esta bio
             output  = u"""\n<br clear="all"/>\n==== [[%s]] ([[:%s:%s|%s]]) ====""" % (x.title, lang, x.title, lang)
-            output += u"""\n[[File:%s|thumb|right|120px|%s]]""" % (image_cand, x.title)
+            #temp output += u"""\n[[File:%s|thumb|right|120px|%s]]""" % (image_cand, x.title)
             output += u"""\n<small>%s</small>""" % (linkstoiws(desc, lang).strip())
             output += u"""\n<pre>"""
             output += u"""\n{{Expand Spanish|%s}}""" % (x.title)
-            output += u"""\n[[File:%s|thumb|right|%s]]""" % (image_cand, x.title)
+            #temp output += u"""\n[[File:%s|thumb|right|%s]]""" % (image_cand, x.title)
             output += u"""\n\'\'\'%s\'\'\' (%s - %s) was a .""" % (x.title, birthdate, deathdate)
             output += u"""\n\n{{Persondata <!-- Metadata: see [[Wikipedia:Persondata]]. -->"""
             output += u"""\n| NAME              = %s """ % (defaultsort)
