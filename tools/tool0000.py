@@ -80,9 +80,9 @@ ob_end_flush();
 """ % datetime.datetime.now()
 
 def getPHPTools():
-    return u"""<!--<h2>My best tools (or I think so)</h2>-->
+    return u"""<h2>My best tools (or I think so)</h2>
 <ul>
-<li><a href="imagesforbio/">Images for biographies</a>: it shows a list of biographies missing images, with image proposals. It helps to include images in <a href="http://toolserver.org/~emijrp/imagesforbio/stats.php">+150 Wikipedia projects</a>, also in the smallest ones. Thousands of images have been included in articles ussing this method. Yay!</li>
+<li><a href="imagesforbio/">Images for biographies</a>: it shows a list of biographies missing images, with image proposals. It helps to include images in <a href="http://toolserver.org/~emijrp/imagesforbio/stats.php">+150 Wikipedia projects</a>, also in the smallest ones. Thousands of images have been included in articles using this method. Yay!</li>
 <li><a href="wlm/">Wiki <i>Loves</i> Monuments</a>: a map for the Spanish edition of Wiki Loves Monuments.</li>
 <li><a href="commonsexplorer/">Wikimedia Commons Explorer</a>: a map to explore geocoded Wikimedia Commons images by date.</li>
 <li><a href="wikimediacounter/">Wikimedia counter</a>: this counter shows the number of edits made in all the Wikimedia Foundation projects (Wikipedia, Wiktionary, Wikibooks, Wikiquote, Wikisource, Wikinews, Wikiversity, Meta, Wikispecies and Commons). The 1,000,000,000 (one billion) milestone was reached in <a href="wikimediacounter/onebillion.png">April 16, 2010</a>. Congratulations!</li>
@@ -148,7 +148,7 @@ def createIndex():
 
 <p><img src="Wikihands.jpg" alt="me" style="clear:right;float:right"/></p>
 %s
-
+<!--
 <h2>Useful links</h2>
 Some useful links for developing tools and <i>just for fun</i>:
 <ul>
@@ -160,18 +160,12 @@ Some useful links for developing tools and <i>just for fun</i>:
 <ul>
 <li>Counters: <a href="http://www.7is7.com/software/firefox/partycounter.html">Firefox downloads</a>, <a href="http://gigatweeter.com/counter">Twitter</a></li>
 </ul>
+-->
+
 <?php
 /*
 
 OLD DESIGN
-
-<h2>Image related</h2>
-<ul>
-<li><a href="http://toolserver.org/~emijrp/best/"><i>Best Free Images</i></a>: Vote your favorite images!</li>
-<li><a href="http://commons.wikimedia.org/wiki/User:Emijrp/Commons">Proposed images for blind articles</a> (<tt>Updated!</tt>)</li>
-<li>Duplicated images: <a href="http://commons.wikimedia.org/wiki/User:Emijrp/Duplicated_images">Commons</a> (<tt>Old</tt>), <a href="http://en.wikipedia.org/wiki/User:Emijrp/Duplicated_images">English Wikipedia</a> (<tt>Updated!</tt>), <a href="">Deutch Wikipedia</a>.</li>
-<li><a href="http://toolserver.org/~emijrp/imagesforbio/">Images for biographies</a> (<tt>Updated!</tt>)</li>
-</ul>
 
 <h2>Lists</h2>
 <ul>
@@ -181,16 +175,9 @@ OLD DESIGN
 
 <h2>Miscellany</h2>
 <ul>
-<li><a href="http://www.toolserver.org/~emijrp/avbot/">AVBOT logs</a>: Real time logs for an antivandalbot in Spanish Wikipedia.</li>
-<li><a href="http://www.toolserver.org/~emijrp/wikiforja.php">WikiFORJA</a>: More tools.</li>
 <li><a href="http://www.toolserver.org/~emijrp/red/">Wikipedia Redlinks</a>: <i>perpetual work-in-progress</i>.</li>
-<li><a href="http://www.toolserver.org/~emijrp/tutoriales/">Tutoriales en Flash</a>: Para aprender las cosas bÃ¡sicas de Wikipedia.</li>
 </ul>
 
-<hr/>
-
-<p>See my userpage in <a href="http://es.wikipedia.org/wiki/Usuario:Emijrp">Spanish</a> and <a href="http://en.wikipedia.org/wiki/User:Emijrp">English Wikipedia</a>. Bugs reports and suggestions to <tt>emijrp</tt> AATTTT <tt>gmail</tt> DDDOOOOOTTT <tt>com</tt></p>
-*/
 ?>
 %s
 """ % (getPHPHeader(), getPHPTools(), getPHPFooter())
