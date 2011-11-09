@@ -63,7 +63,7 @@ def main():
     dumppath = ''
     dumpfilename = ''
     mode = ''
-    skip = 'File:Ubuntu 10.04 evolution4.png' #'File:Lagothrix lagotricha.jpg'
+    skip = u'File:Géographie illustrée de la France et de ses colonies 106.jpg' #'File:Lagothrix lagotricha.jpg'
     if len(sys.argv) >= 2:
         dumpfilename = sys.argv[1]
     if len(sys.argv) >= 3: #en1, fr1, etc, regexps
