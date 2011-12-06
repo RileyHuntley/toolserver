@@ -63,7 +63,7 @@ def main():
     dumppath = ''
     dumpfilename = ''
     mode = ''
-    skip = u'File:Géographie illustrée de la France et de ses colonies 106.jpg' #'File:Lagothrix lagotricha.jpg'
+    skip = u'' #'File:Lagothrix lagotricha.jpg'
     if len(sys.argv) >= 2:
         dumpfilename = sys.argv[1]
     if len(sys.argv) >= 3: #en1, fr1, etc, regexps
@@ -89,8 +89,11 @@ def main():
                 skip = ''
         
         #regexps
+        spliter1 = ur'[\s\-\,\.]*' #spliter for months in words
+        spliter2 = ur'' #todo, spliter for dates with month in numbers
         regexp_r = {
-            'en1': ur"(?im)^(?P<all>(?P<ini>\s*\|\s*Date\s*=\s*)(?P<date>(?P<day>[1-9]|1[0-9]|2[0-9]|3[0-1])\s*(?P<month>January|Jan|February|Feb|March|Mar|April|Apr|May|June|Jun|July|Jul|August|Aug|September|Sept?|October|Oct|November|Nov|December|Dec)\s*(?P<year>\d{4}))(?P<end>\s*))$",
+            'en1': ur"(?im)^(?P<all>(?P<ini>\s*\|\s*Date\s*=\s*)(?P<date>(?P<day>[1-9]|1[0-9]|2[0-9]|3[0-1])%s(?P<month>January|Jan|February|Feb|March|Mar|April|Apr|May|June|Jun|July|Jul|August|Aug|September|Sept?|October|Oct|November|Nov|December|Dec)%s(?P<year>\d{4}))(?P<end>\s*))$" % (spliter1, spliter1),
+            'en2': ur"(?im)^(?P<all>(?P<ini>\s*\|\s*Date\s*=\s*)(?P<month>January|Jan|February|Feb|March|Mar|April|Apr|May|June|Jun|July|Jul|August|Aug|September|Sept?|October|Oct|November|Nov|December|Dec)%s(?P<date>(?P<day>[1-9]|1[0-9]|2[0-9]|3[0-1])%s(?P<year>\d{4}))(?P<end>\s*))$" % (spliter1, spliter1),
             'es1': ur"(?im)^(?P<all>(?P<ini>\s*\|\s*Date\s*=\s*)(?P<date>(?P<day>[1-9]|1[0-9]|2[0-9]|3[0-1])\s+de\s+(?P<month>Enero|Ene|Febrero|Feb|Marzo|Mar|Abril|Abr|Mayo|May|Junio|Jun|Julio|Jul|Agosto|Ago|Septiembre|Sept?|Octubre|Oct|Noviembre|Nov|Diciembre|Dic)\s+de\s+(?P<year>\d{4}))(?P<end>\s*))$",
             
         }
@@ -115,12 +118,14 @@ def main():
                 #replacement
                 regexp_rep = {
                     'en1': i.group('all'),
+                    'en2': i.group('all'),
                     'es1': i.group('all'),
                     
                 }
                 #sub
                 regexp_sub = { 
                     'en1': ur"%s%s-%s-%02d%s" % (i.group('ini'), i.group('year'), month2number[i.group('month').strip().lower()], int(i.group('day')), i.group('end')),
+                    'en2': ur"%s%s-%s-%02d%s" % (i.group('ini'), i.group('year'), month2number[i.group('month').strip().lower()], int(i.group('day')), i.group('end')),
                     'es1': ur"%s%s-%s-%02d%s" % (i.group('ini'), i.group('year'), month2number[i.group('month').strip().lower()], int(i.group('day')), i.group('end')),
                     
                 }
