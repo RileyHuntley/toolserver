@@ -73,16 +73,22 @@ monthstoen = {
     }
 
 nation = {
+    'American': 'United States',
     'Argentine': 'Argentina',
     'Bolivian': 'Bolivia',
     'Brazilian': 'Brazil',
     'Chilean': 'Chile',
+    'Cuban': 'Cuba',
+    'Ecuadorian': 'Ecuador',
     'French': 'France',
     'Hungarian': 'Hungry',
     'Italian': 'Italy',
+    'Mexican': 'Mexico',
+    'Paraguayan': 'Paraguay',
     'Peruvian': 'Peru',
     'Spanish': 'Spain',
     'Uruguayan': 'Uruguay',
+    'Venezuelan': 'Venezuela',
 }
 
 def main():
@@ -212,8 +218,11 @@ def main():
             if nationality:
                 for cat in cats:
                     t = cat.split(' ')
-                    if t[0] == nationality and len(t) == 2:
-                        occupations.append(t[1][:-1]) #remove final s
+                    if (t[0] == nationality or t[0].split('-')[0] == nationality) and len(t) == 2: # [[Category:Spanish writers]] [[Category:Spanish-language writers]]
+                        if t[1][-1] == 's':
+                            occupations.append(t[1].rstrip('s')) #remove final s
+                        elif t[1] == 'businesspeople':
+                            occupations.append('businessman')
                 
             #la salida para esta bio
             output  = u"""\n<br clear="all"/>\n==== [[%s]] ([[:%s:%s|%s]]) ====""" % (x.title, lang, x.title, lang)
