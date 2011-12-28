@@ -136,10 +136,12 @@ def main():
         #metemos variantes sin acentos
         [(trozo != quitaracentos(trozo) and trozo not in trozos) and trozos.append(quitaracentos(trozo)) for trozo in trozos]
         
-        if not re.search(birth_r, x.text) or not re.search(death_r, x.text): #ha fallecido
+        #descartamos algunas bios
+        if not re.search(birth_r, x.text) or not re.search(death_r, x.text): #sino ha fallecido, fuera
             continue
-        if re.search(iws_r, x.text): #no tiene iws
+        if re.search(iws_r, x.text): #si tiene iws, fuera
             continue
+        
         c += 1
         images = re.findall(ur"(?im)[\s\/\:\|\=]+([^\/\:\|\=]+\.jpe?g)[\s\|]", x.text)
         image_cand = ''
@@ -247,7 +249,7 @@ def main():
                 for cat in cats:
                     output += u"""\n[[Category:%s]]""" % (cat)
             output += u"""\n\n[[%s:%s]]""" % (lang, x.title)
-            output += u"""\n\n{{bio-stub}}"""
+            output += u"""\n\n%s""" % (nationality and nation[nationality] and '{{%s-bio-stub}}' % (nation[nationality]) or '{{bio-stub}}')
             output += u"""\n</pre>"""
             
             print '#'*70
