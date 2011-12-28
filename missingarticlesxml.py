@@ -20,6 +20,7 @@ import os
 import re
 import sys
 
+import family
 import wikipedia
 import xmlreader
 
@@ -71,6 +72,19 @@ monthstoen = {
     'diciembre': 'December',
     }
 
+nation = {
+    'Argentine': 'Argentina',
+    'Bolivian': 'Bolivia',
+    'Brazilian': 'Brazil',
+    'Chilean': 'Chile',
+    'French': 'France',
+    'Hungarian': 'Hungry',
+    'Italian': 'Italy',
+    'Peruvian': 'Peru',
+    'Spanish': 'Spain',
+    'Uruguayan': 'Uruguay',
+}
+
 def main():
     """Missing articles"""
     
@@ -98,7 +112,10 @@ def main():
                         ur"Categoría" #es
                         ur")\s*:\s*(?P<catname>[^\]\|]+)\s*[\]\|]")
     dates_r = re.compile(ur"(?im)\(\s*[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)\s*de\s*(?P<birthmonth>%s)\]?\]?\s*de)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,5}\s*[^\(\)\d]*?\s*(\[?\[?(?P<deathday>\d+)\s*de\s*(?P<deathmonth>%s)\]?\]?\s*de)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?\s*\)" % ('|'.join(months['es']), '|'.join(months['es'])))
-    defaultsort_r = re.compile(ur"(?im)\{\{\s*(DEFAULTSORT|ORDENAR)\s*:\s*(?P<defaultsort>[^\{\}]+?)\s*\}\}")
+    defaultsort_r = re.compile(ur"(?im)\{\{\s*("
+                               ur"DEFAULTSORT|" #en
+                               ur"ORDENAR" #es
+                               ur")\s*:\s*(?P<defaultsort>[^\{\}]+?)\s*\}\}")
     for x in xml.parse(): #parsing the whole dump
         if re.search(title_ex_r, x.title) or \
            re.search(red_r, x.text) or \
@@ -106,18 +123,12 @@ def main():
            len(x.text.splitlines()) < 3 or len(x.text) < 1024*2:
             continue
         #nombre con dos palabras largas al menos
-        trozos = x.title.split(' ')
-        trozos2 = []
-        for trozo in trozos: 
-            if len(trozo) >= 3:
-                trozos2.append(trozo)
-        trozos = trozos2
+        trozos = [] # no hacer la asignacion del bucle for directamente, sino almacena True y False en vez de los trozos
+        [len(trozo) >= 3 and trozos.append(trozo) for trozo in x.title.split(' ')]
         if not len(trozos) >= 2:
             continue
         #metemos variantes sin acentos
-        for trozo in trozos2:
-            if trozo != quitaracentos(trozo):
-                trozos.append(quitaracentos(trozo))
+        [(trozo != quitaracentos(trozo) and trozo not in trozos) and trozos.append(quitaracentos(trozo)) for trozo in trozos]
         
         if not re.search(birth_r, x.text) or not re.search(death_r, x.text): #ha fallecido
             continue
@@ -174,17 +185,36 @@ def main():
         for d in m:
             defaultsort = d.group("defaultsort")
             break
+        if not defaultsort: #create myself
+            defaultsort = u'%s, %s' % (' '.join(x.title.split(' ')[1:]), x.title.split(' ')[0])
         
         if desc and len(desc) < 1000 and birthdate and deathdate:
             #cats, esto es lo más costoso en tiempo, entonces lo dejamos para este último if justo antes de generar el output
             m = cats_r.finditer(x.text)
             cats = []
-            for cat in m:
-                #print cat.group('catname')
-                transcat = translatecat(cat.group('catname'), lang)
-                if transcat:
-                    cats.append(transcat)
+            [translatecat(cat.group('catname'), lang) and cats.append(translatecat(cat.group('catname'), lang)) for cat in m]
             
+            #nationality
+            nationality = ''
+            if cats:
+                n = [cat.split(' ')[0] for cat in cats]
+                for nn in n:
+                    if nn in nation.keys():
+                        if nationality:
+                            if nn != nationality: #conflict, several nationalities for this bio, blank nationality and exit
+                                nationality = ''
+                                break
+                        else:
+                            nationality = nn                        
+            
+            #occupations
+            occupations = []
+            if nationality:
+                for cat in cats:
+                    t = cat.split(' ')
+                    if t[0] == nationality and len(t) == 2:
+                        occupations.append(t[1][:-1]) #remove final s
+                
             #la salida para esta bio
             output  = u"""\n<br clear="all"/>\n==== [[%s]] ([[:%s:%s|%s]]) ====""" % (x.title, lang, x.title, lang)
             #temp output += u"""\n[[File:%s|thumb|right|120px|%s]]""" % (image_cand, x.title)
@@ -192,7 +222,7 @@ def main():
             output += u"""\n<pre>"""
             output += u"""\n{{Expand Spanish|%s}}""" % (x.title)
             #temp output += u"""\n[[File:%s|thumb|right|%s]]""" % (image_cand, x.title)
-            output += u"""\n\'\'\'%s\'\'\' (%s - %s) was a .""" % (x.title, birthdate, deathdate)
+            output += u"""\n\'\'\'%s\'\'\' (%s - %s) was %s %s %s.""" % (x.title, birthdate, deathdate, nationality and nation[nationality][0] in ['A', 'E', 'I', 'O', 'U'] and 'an' or 'a', nationality and '[[%s|%s]]' % (nation[nationality], nationality), occupations and (len(occupations) > 1 and '%s and %s' % (', '.join(occupations[:-1]), occupations[-1:][0]) or occupations[0]) or '...')
             output += u"""\n\n{{Persondata <!-- Metadata: see [[Wikipedia:Persondata]]. -->"""
             output += u"""\n| NAME              = %s """ % (defaultsort)
             output += u"""\n| ALTERNATIVE NAMES = """

@@ -89,11 +89,12 @@ def main():
                 skip = ''
         
         #regexps
-        spliter1 = ur'[\s\-\,\.]*' #spliter for months in words
+        spliter1 = ur'[\s\-\,\.\/]*' #spliter for months in words
         spliter2 = ur'' #todo, spliter for dates with month in numbers
+        suffix1 = ur'[\s\.]*(st|nd|rd|th)?[\s\.]*' # March 1st, ..., not mandatory
         regexp_r = {
-            'en1': ur"(?im)^(?P<all>(?P<ini>\s*\|\s*Date\s*=\s*)(?P<date>(?P<day>[1-9]|1[0-9]|2[0-9]|3[0-1])%s(?P<month>January|Jan|February|Feb|March|Mar|April|Apr|May|June|Jun|July|Jul|August|Aug|September|Sept?|October|Oct|November|Nov|December|Dec)%s(?P<year>\d{4}))(?P<end>\s*))$" % (spliter1, spliter1),
-            'en2': ur"(?im)^(?P<all>(?P<ini>\s*\|\s*Date\s*=\s*)(?P<month>January|Jan|February|Feb|March|Mar|April|Apr|May|June|Jun|July|Jul|August|Aug|September|Sept?|October|Oct|November|Nov|December|Dec)%s(?P<date>(?P<day>[1-9]|1[0-9]|2[0-9]|3[0-1])%s(?P<year>\d{4}))(?P<end>\s*))$" % (spliter1, spliter1),
+            'en1': ur"(?im)^(?P<all>(?P<ini>\s*\|\s*Date\s*=\s*)(?P<date>(?P<day>[1-9]|1[0-9]|2[0-9]|3[0-1])%s%s(?P<month>January|Jan|February|Feb|March|Mar|April|Apr|May|June|Jun|July|Jul|August|Aug|September|Sept?|October|Oct|November|Nov|December|Dec)%s(?P<year>\d{4}))(?P<end>\s*))$" % (suffix1, spliter1, spliter1),
+            'en2': ur"(?im)^(?P<all>(?P<ini>\s*\|\s*Date\s*=\s*)(?P<month>January|Jan|February|Feb|March|Mar|April|Apr|May|June|Jun|July|Jul|August|Aug|September|Sept?|October|Oct|November|Nov|December|Dec)%s(?P<date>(?P<day>[1-9]|1[0-9]|2[0-9]|3[0-1])%s%s(?P<year>\d{4}))(?P<end>\s*))$" % (spliter1, suffix1, spliter1),
             'es1': ur"(?im)^(?P<all>(?P<ini>\s*\|\s*Date\s*=\s*)(?P<date>(?P<day>[1-9]|1[0-9]|2[0-9]|3[0-1])\s+de\s+(?P<month>Enero|Ene|Febrero|Feb|Marzo|Mar|Abril|Abr|Mayo|May|Junio|Jun|Julio|Jul|Agosto|Ago|Septiembre|Sept?|Octubre|Oct|Noviembre|Nov|Diciembre|Dic)\s+de\s+(?P<year>\d{4}))(?P<end>\s*))$",
             
         }
