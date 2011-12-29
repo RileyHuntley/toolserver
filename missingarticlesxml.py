@@ -263,13 +263,13 @@ def main():
             defaultsort = d.group("defaultsort")
             break
         if not defaultsort: #create myself
-            defaultsort = u'%s, %s' % (' '.join(x.title.split(' ')[1:]), x.title.split(' ')[0])
+            defaultsort = u'%s, %s' % (' '.join(quitaracentos(x.title).split(' ')[1:]), quitaracentos(x.title).split(' ')[0])
         
         if desc and len(desc) < 1000 and birthdate and deathdate:
             #cats, esto es lo más costoso en tiempo, entonces lo dejamos para este último if justo antes de generar el output
             m = cats_r.finditer(x.text)
             cats = []
-            [translatecat(cat.group('catname'), lang) and cats.append(translatecat(cat.group('catname'), lang)) for cat in m]
+            [translatecat(cat.group('catname'), lang) and translatecat(cat.group('catname'), lang) not in cats and cats.append(translatecat(cat.group('catname'), lang)) for cat in m]
             
             #nationality
             nationality = ''
