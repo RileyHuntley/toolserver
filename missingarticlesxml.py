@@ -212,7 +212,7 @@ def main():
         #    continue
         
         #description
-        desc = re.findall(ur"(?im)^(\'{3}\s*%s[^\n\r\<]+)[\n\r]"  % (x.title), x.text)
+        desc = re.findall(ur"(?im)^(\'{2,5}\s*%s[^\n\r]+)[\n\r]"  % (x.title.split(' ')[0]), x.text)
         if not desc:
             continue
         desc = desc[0]
