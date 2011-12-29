@@ -276,7 +276,7 @@ def main():
             if cats:
                 n = [cat.split(' ')[0] for cat in cats]
                 for nn in n:
-                    if nn in nation.keys():
+                    if nn in nationalitytonation.keys():
                         if nationality:
                             if nn != nationality: #conflict, several nationalities for this bio, blank nationality and exit
                                 nationality = ''
