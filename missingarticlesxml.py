@@ -27,16 +27,16 @@ import xmlreader
 #TODO ranking de categorías sacadas de artículos que no tienen ningún interwiki
 
 def quitaracentos(t):
-    t = t.replace(u'Á', 'A')
-    t = t.replace(u'É', 'E')
-    t = t.replace(u'Í', 'I')
-    t = t.replace(u'Ó', 'O')
-    t = t.replace(u'Ú', 'U')
-    t = t.replace(u'á', 'a')
-    t = t.replace(u'é', 'e')
-    t = t.replace(u'í', 'i')
-    t = t.replace(u'ó', 'o')
-    t = t.replace(u'ú', 'u')
+    t = re.sub(ur'[ÁÀÄ]', ur'A', t)
+    t = re.sub(ur'[ÉÈË]', ur'E', t)
+    t = re.sub(ur'[ÍÌÏ]', ur'I', t)
+    t = re.sub(ur'[ÓÒÖ]', ur'O', t)
+    t = re.sub(ur'[ÚÙÜ]', ur'U', t)
+    t = re.sub(ur'[áàä]', ur'a', t)
+    t = re.sub(ur'[éèë]', ur'e', t)
+    t = re.sub(ur'[íìï]', ur'i', t)
+    t = re.sub(ur'[óòö]', ur'o', t)
+    t = re.sub(ur'[úùü]', ur'u', t)
     return t
 
 def linkstoiws(t, lang):
@@ -53,11 +53,35 @@ def translatecat(cat, lang):
             return i.group('catiw')
     return ''
 
+langisotolang = {
+    'es': 'Spanish',
+    'fr': 'French',
+    'de': 'German',
+}
+
 months = {
+    'de': ['januar', 'februar', u'm[äa]rz', 'april', 'mai', 'juni', 'juli', 'august', 'september', 'oktober', 'november', 'dezember'],
     'es': ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
+    'fr': ['janvier', u'f[ée]vrier', 'mars', 'avril', 'may', 'juin', 'juillet', u'ao[ûu]t', 'septembre', 'octobre', 'novembre', u'décembre'],
     }
 
 monthstoen = {
+    #de
+    'januar': 'January',
+    'februar': 'February',
+    'märz': 'March',
+    'marz': 'March',
+    'april': 'April',
+    'mai': 'May',
+    'juni': 'June',
+    'juli': 'July',
+    'august': 'August',
+    'september': 'September',
+    'oktober': 'October',
+    'november': 'November',
+    'dezember': 'December',
+    
+    #es
     'enero': 'January',
     'febrero': 'February',
     'marzo': 'March',
@@ -70,17 +94,35 @@ monthstoen = {
     'octubre': 'October',
     'noviembre': 'November',
     'diciembre': 'December',
+    
+    #fr
+    'janvier': 'January',
+    'février': 'February',
+    'fevrier': 'February',
+    'mars': 'March',
+    'avril': 'April',
+    'may': 'May',
+    'juin': 'June',
+    'juillet': 'July',
+    'août': 'August',
+    'aout': 'August',
+    'septembre': 'September',
+    'octobre': 'October',
+    'novembre': 'November',
+    'décembre': 'December',
     }
 
-nation = {
+nationalitytonation = {
     'American': 'United States',
     'Argentine': 'Argentina',
+    'Belgian': 'Belgium',
     'Bolivian': 'Bolivia',
     'Brazilian': 'Brazil',
     'Chilean': 'Chile',
     'Cuban': 'Cuba',
     'Ecuadorian': 'Ecuador',
     'French': 'France',
+    'German': 'Germany',
     'Hungarian': 'Hungry',
     'Italian': 'Italy',
     'Mexican': 'Mexico',
@@ -99,30 +141,44 @@ def main():
     dumpfilename = ''
     if len(sys.argv) >= 2:
         dumpfilename = sys.argv[1]
+        lang = dumpfilename.split('wiki')[0]
     
     xml = xmlreader.XmlDump('%s%s' % (dumppath and '%s/' % dumppath or '', dumpfilename), allrevisions=False)
     c = 0
+    bios = 0
     
     title_ex_r = re.compile(ur"(?im)[\:\(\)]") # : to exclude other namespaces, ( to disambiguation
-    red_r = re.compile(ur"(?im)^\#\s*redirect")
+    red_r = re.compile(ur"(?im)^\#\s*redirec")
     iws_r = re.compile(ur"(?im)\[\[\s*[a-z]{2,3}(\-[a-z]{2,5})?\s*:")
-    dis_r = re.compile(ur"(?im)\{\{\s*(disambiguation|disambig|desambiguaci[oó]n|desambig|desamb)\s*[\|\}]")
+    dis_r = re.compile(ur"(?im)\{\{\s*(disambiguation|disambig|desambiguaci[oó]n|desambig|desamb|homonymie)\s*[\|\}]")
     birth_r = re.compile(ur"(?im)\:\s*("
-                         ur"Nacidos[_ ]en" #es
-                         ur")")
+                         ur"Geboren[_ ]|" #de
+                         ur"Nacidos[_ ]en|" #es
+                         ur"Naissance[_ ]en" #fr
+                         ur")[_ ](?P<birthyear>\d{4})")
     death_r = re.compile(ur"(?im)\:\s*("
-                         ur"Fallecidos[_ ]en" #es
-                         ur")")
+                         ur"Gestorben[_ ]|" #de
+                         ur"Fallecidos[_ ]en|" #es
+                         ur"Décès[_ ]en" #fr
+                         ur")[_ ](?P<deathyear>\d{4})")
     cats_r = re.compile(ur"(?im)\[\[\s*("
+                        ur"Kategorie|" #de
                         ur"Category|" #en
-                        ur"Categoría" #es
+                        ur"Categoría|" #es
+                        ur"Catégorie" #fr
                         ur")\s*:\s*(?P<catname>[^\]\|]+)\s*[\]\|]")
-    dates_r = re.compile(ur"(?im)\(\s*[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)\s*de\s*(?P<birthmonth>%s)\]?\]?\s*de)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,5}\s*[^\(\)\d]*?\s*(\[?\[?(?P<deathday>\d+)\s*de\s*(?P<deathmonth>%s)\]?\]?\s*de)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?\s*\)" % ('|'.join(months['es']), '|'.join(months['es'])))
+    dates_r = {
+        'de': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
+        'es': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)\s*de\s*(?P<birthmonth>%s)\]?\]?\s*de)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*[^\(\)\d]*?\s*(\[?\[?(?P<deathday>\d+)\s*de\s*(?P<deathmonth>%s)\]?\]?\s*de)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
+        'fr': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
+    }
     defaultsort_r = re.compile(ur"(?im)\{\{\s*("
-                               ur"DEFAULTSORT|" #en
+                               ur"SORTIERUNG|" #de
+                               ur"DEFAULTSORT|" #en, fr
                                ur"ORDENAR" #es
                                ur")\s*:\s*(?P<defaultsort>[^\{\}]+?)\s*\}\}")
     for x in xml.parse(): #parsing the whole dump
+        c+=1
         if re.search(title_ex_r, x.title) or \
            re.search(red_r, x.text) or \
            re.search(dis_r, x.text) or \
@@ -142,7 +198,7 @@ def main():
         if re.search(iws_r, x.text): #si tiene iws, fuera
             continue
         
-        c += 1
+        #buscando imágenes útiles para la bio
         images = re.findall(ur"(?im)[\s\/\:\|\=]+([^\/\:\|\=]+\.jpe?g)[\s\|]", x.text)
         image_cand = ''
         if images:
@@ -163,29 +219,42 @@ def main():
         #print desc
         
         #birth and death dates
-        m = dates_r.finditer(desc)
         birthdate = ''
         deathdate = ''
-        for dates in m:
-            birthmonth = ''
-            if dates.group('birthday') and dates.group('birthmonth'):
-                if monthstoen.has_key(dates.group('birthmonth').lower()):
-                    birthmonth = monthstoen[dates.group('birthmonth').lower()]
-            deathmonth = ''
-            if dates.group('deathday') and dates.group('deathmonth'):
-                if monthstoen.has_key(dates.group('deathmonth').lower()):
-                    deathmonth = monthstoen[dates.group('deathmonth').lower()]
-            if birthmonth:
-                #continue #temp
-                birthdate = u'%s %s, %s' % (birthmonth, dates.group('birthday'), dates.group('birthyear'))
-            else:
-                birthdate = u'%s' % (dates.group('birthyear'))
-            if deathmonth:
-                #continue #temp
-                deathdate = u'%s %s, %s' % (deathmonth, dates.group('deathday'), dates.group('deathyear'))
-            else:
-                deathdate = u'%s' % (dates.group('deathyear'))
+        m = birth_r.finditer(x.text)
+        for i in m:
+            birthdate = i.group('birthyear')
             break
+        m = death_r.finditer(x.text)
+        for i in m:
+            deathdate = i.group('deathyear')
+            break
+        
+        if not birthdate or not deathdate:
+            m = dates_r[lang].finditer(desc)
+            for i in m:
+                birthmonth = ''
+                if i.group('birthday') and i.group('birthmonth'):
+                    if monthstoen.has_key(quitaracentos(i.group('birthmonth').lower())):
+                        birthmonth = monthstoen[i.group('birthmonth').lower()]
+                deathmonth = ''
+                if i.group('deathday') and i.group('deathmonth'):
+                    if monthstoen.has_key(quitaracentos(i.group('deathmonth').lower())):
+                        deathmonth = monthstoen[i.group('deathmonth').lower()]
+                if birthmonth:
+                    #continue #temp
+                    birthdate = u'%s %s, %s' % (birthmonth, i.group('birthday'), i.group('birthyear'))
+                else:
+                    birthdate = u'%s' % (i.group('birthyear'))
+                if deathmonth:
+                    #continue #temp
+                    deathdate = u'%s %s, %s' % (deathmonth, i.group('deathday'), i.group('deathyear'))
+                else:
+                    deathdate = u'%s' % (i.group('deathyear'))
+                break
+        
+        if not birthdate or not deathdate:
+            continue
         
         #defaultsort
         m = defaultsort_r.finditer(x.text)
@@ -225,15 +294,18 @@ def main():
                             occupations.append(t[1].rstrip('s')) #remove final s
                         elif t[1] == 'businesspeople':
                             occupations.append('businessman')
-                
+            
+            if not occupations or not nationality:
+                continue
+            
             #la salida para esta bio
             output  = u"""\n<br clear="all"/>\n==== [[%s]] ([[:%s:%s|%s]]) ====""" % (x.title, lang, x.title, lang)
             #temp output += u"""\n[[File:%s|thumb|right|120px|%s]]""" % (image_cand, x.title)
-            output += u"""\n<small>%s</small>""" % (linkstoiws(desc, lang).strip())
+            output += u"""\n<small><nowiki>%s</nowiki></small>""" % (linkstoiws(desc, lang).strip())
             output += u"""\n<pre>"""
-            output += u"""\n{{Expand Spanish|%s}}""" % (x.title)
+            output += u"""\n{{Expand %s|%s}}""" % (langisotolang[lang], x.title)
             #temp output += u"""\n[[File:%s|thumb|right|%s]]""" % (image_cand, x.title)
-            output += u"""\n\'\'\'%s\'\'\' (%s - %s) was %s %s %s.""" % (x.title, birthdate, deathdate, nationality and nation[nationality][0] in ['A', 'E', 'I', 'O', 'U'] and 'an' or 'a', nationality and '[[%s|%s]]' % (nation[nationality], nationality), occupations and (len(occupations) > 1 and '%s and %s' % (', '.join(occupations[:-1]), occupations[-1:][0]) or occupations[0]) or '...')
+            output += u"""\n\'\'\'%s\'\'\' (%s - %s) was %s %s %s.""" % (x.title, birthdate, deathdate, nationality and nationalitytonation[nationality][0] in ['A', 'E', 'I', 'O', 'U'] and 'an' or 'a', nationality and '[[%s|%s]]' % (nationalitytonation[nationality], nationality), occupations and (len(occupations) > 1 and '%s and %s' % (', '.join(occupations[:-1]), occupations[-1:][0]) or occupations[0]) or '...')
             output += u"""\n\n{{Persondata <!-- Metadata: see [[Wikipedia:Persondata]]. -->"""
             output += u"""\n| NAME              = %s """ % (defaultsort)
             output += u"""\n| ALTERNATIVE NAMES = """
@@ -249,13 +321,15 @@ def main():
                 for cat in cats:
                     output += u"""\n[[Category:%s]]""" % (cat)
             output += u"""\n\n[[%s:%s]]""" % (lang, x.title)
-            output += u"""\n\n%s""" % (nationality and nation[nationality] and '{{%s-bio-stub}}' % (nation[nationality]) or '{{bio-stub}}')
+            output += u"""\n\n%s""" % (nationality and nationalitytonation[nationality] and '{{%s-bio-stub}}' % (nationalitytonation[nationality]) or '{{bio-stub}}')
             output += u"""\n</pre>"""
             
             print '#'*70
             print x.title, 'https://%s.wikipedia.org/wiki/%s' % (lang, x.title.replace(' ', '_'))
             print output
-            f = open('missingarticlesxml.output', 'a')
+            bios += 1
+            print 'Total pages analysed =', c, '| Bios =', bios
+            f = open('missingarticlesxml.output.%s' % (lang), 'a')
             f.write(output.encode('utf-8'))
             f.close()
 
