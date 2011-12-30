@@ -26,6 +26,7 @@ import xmlreader
 
 #TODO ranking de categorías sacadas de artículos que no tienen ningún interwiki
 
+cattranslations = {}
 def quitaracentos(t):
     t = re.sub(ur'[ÁÀÄ]', ur'A', t)
     t = re.sub(ur'[ÉÈË]', ur'E', t)
@@ -45,12 +46,16 @@ def linkstoiws(t, lang):
     return t
 
 def translatecat(cat, lang):
-    catpage = wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), "Category:%s" % (cat))
-    if catpage.exists() and not catpage.isRedirectPage():
-        cattext = catpage.get()
-        m = re.compile(ur"(?im)\[\[\s*en\s*:\s*Category\s*:\s*(?P<catiw>[^\[\]]+?)\s*\]\]").finditer(cattext)
-        for i in m:
-            return i.group('catiw')
+    if cattranslations.has_key(cat):
+        return cattranslations[cat]
+    else:
+        catpage = wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), "Category:%s" % (cat))
+        if catpage.exists() and not catpage.isRedirectPage():
+            cattext = catpage.get()
+            m = re.compile(ur"(?im)\[\[\s*%s\s*:\s*Category\s*:\s*(?P<catiw>[^\[\]]+?)\s*\]\]" % (targetlang)).finditer(cattext)
+            for i in m:
+                cattranslations[cat] = i.group('catiw')
+                return i.group('catiw')
     return ''
 
 langisotolang = {
@@ -136,6 +141,7 @@ nationalitytonation = {
 def main():
     """Missing articles"""
     
+    targetlang = 'en' #no cambiar a menos que quiera crear bios para otras wikipedias distintas a la inglesa
     lang = 'es'
     dumppath = ''
     dumpfilename = ''
@@ -149,7 +155,8 @@ def main():
     
     title_ex_r = re.compile(ur"(?im)[\:\(\)]") # : to exclude other namespaces, ( to disambiguation
     red_r = re.compile(ur"(?im)^\#\s*redirec")
-    iws_r = re.compile(ur"(?im)\[\[\s*[a-z]{2,3}(\-[a-z]{2,5})?\s*:")
+    iws_r = re.compile(ur"(?im)\[\[\s*(?P<iwlang>[a-z]{2,3}(\-[a-z]{2,5})?)\s*:\s*(?P<iwtitle>[^\]\|]+)\s*\]\]")
+    iws_target_r = re.compile(ur"(?im)\[\[\s*%s\s*:\s*[^\]\|]+\s*\]\]" % (targetlang))
     dis_r = re.compile(ur"(?im)\{\{\s*(disambiguation|disambig|desambiguaci[oó]n|desambig|desamb|homonymie)\s*[\|\}]")
     birth_r = re.compile(ur"(?im)\:\s*("
                          ur"Geboren[_ ]|" #de
@@ -195,7 +202,7 @@ def main():
         #descartamos algunas bios
         if not re.search(birth_r, x.text) or not re.search(death_r, x.text): #sino ha fallecido, fuera
             continue
-        if re.search(iws_r, x.text): #si tiene iws, fuera
+        if re.search(iws_target_r, x.text): #si tiene iws hacia targetlang, no nos interesa, ya existe la bio
             continue
         
         #buscando imágenes útiles para la bio
@@ -253,9 +260,6 @@ def main():
                     deathdate = u'%s' % (i.group('deathyear'))
                 break
         
-        if not birthdate or not deathdate:
-            continue
-        
         #defaultsort
         m = defaultsort_r.finditer(x.text)
         defaultsort = ''
@@ -265,7 +269,23 @@ def main():
         if not defaultsort: #create myself
             defaultsort = u'%s, %s' % (' '.join(quitaracentos(x.title).split(' ')[1:]), quitaracentos(x.title).split(' ')[0])
         
+        #iws
+        m = iws_r.finditer(x.text)
+        iws = []
+        for iw in m:
+            if not iw.group('iwlang') in [targetlang, lang]:
+                iws.append([iw.group('iwlang'), iw.group('iwtitle')])
+        iws.append([lang, x.title])
+        iws.sort()
+        iws_plain = ''
+        for iwlang, iwtitle in iws:
+            iws_plain += u'[[%s:%s]]\n' % (iwlang, iwtitle)
+        
         if desc and len(desc) < 1000 and birthdate and deathdate:
+            #check if live version has interwiki or not
+            sourcebio = wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), x.title)
+            if not sourcebio.exists() or sourcebio.isRedirectPage() or sourcebio.isDisambig() or len(re.findall(iws_target_r, sourcebio.get())) != 0:
+                continue
             #cats, esto es lo más costoso en tiempo, entonces lo dejamos para este último if justo antes de generar el output
             m = cats_r.finditer(x.text)
             cats = []
@@ -282,9 +302,13 @@ def main():
                                 nationality = ''
                                 break
                         else:
-                            nationality = nn                        
+                            nationality = nn         
+                    else:
+                        f = open('missingarticlesxml.output.errors', 'a')
+                        f.write((u'missing nationality = %s\n' % (nn)).encode('utf-8'))
+                        f.close()
             
-            #occupations
+            #occupations (usando cats)
             occupations = []
             if nationality:
                 for cat in cats:
@@ -320,8 +344,8 @@ def main():
                 output += u"""\n"""
                 for cat in cats:
                     output += u"""\n[[Category:%s]]""" % (cat)
-            output += u"""\n\n[[%s:%s]]""" % (lang, x.title)
-            output += u"""\n\n%s""" % (nationality and nationalitytonation[nationality] and '{{%s-bio-stub}}' % (nationalitytonation[nationality]) or '{{bio-stub}}')
+            output += u"""\n\n%s""" % (iws_plain)
+            output += u"""\n%s""" % (nationality and nationalitytonation[nationality] and '{{%s-bio-stub}}' % (nationalitytonation[nationality]) or '{{bio-stub}}')
             output += u"""\n</pre>"""
             
             print '#'*70

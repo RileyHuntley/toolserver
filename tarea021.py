@@ -142,7 +142,7 @@ def main():
     avisotoolserver=u'<noinclude>{{aviso|Esta página se actualiza automáticamente. No hagas cambios aquí.}}</noinclude>\n'
     nohay=u':No hay contenido con estas características.'
     
-    conn = _mysql.connect(host='sql-s3', db='%swiki_p' % lang, read_default_file='~/.my.cnf')
+    conn = _mysql.connect(host='sql-s7-rr', db='%swiki_p' % lang, read_default_file='~/.my.cnf')
     site=wikipedia.Site(lang, "wikipedia")
     projects=loadProjects(site)
     [nuevos_dic, nuevos_list]=loadNewPages(site, limitenuevos)
