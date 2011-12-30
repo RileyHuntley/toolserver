@@ -19,6 +19,7 @@ import md5
 import os
 import re
 import sys
+import unicodedata
 
 import family
 import wikipedia
@@ -35,54 +36,26 @@ if len(sys.argv) >= 2:
     lang = dumpfilename.split('wiki')[0]
 
 cattranslations = {}
-def quitaracentos(t):
-    t = re.sub(ur'[ÁÀÄ]', ur'A', t)
-    t = re.sub(ur'[ÉÈË]', ur'E', t)
-    t = re.sub(ur'[ÍÌÏ]', ur'I', t)
-    t = re.sub(ur'[ÓÒÖ]', ur'O', t)
-    t = re.sub(ur'[ÚÙÜ]', ur'U', t)
-    t = re.sub(ur'[áàä]', ur'a', t)
-    t = re.sub(ur'[éèë]', ur'e', t)
-    t = re.sub(ur'[íìï]', ur'i', t)
-    t = re.sub(ur'[óòö]', ur'o', t)
-    t = re.sub(ur'[úùü]', ur'u', t)
-    return t
-
-def linkstoiws(t, lang):
-    t = re.sub(ur"\[\[([^\[\]\|]+)\|([^\[\]\|]+)\]\]", ur"[[:%s:\1|\2]]" % (lang), t)
-    t = re.sub(ur"\[\[([^\[\]\|]+)\]\]", ur"[[:%s:\1|\1]]" % (lang), t)
-    return t
-
-def translatecat(cat, lang):
-    if cattranslations.has_key(cat):
-        return cattranslations[cat]
-    else:
-        catpage = wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), "Category:%s" % (cat))
-        if catpage.exists() and not catpage.isRedirectPage():
-            cattext = catpage.get()
-            m = re.compile(ur"(?im)\[\[\s*%s\s*:\s*Category\s*:\s*(?P<catiw>[^\[\]]+?)\s*\]\]" % (targetlang)).finditer(cattext)
-            for i in m:
-                cattranslations[cat] = i.group('catiw')
-                return i.group('catiw')
-    return ''
 
 langisotolang = {
     'es': 'Spanish',
     'fr': 'French',
     'de': 'German',
+    'pl': 'Polish',
 }
 
 months = {
     'de': ['januar', 'februar', u'm[äa]rz', 'april', 'mai', 'juni', 'juli', 'august', 'september', 'oktober', 'november', 'dezember'],
     'es': ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
     'fr': ['janvier', u'f[ée]vrier', 'mars', 'avril', 'may', 'juin', 'juillet', u'ao[ûu]t', 'septembre', 'octobre', 'novembre', u'décembre'],
+    'pl': ['stycznia', u'lutego', 'marca', 'kwietnia', 'maja', 'czerwca', 'lipca', u'sierpnia', u'wrze[śs]nia', u'pa[źz]dziernika', 'listopada', u'grudnia'],
     }
 
 monthstoen = {
     #de
     'januar': 'January',
     'februar': 'February',
-    'märz': 'March',
+    u'märz': 'March',
     'marz': 'March',
     'april': 'April',
     'mai': 'May',
@@ -110,19 +83,35 @@ monthstoen = {
     
     #fr
     'janvier': 'January',
-    'février': 'February',
+    u'février': 'February',
     'fevrier': 'February',
     'mars': 'March',
     'avril': 'April',
     'may': 'May',
     'juin': 'June',
     'juillet': 'July',
-    'août': 'August',
+    u'août': 'August',
     'aout': 'August',
     'septembre': 'September',
     'octobre': 'October',
     'novembre': 'November',
     'décembre': 'December',
+    
+    #pl
+    'stycznia': 'January',
+    'lutego': 'February',
+    'marca': 'March',
+    'kwietnia': 'April',
+    'maja': 'May',
+    'czerwca': 'June',
+    'lipca': 'July',
+    'sierpnia': 'August',
+    u'września': 'September',
+    'wrzesnia': 'September',
+    u'października': 'October',
+    'pazdziernika': 'October',
+    'listopada': 'November',
+    'grudnia': 'December',
     }
 
 nationalitytonation = {
@@ -158,44 +147,83 @@ nationalitytonation = {
     'Venezuelan': 'Venezuela',
 }
 
+title_ex_r = re.compile(ur"(?im)[\:\(\)]") # : to exclude other namespaces, ( to disambiguation
+red_r = re.compile(ur"(?im)^\#\s*redirec")
+iws_r = re.compile(ur"(?im)\[\[\s*(?P<iwlang>[a-z]{2,3}(\-[a-z]{2,5})?)\s*:\s*(?P<iwtitle>[^\]\|]+)\s*\]\]")
+iws_target_r = re.compile(ur"(?im)\[\[\s*%s\s*:\s*[^\]\|]+\s*\]\]" % (targetlang))
+dis_r = re.compile(ur"(?im)\{\{\s*(disambiguation|disambig|desambiguaci[oó]n|desambig|desamb|homonymie)\s*[\|\}]") #pl: DisambigR, 
+birth_r = re.compile(ur"(?im)\:\s*("
+                     ur"Geboren[_ ]|" #de
+                     ur"Nacidos[_ ]en|" #es
+                     ur"Naissance[_ ]en|" #fr
+                     ur"Urodzeni[_ ]w" #pl
+                     ur")[_ ](?P<birthyear>\d{4})")
+death_r = re.compile(ur"(?im)\:\s*("
+                     ur"Gestorben[_ ]|" #de
+                     ur"Fallecidos[_ ]en|" #es
+                     ur"Décès[_ ]en|" #fr
+                     ur"Zmarli[_ ]w" #pl
+                     ur")[_ ](?P<deathyear>\d{4})")
+
+catsnm = { #lo uso en translatecat() también
+    'de': 'Kategorie',
+    'en': 'Category',
+    'es': u'Categoría',
+    'fr': u'Catégorie',
+    'pl': 'Kategoria',
+    }
+cats_r = re.compile(ur"(?im)\[\[\s*(%s)\s*:\s*(?P<catname>[^\]\|]+)\s*[\]\|]" % ('|'.join(catsnm.values())))
+dates_r = {
+    'de': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
+    'es': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)\s*de\s*(?P<birthmonth>%s)\]?\]?\s*de)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*[^\(\)\d]*?\s*(\[?\[?(?P<deathday>\d+)\s*de\s*(?P<deathmonth>%s)\]?\]?\s*de)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
+    'fr': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
+    'pl': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
+}
+defaultsort_r = re.compile(ur"(?im)\{\{\s*("
+                           ur"SORTIERUNG|" #de
+                           ur"DEFAULTSORT|" #en, fr, pl
+                           ur"ORDENAR" #es
+                           ur")\s*:\s*(?P<defaultsort>[^\{\}]+?)\s*\}\}")
+
+def quitaracentos(s):
+    #http://stackoverflow.com/questions/517923/what-is-the-best-way-to-remove-accents-in-a-python-unicode-string
+    return ''.join((c for c in unicodedata.normalize('NFD', u'%s' % s) if unicodedata.category(c) != 'Mn'))
+    """
+    t = re.sub(ur'[ÁÀÄ]', ur'A', t)
+    t = re.sub(ur'[ÉÈË]', ur'E', t)
+    t = re.sub(ur'[ÍÌÏ]', ur'I', t)
+    t = re.sub(ur'[ÓÒÖ]', ur'O', t)
+    t = re.sub(ur'[ÚÙÜ]', ur'U', t)
+    t = re.sub(ur'[áàä]', ur'a', t)
+    t = re.sub(ur'[éèë]', ur'e', t)
+    t = re.sub(ur'[íìï]', ur'i', t)
+    t = re.sub(ur'[óòö]', ur'o', t)
+    t = re.sub(ur'[úùü]', ur'u', t)
+    return t"""
+
+def linkstoiws(t, lang):
+    t = re.sub(ur"\[\[([^\[\]\|]+)\|([^\[\]\|]+)\]\]", ur"[[:%s:\1|\2]]" % (lang), t)
+    t = re.sub(ur"\[\[([^\[\]\|]+)\]\]", ur"[[:%s:\1|\1]]" % (lang), t)
+    return t
+
+def translatecat(cat, lang):
+    if cattranslations.has_key(cat):
+        return cattranslations[cat]
+    else:
+        catpage = wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), "Category:%s" % (cat))
+        if catpage.exists() and not catpage.isRedirectPage():
+            cattext = catpage.get()
+            m = re.compile(ur"(?im)\[\[\s*%s\s*:\s*(%s)\s*:\s*(?P<catiw>[^\[\]]+?)\s*\]\]" % (targetlang, '|'.join(catsnm.values()))).finditer(cattext)
+            for i in m:
+                cattranslations[cat] = i.group('catiw')
+                return i.group('catiw')
+    return ''
+
 def main():
     """Missing articles"""
-    
     xml = xmlreader.XmlDump('%s%s' % (dumppath and '%s/' % dumppath or '', dumpfilename), allrevisions=False)
     c = 0
     bios = 0
-    
-    title_ex_r = re.compile(ur"(?im)[\:\(\)]") # : to exclude other namespaces, ( to disambiguation
-    red_r = re.compile(ur"(?im)^\#\s*redirec")
-    iws_r = re.compile(ur"(?im)\[\[\s*(?P<iwlang>[a-z]{2,3}(\-[a-z]{2,5})?)\s*:\s*(?P<iwtitle>[^\]\|]+)\s*\]\]")
-    iws_target_r = re.compile(ur"(?im)\[\[\s*%s\s*:\s*[^\]\|]+\s*\]\]" % (targetlang))
-    dis_r = re.compile(ur"(?im)\{\{\s*(disambiguation|disambig|desambiguaci[oó]n|desambig|desamb|homonymie)\s*[\|\}]")
-    birth_r = re.compile(ur"(?im)\:\s*("
-                         ur"Geboren[_ ]|" #de
-                         ur"Nacidos[_ ]en|" #es
-                         ur"Naissance[_ ]en" #fr
-                         ur")[_ ](?P<birthyear>\d{4})")
-    death_r = re.compile(ur"(?im)\:\s*("
-                         ur"Gestorben[_ ]|" #de
-                         ur"Fallecidos[_ ]en|" #es
-                         ur"Décès[_ ]en" #fr
-                         ur")[_ ](?P<deathyear>\d{4})")
-    cats_r = re.compile(ur"(?im)\[\[\s*("
-                        ur"Kategorie|" #de
-                        ur"Category|" #en
-                        ur"Categoría|" #es
-                        ur"Catégorie" #fr
-                        ur")\s*:\s*(?P<catname>[^\]\|]+)\s*[\]\|]")
-    dates_r = {
-        'de': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
-        'es': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)\s*de\s*(?P<birthmonth>%s)\]?\]?\s*de)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*[^\(\)\d]*?\s*(\[?\[?(?P<deathday>\d+)\s*de\s*(?P<deathmonth>%s)\]?\]?\s*de)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
-        'fr': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
-    }
-    defaultsort_r = re.compile(ur"(?im)\{\{\s*("
-                               ur"SORTIERUNG|" #de
-                               ur"DEFAULTSORT|" #en, fr
-                               ur"ORDENAR" #es
-                               ur")\s*:\s*(?P<defaultsort>[^\{\}]+?)\s*\}\}")
     for x in xml.parse(): #parsing the whole dump
         c+=1
         if re.search(title_ex_r, x.title) or \
@@ -205,7 +233,7 @@ def main():
             continue
         #nombre con dos palabras largas al menos
         trozos = [] # no hacer la asignacion del bucle for directamente, sino almacena True y False en vez de los trozos
-        [len(trozo) >= 3 and trozos.append(trozo) for trozo in x.title.split(' ')]
+        [len(trozo) >= 4 and trozos.append(trozo) for trozo in x.title.split(' ')]
         if not len(trozos) >= 2:
             continue
         #metemos variantes sin acentos
@@ -223,7 +251,7 @@ def main():
         if images:
             continue #temp
             for image in images:
-                if len(re.findall(ur"(%s)" % ('|'.join(trozos)), image)) >= 2:
+                if len(re.findall(ur"(%s)" % ('|'.join(trozos)), image)) >= 1:
                     image_cand = image
                     break
         #temp
@@ -343,7 +371,8 @@ def main():
             output += u"""\n<small><nowiki>%s</nowiki></small>""" % (linkstoiws(desc, lang).strip())
             output += u"""\n<pre>"""
             output += u"""\n{{Expand %s|%s}}""" % (langisotolang[lang], x.title)
-            #temp output += u"""\n[[File:%s|thumb|right|%s]]""" % (image_cand, x.title)
+            if image_cand:
+                output += u"""\n[[File:%s|thumb|right|%s]]""" % (image_cand, x.title)
             output += u"""\n\'\'\'%s\'\'\' (%s - %s) was %s %s %s.""" % (x.title, birthdate, deathdate, nationality and nationalitytonation[nationality][0] in ['A', 'E', 'I', 'O', 'U'] and 'an' or 'a', nationality and '[[%s|%s]]' % (nationalitytonation[nationality], nationality), occupations and (len(occupations) > 1 and '%s and %s' % (', '.join(occupations[:-1]), occupations[-1:][0]) or occupations[0]) or '...')
             output += u"""\n\n{{Persondata <!-- Metadata: see [[Wikipedia:Persondata]]. -->"""
             output += u"""\n| NAME              = %s """ % (defaultsort)
