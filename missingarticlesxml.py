@@ -26,6 +26,14 @@ import xmlreader
 
 #TODO ranking de categorías sacadas de artículos que no tienen ningún interwiki
 
+targetlang = 'en' #no cambiar a menos que quiera crear bios para otras wikipedias distintas a la inglesa
+lang = 'es'
+dumppath = ''
+dumpfilename = ''
+if len(sys.argv) >= 2:
+    dumpfilename = sys.argv[1]
+    lang = dumpfilename.split('wiki')[0]
+
 cattranslations = {}
 def quitaracentos(t):
     t = re.sub(ur'[ÁÀÄ]', ur'A', t)
@@ -140,14 +148,6 @@ nationalitytonation = {
 
 def main():
     """Missing articles"""
-    
-    targetlang = 'en' #no cambiar a menos que quiera crear bios para otras wikipedias distintas a la inglesa
-    lang = 'es'
-    dumppath = ''
-    dumpfilename = ''
-    if len(sys.argv) >= 2:
-        dumpfilename = sys.argv[1]
-        lang = dumpfilename.split('wiki')[0]
     
     xml = xmlreader.XmlDump('%s%s' % (dumppath and '%s/' % dumppath or '', dumpfilename), allrevisions=False)
     c = 0
@@ -290,6 +290,7 @@ def main():
             m = cats_r.finditer(x.text)
             cats = []
             [translatecat(cat.group('catname'), lang) and translatecat(cat.group('catname'), lang) not in cats and cats.append(translatecat(cat.group('catname'), lang)) for cat in m]
+            cats.sort()
             
             #nationality
             nationality = ''
@@ -315,9 +316,11 @@ def main():
                     t = cat.split(' ')
                     if (t[0] == nationality or t[0].split('-')[0] == nationality) and len(t) == 2: # [[Category:Spanish writers]] [[Category:Spanish-language writers]]
                         if t[1][-1] == 's':
-                            occupations.append(t[1].rstrip('s')) #remove final s
+                            if not t[1].rstrip('s') in occupations:
+                                occupations.append(t[1].rstrip('s')) #remove final s
                         elif t[1] == 'businesspeople':
-                            occupations.append('businessman')
+                            if not 'businessman' in occupations:
+                                occupations.append('businessman')
             
             if not occupations or not nationality:
                 continue
