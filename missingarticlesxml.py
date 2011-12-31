@@ -164,6 +164,7 @@ death_r = re.compile(ur"(?im)\:\s*("
                      ur"Décès[_ ]en|" #fr
                      ur"Zmarli[_ ]w" #pl
                      ur")[_ ](?P<deathyear>\d{4})")
+bdtemplate_r = re.compile(ur"(?im)\{\{\s*(BD|NF)\s*\|\s*(?P<birthyear>\d{4})\s*\|\s*(?P<deathyear>\d{4})\s*(\s*\|\s*(?P<defaultsort>[^\}]{4,},[^\}]{4,})\s*)?\s*\}\}")
 
 catsnm = { #lo uso en translatecat() también
     'de': 'Kategorie',
@@ -300,12 +301,26 @@ def main():
                     deathdate = u'%s' % (i.group('deathyear'))
                 break
         
+        #special cases for es: {{BD|XXXX|YYYY|DEFAULTSORT}}
+        if not birthdate and not deathdate:
+            m = bdtemplate_r.finditer(x.text)
+            for i in m:
+                birthdate = u'%s' % (i.group('birthyear'))
+                deathdate = u'%s' % (i.group('deathyear'))
+                break
+        #end birth and death dates
+        
         #defaultsort
         m = defaultsort_r.finditer(x.text)
         defaultsort = ''
         for d in m:
             defaultsort = d.group("defaultsort")
             break
+        if not defaultsort:
+            m = bdtemplate_r.finditer(x.text)
+            for i in m:
+                defaultsort = u'%s' % (i.group('defaultsort'))
+                break
         if not defaultsort: #create myself
             defaultsort = u'%s, %s' % (' '.join(quitaracentos(x.title).split(' ')[1:]), quitaracentos(x.title).split(' ')[0])
         
@@ -367,7 +382,7 @@ def main():
             
             #la salida para esta bio
             output  = u"""\n<br clear="all"/>\n==== [[%s]] ([[:%s:%s|%s]]) ====""" % (x.title, lang, x.title, lang)
-            #temp output += u"""\n[[File:%s|thumb|right|120px|%s]]""" % (image_cand, x.title)
+            output += u"""\n[[File:%s|thumb|right|120px|%s]]""" % (image_cand, x.title)
             output += u"""\n<small><nowiki>%s</nowiki></small>""" % (linkstoiws(desc, lang).strip())
             output += u"""\n<pre>"""
             output += u"""\n{{Expand %s|%s}}""" % (langisotolang[lang], x.title)
