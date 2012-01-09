@@ -370,7 +370,10 @@ def main():
                 for cat in cats:
                     t = cat.split(' ')
                     if (t[0] == nationality or t[0].split('-')[0] == nationality) and len(t) == 2: # [[Category:Spanish writers]] [[Category:Spanish-language writers]]
-                        if t[1][-1] == 's':
+                        if t[1][-3:] == 'ies':
+                            if not '%sy' % t[1].rstrip('ies') in occupations:
+                                occupations.append('%sy' % t[1].rstrip('ies')) #remove final ies and add y
+                        elif t[1][-1] == 's':
                             if not t[1].rstrip('s') in occupations:
                                 occupations.append(t[1].rstrip('s')) #remove final s
                         elif t[1] == 'businesspeople':
