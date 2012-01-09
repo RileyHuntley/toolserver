@@ -10,10 +10,16 @@ import MySQLdb
 
 # trying to put some light on wiki bias, not only gender bias
 
+def domain(lang, family):
+    if family == 'commons':
+        return 'http://commons.wikimedia.org'
+    else:
+        return 'http://%s.%s.org' % (lang, family)
+
 path = "/home/emijrp/public_html/bias"
 conn = MySQLdb.connect(host='sql-s1', db='toolserver', read_default_file='~/.my.cnf', use_unicode=True)
 cursor = conn.cursor()
-cursor.execute("SELECT lang, family, CONCAT('sql-s', server) AS dbserver, dbname FROM toolserver.wiki WHERE 1;")
+cursor.execute("SELECT lang, family, CONCAT('sql-s', server) AS dbserver, dbname FROM toolserver.wiki WHERE 1 ORDER BY lang;")
 result = cursor.fetchall()
 checked = 0
 families = ["wikibooks", "wikipedia", "wiktionary", "wikimedia", "wikiquote", "wikisource", "wikinews", "wikiversity", "commons", "wikispecies"]
@@ -73,7 +79,7 @@ l.sort()
 gender_table_core1 = u""
 for family, males, females, percent in l:
     gender_table_core1 += u"<tr><td>%s</td><td>%d</td><td>%d</td><td>%.2f</td></tr>\n" % (family, males, females, percent)
-gender_table1 = u"""<table>\n<tr><th>Family</th><th>Male</th><th>Female</th><th>Female (%%)</th></tr>\n%s\n</table>""" % (gender_table_core1)
+gender_table1 = u"""<table class="sortable" style="text-align: center;">\n<tr><th>Family</th><th>Male</th><th>Female</th><th>Female (%%)</th></tr>\n%s\n</table>""" % (gender_table_core1)
 
 #table 2
 l = []
@@ -91,7 +97,7 @@ l.sort()
 gender_table_core2 = u""
 for lang, males, females, percent in l:
     gender_table_core2 += u"<tr><td>%s</td><td>%d</td><td>%d</td><td>%.2f</td></tr>\n" % (lang, males, females, percent)
-gender_table2 = u"""<table>\n<tr><th>Language</th><th>Male</th><th>Female</th><th>Female (%%)</th></tr>\n%s\n</table>""" % (gender_table_core1)
+gender_table2 = u"""<table class="sortable" style="text-align: center;">\n<tr><th>Language</th><th>Male</th><th>Female</th><th>Female (%%)</th></tr>\n%s\n</table>""" % (gender_table_core2)
 
 #table 3
 l = []
@@ -101,21 +107,43 @@ for family, langs in genderdic.items():
 l.sort()
 gender_table_core3 = u""
 for family, lang, males, females, percent in l:
-    gender_table_core3 += u"<tr><td>%s</td><td>%s</td><td>%d</td><td>%d</td><td>%.2f</td></tr>\n" % (family, lang, males, females, percent)
-gender_table3 = u"""<table>\n<tr><th>Family</th><th>Language</th><th>Male</th><th>Female</th><th>Female (%%)</th></tr>\n%s\n</table>""" % (gender_table_core3)
+    gender_table_core3 += u"<tr><td>%s</td><td><a href='%s'>%s</a></td><td>%d</td><td>%d</td><td>%.2f</td></tr>\n" % (family, domain(lang, family), lang, males, females, percent)
+gender_table3 = u"""<table class="sortable" style="text-align: center;">\n<tr><th>Family</th><th>Language</th><th>Male</th><th>Female</th><th>Female (%%)</th></tr>\n%s\n</table>""" % (gender_table_core3)
 
 #end gendergap
 
-output = u"""%d wikis checked.
+output = u"""<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <script src="sorttable.js" type="text/javascript"></script>
+    <title>Biases</title>
+</head>
+<body>
+<p>This page analyzes some possible biases in Wikimedia projects. Tables are sortable. %d wikis checked.</p>
 
-<h1>Gender gap?</h1>
+<p><i>This page was last modified on <!-- timestamp -->%s<!-- timestamp --> (UTC).</i></p>
 
-<table>
-<tr><td valign=top>%s</td><td rowspan=2 valign=top>%s</td></tr>
-<tr><td valign=top>%s</td></tr>
+<h2>Biography bias</h2>
+
+TODO.
+
+<h2>Gender gap?</h2>
+
+<p>A lot have been written about <a href="http://meta.wikimedia.org/wiki/Gender_gap">gender gap and Wikimedia projects</a>. Well, really <a href="http://meta.wikimedia.org/wiki/Category:Gender_gap">not that much</a>, only a few data is available from some surveys and studies. <a href="http://lists.wikimedia.org/pipermail/gendergap/2011-February/000073.html">12.94%% of females (2011)? 7.3%% (2007)?</a> Look the last data.</p>
+
+<table align=center>
+<tr><td valign=top>%s %s</td><td valign=top>%s</td></tr>
 </table>
 
-""" % (checked, gender_table1, gender_table3, gender_table2)
+<h2>Geography bias</h2>
+
+TODO.
+
+</body>
+</html>
+""" % (checked, datetime.datetime.now(), gender_table1, gender_table2, gender_table3)
 
 f = open('%s/index.html' % (path), 'w')
 f.write(output.encode('utf-8'))
