@@ -10,14 +10,14 @@ import MySQLdb
 
 # trying to put some light on wiki bias, not only gender bias
 
-path="/home/emijrp/public_html/bias"
+path = "/home/emijrp/public_html/bias"
 conn = MySQLdb.connect(host='sql-s1', db='toolserver', read_default_file='~/.my.cnf', use_unicode=True)
 cursor = conn.cursor()
 cursor.execute("SELECT lang, family, CONCAT('sql-s', server) AS dbserver, dbname FROM toolserver.wiki WHERE 1;")
 result = cursor.fetchall()
 checked = 0
 families = ["wikibooks", "wikipedia", "wiktionary", "wikimedia", "wikiquote", "wikisource", "wikinews", "wikiversity", "commons", "wikispecies"]
-ranking = []
+genderdic = {}
 for row in result:
     time.sleep(0.1)
     lang = row[0]
@@ -27,37 +27,96 @@ for row in result:
     dbserver = row[2] + "-fast"
     dbname = row[3]
     
+    #if checked > 15:
+    #    break
+    
     try:
         conn2 = MySQLdb.connect(host=dbserver, db=dbname, read_default_file='~/.my.cnf', use_unicode=True)
         cursor2 = conn2.cursor()
         #print "OK:", dbserver, dbname
         cursor2.execute("SELECT up_value, count(*) AS count FROM user_properties WHERE up_property='gender' GROUP BY up_value")
         result2 = cursor2.fetchall()
-        male = 0
-        female = 0
         for row2 in result2:
-            if row2[0] == 'male':
-                male = int(row2[1])
-            elif row2[0] == 'female':
-                female = int(row2[1])
-        
-        ranking.append([female/((male+female)/100.0), lang, family, male+female, male, female])
-        ranking.sort()
-        ranking.reverse()
-        print '#'*50
-        limit = 25
-        if len(ranking) >= limit:
-            for i in range(limit):
-                print '|', ' || '.join([str(v) for v in ranking[i]])
-                print '|-'
+            gender = row2[0].lower()
+            count = int(row2[1])
+            print family, lang, gender, count
+            if genderdic.has_key(family):
+                if genderdic[family].has_key(lang):
+                    genderdic[family][lang][gender] += count
+                else:
+                    genderdic[family][lang] = {'female': 0, 'male': 0}
+                    genderdic[family][lang][gender] += count
+            else:
+                genderdic[family] = { lang: {'female': 0, 'male': 0}}
+                genderdic[family][lang][gender] += count
         
         cursor2.close()
         conn2.close()
+        checked += 1
     except:
         print "Error in", dbserver, dbname
-
 
 cursor.close()
 conn.close()
 
+#gendergap
+#table 1
+l = []
+for family, langs in genderdic.items():
+    male = 0
+    female = 0
+    for lang, values in langs.items():
+        male += values['male']
+        female += values['female']
+    l.append([family, male, female, female/((male+female)/100.0)])
+l.sort()
+gender_table_core1 = u""
+for family, males, females, percent in l:
+    gender_table_core1 += u"<tr><td>%s</td><td>%d</td><td>%d</td><td>%.2f</td></tr>\n" % (family, males, females, percent)
+gender_table1 = u"""<table>\n<tr><th>Family</th><th>Male</th><th>Female</th><th>Female (%%)</th></tr>\n%s\n</table>""" % (gender_table_core1)
 
+#table 2
+l = []
+temp = {}
+for family, langs in genderdic.items():
+    for lang, values in langs.items():
+        if temp.has_key(lang):
+            temp[lang]['male'] += values['male']
+            temp[lang]['female'] += values['female']
+        else:
+            temp[lang] = { 'male': values['male'], 'female': values['female'] }
+for lang, values in temp.items():
+    l.append([lang, values['male'], values['female'], values['female']/((values['male']+values['female'])/100.0)])
+l.sort()
+gender_table_core2 = u""
+for lang, males, females, percent in l:
+    gender_table_core2 += u"<tr><td>%s</td><td>%d</td><td>%d</td><td>%.2f</td></tr>\n" % (lang, males, females, percent)
+gender_table2 = u"""<table>\n<tr><th>Language</th><th>Male</th><th>Female</th><th>Female (%%)</th></tr>\n%s\n</table>""" % (gender_table_core1)
+
+#table 3
+l = []
+for family, langs in genderdic.items():
+    for lang, values in langs.items():
+        l.append([family, lang, values['male'], values['female'], values['female']/((values['male']+values['female'])/100.0)])
+l.sort()
+gender_table_core3 = u""
+for family, lang, males, females, percent in l:
+    gender_table_core3 += u"<tr><td>%s</td><td>%s</td><td>%d</td><td>%d</td><td>%.2f</td></tr>\n" % (family, lang, males, females, percent)
+gender_table3 = u"""<table>\n<tr><th>Family</th><th>Language</th><th>Male</th><th>Female</th><th>Female (%%)</th></tr>\n%s\n</table>""" % (gender_table_core3)
+
+#end gendergap
+
+output = u"""%d wikis checked.
+
+<h1>Gender gap?</h1>
+
+<table>
+<tr><td valign=top>%s</td><td rowspan=2 valign=top>%s</td></tr>
+<tr><td valign=top>%s</td></tr>
+</table>
+
+""" % (checked, gender_table1, gender_table3, gender_table2)
+
+f = open('%s/index.html' % (path), 'w')
+f.write(output.encode('utf-8'))
+f.close()
