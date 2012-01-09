@@ -40,6 +40,10 @@ def getProjectDatabases(lang='', family=''):
     cursor = createCursor(conn=conn)
     if lang and family:
         cursor.execute("SELECT lang, family, CONCAT('sql-s', server) AS dbserver, dbname FROM toolserver.wiki WHERE lang='%s' AND family='%s';" % (lang, family))
+    elif lang:
+        cursor.execute("SELECT lang, family, CONCAT('sql-s', server) AS dbserver, dbname FROM toolserver.wiki WHERE lang='%s';" % (lang))
+    elif family:
+        cursor.execute("SELECT lang, family, CONCAT('sql-s', server) AS dbserver, dbname FROM toolserver.wiki WHERE family='%s';" % (family))
     else:
         cursor.execute("SELECT lang, family, CONCAT('sql-s', server) AS dbserver, dbname FROM toolserver.wiki WHERE 1;")
     result = cursor.fetchall()
