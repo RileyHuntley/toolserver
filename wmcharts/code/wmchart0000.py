@@ -64,7 +64,6 @@ def runQueries(projectdbs, queries):
         try:
             conn = connectDB(dbserver=dbserver, dbname=dbname)
             cursor = createCursor(conn=conn)
-            print "OK:", dbserver, dbname
             projects[dbname] = {}
             for queryname, query in queries:
                 projects[dbname][queryname] = []
@@ -78,6 +77,7 @@ def runQueries(projectdbs, queries):
                 projects[dbname][queryname] = projects[dbname][queryname][1:] #trip first, it is incomplete
             cursor.close()
             conn.close()
+            print "OK:", dbserver, dbname
         except:
             print "Error in", dbserver, dbname
         
@@ -85,15 +85,18 @@ def runQueries(projectdbs, queries):
     projects_list.sort()
     return projects_list
 
-def generateHTMLSelect(projects):
+def generateHTMLSelect(projects=[]):
     c = 0
     select = ""
-    for project, values in projects:
-        if project == 'enwiki_p':
-            select += '<option value="%d" selected>%s</option>' % (c, project)
-        else:
-            select += '<option value="%d">%s</option>' % (c, project)
-        c += 1
+    if projects:
+        for project, values in projects:
+            if project == 'enwiki_p':
+                select += '<option value="%d" selected>%s</option>' % (c, project)
+            else:
+                select += '<option value="%d">%s</option>' % (c, project)
+            c += 1
+    else:
+        select += '<option value="%d" selected>All</option>' % (c)
     return select
 
 def generateHTML(title, description, select, js):
@@ -165,7 +168,7 @@ $("#placeholder").bind("plothover", function (event, pos, item) {
 <!-- end content -->
 </body>
 </html>
-""" % (title, title, description, select, js, datetime.datetime.now())
+""" % (title, title, description, select and select or "", js, datetime.datetime.now())
 
 def writeHTML(filename, output):
     f = open(os.path.expanduser('~/public_html/wmcharts/%s' % (filename)), 'w')

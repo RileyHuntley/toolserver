@@ -139,6 +139,8 @@ def main():
                     raw = raw.split("<!-- bodytext -->")[1].split("<!-- /bodytext -->")[0]
                 elif re.search(ur"<!-- start content -->", raw):
                     raw = raw.split("<!-- start content -->")[1].split("<!-- end content -->")[0]
+                elif re.search(ur"<!-- bodycontent -->", raw):
+                    raw = raw.split("<!-- bodycontent -->")[1].split("<!-- /bodycontent -->")[0]
                 else:
                     sys.exit()
                 red = len(re.findall('class="new"', raw))
