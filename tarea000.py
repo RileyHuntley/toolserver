@@ -207,6 +207,7 @@ def getDbname(lang, family):
     return dbname
 
 def getServer(lang, family):
+    #https://wiki.toolserver.org/view/Database_access
     more=""
     if lang=='en':
         more = " and domain='%s.%s.org'" % (lang, family)
@@ -225,7 +226,7 @@ def getServer(lang, family):
     server=""
     for row in result:
         if len(row)==1: #por si no existe ese idioma
-            server="sql-s%s" % row[0]
+            server="sql-s%s-rr" % row[0]
             break
 
     cursor.close()
