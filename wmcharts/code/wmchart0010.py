@@ -35,9 +35,9 @@ var1 = []
 var2 = []
 var3 = []
 for project, values in projects:
-    var1.append(values["Total edits by editors with known gender"])
-    var2.append(values["Edits by male editors"])
-    var3.append(values["Edits by female editors"])
+    var1.append(values.has_key("Total edits by editors with known gender") and values["Total edits by editors with known gender"] or 0)
+    var2.append(values.has_key("Edits by male editors") and values["Edits by male editors"] or 0)
+    var3.append(values.has_key("Edits by female editors") and values["Edits by female editors"] or 0)
 
 js = """function p() {
     var d1 = %s;
