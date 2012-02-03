@@ -31,7 +31,7 @@ queries = [
     
 ]
 projects = runQueries(projectdbs=projectdbs, queries=queries)
-select = generateHTMLSelect(projects)
+select = generateHTMLSelect(projects=[["all", '']])
 
 accum = {}
 for project, values in projects:
@@ -43,12 +43,13 @@ for project, values in projects:
                 accum[family]["female"].append(values["Edits by female editors"])
             else:
                 accum[family] = { "total": [values["Total edits by editors with known gender"]], "male": [values["Edits by male editors"]], "female": [values["Edits by female editors"]] }
-        if accum.has_key("all"):
-            accum["all"]["total"].append(values["Total edits by editors with known gender"])
-            accum["all"]["male"].append(values["Edits by male editors"])
-            accum["all"]["female"].append(values["Edits by female editors"])
-        else:
-            accum["all"] = { "total": [values["Total edits by editors with known gender"]], "male": [values["Edits by male editors"]], "female": [values["Edits by female editors"]] }
+            if accum.has_key("all"):
+                accum["all"]["total"].append(values["Total edits by editors with known gender"])
+                accum["all"]["male"].append(values["Edits by male editors"])
+                accum["all"]["female"].append(values["Edits by female editors"])
+            else:
+                accum["all"] = { "total": [values["Total edits by editors with known gender"]], "male": [values["Edits by male editors"]], "female": [values["Edits by female editors"]] }
+            break
 
 var = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: []}
 c = 1
@@ -66,8 +67,10 @@ for family in ["wikipedia", "wikibooks", "wikinews", "wikiquote", "wikisource", 
             dics["%s-l" % gender].append([k, v])
         dics["%s-l" % gender].sort()
     
+    dummy = []
     for date, v in dics["female-l"]:
-        var[c].append([date, "%.1f" % (v/(dics["total"][date]/100.0))])
+        dummy.append([date, "%.1f" % (v/(dics["total"][date]/100.0))])
+    var[c].append(dummy)
     
     c += 1
 

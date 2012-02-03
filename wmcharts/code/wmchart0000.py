@@ -88,10 +88,13 @@ def runQueries(projectdbs, queries):
 def generateHTMLSelect(projects=[]):
     c = 0
     select = ""
+    selecteddone = False
     if projects:
         for project, values in projects:
-            if project == 'enwiki_p':
-                select += '<option value="%d" selected>%s</option>' % (c, project)
+            if project == 'enwiki_p' or project == 'all':
+                if not selecteddone:
+                    select += '<option value="%d" selected>%s</option>' % (c, project)
+                    selecteddone = True
             else:
                 select += '<option value="%d">%s</option>' % (c, project)
             c += 1
