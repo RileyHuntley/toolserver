@@ -38,17 +38,17 @@ for project, values in projects:
     for family, result in [["wikipedia", re.search(ur"wiki_p", project)], ["wikibooks", re.search(ur"wikibooks_p", project)], ["wikinews", re.search(ur"wikinews_p", project)], ["wikiquote", re.search(ur"wikiquote_p", project)], ["wikisource", re.search(ur"wikisource_p", project)], ["wikiversity", re.search(ur"wikiversity_p", project)], ["wiktionary", re.search(ur"wiktionary_p", project)], ]:
         if result:
             if accum.has_key(family):
-                accum[family]["total"].append(values["Total edits by editors with known gender"])
-                accum[family]["male"].append(values["Edits by male editors"])
-                accum[family]["female"].append(values["Edits by female editors"])
+                accum[family]["total"].append(values.has_key("Total edits by editors with known gender") and values["Total edits by editors with known gender"] or [])
+                accum[family]["male"].append(values.has_key("Edits by male editors") and values["Edits by male editors"] or [])
+                accum[family]["female"].append(values.has_key("Edits by female editors") and values["Edits by female editors"] or [])
             else:
-                accum[family] = { "total": [values["Total edits by editors with known gender"]], "male": [values["Edits by male editors"]], "female": [values["Edits by female editors"]] }
+                accum[family] = { "total": [values.has_key("Total edits by editors with known gender") and values["Total edits by editors with known gender"] or []], "male": [values.has_key("Edits by male editors") and values["Edits by male editors"] or []], "female": [values.has_key("Edits by female editors") and values["Edits by female editors"] or []] }
             if accum.has_key("all"):
-                accum["all"]["total"].append(values["Total edits by editors with known gender"])
-                accum["all"]["male"].append(values["Edits by male editors"])
-                accum["all"]["female"].append(values["Edits by female editors"])
+                accum["all"]["total"].append(values.has_key("Total edits by editors with known gender") and values["Total edits by editors with known gender"] or [])
+                accum["all"]["male"].append(values.has_key("Edits by male editors") and values["Edits by male editors"] or [])
+                accum["all"]["female"].append(values.has_key("Edits by female editors") and values["Edits by female editors"] or [])
             else:
-                accum["all"] = { "total": [values["Total edits by editors with known gender"]], "male": [values["Edits by male editors"]], "female": [values["Edits by female editors"]] }
+                accum["all"] = { "total": [values.has_key("Total edits by editors with known gender") and values["Total edits by editors with known gender"] or []], "male": [values.has_key("Edits by male editors") and values["Edits by male editors"] or []], "female": [values.has_key("Edits by female editors") and values["Edits by female editors"] or []] }
             break
 
 var = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: []}
