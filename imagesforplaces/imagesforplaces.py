@@ -61,7 +61,7 @@ kmlend = u"""
 
 zones = {
     'all': {'maxlat': 90, 'minlat': -90, 'maxlon': 179, 'minlon': -179},
-    'spain': {'maxlat': 44, 'minlat': 35, 'maxlon': 5, 'minlon': -10}
+    #'spain': {'maxlat': 44, 'minlat': 35, 'maxlon': 5, 'minlon': -10}
 }
 
 #get all places without images
@@ -144,12 +144,12 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 
 <h2 align=center><i>Images for places</i></h2>
 
-<center>This map contains Wikipedia articles missing images. Legend: %s
+<center>This map contains the location for %d Wikipedia articles which has no images.<br/>Legend: %s
 <iframe width="99%%" height="600px" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.es/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fimagesforplaces%%2Fkml%%2Fall.kml%%3Fusecache%%3D0&amp;output=embed"></iframe></center>
 
 </body>
 </html>
-""" % ('&nbsp;&nbsp;'.join(["<img src='%s' alt='%s' title='%s' width=25px />" % (icon, desc, desc) for tag, icon, desc in icons]))
+""" % (len(points), '&nbsp;&nbsp;'.join(["<img src='%s' alt='%s' title='%s' width=25px />" % (icon, desc, desc) for tag, icon, desc in icons]))
 
 f = open('%s/index.php' % (path), 'w')
 f.write(output.encode('utf-8'))
