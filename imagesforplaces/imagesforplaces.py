@@ -73,6 +73,7 @@ row = cursor.fetchone()
 while row:
     page_title = re.sub(ur"_", ur" ", unicode(row[0], "utf-8"))
     if page_title.isdigit(): #year articles
+        row = cursor.fetchone()  
         continue
     gc_lat = row[1]
     gc_lon = row[2]
