@@ -32,7 +32,7 @@ path = '/home/emijrp/public_html/imagesforplaces'
 icons = [
     ['no', 'http://maps.google.com/mapfiles/kml/paddle/red-stars.png', 'Unknown'],
     ['ai', 'http://google-maps-icons.googlecode.com/files/airport.png', 'Airport, heliport'],
-    ['ce', 'http://google-maps-icons.googlecode.com/files/cemetary.png', 'Cemetery'],
+    ['br', 'http://google-maps-icons.googlecode.com/files/bridgemodern.png', 'Bridge, aqueduct'],
     ['ch', 'http://google-maps-icons.googlecode.com/files/church2.png', 'Church, cathedral, convent'],
     ['es', 'http://google-maps-icons.googlecode.com/files/stadium.png', 'Estadio'],
     ['fa', 'http://google-maps-icons.googlecode.com/files/lighthouse.png', 'Lighthouse'],
@@ -45,6 +45,7 @@ icons = [
     ['sta', 'http://google-maps-icons.googlecode.com/files/bus.png', 'Station'],
     ['th', 'http://google-maps-icons.googlecode.com/files/theater.png', 'Theatre'],
     ['un', 'http://google-maps-icons.googlecode.com/files/university.png', 'University, faculty'],
+    ['ce', 'http://google-maps-icons.googlecode.com/files/cemetary.png', 'Cemetery'],
 ]
 kmlini = u"""<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
@@ -100,7 +101,9 @@ for zone, coordlimits in zones.items():
             placetype = 'ai'
         elif title.startswith(u'Cementerio'):
             placetype = 'ce'
-        elif title.startswith(u'Iglesia') or title.startswith(u'Catedral') or title.startswith(u'Convento') or title.startswith(u'Monasterio'):
+        elif title.startswith(u'Puente ') or title.startswith(u'Acueducto'):
+            placetype = 'br'
+        elif title.startswith(u'Iglesia') or title.startswith(u'Catedral') or title.startswith(u'Convento') or title.startswith(u'Monasterio') or title.startswith(u'Mezquita'):
             placetype = 'ch'
         elif title.startswith(u'Estadio'):
             placetype = 'es'
@@ -156,8 +159,8 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 
 <h1 align=center><i>Images for places</i></h1>
 
-<center>This map contains the <a href="http://toolserver.org/~dispenser/dumps/">location</a> for <b>%d</b> Wikipedia articles which have no images.<br/>Legend: %s
-<iframe width="99%%" height="600px" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.es/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fimagesforplaces%%2Fkml%%2Fall.kml%%3Fusecache%%3D0&amp;output=embed"></iframe></center>
+<center>This map contains the <a href="http://toolserver.org/~dispenser/dumps/">location</a> for <b>%d</b> Wikipedia articles which have no images. Check <a href="http://commons.wikimedia.org/">Wikimedia Commons</a> before going to take a photo!<br/>%s<br/>
+<iframe width="99%%" height="570px" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.es/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fimagesforplaces%%2Fkml%%2Fall.kml%%3Fusecache%%3D0&amp;output=embed"></iframe></center>
 
 <center>This tool has been developed by <a href="http://toolserver.org/~emijrp/">emijrp</a></center>
 </body>
