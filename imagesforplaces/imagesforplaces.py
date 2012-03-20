@@ -162,7 +162,7 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 <center>This map contains the <a href="http://toolserver.org/~dispenser/dumps/">location</a> for <b>%d</b> Wikipedia articles which have no images. Check <a href="http://commons.wikimedia.org/">Wikimedia Commons</a> before going to take a photo!<br/>%s<br/>
 <iframe width="99%%" height="570px" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.es/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fimagesforplaces%%2Fkml%%2Fall.kml%%3Fusecache%%3D0&amp;output=embed"></iframe></center>
 
-<center><i>This page was last modified on <!-- timestamp -->%s<!-- timestamp --> (UTC)</i>. This tool has been developed by <a href="http://toolserver.org/~emijrp/">emijrp</a>.</center>
+<center><i>This page was last updated on <!-- timestamp -->%s<!-- timestamp --> (UTC)</i>. This tool has been developed by <a href="http://toolserver.org/~emijrp/">emijrp</a>.</center>
 </body>
 </html>
 """ % (len(points), u'&nbsp;&nbsp;'.join([u"<img src='%s' alt='%s' title='%s' width=25px />" % (icon, desc, desc) for tag, icon, desc in icons]), datetime.datetime.now())
