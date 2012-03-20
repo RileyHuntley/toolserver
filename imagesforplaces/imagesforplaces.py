@@ -103,13 +103,13 @@ for zone, coordlimits in zones.items():
             placetype = 'ce'
         elif title.startswith(u'Puente ') or title.startswith(u'Acueducto'):
             placetype = 'br'
-        elif title.startswith(u'Iglesia') or title.startswith(u'Catedral') or title.startswith(u'Convento') or title.startswith(u'Monasterio') or title.startswith(u'Mezquita'):
+        elif title.startswith(u'Iglesia') or title.startswith(u'Ermita') or title.startswith(u'Catedral') or title.startswith(u'Convento') or title.startswith(u'Monasterio') or title.startswith(u'Mezquita'):
             placetype = 'ch'
         elif title.startswith(u'Estadio'):
             placetype = 'es'
         elif title.startswith(u'Faro '):
             placetype = 'fa'
-        elif title.startswith(u'Montaña') or title.startswith(u'Monte') or title.startswith(u'Pico') or title.startswith(u'Cueva'):
+        elif title.startswith(u'Montaña') or title.startswith(u'Monte') or title.startswith(u'Pico') or title.startswith(u'Cerro') or title.startswith(u'Meseta') or title.startswith(u'Cueva'):
             placetype = 'mo'
         elif title.startswith(u'Palacio') or title.startswith(u'Casa de'):
             placetype = 'monu'
