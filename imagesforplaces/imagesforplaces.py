@@ -154,11 +154,12 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 </head>
 <body style="background-color:#cedff2;">
 
-<h2 align=center><i>Images for places</i></h2>
+<h1 align=center><i>Images for places</i></h1>
 
-<center>This map contains the location for %d Wikipedia articles which have no images.<br/>Legend: %s
+<center>This map contains the <a href="http://toolserver.org/~dispenser/dumps/">location</a> for <b>%d</b> Wikipedia articles which have no images.<br/>Legend: %s
 <iframe width="99%%" height="600px" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.es/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fimagesforplaces%%2Fkml%%2Fall.kml%%3Fusecache%%3D0&amp;output=embed"></iframe></center>
 
+<center>This tool has been developed by <a href="http://toolserver.org/~emijrp/">emijrp</a></center>
 </body>
 </html>
 """ % (len(points), u'&nbsp;&nbsp;'.join([u"<img src='%s' alt='%s' title='%s' width=25px />" % (icon, desc, desc) for tag, icon, desc in icons]))
