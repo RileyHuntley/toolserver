@@ -29,33 +29,32 @@ def cleantitle(title):
     return title
 
 path = '/home/emijrp/public_html/imagesforplaces'
+icons = [
+    ['no', 'http://maps.google.com/mapfiles/kml/paddle/red-stars.png', 'Unknown'],
+    ['ai', 'http://google-maps-icons.googlecode.com/files/airport.png', 'Airport, heliport'],
+    ['ch', 'http://google-maps-icons.googlecode.com/files/church2.png', 'Church'],
+    ['es', 'http://google-maps-icons.googlecode.com/files/stadium.png', 'Estadio'],
+    ['mo', 'http://google-maps-icons.googlecode.com/files/beautiful.png', 'Mountain, cave'],
+    ['mu', 'http://google-maps-icons.googlecode.com/files/museum-historical.png', 'Museums, Galleries'], 
+    ['ob', 'http://google-maps-icons.googlecode.com/files/observatory.png', 'Observatory'],
+    ['pa', 'http://google-maps-icons.googlecode.com/files/park.png', 'Parks'],
+    ['sc', 'http://google-maps-icons.googlecode.com/files/school.png', 'School'],
+    ['th', 'http://google-maps-icons.googlecode.com/files/theater.png', 'Theatre'],
+    ['un', 'http://google-maps-icons.googlecode.com/files/university.png', 'University'],
+]
 kmlini = u"""<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
     <Document>
     <name>Images for places</name>
     <description>Missing images by place</description>
-    <Style id="no">
+    %s
+    """ % ('\n'.join(["""<Style id="%s">
       <IconStyle>
         <Icon>
-          <href>http://maps.google.com/mapfiles/kml/paddle/red-stars.png</href>
+          <href>%s</href>
         </Icon>
       </IconStyle>
-    </Style>
-    <Style id="mu">
-      <IconStyle>
-        <Icon>
-          <href>http://google-maps-icons.googlecode.com/files/museum-historical.png</href>
-        </Icon>
-      </IconStyle>
-    </Style>
-    <Style id="pa">
-      <IconStyle>
-        <Icon>
-          <href>http://google-maps-icons.googlecode.com/files/park.png</href>
-        </Icon>
-      </IconStyle>
-    </Style>
-    """
+    </Style>""" % (tag, icon) for tag, icon, desc in icons]))
 kmlend = u"""
     </Document>
 </kml>"""
@@ -73,6 +72,8 @@ cursor.execute("SELECT page_title, gc_lat, gc_lon, page_len from u_dispenser_p.c
 row = cursor.fetchone()
 while row:
     page_title = re.sub(ur"_", ur" ", unicode(row[0], "utf-8"))
+    if page_title.isdigit(): #year articles
+        continue
     gc_lat = row[1]
     gc_lon = row[2]
     page_len = row[3]
@@ -90,10 +91,26 @@ for zone, coordlimits in zones.items():
             continue
         title_clean = cleantitle(title)
         placetype = 'no'
-        if title.startswith('Museo') or title.startswith(u'Galería'):
+        if title.startswith(u'Aeropuerto') or title.startswith(u'Helicóptero') or title.startswith(u'Aeródromo'):
+            placetype = 'ai'
+        elif title.startswith(u'Iglesia') or title.startswith(u'Convento') or title.startswith(u'Monasterio'):
+            placetype = 'ch'
+        elif title.startswith(u'Estadio'):
+            placetype = 'es'
+        elif title.startswith(u'Montaña') or title.startswith(u'Monte') or title.startswith(u'Pico') or title.startswith(u'Cueva'):
+            placetype = 'mo'
+        elif title.startswith('Museo') or title.startswith(u'Galería'):
             placetype = 'mu'
+        elif title.startswith('Observatorio'):
+            placetype = 'ob'
         elif title.startswith('Parque') or title.startswith(u'Jardín'):
             placetype = 'pa'
+        elif title.startswith('Colegio') or title.startswith(u'Escuela'):
+            placetype = 'sc'
+        elif title.startswith('Teatro'):
+            placetype = 'th'
+        elif title.startswith('Universidad') or title.startswith(u'Facultad'):
+            placetype = 'un'
         output += u"""
     <Placemark>
     <name>%s</name>
@@ -126,11 +143,12 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 
 <h2 align=center>Images for places</h2>
 
-<center><iframe width="1000" height="600" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.es/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%2F%2Ftoolserver.org%2F~emijrp%2Fimagesforplaces%2Fkml%2Fall.kml%3Fusecache%3D0&amp;output=embed"></iframe></center>
+<center>%s
+<iframe width="99%%" height="600px" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.es/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fimagesforplaces%%2Fkml%%2Fall.kml%%3Fusecache%%3D0&amp;output=embed"></iframe></center>
 
 </body>
 </html>
-"""
+""" % ('&nbsp;&nbsp;'.join(["<img src='%s' alt='%s' title='%s' width=25px />" % (icon, desc, desc) for tag, icon, desc in icons]))
 
 f = open('%s/index.php' % (path), 'w')
 f.write(output.encode('utf-8'))
