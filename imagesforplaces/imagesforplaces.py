@@ -110,19 +110,19 @@ for zone, coordlimits in zones.items():
             placetype = 'mo'
         elif title.startswith(u'Palacio') or title.startswith(u'Casa de'):
             placetype = 'monu'
-        elif title.startswith('Museo') or title.startswith(u'Galería'):
+        elif title.startswith(u'Museo') or title.startswith(u'Galería'):
             placetype = 'mu'
-        elif title.startswith('Observatorio'):
+        elif title.startswith(u'Observatorio'):
             placetype = 'ob'
-        elif title.startswith('Parque') or title.startswith(u'Jardín'):
+        elif title.startswith(u'Parque') or title.startswith(u'Jardín'):
             placetype = 'pa'
-        elif title.startswith('Colegio') or title.startswith(u'Escuela'):
+        elif title.startswith(u'Colegio') or title.startswith(u'Escuela'):
             placetype = 'sc'
-        elif title.startswith('Estación'):
+        elif title.startswith(u'Estación'):
             placetype = 'sta'
-        elif title.startswith('Teatro'):
+        elif title.startswith(u'Teatro'):
             placetype = 'th'
-        elif title.startswith('Universidad') or title.startswith(u'Facultad'):
+        elif title.startswith(u'Universidad') or title.startswith(u'Facultad'):
             placetype = 'un'
         output += u"""
     <Placemark>
