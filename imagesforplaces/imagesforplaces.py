@@ -42,7 +42,7 @@ icons = [
     ['ob', 'http://google-maps-icons.googlecode.com/files/observatory.png', 'Observatory'],
     ['pa', 'http://google-maps-icons.googlecode.com/files/park.png', 'Parks'],
     ['sc', 'http://google-maps-icons.googlecode.com/files/school.png', 'School'],
-    ['sta', 'http://google-maps-icons.googlecode.com/files/bus.png', 'Estación'],
+    ['sta', 'http://google-maps-icons.googlecode.com/files/bus.png', 'Station'],
     ['th', 'http://google-maps-icons.googlecode.com/files/theater.png', 'Theatre'],
     ['un', 'http://google-maps-icons.googlecode.com/files/university.png', 'University, faculty'],
 ]
@@ -161,7 +161,7 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 
 </body>
 </html>
-""" % (len(points), '&nbsp;&nbsp;'.join(["<img src='%s' alt='%s' title='%s' width=25px />" % (icon, desc, desc) for tag, icon, desc in icons]))
+""" % (len(points), u'&nbsp;&nbsp;'.join([u"<img src='%s' alt='%s' title='%s' width=25px />" % (icon, desc, desc) for tag, icon, desc in icons]))
 
 f = open('%s/index.php' % (path), 'w')
 f.write(output.encode('utf-8'))
