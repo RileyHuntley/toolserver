@@ -140,11 +140,11 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
     <title>Images for places</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
-<body>
+<body style="background-color:#cedff2;">
 
-<h2 align=center>Images for places</h2>
+<h2 align=center><i>Images for places</i></h2>
 
-<center>%s
+<center>This map contains Wikipedia articles missing images. Legend: %s
 <iframe width="99%%" height="600px" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.es/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fimagesforplaces%%2Fkml%%2Fall.kml%%3Fusecache%%3D0&amp;output=embed"></iframe></center>
 
 </body>
