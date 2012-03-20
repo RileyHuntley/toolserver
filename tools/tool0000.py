@@ -99,6 +99,10 @@ def getPHPTools():
 <ul>
 <li><a href="wikiasearch/">Wikia Search design</a>: a proposed design for Wikia Search search engine that was closed some time ago.</li>
 </ul>
+
+<h2>Source code</h2>
+
+You can find most of the source code for these tools in my <a href="http://code.google.com/p/toolserver/source/browse/#svn%2Ftrunk">SVN repository</a> at Google Code. For any comment or if you found a bug, reach me at emijrp@gmail.com.
 """
 
     """<h2>More tools</h2>
