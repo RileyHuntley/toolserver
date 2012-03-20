@@ -32,15 +32,19 @@ path = '/home/emijrp/public_html/imagesforplaces'
 icons = [
     ['no', 'http://maps.google.com/mapfiles/kml/paddle/red-stars.png', 'Unknown'],
     ['ai', 'http://google-maps-icons.googlecode.com/files/airport.png', 'Airport, heliport'],
-    ['ch', 'http://google-maps-icons.googlecode.com/files/church2.png', 'Church'],
+    ['ce', 'http://google-maps-icons.googlecode.com/files/cemetary.png', 'Cemetery'],
+    ['ch', 'http://google-maps-icons.googlecode.com/files/church2.png', 'Church, cathedral, convent'],
     ['es', 'http://google-maps-icons.googlecode.com/files/stadium.png', 'Estadio'],
+    ['fa', 'http://google-maps-icons.googlecode.com/files/lighthouse.png', 'Lighthouse'],
     ['mo', 'http://google-maps-icons.googlecode.com/files/beautiful.png', 'Mountain, cave'],
+    ['monu', 'http://google-maps-icons.googlecode.com/files/monument.png', 'Monument'],
     ['mu', 'http://google-maps-icons.googlecode.com/files/museum-historical.png', 'Museums, Galleries'], 
     ['ob', 'http://google-maps-icons.googlecode.com/files/observatory.png', 'Observatory'],
     ['pa', 'http://google-maps-icons.googlecode.com/files/park.png', 'Parks'],
     ['sc', 'http://google-maps-icons.googlecode.com/files/school.png', 'School'],
+    ['sta', 'http://google-maps-icons.googlecode.com/files/bus.png', 'Estación'],
     ['th', 'http://google-maps-icons.googlecode.com/files/theater.png', 'Theatre'],
-    ['un', 'http://google-maps-icons.googlecode.com/files/university.png', 'University'],
+    ['un', 'http://google-maps-icons.googlecode.com/files/university.png', 'University, faculty'],
 ]
 kmlini = u"""<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
@@ -94,12 +98,18 @@ for zone, coordlimits in zones.items():
         placetype = 'no'
         if title.startswith(u'Aeropuerto') or title.startswith(u'Helicóptero') or title.startswith(u'Aeródromo'):
             placetype = 'ai'
-        elif title.startswith(u'Iglesia') or title.startswith(u'Convento') or title.startswith(u'Monasterio'):
+        elif title.startswith(u'Cementerio'):
+            placetype = 'ce'
+        elif title.startswith(u'Iglesia') or title.startswith(u'Catedral') or title.startswith(u'Convento') or title.startswith(u'Monasterio'):
             placetype = 'ch'
         elif title.startswith(u'Estadio'):
             placetype = 'es'
+        elif title.startswith(u'Faro '):
+            placetype = 'fa'
         elif title.startswith(u'Montaña') or title.startswith(u'Monte') or title.startswith(u'Pico') or title.startswith(u'Cueva'):
             placetype = 'mo'
+        elif title.startswith(u'Palacio') or title.startswith(u'Casa de'):
+            placetype = 'monu'
         elif title.startswith('Museo') or title.startswith(u'Galería'):
             placetype = 'mu'
         elif title.startswith('Observatorio'):
@@ -108,6 +118,8 @@ for zone, coordlimits in zones.items():
             placetype = 'pa'
         elif title.startswith('Colegio') or title.startswith(u'Escuela'):
             placetype = 'sc'
+        elif title.startswith('Estación'):
+            placetype = 'sta'
         elif title.startswith('Teatro'):
             placetype = 'th'
         elif title.startswith('Universidad') or title.startswith(u'Facultad'):
@@ -144,7 +156,7 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 
 <h2 align=center><i>Images for places</i></h2>
 
-<center>This map contains the location for %d Wikipedia articles which has no images.<br/>Legend: %s
+<center>This map contains the location for %d Wikipedia articles which have no images.<br/>Legend: %s
 <iframe width="99%%" height="600px" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.es/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fimagesforplaces%%2Fkml%%2Fall.kml%%3Fusecache%%3D0&amp;output=embed"></iframe></center>
 
 </body>
