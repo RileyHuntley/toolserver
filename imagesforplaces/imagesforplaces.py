@@ -157,7 +157,7 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 </head>
 <body style="background-color:#cedff2;">
 
-<h1 align=center><i>Images for places</i></h1>
+<h1 align=center><i>Images for places</i> <img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Crystal_128_camera_SVG.svg/35px-Crystal_128_camera_SVG.svg.png" /></h1>
 
 <center>This map contains the <a href="http://toolserver.org/~dispenser/dumps/">location</a> for <b>%d</b> Wikipedia articles which have no images. Check <a href="http://commons.wikimedia.org/">Wikimedia Commons</a> before going to take a photo!<br/>%s<br/>
 <iframe width="99%%" height="570px" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.es/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fimagesforplaces%%2Fkml%%2Fall.kml%%3Fusecache%%3D0&amp;output=embed"></iframe></center>
