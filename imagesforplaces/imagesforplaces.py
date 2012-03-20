@@ -34,12 +34,34 @@ kmlini = u"""<?xml version="1.0" encoding="UTF-8"?>
     <Document>
     <name>Images for places</name>
     <description>Missing images by place</description>
+    <Style id="no">
+      <IconStyle>
+        <Icon>
+          <href>http://maps.google.com/mapfiles/kml/paddle/red-stars.png</href>
+        </Icon>
+      </IconStyle>
+    </Style>
+    <Style id="mu">
+      <IconStyle>
+        <Icon>
+          <href>http://google-maps-icons.googlecode.com/files/museum-historical.png</href>
+        </Icon>
+      </IconStyle>
+    </Style>
+    <Style id="pa">
+      <IconStyle>
+        <Icon>
+          <href>http://google-maps-icons.googlecode.com/files/park.png</href>
+        </Icon>
+      </IconStyle>
+    </Style>
     """
 kmlend = u"""
     </Document>
 </kml>"""
 
 zones = {
+    'all': {'maxlat': 90, 'minlat': -90, 'maxlon': 179, 'minlon': -179},
     'spain': {'maxlat': 44, 'minlat': 35, 'maxlon': 5, 'minlon': -10}
 }
 
@@ -67,21 +89,25 @@ for zone, coordlimits in zones.items():
            not lon < coordlimits['maxlon'] or not lon > coordlimits['minlon']:
             continue
         title_clean = cleantitle(title)
+        placetype = 'no'
+        if title.startswith('Museo') or title.startswith(u'Galería'):
+            placetype = 'mu'
+        elif title.startswith('Parque') or title.startswith(u'Jardín'):
+            placetype = 'pa'
         output += u"""
     <Placemark>
     <name>%s</name>
     <description>
         <![CDATA[
-        <table width=350px>
-        <tr><td>Article:</b><br/><a href='http://es.wikipedia.org/wiki/%s'>%s</a></td></tr>
-        <tr><td><b>Coordinates:</b><br/>%s, %s</td></tr>
-        </table>
+        <a href="http://es.wikipedia.org/wiki/%s">Wikipedia</a>
+        </ul>
         ]]>
     </description>
+    <styleUrl>#%s</styleUrl>
     <Point>
         <coordinates>%s,%s</coordinates>
     </Point>
-    </Placemark>""" % (len(title_clean) > 37 and '%s...' % (title_clean[:37]) or title_clean, re.sub(' ', '_', title), title, lon, lat, lon, lat)
+    </Placemark>""" % (len(title_clean) > 37 and '%s...' % (title_clean[:37]) or title_clean, re.sub(' ', '_', title), placetype, lon, lat)
     
     output += kmlend
     f = open('%s/kml/%s.kml' % (path, zone), 'w')
@@ -95,113 +121,16 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 <head>
     <title>Images for places</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <style>
-        html,body {
-            height: 98.5%%;
-            width: 99.5%%;
-        }
-        #map {
-            width: 100%%;
-            height: 100%%;
-        }
-    </style>
-    <script src='http://openlayers.org/api/OpenLayers.js'></script>
 </head>
-<body onload="init()">
-<!-- Code adapted from OpenLayers example http://openlayers.org/dev/examples/sundials-spherical-mercator.html -->
+<body>
 
-<script type="text/javascript">
-    var map, select;
+<h2 align=center>Images for places</h2>
 
-    function init(){
-        var options = {
-            projection: new OpenLayers.Projection("EPSG:900913"),
-            displayProjection: new OpenLayers.Projection("EPSG:4326"),
-            units: "m",
-            maxResolution: 156543.0339,
-            maxExtent: new OpenLayers.Bounds(-20037508.34, -20037508.34,
-                                             20037508.34, 20037508.34),
-        };
-        map = new OpenLayers.Map('map', options);
-        
-        var mapnik = new OpenLayers.Layer.OSM("OpenStreetMap (Mapnik)");
-        //var gmap = new OpenLayers.Layer.Google("Google", {sphericalMercator:true});
-        mylayers = [];
-        zones = [%s];
-        zones_label = [%s];
-        for (i=0;i<zones.length;i++){
-            var mylayer = new OpenLayers.Layer.Vector(zones_label[i], {
-                projection: map.displayProjection,
-                strategies: [new OpenLayers.Strategy.Fixed()],
-                protocol: new OpenLayers.Protocol.HTTP({
-                    url: "http://toolserver.org/~emijrp/imagesforplaces/kml/"+zones[i]+".kml",
-                    format: new OpenLayers.Format.KML({
-                        extractStyles: true,
-                        extractAttributes: true
-                    })
-                })
-            });
-            if (zones[i] == 'spain') {
-                mylayer.setVisibility(true);
-            }else{
-                mylayer.setVisibility(false);
-            }
-            mylayers = mylayers.concat([mylayer]);
-        }
-        
-        layers = [mapnik];
-        map.addLayers(layers.concat(mylayers));
-
-        select = new OpenLayers.Control.SelectFeature(mylayers);
-        
-        for (i=1;i<mylayers.length;i++){
-            mylayers[i].events.on({
-                "featureselected": onFeatureSelect,
-                "featureunselected": onFeatureUnselect
-            });
-        }
-
-        map.addControl(select);
-        select.activate();   
-
-        map.addControl(new OpenLayers.Control.LayerSwitcher());
-
-        map.zoomToExtent(
-            new OpenLayers.Bounds(
-                -100, -70, 100, 70
-            ).transform(map.displayProjection, map.projection)
-        );
-    }
-    function onPopupClose(evt) {
-        select.unselectAll();
-    }
-    function onFeatureSelect(event) {
-        var feature = event.feature;
-        var selectedFeature = feature;
-        var popup = new OpenLayers.Popup.FramedCloud("chicken", 
-            feature.geometry.getBounds().getCenterLonLat(),
-            new OpenLayers.Size(100,100),
-            "<h4>"+feature.attributes.name + "</h4>" + feature.attributes.description,
-            null, true, onPopupClose
-        );
-        feature.popup = popup;
-        map.addPopup(popup);
-    }
-    function onFeatureUnselect(event) {
-        var feature = event.feature;
-        if(feature.popup) {
-            map.removePopup(feature.popup);
-            feature.popup.destroy();
-            delete feature.popup;
-        }
-    }
-</script>
-
-<div id="map" class="smallmap"></div>
+<center><iframe width="1000" height="600" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.es/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%2F%2Ftoolserver.org%2F~emijrp%2Fimagesforplaces%2Fkml%2Fall.kml%3Fusecache%3D0&amp;output=embed"></iframe></center>
 
 </body>
 </html>
-""" % (', '.join(['"%s"' % (zone) for zone in zones]), ', '.join(['"%s"' % (zone) for zone in zones]))
+"""
 
 f = open('%s/index.php' % (path), 'w')
 f.write(output.encode('utf-8'))

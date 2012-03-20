@@ -83,6 +83,7 @@ def getPHPTools():
     return u"""<h2>My best tools (or I think so)</h2>
 <ul>
 <li><a href="imagesforbio/">Images for biographies</a>: it shows a list of biographies missing images, with image proposals. It helps to include images in <a href="http://toolserver.org/~emijrp/imagesforbio/stats.php">+150 Wikipedia projects</a>, also in the smallest ones. Thousands of images have been included in articles using this method. Yay!</li>
+<li><a href="imagesforplaces/">Images for places</a>: a map with geolocated articles which have no pictures. Can you help taking a photo?</li>
 <li><a href="wlm/">Wiki <i>Loves</i> Monuments</a>: a map for the Spanish edition of Wiki Loves Monuments.</li>
 <li><a href="commonsexplorer/">Wikimedia Commons Explorer</a>: a map to explore geocoded Wikimedia Commons images by date.</li>
 <li><a href="wikimediacounter/">Wikimedia counter</a>: this counter shows the number of edits made in all the Wikimedia Foundation projects (Wikipedia, Wiktionary, Wikibooks, Wikiquote, Wikisource, Wikinews, Wikiversity, Meta, Wikispecies and Commons). The 1,000,000,000 (one billion) milestone was reached in <a href="wikimediacounter/onebillion.png">April 16, 2010</a>. Congratulations!</li>
