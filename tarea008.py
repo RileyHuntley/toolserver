@@ -255,7 +255,7 @@ for family, langs in projects.items():
             if optoutpagetitle!='':
                 optoutpage=wikipedia.Page(optoutsite, optoutpagetitle)
                 if optoutpage.exists() and not optoutpage.isRedirectPage():
-                    mm=re.compile(ur"\[\[ *[^\:]+? *\: *(?P<useroptout>[^\]\|]+?) *[\]\|]").finditer(optoutpage.get())
+                    mm=re.compile(ur"(?im)^#\s*\[\[\s*[^\:]+?\s*\:\s*(?P<useroptout>[^\]\|]+?)\s*[\]\|]").finditer(optoutpage.get())
                     for ii in mm:
                         optouts.append(re.sub('_', ' ', ii.group("useroptout")))
         #print "Excluidos", optouts
@@ -289,15 +289,12 @@ for family, langs in projects.items():
             continue
         #poner slow ok ralentiza demasiado? más de 24h?
         #poner un try except aquí no conviene porque al fallar un wiki, falsea el ranking global de wikimedias
-        #cursor.execute("select user_name, user_editcount from user where user_editcount!=0 order by user_editcount desc limit 5000;")
-        
-        result = []
-        """cursor.execute("select /* SLOW_OK */ rev_user_text, count(*) as count from revision where 1 group by rev_user_text order by count desc limit 5000;")
+        #cursor.execute("select /* SLOW_OK */ rev_user_text, count(*) as count from revision where 1 group by rev_user_text order by count desc limit 5000;")
+        cursor.execute("select user_name, user_editcount from user where user_editcount!=0 order by user_editcount desc limit 5000;")
         result=cursor.fetchall()
         cursor.close()
         #conn.close()
         time.sleep(0.5)
-        """
         
         s=u""
         sbots=u""
@@ -403,7 +400,7 @@ for family, langs in projects.items():
             page=wikipedia.Page(site, title)
             if projects[family][lang]['rankingusers'] and ((not page.exists()) or (not page.isRedirectPage() and not page.isDisambig() and page.get()!=s and int(page.getVersionHistory(revCount=1)[0][1][8:10])!=datetime.datetime.now().day)):# [0][1] es el timestamp de la última versión del historial, [8:10] es el día del mes, evitamos actualizar dos veces el mismo día
                 try:
-                    page.put(u"This page is under manintenance", resume) #page.put(s, resume)
+                    page.put(s, resume) #page.put(u"This page is under maintenance", resume)
                 except:
                     print "Error, unable to write to", family, lang, "see user-config.py"
                 time.sleep(delay)
@@ -436,7 +433,7 @@ for family, langs in projects.items():
             page=wikipedia.Page(site, title)
             if projects[family][lang]['rankingbots'] and ((not page.exists()) or (not page.isRedirectPage() and not page.isDisambig() and page.get()!=sbots and int(page.getVersionHistory(revCount=1)[0][1][8:10])!=datetime.datetime.now().day)):# [0][1] es el timestamp de la última versión del historial, [8:10] es el día del mes, evitamos actualizar dos veces el mismo día
                 try:
-                    page.put(u"This page is under manintenance", resume) #page.put(sbots, resume)
+                    page.put(sbots, resume) #page.put(u"This page is under maintenance", resume)
                 except:
                     print "Error, unable to write to", family, lang, "see user-config.py"
                 time.sleep(delay)

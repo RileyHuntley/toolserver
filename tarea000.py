@@ -226,7 +226,7 @@ def getServer(lang, family):
     server=""
     for row in result:
         if len(row)==1: #por si no existe ese idioma
-            server="sql-s%s-rr" % row[0]
+            server="sql-s%s" % row[0]
             break
 
     cursor.close()

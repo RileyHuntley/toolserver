@@ -24,6 +24,8 @@ import sys
 import wikipedia
 import xmlreader
 
+import tarea000
+
 def cleantitle(title):
     title = re.sub(ur"[&]", ur"-", title)
     return title
@@ -70,31 +72,53 @@ zones = {
 }
 
 #get all places without images
-points = []
-conn = MySQLdb.connect(host='sql-s7', db='eswiki_p', read_default_file='~/.my.cnf', use_unicode=True)
-cursor = conn.cursor()
-cursor.execute("SELECT page_title, gc_lat, gc_lon, page_len from u_dispenser_p.coord_eswiki join page on page_id=gc_from where page_namespace=0 and gc_from not in (select distinct il_from from imagelinks where 1) group by page_title order by page_title")
-row = cursor.fetchone()
-while row:
-    page_title = re.sub(ur"_", ur" ", unicode(row[0], "utf-8"))
-    if page_title.isdigit(): #year articles
-        row = cursor.fetchone()  
-        continue
-    gc_lat = row[1]
-    gc_lon = row[2]
-    page_len = row[3]
-    points.append([page_title, gc_lat, gc_lon, page_len])
-    row = cursor.fetchone()    
-cursor.close()
-conn.close()
+points = {}
+choicedlangs = ['es', 'pl']
+for lang in choicedlangs:
+    conn = MySQLdb.connect(host=tarea000.getServer(lang, 'wikipedia'), db=tarea000.getDbname(lang, 'wikipedia'), read_default_file='~/.my.cnf', use_unicode=True)
+    cursor = conn.cursor()
+    cursor.execute("SELECT distinct page_title, gc_lat, gc_lon, ll_lang, ll_title from u_dispenser_p.coord_%swiki join page on page_id=gc_from join langlinks on ll_from=gc_from where page_namespace=0 and page_is_redirect=0 and gc_from not in (select distinct il_from from imagelinks where 1) order by page_title" % (lang))
+    row = cursor.fetchone()
+    while row:
+        page_title = re.sub(ur"_", ur" ", unicode(row[0], "utf-8"))
+        if page_title.isdigit(): #year articles
+            row = cursor.fetchone()  
+            continue
+        gc_lat = row[1]
+        gc_lon = row[2]
+        ll_lang = unicode(row[3], "utf-8")
+        ll_title = unicode(row[4], "utf-8")
+        coords = '%s,%s' % (gc_lat, gc_lon)
+        added = False
+        for k, v in points.items():
+            if page_title in v.values():
+                added = True
+                points[k][lang][1] = False #no images in this page in this lang
+        if not points.has_key(coords):
+            points[coords] = {}
+        if not added:
+            points[coords][lang] = [page_title, False] #we know it has no images because sql discarded
+        if not points[coords].has_key(ll_lang):
+            points[coords][ll_lang] = [ll_title, True] # we put True by default and it will be checked later
+        row = cursor.fetchone()    
+    cursor.close()
+    conn.close()
 
 #generating KMLs by zone
 for zone, coordlimits in zones.items():
     output = kmlini
-    for title, lat, lon, pagelen in points:
+    for coords, langlinks in points.items():
+        lat = float(coords.split(',')[0])
+        lon = float(coords.split(',')[1])
         if not lat < coordlimits['maxlat'] or not lat > coordlimits['minlat'] or \
            not lon < coordlimits['maxlon'] or not lon > coordlimits['minlon']:
             continue
+        
+        #discard points with possible images in any wiki
+        if True in [v2 for v1, v2 in langlinks.values()]:
+            continue
+        
+        title = langlinks.has_key('es') and langlinks['es'][0] or langlinks[langlinks.keys()[0]]
         title_clean = cleantitle(title)
         placetype = 'no'
         if title.startswith(u'Aeropuerto') or title.startswith(u'Helicóptero') or title.startswith(u'Aeródromo'):
@@ -113,7 +137,7 @@ for zone, coordlimits in zones.items():
             placetype = 'mo'
         elif title.startswith(u'Palacio') or title.startswith(u'Casa de'):
             placetype = 'monu'
-        elif title.startswith(u'Museo') or title.startswith(u'Galería'):
+        elif title.startswith(u'Museo') or title.startswith(u'Muzeum') or title.startswith(u'Galería'):
             placetype = 'mu'
         elif title.startswith(u'Observatorio'):
             placetype = 'ob'
@@ -132,7 +156,7 @@ for zone, coordlimits in zones.items():
     <name>%s</name>
     <description>
         <![CDATA[
-        <a href="http://es.wikipedia.org/wiki/%s">Wikipedia</a>
+        %s
         </ul>
         ]]>
     </description>
@@ -140,7 +164,7 @@ for zone, coordlimits in zones.items():
     <Point>
         <coordinates>%s,%s</coordinates>
     </Point>
-    </Placemark>""" % (len(title_clean) > 37 and '%s...' % (title_clean[:37]) or title_clean, re.sub(' ', '_', title), placetype, lon, lat)
+    </Placemark>""" % (len(title_clean) > 37 and '%s...' % (title_clean[:37]) or title_clean, ' - '.join(['<a href="http://%s.wikipedia.org/wiki/%s">%s</a>' % (ll_lang, re.sub(' ', '_', ll_title[0]), ll_lang) for ll_lang, ll_title in langlinks.items() if ll_lang in choicedlangs]), placetype, lon, lat)
     
     output += kmlend
     f = open('%s/kml/%s.kml' % (path, zone), 'w')
@@ -165,7 +189,7 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 <center><i>This page was last updated on <!-- timestamp -->%s<!-- timestamp --> (UTC)</i>. This tool has been developed by <a href="http://toolserver.org/~emijrp/">emijrp</a>.</center>
 </body>
 </html>
-""" % (len(points), u'&nbsp;&nbsp;'.join([u"<img src='%s' alt='%s' title='%s' width=25px />" % (icon, desc, desc) for tag, icon, desc in icons]), datetime.datetime.now())
+""" % (len(points.items()), u'&nbsp;&nbsp;'.join([u"<img src='%s' alt='%s' title='%s' width=25px />" % (icon, desc, desc) for tag, icon, desc in icons]), datetime.datetime.now())
 
 f = open('%s/index.php' % (path), 'w')
 f.write(output.encode('utf-8'))
