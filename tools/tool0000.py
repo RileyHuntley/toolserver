@@ -67,7 +67,7 @@ foreach ($langs_temp as $lang_temp) { array_push($langs, '<a href="?lang='.$lang
 def getPHPFooter():
     return u"""<hr/>
 <div style="float: right;"><a href="http://toolserver.org"><img src="wikimedia-toolserver-button.png" alt="Powered by Toolserver"></a></div>
-<p><i>This page was last modified on <!-- timestamp -->%s<!-- timestamp --> (UTC).</i></p>
+<p><i>Total visits: <?php include ("counter.php"); ?>. This page was last modified on <!-- timestamp -->%s<!-- timestamp --> (UTC).</i></p>
 <!-- end content -->
 </body>
 </html>
@@ -102,7 +102,7 @@ def getPHPTools():
 
 <h2>Source code</h2>
 
-You can find most of the source code for these tools in my <a href="http://code.google.com/p/toolserver/source/browse/#svn%2Ftrunk">SVN repository</a> at Google Code. For any comment or if you found a bug, reach me at emijrp@gmail.com.
+You can find most of the source code for these tools in my <a href="http://code.google.com/p/toolserver/source/browse/#svn%2Ftrunk">SVN repository</a> at Google Code. If you want to send me any comment or report a bug, reach me at <a href="mailto:emijrp@gmail.com">emijrp@gmail.com</a>.
 """
 
     """<h2>More tools</h2>
