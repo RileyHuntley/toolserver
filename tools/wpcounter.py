@@ -170,6 +170,9 @@ p#followus {
 p#translateit{
     right:10;
 }
+p#visits{
+    right:10;
+}
 p#donate, p#author, p#f11 {
     position:absolute;
     margin:0;border:0;padding:0;
@@ -471,9 +474,11 @@ output=u"""<html>
 <div id='content'>
 
 <p id="followus">
+<!--
 Join us on <a href="http://www.facebook.com/group.php?gid=287466429242">Facebook</a> and follow us on <a href="http://twitter.com/wmcounter">Twitter</a>!<br/>
-Chat with us at <a href="http://webchat.freenode.net/?randomnick=1&channels=wikimediacounter">Freenode</a><br/>
-1 Billionth edit <a href="onebillion.png">screenshot</a>!
+Chat with us at <a href="http://webchat.freenode.net/?randomnick=1&channels=wikimediacounter">Freenode</a><br/>-->
+1 Billionth edit <a href="onebillion.png">screenshot</a>!<br/>
+Total visits: <?php include ("../visits.php"); ?>
 </p>
 
 <p id="translateit"><a href="http://en.wikipedia.org/wiki/User:Emijrp/Wikimedia_projects_edits_counter">Translate it</a>!</p>
