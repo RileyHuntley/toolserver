@@ -16,7 +16,7 @@
 
 from wmchart0000 import *
 
-filename = 'wmchart0006.html'
+filename = 'wmchart0006.php'
 title = 'Protects and unprotects'
 description = "This chart shows how many protects and unprotects were made in the last days."
 

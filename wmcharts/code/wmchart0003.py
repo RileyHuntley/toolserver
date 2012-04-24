@@ -16,7 +16,7 @@
 
 from wmchart0000 import *
 
-filename = 'wmchart0003.html'
+filename = 'wmchart0003.php'
 title = 'File uploads'
 description = "This chart shows how many files have been uploaded in the last days."
 

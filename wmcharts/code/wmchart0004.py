@@ -16,7 +16,7 @@
 
 from wmchart0000 import *
 
-filename = 'wmchart0004.html'
+filename = 'wmchart0004.php'
 title = 'Deletions and restorations'
 description = "This chart shows how many deletions and restorations were made in the last days."
 

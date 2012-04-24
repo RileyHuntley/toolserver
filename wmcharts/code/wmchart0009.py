@@ -16,7 +16,7 @@
 
 from wmchart0000 import *
 
-filename = 'wmchart0009.html'
+filename = 'wmchart0009.php'
 title = 'WikiLove'
 description = "This chart shows how many WikiLove messages were sent in the last days."
 

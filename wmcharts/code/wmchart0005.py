@@ -16,7 +16,7 @@
 
 from wmchart0000 import *
 
-filename = 'wmchart0005.html'
+filename = 'wmchart0005.php'
 title = 'Blocks and unblocks'
 description = "This chart shows how many blocks and unblocks were made in the last days."
 

@@ -16,7 +16,7 @@
 
 from wmchart0000 import *
 
-filename = 'wmchart0010.html'
+filename = 'wmchart0010.php'
 title = 'Gender gap edits'
 description = "This chart shows how many edits were done by male and female editors in the last days. Not all users disclose her gender."
 

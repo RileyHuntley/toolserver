@@ -167,7 +167,7 @@ $("#placeholder").bind("plothover", function (event, pos, item) {
 
 <hr/>
 <div style="float: right;"><a href="http://toolserver.org"><img src="../wikimedia-toolserver-button.png" alt="Powered by Toolserver"></a></div>
-<p><i>This page was last modified on <!-- timestamp -->%s<!-- timestamp --> (UTC).</i></p>
+<p><i>Total visits: <?php include ("../visits.php"); ?>. This page was last modified on <!-- timestamp -->%s<!-- timestamp --> (UTC).</i></p>
 <!-- end content -->
 </body>
 </html>

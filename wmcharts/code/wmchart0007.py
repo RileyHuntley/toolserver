@@ -16,7 +16,7 @@
 
 from wmchart0000 import *
 
-filename = 'wmchart0007.html'
+filename = 'wmchart0007.php'
 title = 'New accounts'
 description = "This chart shows how many accounts were created in the last days."
 

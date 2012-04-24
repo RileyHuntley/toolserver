@@ -16,7 +16,7 @@
 
 from wmchart0000 import *
 
-filename = 'wmchart0008.html'
+filename = 'wmchart0008.php'
 title = 'Reverts'
 description = "This chart shows how many edits were reverted in the namespace=0 (articles) in the last days."
 

@@ -16,7 +16,7 @@
 
 from wmchart0000 import *
 
-filename = 'wmchart0012.html'
+filename = 'wmchart0012.php'
 title = 'Images for bio progress'
 description = "This chart shows how many images have been added to articles using the <i><a href='http://toolserver.org/~emijrp/imagesforbio/'>Images for biographies</a> tool."
 

@@ -16,7 +16,7 @@
 
 from wmchart0000 import *
 
-filename = 'wmchart0002.html'
+filename = 'wmchart0002.php'
 title = 'New pages'
 description = "This chart shows how many pages have been created in the last days."
 

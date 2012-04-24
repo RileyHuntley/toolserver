@@ -16,7 +16,7 @@
 
 from wmchart0000 import *
 
-filename = 'wmchart0001.html'
+filename = 'wmchart0001.php'
 title = 'Recent changes'
 description = "This chart shows the recent changes edit rate in the last days."
 
