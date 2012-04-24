@@ -18,19 +18,19 @@
 
 <p>The <b>charts</b> available are:</p>
 <ul>
-<li><a href="wmchart0001.html">Recent changes</a></li>
-<li><a href="wmchart0002.html">New pages</a></li>
-<li><a href="wmchart0003.html">File uploads</a></li>
-<li><a href="wmchart0004.html">Deletions and restorations</a></li>
-<li><a href="wmchart0005.html">Blocks and unblocks</a></li>
-<li><a href="wmchart0006.html">Protects and unprotects</a></li>
-<li><a href="wmchart0007.html">New accounts</a></li>
-<li><a href="wmchart0008.html">Reverts</a></li>
-<li><a href="wmchart0009.html">WikiLove</a></li>
-<li><a href="wmchart0010.html">Gender gap edits</a></li>
-<li><a href="wmchart0011.html">Gender gap editors</a></li>
-<li><a href="wmchart0013.html">Gender gap edits by project family</a></li>
-<li><a href="wmchart0012.html">Images for bio progress</a></li>
+<li><a href="wmchart0001.php">Recent changes</a></li>
+<li><a href="wmchart0002.php">New pages</a></li>
+<li><a href="wmchart0003.php">File uploads</a></li>
+<li><a href="wmchart0004.php">Deletions and restorations</a></li>
+<li><a href="wmchart0005.php">Blocks and unblocks</a></li>
+<li><a href="wmchart0006.php">Protects and unprotects</a></li>
+<li><a href="wmchart0007.php">New accounts</a></li>
+<li><a href="wmchart0008.php">Reverts</a></li>
+<li><a href="wmchart0009.php">WikiLove</a></li>
+<li><a href="wmchart0010.php">Gender gap edits</a></li>
+<li><a href="wmchart0011.php">Gender gap editors</a></li>
+<li><a href="wmchart0013.php">Gender gap edits by project family</a></li>
+<li><a href="wmchart0012.php">Images for bio progress</a></li>
 </ul>
 
 <h2>License</h2>
