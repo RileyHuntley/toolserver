@@ -56,6 +56,9 @@ foreach($langs as $lang)
 }
 
 echo "<tr><td>All</td><td>{$totaltodo}</td><td>{$totaldone}</td><td>".($totaldone+$totaltodo)."</td><td>".number_format($totaldone/(($totaldone+$totaltodo)/100), 2)."%</td></tr>";
-echo "</table><br/>This tool has been reset several times. Total images added to articles since 2010: XXXX.</center>";
+echo "</table><br/>This tool has been reset several times. Total images added to articles since 2010: XXXX.";
+echo "<br/>Total visits: ";
+include ('../visits.php');
+echo "</center>";
 
 ?>

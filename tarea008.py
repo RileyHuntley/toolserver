@@ -190,6 +190,7 @@ projects={
 """
 skiplangs = [
 u'gsw', #por lo visto la cerraron
+u'donate', #not a wikipedia
 ]
 #metemos el resto de idiomas
 #descomentar cuando arregle el fallo de _mysql_exceptions.OperationalError: (1040, 'Too many connections')
