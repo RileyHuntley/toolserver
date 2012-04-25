@@ -25,10 +25,14 @@ import subprocess
 import urllib
 import wikipedia
 
-iws = ['en', 'fr', 'pl', 'it', 'ja', 'ru', 'nl', 'pt', 'sv', 'zh', 'ca', 'no', 'uk', 'fi', 'vi', 'cs', 'hu', 'tr', 'id', 'ko', 'ro', 'da', 'ar', 'eo', 'sr', 'lt', 'fa', 'sk', 'ms', 'vo', 'he', 'bg', 'sl', 'war', ]
+iws = ['fr', 'pl', 'it', 'ja', 'ru', 'nl', 'pt', 'sv', 'zh', 'ca', 'no', 'uk', 'fi', 'vi', 'cs', 'hu', 'tr', 'id', 'ko', 'ro', 'da', 'ar', 'eo', 'sr', 'lt', 'fa', 'sk', 'ms', 'vo', 'he', 'bg', 'sl', 'war', ]#en crashes and kill the script, better run apart
 iws.sort()
 
-langs = sys.argv[1].split(',')
+langs = []
+if len(sys.argv) > 1:
+    langs = sys.argv[1].split(',')
+else:
+    langs = iws
 
 for lang in langs:
     print 'Analysing... %s:' % (lang)
@@ -56,8 +60,6 @@ for lang in langs:
     g.close()
     print 'Loaded %d pageids for pages in nm = 0 (including redirects)' % (len(pages.keys()))
     
-    #subprocess.Popen(["""gunzip -c %swiki-latest-externallinks.sql.gz | egrep -o "[0-9],'https?://[^/']+[^\./'][/']" | cut -d "'" -f 2- | sed -r -e "s/['/]$//g" | sed -r -e "s/^(https?):\/\/www\-?[0-9]*\./\1:\/\//g" | sort | uniq -c | sort -nr | head -n 1000 > ranking-%s""" % (lang, lang)], stdout=devnull)
-    
     #get urls
     g = gzip.GzipFile('%swiki-latest-externallinks.sql.gz' % (lang), 'r')
     ranking_dic = {}
@@ -71,35 +73,31 @@ for lang in langs:
             if c % 10000 == 0:
                 print 'Loaded %d external links' % (c)
             #merge subdomains
-            domain = re.sub(r'(?im)^([a-z]+)://www\-?[0-9]*\.', r'\1://', url)
+            domain = url
+            domain = re.sub(r'(?im)^([a-z]+)://www\-?[0-9]*\.', r'\1://', domain)
+            domain = re.sub(r'(?im)^https://', r'http://', domain)
+            domain = re.sub(r'(?im)^ftps://', r'ftp://', domain)
             #print pageid, url, domain
             
-            if ranking_dic.has_key(domain):
-                if pages.has_key(pageid) and pages[pageid] == 0:
-                    ranking_dic[domain][0] += 1
-                ranking_dic[domain]['all'] += 1
-            else:
+            if not ranking_dic.has_key(domain):
                 ranking_dic[domain] = {0: 0, 'all': 0}
-                if pages.has_key(pageid) and pages[pageid] == 0:
-                    ranking_dic[domain][0] += 1
-                ranking_dic[domain]['all'] += 1
-            
+            if pages.has_key(pageid) and pages[pageid] == 0:
+                ranking_dic[domain][0] += 1
+            ranking_dic[domain]['all'] += 1
             c += 1
     g.close()
     
     #sort
     ranking_list_art = []
     ranking_list_all = []
-    for url, nms_dic in ranking_dic.items():
+    for domain, nms_dic in ranking_dic.items():
         if nms_dic[0] > 1: #discarding links with only 1 occurence
-            ranking_list_art.append([nms_dic[0], url])
+            ranking_list_art.append([nms_dic[0], domain])
         if nms_dic['all'] > 1:
-            ranking_list_all.append([nms_dic['all'], url])
+            ranking_list_all.append([nms_dic['all'], domain])
     #del ranking_dic
-    ranking_list_art.sort()
-    ranking_list_all.sort()
-    ranking_list_art.reverse()
-    ranking_list_all.reverse()
+    ranking_list_art.sort(reverse=True)
+    ranking_list_all.sort(reverse=True)
     print len(ranking_list_art), 'urls in the ranking for nm = 0'
     print len(ranking_list_all), 'urls in the ranking for all namespaces'
     
@@ -120,7 +118,7 @@ Domains like http://books.google.com are not merged into http://google.com.""" %
     protocols = {}
     for times, domain in ranking_list_art:
         if c <= limit:
-            search = len(re.findall('\.', domain)) == 1 and re.sub(r'http://', 'http://*.', domain) or domain
+            search = re.sub(r'http://', 'http://*.', domain)
             tableart += '\n|-\n| %s || %s || [{{fullurl:Special:LinkSearch|target=%s}} %s] ' % (c, domain, search, times, )
         totallinks += times
         protocol = domain.split('://')[0]
@@ -140,7 +138,7 @@ Domains like http://books.google.com are not merged into http://google.com.""" %
     protocols = {}
     for times, domain in ranking_list_all:
         if c <= limit:
-            search = len(re.findall('\.', domain)) == 1 and re.sub(r'http://', 'http://*.', domain) or domain
+            search = re.sub(r'http://', 'http://*.', domain)
             tableall += '\n|-\n| %s || %s || [{{fullurl:Special:LinkSearch|target=%s}} %s] ' % (c, domain, search, times, )
         totallinks += times
         protocol = domain.split('://')[0]
