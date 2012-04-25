@@ -29,6 +29,7 @@ import xmlreader
 
 targetlang = 'en' #no cambiar a menos que quiera crear bios para otras wikipedias distintas a la inglesa
 lang = 'es'
+limit = 2 #minimum interwikis to create this stub (avoiding non-notable bios)
 dumppath = ''
 dumpfilename = ''
 if len(sys.argv) >= 2:
@@ -132,7 +133,7 @@ nationalitytonation = {
     'German': 'Germany',
     'Guatemalan': 'Guatemala',
     'Honduran': 'Honduras',
-    'Hungarian': 'Hungry',
+    'Hungarian': 'Hungary',
     'Italian': 'Italy',
     'Mexican': 'Mexico',
     'Panamanian': 'Panama',
@@ -225,7 +226,7 @@ def main():
     xml = xmlreader.XmlDump('%s%s' % (dumppath and '%s/' % dumppath or '', dumpfilename), allrevisions=False)
     c = 0
     bios = 0
-    for x in xml.parse(): #parsing the whole dump
+    for x in xml.parse(): #parsing the whole dump, one page a time
         c+=1
         if re.search(title_ex_r, x.title) or \
            re.search(red_r, x.text) or \
@@ -331,6 +332,8 @@ def main():
             if not iw.group('iwlang') in [targetlang, lang]:
                 iws.append([iw.group('iwlang'), iw.group('iwtitle')])
         iws.append([lang, x.title])
+        if len(iws) < limit:
+            continue # this language and other wiki at least
         iws.sort()
         iws_plain = ''
         for iwlang, iwtitle in iws:
@@ -409,6 +412,10 @@ def main():
             output += u"""\n\n%s""" % (iws_plain)
             output += u"""\n%s""" % (nationality and nationalitytonation[nationality] and '{{%s-bio-stub}}' % (nationalitytonation[nationality]) or '{{bio-stub}}')
             output += u"""\n</pre>"""
+            
+            #last replacements...
+            output = re.sub(ur"{{United States-bio-stub}}", ur"{{US-bio-stub}}", output)
+            #end last
             
             print '#'*70
             print x.title, 'https://%s.wikipedia.org/wiki/%s' % (lang, x.title.replace(' ', '_'))

@@ -210,15 +210,16 @@ def createDB(conn=None, cursor=None):
 
 def main():
     t2 = time.time()
-    delete = False
+    delete = False #delete database
     commitlimit = 10000
     dbfilename = '/mnt/user-store/emijrp/missingimages%s.db' % (subproject)
-    create = False
-    if delete:
-        if os.path.exists(dbfilename):
+    create = False #create database structure
+    if os.path.exists(dbfilename):
+        if delete:
             os.remove(dbfilename)
-        else:
-            create = True
+    else:
+        delete = True
+        create = True
     
     #filters
     ex = ur'(?i)(%s)' % ('|'.join(wikipedia.Page(wikipedia.Site("en", "wikipedia"), u"User:Emijrp/Images for biographies/Exclusions").get().splitlines()))
