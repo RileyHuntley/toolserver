@@ -32,9 +32,12 @@ lang = 'es'
 limit = 2 #minimum interwikis to create this stub (avoiding non-notable bios)
 dumppath = ''
 dumpfilename = ''
+skip = '' #page to skip to
 if len(sys.argv) >= 2:
     dumpfilename = sys.argv[1]
     lang = dumpfilename.split('wiki')[0]
+if len(sys.argv) >= 3:
+    skip = re.sub('_', ' ', unicode(sys.argv[2], 'utf-8'))
 
 cattranslations = {}
 
@@ -240,8 +243,14 @@ def main():
     xml = xmlreader.XmlDump('%s%s' % (dumppath and '%s/' % dumppath or '', dumpfilename), allrevisions=False)
     c = 0
     bios = 0
+    global skip
     for x in xml.parse(): #parsing the whole dump, one page a time
         c+=1
+        if skip:
+            if x.title == skip:
+                skip = ''
+            continue
+        
         if re.search(title_ex_r, x.title) or \
            re.search(red_r, x.text) or \
            re.search(dis_r, x.text) or \
@@ -429,6 +438,7 @@ def main():
             
             #last replacements...
             output = re.sub(ur"{{United States-bio-stub}}", ur"{{US-bio-stub}}", output)
+            output = re.sub(ur"{{Czech Republic-bio-stub}}", ur"{{Czech-bio-stub}}", output)
             #end last
             
             print '#'*70
