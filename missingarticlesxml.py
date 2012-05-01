@@ -550,9 +550,14 @@ def main():
                         else:
                             nationality = nn         
                     else:
-                        f = open('missingarticlesxml.output.errors', 'a')
-                        f.write((u'missing nationality = %s\n' % (nn)).encode('utf-8'))
-                        f.close()
+                        if not nn.isdigit():
+                            f = open('missingarticlesxml.output.errors', 'a')
+                            f.write((u'missing nationality = %s\n' % (nn)).encode('utf-8'))
+                            f.close()
+            
+            if not nationality:
+                print 'No nationality found'
+                continue
             
             #occupations (usando cats)
             occupations = []
@@ -570,7 +575,8 @@ def main():
                             if not 'businessman' in occupations:
                                 occupations.append('businessman')
             
-            if not occupations or not nationality:
+            if not occupations:
+                print 'No occupations found'
                 continue
             
             #la salida para esta bio
