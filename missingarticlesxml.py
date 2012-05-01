@@ -298,15 +298,15 @@ catsnm = { #lo uso en translatecat() también
     }
 cats_r = re.compile(ur"(?im)\[\[\s*(%s)\s*:\s*(?P<catname>[^\]\|]+)\s*[\]\|]" % ('|'.join(catsnm.values())))
 dates_r = { #fix, most intros are not well parsed, birthday de birthmonth
-    'de': re.compile(ur"^.*?\[\[(?P<birthyear>\d{4})\]\].*?\[\[(?P<deathyear>\d{4})\]\]"),
-    'es': re.compile(ur"^.*?\[\[(?P<birthyear>\d{4})\]\].*?\[\[(?P<deathyear>\d{4})\]\]"),
-    'fr': re.compile(ur"^.*?\[\[(?P<birthyear>\d{4})\]\].*?\[\[(?P<deathyear>\d{4})\]\]"),
-    'it': re.compile(ur"^.*?\[\[(?P<birthyear>\d{4})\]\].*?\[\[(?P<deathyear>\d{4})\]\]"),
-    'nl': re.compile(ur"^.*?\[\[(?P<birthyear>\d{4})\]\].*?\[\[(?P<deathyear>\d{4})\]\]"),
-    'pl': re.compile(ur"^.*?\[\[(?P<birthyear>\d{4})\]\].*?\[\[(?P<deathyear>\d{4})\]\]"),
-    'pt': re.compile(ur"^.*?\[\[(?P<birthyear>\d{4})\]\].*?\[\[(?P<deathyear>\d{4})\]\]"),
-    'sv': re.compile(ur"^.*?\[\[(?P<birthyear>\d{4})\]\].*?\[\[(?P<deathyear>\d{4})\]\]"),
-    'vi': re.compile(ur"^.*?\[\[(?P<birthyear>\d{4})\]\].*?\[\[(?P<deathyear>\d{4})\]\]"),
+    'de': re.compile(ur"^[^\n\r]*?\[\[(?P<birthyear>\d{4})\]\][^\n\r]{,30}\[\[(?P<deathyear>\d{4})\]\]"),
+    'es': re.compile(ur"^[^\n\r]*?\[\[(?P<birthyear>\d{4})\]\][^\n\r]{,30}\[\[(?P<deathyear>\d{4})\]\]"),
+    'fr': re.compile(ur"^[^\n\r]*?\[\[(?P<birthyear>\d{4})\]\][^\n\r]{,30}\[\[(?P<deathyear>\d{4})\]\]"),
+    'it': re.compile(ur"^[^\n\r]*?\[\[(?P<birthyear>\d{4})\]\][^\n\r]{,30}\[\[(?P<deathyear>\d{4})\]\]"),
+    'nl': re.compile(ur"^[^\n\r]*?\[\[(?P<birthyear>\d{4})\]\][^\n\r]{,30}\[\[(?P<deathyear>\d{4})\]\]"),
+    'pl': re.compile(ur"^[^\n\r]*?\[\[(?P<birthyear>\d{4})\]\][^\n\r]{,30}\[\[(?P<deathyear>\d{4})\]\]"),
+    'pt': re.compile(ur"^[^\n\r]*?\[\[(?P<birthyear>\d{4})\]\][^\n\r]{,30}\[\[(?P<deathyear>\d{4})\]\]"),
+    'sv': re.compile(ur"^[^\n\r]*?\[\[(?P<birthyear>\d{4})\]\][^\n\r]{,30}\[\[(?P<deathyear>\d{4})\]\]"),
+    'vi': re.compile(ur"^[^\n\r]*?\[\[(?P<birthyear>\d{4})\]\][^\n\r]{,30}\[\[(?P<deathyear>\d{4})\]\]"),
 }
 """
 'de': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
@@ -368,6 +368,8 @@ def main():
     c = 0
     bios = 0
     global skip
+    if skip:
+        print 'Skiping to...', skip
     for x in xml.parse(): #parsing the whole dump, one page a time
         c+=1
         if c % 10000 == 0:
@@ -479,7 +481,7 @@ def main():
         if birthdate and deathdate:
             print 'We have birthdate and deathdate'
             if (int(deathdate[-4:]) - int(birthdate[-4:])) < 20: #weird, child prodigy?
-                print 'But dates are weird'
+                print 'But dates are weird', birthdate, deathdate
                 continue #skiping bio
         else:
             print 'No birthdate or deathdate'
