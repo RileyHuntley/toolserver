@@ -43,16 +43,24 @@ cattranslations = {}
 
 langisotolang = {
     'es': 'Spanish',
-    'fr': 'French',
     'de': 'German',
+    'fr': 'French',
+    'it': 'Italian',
+    'nl': 'Dutch',
     'pl': 'Polish',
+    'pt': 'Portuguese',
+    'sv': 'Swedish',
 }
 
 months = {
     'de': ['januar', 'februar', u'm[äa]rz', 'april', 'mai', 'juni', 'juli', 'august', 'september', 'oktober', 'november', 'dezember'],
     'es': ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
     'fr': ['janvier', u'f[ée]vrier', 'mars', 'avril', 'may', 'juin', 'juillet', u'ao[ûu]t', 'septembre', 'octobre', 'novembre', u'décembre'],
+    'it': ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'],
+    'nl': ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december'],
     'pl': ['stycznia', u'lutego', 'marca', 'kwietnia', 'maja', 'czerwca', 'lipca', u'sierpnia', u'wrze[śs]nia', u'pa[źz]dziernika', 'listopada', u'grudnia'],
+    'pt': ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'],
+    'sv': ['januari', 'februari', 'mars', 'april', 'maj', 'juni', 'juli', 'augusti', 'september', 'oktober', 'november', 'december'],
     }
 
 monthstoen = {
@@ -101,6 +109,34 @@ monthstoen = {
     'novembre': 'November',
     'décembre': 'December',
     
+    #it
+    'gennaio': 'January',
+    'febbraio': 'February',
+    'marzo': 'March',
+    'aprile': 'April',
+    'maggio': 'May',
+    'giugno': 'June',
+    'luglio': 'July',
+    'agosto': 'August',
+    'settembre': 'September',
+    'ottobre': 'October',
+    'novembre': 'November',
+    'dicembre': 'December',
+    
+    #nl
+    'januari': 'January',
+    'februari': 'February',
+    'maart': 'March',
+    'april': 'April',
+    'mei': 'May',
+    'juni': 'June',
+    'juli': 'July',
+    'augustus': 'August',
+    'september': 'September',
+    'oktober': 'October',
+    'november': 'November',
+    'december': 'December',
+    
     #pl
     'stycznia': 'January',
     'lutego': 'February',
@@ -116,6 +152,34 @@ monthstoen = {
     'pazdziernika': 'October',
     'listopada': 'November',
     'grudnia': 'December',
+    
+    #pt
+    'janeiro': 'January',
+    'fevereiro': 'February',
+    'março': 'March',
+    'abril': 'April',
+    'maio': 'May',
+    'junho': 'June',
+    'julho': 'July',
+    'agosto': 'August',
+    'setembro': 'September',
+    'outubro': 'October',
+    'novembro': 'November',
+    'dezembro': 'December',
+    
+    #sv
+    'januari': 'January',
+    'februari': 'February',
+    'mars': 'March',
+    'april': 'April',
+    'maj': 'May',
+    'juni': 'June',
+    'juli': 'July',
+    'augusti': 'August',
+    'september': 'September',
+    'oktober': 'October',
+    'november': 'November',
+    'december': 'December',
     }
 
 nationalitytonation = {
@@ -169,19 +233,25 @@ title_ex_r = re.compile(ur"(?im)[\:\(\)]") # : to exclude other namespaces, ( to
 red_r = re.compile(ur"(?im)^\#\s*redirec")
 iws_r = re.compile(ur"(?im)\[\[\s*(?P<iwlang>[a-z]{2,3}(\-[a-z]{2,5})?)\s*:\s*(?P<iwtitle>[^\]\|]+)\s*\]\]")
 iws_target_r = re.compile(ur"(?im)\[\[\s*%s\s*:\s*[^\]\|]+\s*\]\]" % (targetlang))
-dis_r = re.compile(ur"(?im)\{\{\s*(disambiguation|disambig|desambiguaci[oó]n|desambig|desamb|homonymie)\s*[\|\}]") #pl: DisambigR, 
+dis_r = re.compile(ur"(?im)\{\{\s*(disambiguation|disambig|desambiguaci[oó]n|desambig|desamb|homonymie|dp|disambigua|desambiguação|desambig-ini|förgrening|betydelselista|gaffel|gren|grensida|förgreningssida|flertydig|ortnamn)\s*[\|\}]") #pl: DisambigR, nl: D[Pp], 
 birth_r = re.compile(ur"(?im)\:\s*("
                      ur"Geboren[_ ]|" #de
                      ur"Nacidos[_ ]en|" #es
                      ur"Naissance[_ ]en|" #fr
-                     ur"Urodzeni[_ ]w" #pl
-                     ur")[_ ](?P<birthyear>\d{4})")
+                     ur"Nati[_ ]nel|" #it
+                     ur"Urodzeni[_ ]w|" #pl
+                     ur"Nascidos[_ ]em|" #pt
+                     ur"Födda" #sv
+                     ur")[_ ](?P<birthyear>\d{4})") #nl no tiene
 death_r = re.compile(ur"(?im)\:\s*("
                      ur"Gestorben[_ ]|" #de
                      ur"Fallecidos[_ ]en|" #es
                      ur"Décès[_ ]en|" #fr
-                     ur"Zmarli[_ ]w" #pl
-                     ur")[_ ](?P<deathyear>\d{4})")
+                     ur"Morti[_ ]nel|" #it
+                     ur"Zmarli[_ ]w|" #pl
+                     ur"Mortos[_ ]em|" #pt
+                     ur"Avlidna" #sv
+                     ur")[_ ](?P<deathyear>\d{4})") #nl no tiene
 bdtemplate_r = re.compile(ur"(?im)\{\{\s*(BD|NF)\s*\|\s*(?P<birthyear>\d{4})\s*\|\s*(?P<deathyear>\d{4})\s*(\s*\|\s*(?P<defaultsort>[^\}]{4,},[^\}]{4,})\s*)?\s*\}\}")
 
 catsnm = { #lo uso en translatecat() también
@@ -189,19 +259,28 @@ catsnm = { #lo uso en translatecat() también
     'en': 'Category',
     'es': u'Categoría',
     'fr': u'Catégorie',
+    'it': 'Categoria',
+    'nl': 'Categorie',
     'pl': 'Kategoria',
+    'pt': 'Categoria',
+    'sv': 'Kategori',
     }
 cats_r = re.compile(ur"(?im)\[\[\s*(%s)\s*:\s*(?P<catname>[^\]\|]+)\s*[\]\|]" % ('|'.join(catsnm.values())))
 dates_r = {
     'de': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
     'es': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)\s*de\s*(?P<birthmonth>%s)\]?\]?\s*de)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*[^\(\)\d]*?\s*(\[?\[?(?P<deathday>\d+)\s*de\s*(?P<deathmonth>%s)\]?\]?\s*de)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
     'fr': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
+    'it': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
+    'nl': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
     'pl': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
+    'pt': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
+    'sv': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
 }
 defaultsort_r = re.compile(ur"(?im)\{\{\s*("
                            ur"SORTIERUNG|" #de
-                           ur"DEFAULTSORT|" #en, fr, pl
+                           ur"DEFAULTSORT|" #en, fr, pl, nl, pt
                            ur"ORDENAR" #es
+                           ur"STANDARDSORTERING" #sv
                            ur")\s*:\s*(?P<defaultsort>[^\{\}]+?)\s*\}\}")
 
 def quitaracentos(s):
