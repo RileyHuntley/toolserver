@@ -420,7 +420,7 @@ def main():
             #continue
         
         #description
-        desc = re.findall(ur"(?im)^(\'{2,5}\s*%s[^\n\r]+)[\n\r]"  % (x.title.split(' ')[0]), x.text)
+        desc = re.findall(ur"(?im)^(\'{2,5}\s*.{,25}\s*%s[^\n\r]+)[\n\r]"  % (x.title.split(' ')[0]), x.text)
         if not desc:
             print 'No description'
             continue
@@ -564,7 +564,8 @@ def main():
             
             #la salida para esta bio
             output  = u"""\n<br clear="all"/>\n==== [[%s]] ([[:%s:%s|%s]]) ====""" % (x.title, lang, x.title, lang)
-            output += u"""\n[[File:%s|thumb|right|120px|%s]]""" % (image_cand, x.title)
+            if image_cand:
+                output += u"""\n[[File:%s|thumb|right|120px|%s]]""" % (image_cand, x.title)
             output += u"""\n<small><nowiki>%s</nowiki></small>""" % (linkstoiws(desc, lang).strip())
             output += u"""\n<pre>"""
             output += u"""\n{{Expand %s|%s}}""" % (langisotolang[lang], x.title)
