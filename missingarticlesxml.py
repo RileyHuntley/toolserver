@@ -604,7 +604,7 @@ def main():
             if cats:
                 output += u"""\n"""
                 for cat in cats:
-                    if not cat in ['Men', 'Women', 'Fascists']:
+                    if not cat in ['Men', 'Women', 'Fascists'] and not cat.startswith('Death'):
                         output += u"""\n[[Category:%s]]""" % (cat)
             output += u"""\n\n%s""" % (iws_plain)
             output += u"""\n%s""" % (nationality and nationalitytonation[nationality] and '{{%s-bio-stub}}' % (nationalitytonation[nationality]) or '{{bio-stub}}')
