@@ -60,7 +60,7 @@ months = {
     'it': ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'],
     'nl': ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december'],
     'pl': ['stycznia', u'lutego', 'marca', 'kwietnia', 'maja', 'czerwca', 'lipca', u'sierpnia', u'wrze[śs]nia', u'pa[źz]dziernika', 'listopada', u'grudnia'],
-    'pt': ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'],
+    'pt': ['janeiro', 'fevereiro', u'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'],
     'sv': ['januari', 'februari', 'mars', 'april', 'maj', 'juni', 'juli', 'augusti', 'september', 'oktober', 'november', 'december'],
     'vi': [u'tháng 1', u'tháng 2', u'tháng 3', u'tháng 4', u'tháng 5', u'tháng 6', u'tháng 7', u'tháng 8', u'tháng 9', u'tháng 10', u'tháng 11', u'tháng 12'],
     }
