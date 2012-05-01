@@ -409,13 +409,14 @@ def main():
         images = re.findall(ur"(?im)[\s\/\:\|\=]+([^\/\:\|\=]+\.jpe?g)[\s\|]", x.text)
         image_cand = ''
         if images:
-            continue #temp
             for image in images:
                 if len(re.findall(ur"(%s)" % ('|'.join(trozos)), image)) >= 1:
                     image_cand = image
                     print 'We have image_cand'
                     break
-        if not image_cand:
+        if image_cand:
+            print 'We have image_cand'
+        else:
             print 'No image_cand'
             #continue
         
