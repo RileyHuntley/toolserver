@@ -62,7 +62,7 @@ months = {
     'pl': ['stycznia', u'lutego', 'marca', 'kwietnia', 'maja', 'czerwca', 'lipca', u'sierpnia', u'wrze[śs]nia', u'pa[źz]dziernika', 'listopada', u'grudnia'],
     'pt': ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'],
     'sv': ['januari', 'februari', 'mars', 'april', 'maj', 'juni', 'juli', 'augusti', 'september', 'oktober', 'november', 'december'],
-    'vi': ['tháng 1', 'tháng 2', 'tháng 3', 'tháng 4', 'tháng 5', 'tháng 6', 'tháng 7', 'tháng 8', 'tháng 9', 'tháng 10', 'tháng 11', 'tháng 12'],
+    'vi': [u'tháng 1', u'tháng 2', u'tháng 3', u'tháng 4', u'tháng 5', u'tháng 6', u'tháng 7', u'tháng 8', u'tháng 9', u'tháng 10', u'tháng 11', u'tháng 12'],
     }
 
 monthstoen = {
