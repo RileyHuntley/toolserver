@@ -42,8 +42,8 @@ if len(sys.argv) >= 3:
 cattranslations = {}
 
 langisotolang = {
-    'es': 'Spanish',
     'de': 'German',
+    'es': 'Spanish',
     'fr': 'French',
     'it': 'Italian',
     'nl': 'Dutch',
@@ -245,7 +245,7 @@ nationalitytonation = {
     'Venezuelan': 'Venezuela',
 }
 
-title_ex_r = re.compile(ur"(?im)[\:\(\)]") # : to exclude other namespaces, ( to disambiguation
+title_ex_r = re.compile(ur"(?im)[\:\(\)\,]") # : to exclude other namespaces, ( to disambiguation
 red_r = re.compile(ur"(?im)^\#\s*redirec")
 iws_r = re.compile(ur"(?im)\[\[\s*(?P<iwlang>[a-z]{2,3}(\-[a-z]{2,5})?)\s*:\s*(?P<iwtitle>[^\]\|]+)\s*\]\]")
 iws_target_r = re.compile(ur"(?im)\[\[\s*%s\s*:\s*[^\]\|]+\s*\]\]" % (targetlang))
@@ -270,6 +270,7 @@ death_r = re.compile(ur"(?im)\:\s*("
                      ur")[_ ](?P<deathyear>\d{4})") #nl, vi no tienen o es indirecta con plantillas
 bdtemplate_r = {
     'es': re.compile(ur"(?im)\{\{\s*(BD|NF)\s*\|\s*(?P<birthyear>\d{4})\s*\|\s*(?P<deathyear>\d{4})\s*(\s*\|\s*(?P<defaultsort>[^\}]{4,},[^\}]{4,})\s*)?\s*\}\}"),
+    'pt': re.compile(ur"(?im)\{\{\s*(falecimento|morte|Falecimento[ _]e[ _]idade|Morte[ _]e[ _]idade|Data[ _]da[ _]morte[ _]e[ _]idade|Data[ _]de[ _]falecimento|dmi|Data[ _]de[ _]morte|Data[ _]morte)\s*\|\s*\d*\s*\|\s*\d*\s*\|\s*(?P<birthyear>\d{4})\s*\|\s*\d*\s*\|\s*\d*\s*\|\s*(?P<deathyear>\d{4})\s*[\|\}](?P<defaultsort>)"), #defaultsort is NULL here, because this template doesn't include it
     'vi': re.compile(ur"(?im)\{\{\s*(Lifetime|Ngày[ _]tháng[ _]sống|Ngày[ _]tháng[ _]đang[ _]sống|Thời[ _]gian[ _]sống|Thời[ _]sống)\s*\|\s*(sinh\s*=\s*)?(?P<birthyear>\d{4})\s*\|\s*(mất\s*=\s*)?(?P<deathyear>\d{4})\s*(\s*\|\s*(tên\s*=\s*)?(?P<defaultsort>[^\}]{4,},[^\}]{4,})\s*)?\s*\}\}"),
 }
 
@@ -286,17 +287,28 @@ catsnm = { #lo uso en translatecat() también
     'vi': u'Thể loại',
     }
 cats_r = re.compile(ur"(?im)\[\[\s*(%s)\s*:\s*(?P<catname>[^\]\|]+)\s*[\]\|]" % ('|'.join(catsnm.values())))
-dates_r = {
-    'de': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
-    'es': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)\s*de\s*(?P<birthmonth>%s)\]?\]?\s*de)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*[^\(\)\d]*?\s*(\[?\[?(?P<deathday>\d+)\s*de\s*(?P<deathmonth>%s)\]?\]?\s*de)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
-    'fr': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
-    'it': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
-    'nl': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
-    'pl': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
-    'pt': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
-    'sv': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
-    'vi': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
+dates_r = { #fix, most intros are not well parsed, birthday de birthmonth
+    'de': re.compile(ur"\[\[(?P<birthyear>\d{4})\]\].{,20}\[\[(?P<deathyear>\d{4})\]\]"),
+    'es': re.compile(ur"\[\[(?P<birthyear>\d{4})\]\].{,20}\[\[(?P<deathyear>\d{4})\]\]"),
+    'fr': re.compile(ur"\[\[(?P<birthyear>\d{4})\]\].{,20}\[\[(?P<deathyear>\d{4})\]\]"),
+    'it': re.compile(ur"\[\[(?P<birthyear>\d{4})\]\].{,20}\[\[(?P<deathyear>\d{4})\]\]"),
+    'nl': re.compile(ur"\[\[(?P<birthyear>\d{4})\]\].{,20}\[\[(?P<deathyear>\d{4})\]\]"),
+    'pl': re.compile(ur"\[\[(?P<birthyear>\d{4})\]\].{,20}\[\[(?P<deathyear>\d{4})\]\]"),
+    'pt': re.compile(ur"\[\[(?P<birthyear>\d{4})\]\].{,20}\[\[(?P<deathyear>\d{4})\]\]"),
+    'sv': re.compile(ur"\[\[(?P<birthyear>\d{4})\]\].{,20}\[\[(?P<deathyear>\d{4})\]\]"),
+    'vi': re.compile(ur"\[\[(?P<birthyear>\d{4})\]\].{,20}\[\[(?P<deathyear>\d{4})\]\]"),
 }
+"""
+'de': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
+'es': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)\s*de\s*(?P<birthmonth>%s)\]?\]?\s*de)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*[^\(\)\d]*?\s*(\[?\[?(?P<deathday>\d+)\s*de\s*(?P<deathmonth>%s)\]?\]?\s*de)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
+'fr': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
+'it': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
+'nl': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
+'pl': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
+'pt': re.compile(ur"(?im)(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
+'sv': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
+'vi': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
+"""
 defaultsort_r = re.compile(ur"(?im)\{\{\s*("
                            ur"SORTIERUNG|" #de
                            ur"DEFAULTSORT|" #en, fr, pl, nl, pt, vi
@@ -326,6 +338,8 @@ def linkstoiws(t, lang):
     return t
 
 def translatecat(cat, lang):
+    global cattranslations
+    
     if cattranslations.has_key(cat):
         return cattranslations[cat]
     else:
@@ -358,7 +372,7 @@ def main():
             continue
         #nombre con dos palabras largas al menos
         trozos = [] # no hacer la asignacion del bucle for directamente, sino almacena True y False en vez de los trozos
-        [len(trozo) >= 4 and trozos.append(trozo) for trozo in x.title.split(' ')]
+        [len(trozo) >= 3 and trozos.append(trozo) for trozo in x.title.split(' ')]
         if not len(trozos) >= 2:
             continue
         #metemos variantes sin acentos
@@ -407,7 +421,7 @@ def main():
         if not birthdate and not deathdate:
             m = dates_r[lang].finditer(desc)
             for i in m:
-                birthmonth = ''
+                """birthmonth = ''
                 if i.group('birthday') and i.group('birthmonth'):
                     if monthstoen.has_key(quitaracentos(i.group('birthmonth').lower())):
                         birthmonth = monthstoen[i.group('birthmonth').lower()]
@@ -424,7 +438,9 @@ def main():
                     #continue #temp
                     deathdate = u'%s %s, %s' % (deathmonth, i.group('deathday'), i.group('deathyear'))
                 else:
-                    deathdate = u'%s' % (i.group('deathyear'))
+                    deathdate = u'%s' % (i.group('deathyear'))"""
+                birthdate = i.group('birthyear')
+                deathdate = i.group('deathyear')
                 break
         
         #third case uses special templates
@@ -435,6 +451,9 @@ def main():
                 birthdate = u'%s' % (i.group('birthyear'))
                 deathdate = u'%s' % (i.group('deathyear'))
                 break
+        
+        if birthdate and deathdate and (int(deathdate[-4:]) - int(birthdate[-4:])) < 20: #weird, child prodigy?
+            continue #skiping bio
         #end birth and death dates
         
         #defaultsort
@@ -465,7 +484,7 @@ def main():
         for iwlang, iwtitle in iws:
             iws_plain += u'[[%s:%s]]\n' % (iwlang, iwtitle)
         
-        if desc and len(desc) < 1000 and birthdate and deathdate:
+        if desc and len(desc) < 2000 and birthdate and deathdate:
             #check if live version has interwiki or not
             sourcebio = wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), x.title)
             if not sourcebio.exists() or sourcebio.isRedirectPage() or sourcebio.isDisambig() or len(re.findall(iws_target_r, sourcebio.get())) != 0:
