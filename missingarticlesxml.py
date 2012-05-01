@@ -29,7 +29,7 @@ import xmlreader
 
 targetlang = 'en' #no cambiar a menos que quiera crear bios para otras wikipedias distintas a la inglesa
 lang = 'es'
-limit = 2 #minimum interwikis to create this stub (avoiding non-notable bios)
+minimumiws = 2 #minimum interwikis to create this stub (avoiding non-notable bios)
 dumppath = ''
 dumpfilename = ''
 skip = '' #page to skip to
@@ -362,18 +362,22 @@ def main():
     global skip
     for x in xml.parse(): #parsing the whole dump, one page a time
         c+=1
+        if c % 10000 == 0:
+            print c
         if skip:
             if x.title == skip:
                 skip = ''
             continue
         
+        #filtering unuseful pages
         if re.search(title_ex_r, x.title) or \
            re.search(red_r, x.text) or \
            re.search(dis_r, x.text) or \
            len(x.text.splitlines()) < 3 or len(x.text) < 1024*2:
             continue
         
-        if re.search(iws_target_r, x.text): #si tiene iws hacia targetlang, no nos interesa, ya existe la bio
+        #si tiene iws hacia targetlang, no nos interesa, ya existe la bio
+        if re.search(iws_target_r, x.text):
             continue
         
         #nombre con dos palabras largas al menos
@@ -387,8 +391,11 @@ def main():
         #descartamos algunas bios
         if not re.search(birth_r, x.text) or not re.search(death_r, x.text): #si es BLP, fuera
             continue
+        #sino podemos sacar su año de nacimiento ni fallecimiento, fuera
         if not re.search(birth_r, x.text) and not re.search(death_r, x.text) and bdtemplate_r.has_key(lang) and not re.search(bdtemplate_r[lang], x.text):
             continue
+        
+        print 'Analysing http://%s.wikipedia.org/wiki/%s' % (lang, re.sub(' ', '_', x.title))
         
         #buscando imágenes útiles para la bio
         images = re.findall(ur"(?im)[\s\/\:\|\=]+([^\/\:\|\=]+\.jpe?g)[\s\|]", x.text)
@@ -398,17 +405,20 @@ def main():
             for image in images:
                 if len(re.findall(ur"(%s)" % ('|'.join(trozos)), image)) >= 1:
                     image_cand = image
+                    print 'We have image_cand'
                     break
-        #temp
-        #if not image_cand:
-        #    continue
+        if not image_cand:
+            print 'No image_cand'
+            #continue
         
         #description
         desc = re.findall(ur"(?im)^(\'{2,5}\s*%s[^\n\r]+)[\n\r]"  % (x.title.split(' ')[0]), x.text)
         if not desc:
+            print 'No description'
             continue
-        desc = desc[0]
-        #print desc
+        else:
+            print 'We have description'
+            desc = desc[0]
         
         #birth and death dates
         birthdate = ''
@@ -458,8 +468,13 @@ def main():
                 deathdate = u'%s' % (i.group('deathyear'))
                 break
         
-        if birthdate and deathdate and (int(deathdate[-4:]) - int(birthdate[-4:])) < 20: #weird, child prodigy?
-            continue #skiping bio
+        if birthdate and deathdate:
+            print 'We have birthdate and deathdate'
+            if (int(deathdate[-4:]) - int(birthdate[-4:])) < 20: #weird, child prodigy?
+                print 'But dates are weird'
+                continue #skiping bio
+        else:
+            print 'No birthdate or deathdate'
         #end birth and death dates
         
         #defaultsort
@@ -483,14 +498,16 @@ def main():
             if not iw.group('iwlang') in [targetlang, lang]:
                 iws.append([iw.group('iwlang'), iw.group('iwtitle')])
         iws.append([lang, x.title])
-        if len(iws) < limit:
+        if len(iws) < minimumiws:
+            print 'No minimum interwikis'
             continue # this language and other wiki at least
+        print 'We have %d interwikis' % len(iws)
         iws.sort()
         iws_plain = ''
         for iwlang, iwtitle in iws:
             iws_plain += u'[[%s:%s]]\n' % (iwlang, iwtitle)
         
-        if desc and len(desc) < 2000 and birthdate and deathdate:
+        if desc and len(desc) < 2500 and birthdate and deathdate:
             #check if live version has interwiki or not
             sourcebio = wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), x.title)
             if not sourcebio.exists() or sourcebio.isRedirectPage() or sourcebio.isDisambig() or len(re.findall(iws_target_r, sourcebio.get())) != 0:
