@@ -109,7 +109,7 @@ monthstoen = {
     'septembre': 'September',
     'octobre': 'October',
     'novembre': 'November',
-    'décembre': 'December',
+    u'décembre': 'December',
     
     #it
     'gennaio': 'January',
@@ -158,7 +158,7 @@ monthstoen = {
     #pt
     'janeiro': 'January',
     'fevereiro': 'February',
-    'março': 'March',
+    u'março': 'March',
     'abril': 'April',
     'maio': 'May',
     'junho': 'June',
@@ -270,7 +270,7 @@ death_r = re.compile(ur"(?im)\:\s*("
                      ur")[_ ](?P<deathyear>\d{4})") #nl, vi no tienen o es indirecta con plantillas
 bdtemplate_r = {
     'es': re.compile(ur"(?im)\{\{\s*(BD|NF)\s*\|\s*(?P<birthyear>\d{4})\s*\|\s*(?P<deathyear>\d{4})\s*(\s*\|\s*(?P<defaultsort>[^\}]{4,},[^\}]{4,})\s*)?\s*\}\}"),
-    'vi': re.compile(ur"(?im)\{\{\s*(Lifetime|Ngày tháng sống|Ngày tháng đang sống|Thời gian sống|Thời sống)\s*\|\s*(sinh\s*=\s*)?(?P<birthyear>\d{4})\s*\|\s*(mất\s*=\s*)?(?P<deathyear>\d{4})\s*(\s*\|\s*(tên\s*=\s*)?(?P<defaultsort>[^\}]{4,},[^\}]{4,})\s*)?\s*\}\}"),
+    'vi': re.compile(ur"(?im)\{\{\s*(Lifetime|Ngày[ _]tháng[ _]sống|Ngày[ _]tháng[ _]đang[ _]sống|Thời[ _]gian[ _]sống|Thời[ _]sống)\s*\|\s*(sinh\s*=\s*)?(?P<birthyear>\d{4})\s*\|\s*(mất\s*=\s*)?(?P<deathyear>\d{4})\s*(\s*\|\s*(tên\s*=\s*)?(?P<defaultsort>[^\}]{4,},[^\}]{4,})\s*)?\s*\}\}"),
 }
 
 catsnm = { #lo uso en translatecat() también
@@ -534,7 +534,8 @@ def main():
             if cats:
                 output += u"""\n"""
                 for cat in cats:
-                    output += u"""\n[[Category:%s]]""" % (cat)
+                    if not cat in ['Men', 'Women', 'Fascists']:
+                        output += u"""\n[[Category:%s]]""" % (cat)
             output += u"""\n\n%s""" % (iws_plain)
             output += u"""\n%s""" % (nationality and nationalitytonation[nationality] and '{{%s-bio-stub}}' % (nationalitytonation[nationality]) or '{{bio-stub}}')
             output += u"""\n</pre>"""
