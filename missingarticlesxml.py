@@ -239,10 +239,12 @@ nationalitytonation = {
     'Portuguese': 'Portugal',
     'Russian': 'Russia',
     'Spanish': 'Spain',
+    'Swedish': 'Sweden',
     'Swiss': 'Switzerland',
     'Turkish': 'Turkey',
     'Uruguayan': 'Uruguay',
     'Venezuelan': 'Venezuela',
+    'Vietnamese': 'Vietnam',
 }
 
 title_ex_r = re.compile(ur"(?im)[\:\(\)\,]") # : to exclude other namespaces, ( to disambiguation
@@ -288,15 +290,15 @@ catsnm = { #lo uso en translatecat() también
     }
 cats_r = re.compile(ur"(?im)\[\[\s*(%s)\s*:\s*(?P<catname>[^\]\|]+)\s*[\]\|]" % ('|'.join(catsnm.values())))
 dates_r = { #fix, most intros are not well parsed, birthday de birthmonth
-    'de': re.compile(ur"\[\[(?P<birthyear>\d{4})\]\].{,20}\[\[(?P<deathyear>\d{4})\]\]"),
-    'es': re.compile(ur"\[\[(?P<birthyear>\d{4})\]\].{,20}\[\[(?P<deathyear>\d{4})\]\]"),
-    'fr': re.compile(ur"\[\[(?P<birthyear>\d{4})\]\].{,20}\[\[(?P<deathyear>\d{4})\]\]"),
-    'it': re.compile(ur"\[\[(?P<birthyear>\d{4})\]\].{,20}\[\[(?P<deathyear>\d{4})\]\]"),
-    'nl': re.compile(ur"\[\[(?P<birthyear>\d{4})\]\].{,20}\[\[(?P<deathyear>\d{4})\]\]"),
-    'pl': re.compile(ur"\[\[(?P<birthyear>\d{4})\]\].{,20}\[\[(?P<deathyear>\d{4})\]\]"),
-    'pt': re.compile(ur"\[\[(?P<birthyear>\d{4})\]\].{,20}\[\[(?P<deathyear>\d{4})\]\]"),
-    'sv': re.compile(ur"\[\[(?P<birthyear>\d{4})\]\].{,20}\[\[(?P<deathyear>\d{4})\]\]"),
-    'vi': re.compile(ur"\[\[(?P<birthyear>\d{4})\]\].{,20}\[\[(?P<deathyear>\d{4})\]\]"),
+    'de': re.compile(ur"^.*?\[\[(?P<birthyear>\d{4})\]\].*?\[\[(?P<deathyear>\d{4})\]\]"),
+    'es': re.compile(ur"^.*?\[\[(?P<birthyear>\d{4})\]\].*?\[\[(?P<deathyear>\d{4})\]\]"),
+    'fr': re.compile(ur"^.*?\[\[(?P<birthyear>\d{4})\]\].*?\[\[(?P<deathyear>\d{4})\]\]"),
+    'it': re.compile(ur"^.*?\[\[(?P<birthyear>\d{4})\]\].*?\[\[(?P<deathyear>\d{4})\]\]"),
+    'nl': re.compile(ur"^.*?\[\[(?P<birthyear>\d{4})\]\].*?\[\[(?P<deathyear>\d{4})\]\]"),
+    'pl': re.compile(ur"^.*?\[\[(?P<birthyear>\d{4})\]\].*?\[\[(?P<deathyear>\d{4})\]\]"),
+    'pt': re.compile(ur"^.*?\[\[(?P<birthyear>\d{4})\]\].*?\[\[(?P<deathyear>\d{4})\]\]"),
+    'sv': re.compile(ur"^.*?\[\[(?P<birthyear>\d{4})\]\].*?\[\[(?P<deathyear>\d{4})\]\]"),
+    'vi': re.compile(ur"^.*?\[\[(?P<birthyear>\d{4})\]\].*?\[\[(?P<deathyear>\d{4})\]\]"),
 }
 """
 'de': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
@@ -370,6 +372,10 @@ def main():
            re.search(dis_r, x.text) or \
            len(x.text.splitlines()) < 3 or len(x.text) < 1024*2:
             continue
+        
+        if re.search(iws_target_r, x.text): #si tiene iws hacia targetlang, no nos interesa, ya existe la bio
+            continue
+        
         #nombre con dos palabras largas al menos
         trozos = [] # no hacer la asignacion del bucle for directamente, sino almacena True y False en vez de los trozos
         [len(trozo) >= 3 and trozos.append(trozo) for trozo in x.title.split(' ')]
@@ -379,9 +385,9 @@ def main():
         [(trozo != quitaracentos(trozo) and trozo not in trozos) and trozos.append(quitaracentos(trozo)) for trozo in trozos]
         
         #descartamos algunas bios
-        if not re.search(birth_r, x.text) or not re.search(death_r, x.text): #sino ha fallecido, fuera
+        if not re.search(birth_r, x.text) or not re.search(death_r, x.text): #si es BLP, fuera
             continue
-        if re.search(iws_target_r, x.text): #si tiene iws hacia targetlang, no nos interesa, ya existe la bio
+        if not re.search(birth_r, x.text) and not re.search(death_r, x.text) and bdtemplate_r.has_key(lang) and not re.search(bdtemplate_r[lang], x.text):
             continue
         
         #buscando imágenes útiles para la bio
