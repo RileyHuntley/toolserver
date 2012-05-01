@@ -518,8 +518,19 @@ def main():
         if desc and len(desc) < 2500 and birthdate and deathdate:
             #check if live version has interwiki or not
             sourcebio = wikipedia.Page(wikipedia.Site(lang, 'wikipedia'), x.title)
-            if not sourcebio.exists() or sourcebio.isRedirectPage() or sourcebio.isDisambig() or len(re.findall(iws_target_r, sourcebio.get())) != 0:
+            if not sourcebio.exists():
+                print 'Page doesnt exist'
                 continue
+            if sourcebio.isRedirectPage():
+                print 'Page is redirect'
+                continue
+            if sourcebio.isDisambig():
+                print 'Page is disambig'
+                continue
+            if len(re.findall(iws_target_r, sourcebio.get())) != 0:
+                print 'Found iw to target lang in the current version of article'
+                continue
+            
             #cats, esto es lo más costoso en tiempo, entonces lo dejamos para este último if justo antes de generar el output
             m = cats_r.finditer(x.text)
             cats = []
