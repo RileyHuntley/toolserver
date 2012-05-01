@@ -429,7 +429,7 @@ def main():
         
         #third case uses special templates
         #special cases for es: {{BD|XXXX|YYYY|DEFAULTSORT}}, or vi:, or others
-        if not birthdate and not deathdate:
+        if not birthdate and not deathdate and bdtemplate_r.has_key(lang):
             m = bdtemplate_r[lang].finditer(x.text)
             for i in m:
                 birthdate = u'%s' % (i.group('birthyear'))
@@ -443,7 +443,7 @@ def main():
         for d in m:
             defaultsort = d.group("defaultsort")
             break
-        if not defaultsort:
+        if not defaultsort and bdtemplate_r.has_key(lang):
             m = bdtemplate_r[lang].finditer(x.text)
             for i in m:
                 defaultsort = u'%s' % (i.group('defaultsort'))
