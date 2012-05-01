@@ -412,7 +412,6 @@ def main():
             for image in images:
                 if len(re.findall(ur"(%s)" % ('|'.join(trozos)), image)) >= 1:
                     image_cand = image
-                    print 'We have image_cand'
                     break
         if image_cand:
             print 'We have image_cand'
