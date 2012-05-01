@@ -261,7 +261,7 @@ iws_r = re.compile(ur"(?im)\[\[\s*(?P<iwlang>[a-z]{2,3}(\-[a-z]{2,5})?)\s*:\s*(?
 iws_target_r = re.compile(ur"(?im)\[\[\s*%s\s*:\s*[^\]\|]+\s*\]\]" % (targetlang))
 dis_r = re.compile(ur"(?im)\{\{\s*(disambiguation|disambig|desambiguaci[oó]n|desambig|desamb|homonymie|dp|disambigua|desambiguação|desambig-ini|förgrening|betydelselista|gaffel|gren|grensida|förgreningssida|flertydig|ortnamn|trang[ _]định[ _]hướng|Định[ _]hướng|TLAdisambig|hndis|dab|dis)\s*[\|\}]") #pl: DisambigR, nl: D[Pp], 
 birth_r = re.compile(ur"(?im)\:\s*("
-                     ur"Geboren[_ ]|" #de
+                     ur"Geboren|" #de
                      ur"Nacidos[_ ]en|" #es
                      ur"Naissance[_ ]en|" #fr
                      ur"Nati[_ ]nel|" #it
@@ -270,7 +270,7 @@ birth_r = re.compile(ur"(?im)\:\s*("
                      ur"Födda" #sv
                      ur")[_ ](?P<birthyear>\d{4})") #nl, vi no tienen o es indirecta con plantillas
 death_r = re.compile(ur"(?im)\:\s*("
-                     ur"Gestorben[_ ]|" #de
+                     ur"Gestorben|" #de
                      ur"Fallecidos[_ ]en|" #es
                      ur"Décès[_ ]en|" #fr
                      ur"Morti[_ ]nel|" #it
@@ -590,7 +590,7 @@ def main():
             output += u"""\n{{Expand %s|%s}}""" % (langisotolang[lang], x.title)
             if image_cand:
                 output += u"""\n[[File:%s|thumb|right|%s]]""" % (image_cand, x.title)
-            output += u"""\n\'\'\'%s\'\'\' (%s - %s) was %s %s %s.""" % (x.title, birthdate, deathdate, nationality and nationalitytonation[nationality][0] in ['A', 'E', 'I', 'O', 'U'] and 'an' or 'a', nationality and '[[%s|%s]]' % (nationalitytonation[nationality], nationality), occupations and (len(occupations) > 1 and '%s and %s' % (', '.join(occupations[:-1]), occupations[-1:][0]) or occupations[0]) or '...')
+            output += u"""\n\'\'\'%s\'\'\' (%s–%s) was %s %s %s.""" % (x.title, birthdate, deathdate, nationality and nationalitytonation[nationality][0] in ['A', 'E', 'I', 'O', 'U'] and 'an' or 'a', nationality and '[[%s|%s]]' % (nationalitytonation[nationality], nationality), occupations and (len(occupations) > 1 and '%s and %s' % (', '.join(occupations[:-1]), occupations[-1:][0]) or occupations[0]) or '...')
             output += u"""\n\n{{Persondata <!-- Metadata: see [[Wikipedia:Persondata]]. -->"""
             output += u"""\n| NAME              = %s """ % (defaultsort)
             output += u"""\n| ALTERNATIVE NAMES = """
