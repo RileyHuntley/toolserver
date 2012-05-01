@@ -29,7 +29,7 @@ import xmlreader
 
 targetlang = 'en' #no cambiar a menos que quiera crear bios para otras wikipedias distintas a la inglesa
 lang = 'es'
-minimumiws = 2 #minimum interwikis to create this stub (avoiding non-notable bios)
+minimumiws = 1 #minimum interwikis to create this stub (avoiding non-notable bios), not in use now, i save bios by number of iws in different .txt
 dumppath = ''
 dumpfilename = ''
 skip = '' #page to skip to
@@ -373,7 +373,7 @@ def main():
     for x in xml.parse(): #parsing the whole dump, one page a time
         c+=1
         if c % 10000 == 0:
-            print c
+            print 'Total pages analysed =', c, '| Bios =', bios
         if skip:
             if x.title == skip:
                 skip = ''
@@ -620,7 +620,7 @@ def main():
             print output
             bios += 1
             print 'Total pages analysed =', c, '| Bios =', bios
-            f = open('missingarticlesxml.output.%s' % (lang), 'a')
+            f = open('missingarticlesxml.output.%s.%02d.txt' % (lang, len(iws)), 'a')
             f.write(output.encode('utf-8'))
             f.close()
 
