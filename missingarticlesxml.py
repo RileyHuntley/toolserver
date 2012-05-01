@@ -50,6 +50,7 @@ langisotolang = {
     'pl': 'Polish',
     'pt': 'Portuguese',
     'sv': 'Swedish',
+    'vi': 'Vietnamese',
 }
 
 months = {
@@ -61,6 +62,7 @@ months = {
     'pl': ['stycznia', u'lutego', 'marca', 'kwietnia', 'maja', 'czerwca', 'lipca', u'sierpnia', u'wrze[śs]nia', u'pa[źz]dziernika', 'listopada', u'grudnia'],
     'pt': ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'],
     'sv': ['januari', 'februari', 'mars', 'april', 'maj', 'juni', 'juli', 'augusti', 'september', 'oktober', 'november', 'december'],
+    'vi': ['tháng 1', 'tháng 2', 'tháng 3', 'tháng 4', 'tháng 5', 'tháng 6', 'tháng 7', 'tháng 8', 'tháng 9', 'tháng 10', 'tháng 11', 'tháng 12'],
     }
 
 monthstoen = {
@@ -180,6 +182,20 @@ monthstoen = {
     'oktober': 'October',
     'november': 'November',
     'december': 'December',
+    
+    #vi
+    u'tháng 1': 'January',
+    u'tháng 2': 'February',
+    u'tháng 3': 'March',
+    u'tháng 4': 'April',
+    u'tháng 5': 'May',
+    u'tháng 6': 'June',
+    u'tháng 7': 'July',
+    u'tháng 8': 'August',
+    u'tháng 9': 'September',
+    u'tháng 10': 'October',
+    u'tháng 11': 'November',
+    u'tháng 12': 'December',
     }
 
 nationalitytonation = {
@@ -233,7 +249,7 @@ title_ex_r = re.compile(ur"(?im)[\:\(\)]") # : to exclude other namespaces, ( to
 red_r = re.compile(ur"(?im)^\#\s*redirec")
 iws_r = re.compile(ur"(?im)\[\[\s*(?P<iwlang>[a-z]{2,3}(\-[a-z]{2,5})?)\s*:\s*(?P<iwtitle>[^\]\|]+)\s*\]\]")
 iws_target_r = re.compile(ur"(?im)\[\[\s*%s\s*:\s*[^\]\|]+\s*\]\]" % (targetlang))
-dis_r = re.compile(ur"(?im)\{\{\s*(disambiguation|disambig|desambiguaci[oó]n|desambig|desamb|homonymie|dp|disambigua|desambiguação|desambig-ini|förgrening|betydelselista|gaffel|gren|grensida|förgreningssida|flertydig|ortnamn)\s*[\|\}]") #pl: DisambigR, nl: D[Pp], 
+dis_r = re.compile(ur"(?im)\{\{\s*(disambiguation|disambig|desambiguaci[oó]n|desambig|desamb|homonymie|dp|disambigua|desambiguação|desambig-ini|förgrening|betydelselista|gaffel|gren|grensida|förgreningssida|flertydig|ortnamn|trang[ _]định[ _]hướng|Định[ _]hướng|TLAdisambig|hndis|dab|dis)\s*[\|\}]") #pl: DisambigR, nl: D[Pp], 
 birth_r = re.compile(ur"(?im)\:\s*("
                      ur"Geboren[_ ]|" #de
                      ur"Nacidos[_ ]en|" #es
@@ -242,7 +258,7 @@ birth_r = re.compile(ur"(?im)\:\s*("
                      ur"Urodzeni[_ ]w|" #pl
                      ur"Nascidos[_ ]em|" #pt
                      ur"Födda" #sv
-                     ur")[_ ](?P<birthyear>\d{4})") #nl no tiene
+                     ur")[_ ](?P<birthyear>\d{4})") #nl, vi no tienen o es indirecta con plantillas
 death_r = re.compile(ur"(?im)\:\s*("
                      ur"Gestorben[_ ]|" #de
                      ur"Fallecidos[_ ]en|" #es
@@ -251,8 +267,11 @@ death_r = re.compile(ur"(?im)\:\s*("
                      ur"Zmarli[_ ]w|" #pl
                      ur"Mortos[_ ]em|" #pt
                      ur"Avlidna" #sv
-                     ur")[_ ](?P<deathyear>\d{4})") #nl no tiene
-bdtemplate_r = re.compile(ur"(?im)\{\{\s*(BD|NF)\s*\|\s*(?P<birthyear>\d{4})\s*\|\s*(?P<deathyear>\d{4})\s*(\s*\|\s*(?P<defaultsort>[^\}]{4,},[^\}]{4,})\s*)?\s*\}\}")
+                     ur")[_ ](?P<deathyear>\d{4})") #nl, vi no tienen o es indirecta con plantillas
+bdtemplate_r = {
+    'es': re.compile(ur"(?im)\{\{\s*(BD|NF)\s*\|\s*(?P<birthyear>\d{4})\s*\|\s*(?P<deathyear>\d{4})\s*(\s*\|\s*(?P<defaultsort>[^\}]{4,},[^\}]{4,})\s*)?\s*\}\}"),
+    'vi': re.compile(ur"(?im)\{\{\s*(Lifetime|Ngày tháng sống|Ngày tháng đang sống|Thời gian sống|Thời sống)\s*\|\s*(sinh\s*=\s*)?(?P<birthyear>\d{4})\s*\|\s*(mất\s*=\s*)?(?P<deathyear>\d{4})\s*(\s*\|\s*(tên\s*=\s*)?(?P<defaultsort>[^\}]{4,},[^\}]{4,})\s*)?\s*\}\}"),
+}
 
 catsnm = { #lo uso en translatecat() también
     'de': 'Kategorie',
@@ -264,6 +283,7 @@ catsnm = { #lo uso en translatecat() también
     'pl': 'Kategoria',
     'pt': 'Categoria',
     'sv': 'Kategori',
+    'vi': u'Thể loại',
     }
 cats_r = re.compile(ur"(?im)\[\[\s*(%s)\s*:\s*(?P<catname>[^\]\|]+)\s*[\]\|]" % ('|'.join(catsnm.values())))
 dates_r = {
@@ -275,11 +295,12 @@ dates_r = {
     'pl': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
     'pt': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
     'sv': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
+    'vi': re.compile(ur"(?im)[^\(\)\d]*?\s*(\[?\[?(?P<birthday>\d+)[\s\|]*(?P<birthmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<birthyear>\d{4})\]?\]?\s*[^\n\r\d\)\[]{,15}\s*(\[?\[?(?P<deathday>\d+)[\s\|]*(?P<deathmonth>%s)\]?\]?[\s\|]*)?\s*\[?\[?(?P<deathyear>\d{4})\]?\]?" % ('|'.join(months[lang]), '|'.join(months[lang]))),
 }
 defaultsort_r = re.compile(ur"(?im)\{\{\s*("
                            ur"SORTIERUNG|" #de
-                           ur"DEFAULTSORT|" #en, fr, pl, nl, pt
-                           ur"ORDENAR" #es
+                           ur"DEFAULTSORT|" #en, fr, pl, nl, pt, vi
+                           ur"ORDENAR|" #es
                            ur"STANDARDSORTERING" #sv
                            ur")\s*:\s*(?P<defaultsort>[^\{\}]+?)\s*\}\}")
 
@@ -372,6 +393,7 @@ def main():
         #birth and death dates
         birthdate = ''
         deathdate = ''
+        #first try with birth/death categories
         m = birth_r.finditer(x.text)
         for i in m:
             birthdate = i.group('birthyear')
@@ -381,7 +403,8 @@ def main():
             deathdate = i.group('deathyear')
             break
         
-        if not birthdate or not deathdate:
+        #second attempt uses bio first paragraph
+        if not birthdate and not deathdate:
             m = dates_r[lang].finditer(desc)
             for i in m:
                 birthmonth = ''
@@ -404,9 +427,10 @@ def main():
                     deathdate = u'%s' % (i.group('deathyear'))
                 break
         
-        #special cases for es: {{BD|XXXX|YYYY|DEFAULTSORT}}
+        #third case uses special templates
+        #special cases for es: {{BD|XXXX|YYYY|DEFAULTSORT}}, or vi:, or others
         if not birthdate and not deathdate:
-            m = bdtemplate_r.finditer(x.text)
+            m = bdtemplate_r[lang].finditer(x.text)
             for i in m:
                 birthdate = u'%s' % (i.group('birthyear'))
                 deathdate = u'%s' % (i.group('deathyear'))
@@ -420,7 +444,7 @@ def main():
             defaultsort = d.group("defaultsort")
             break
         if not defaultsort:
-            m = bdtemplate_r.finditer(x.text)
+            m = bdtemplate_r[lang].finditer(x.text)
             for i in m:
                 defaultsort = u'%s' % (i.group('defaultsort'))
                 break
