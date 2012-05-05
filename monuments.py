@@ -25,19 +25,18 @@ def uncode(t):
 
 def translatename(name):
     nameen = name
-    nameen = re.sub(ur"(?im)^Castillo de ", ur"Castle of ", nameen)
     nameen = re.sub(ur"(?im)^Castillo \((.*?)\)", ur"Castle of \1", nameen)
-    nameen = re.sub(ur"(?im)^Catedral de ", ur"Cathedral of ", nameen)
-    nameen = re.sub(ur"(?im)^Concatedral de ", ur"Co-cathedral of ", nameen)
-    nameen = re.sub(ur"(?im)^Ermita de ", ur"Hermitage of ", nameen)
-    nameen = re.sub(ur"(?im)^Iglesia de ", ur"Church of ", nameen)
-    nameen = re.sub(ur"(?im)^Monasterio de ", ur"Monastery of ", nameen)
-    nameen = re.sub(ur"(?im)^Muralla de ", ur"Walls of ", nameen)
-    nameen = re.sub(ur"(?im)^Palacio de ", ur"Palace of ", nameen)
-    nameen = re.sub(ur"(?im)^Puente de ", ur"Bridge of ", nameen)
-    nameen = re.sub(ur"(?im)^Puerta de ", ur"Gate of ", nameen)
-    nameen = re.sub(ur"(?im)^Teatro de ", ur"Theatre of ", nameen)
-    nameen = re.sub(ur"(?im)^Teatro ", ur"Theatre ", nameen)
+    nameen = re.sub(ur"(?im)^Castillo (de )?", ur"Castle of ", nameen)
+    nameen = re.sub(ur"(?im)^Catedral (de )?", ur"Cathedral of ", nameen)
+    nameen = re.sub(ur"(?im)^Concatedral (de )?", ur"Co-cathedral of ", nameen)
+    nameen = re.sub(ur"(?im)^Ermita (de )?", ur"Hermitage of ", nameen)
+    nameen = re.sub(ur"(?im)^Iglesia (de )?", ur"Church of ", nameen)
+    nameen = re.sub(ur"(?im)^Monasterio (de )?", ur"Monastery of ", nameen)
+    nameen = re.sub(ur"(?im)^Muralla (de )?", ur"Walls of ", nameen)
+    nameen = re.sub(ur"(?im)^Palacio (de )?", ur"Palace of ", nameen)
+    nameen = re.sub(ur"(?im)^Puente (de )?", ur"Bridge of ", nameen)
+    nameen = re.sub(ur"(?im)^Puerta (de )?", ur"Gate of ", nameen)
+    nameen = re.sub(ur"(?im)^Teatro (de )?", ur"Theatre of ", nameen)
     return nameen
 
 f = gzip.open('monuments_db.sql.gz', 'rb')
@@ -53,14 +52,33 @@ for monument in monuments:
     name = uncode(monument.group('name'))
     nameen = translatename(name)
     type_ = uncode(monument.group('type')).lower()
-    page = uncode(monument.group('page'))
+    pagename = uncode(monument.group('page'))
     image = uncode(monument.group('image'))
     date = uncode(monument.group('date'))
     location = uncode(monument.group('location'))
     lat = uncode(monument.group('lat'))
     lon = uncode(monument.group('lon'))
     
-    if id and name and page and image and location and lat and lon and types.has_key(type_):
+    if id and name and pagename and image and location and lat and lon and types.has_key(type_):
+        #check if exists
+        skip = False
+        pagees = wikipedia.Page(wikipedia.Site('es', 'wikipedia'), pagename)
+        if pagees.exists():
+            while pagees.isRedirectPage():
+                pagees = pagees.getRedirectTarget()
+            iws = pagees.interwiki()
+            for iw in iws:
+                if iw.site().lang == 'en':
+                    print 'Existe en la inglesa'
+                    skip = True
+                    break
+        if skip:
+            continue
+        pageen = wikipedia.Page(wikipedia.Site('en', 'wikipedia'), nameen)
+        if pageen.exists():
+            print 'Existe en la inglesa'
+            continue
+        
         year = u''
         yearsentence = u''
         if date:
@@ -101,5 +119,6 @@ The '''%s''' ([[Spanish language|Spanish]]: ''%s'') is a %s located in %s, [[Spa
 
 {{Spain-struct-stub}}""" % (nameen, name, image, lat, lon, location, name, year and year or u'', id, nameen, name, type_ and types[type_] or u'monument', location, yearsentence)
         print output
+        print 'Creando...'
 
 print c
