@@ -67,13 +67,13 @@ for monument in monuments:
         if pagees.exists():
             while pagees.isRedirectPage():
                 pagees = pagees.getRedirectTarget()
-            iws = pagees.interwiki()
-            for iw in iws:
+            for iw in pagees.interwiki():
+                iws.append([iw.site().lang, iw.title()])
                 if iw.site().lang == 'en':
                     print 'Existe en la inglesa'
                     skip = True
                     break
-            iws.append(pagees) #inside this if, add only if pagees exists!
+            iws.append(['es', pagees.title()]) #inside this if, add only if pagees exists!
         else:
             pagees = ''
         
