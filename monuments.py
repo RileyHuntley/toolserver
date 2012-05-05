@@ -25,6 +25,7 @@ def uncode(t):
 
 def translatename(name):
     nameen = name
+    nameen = re.sub(ur"(?im)^Arco (árabe)? ?(de )?", ur"Arch of \1", nameen)
     nameen = re.sub(ur"(?im)^Castillo \((.*?)\)", ur"Castle of \1", nameen)
     nameen = re.sub(ur"(?im)^Castillo (de )?", ur"Castle of ", nameen)
     nameen = re.sub(ur"(?im)^Catedral (de )?", ur"Cathedral of ", nameen)
@@ -79,10 +80,11 @@ for monument in monuments:
         
         if skip:
             continue
+        """mejor lo guardo y luego miro si está en azul y si es este monumento u otro q se llama igual (en ese caso creo desambiguación)
         pageen = wikipedia.Page(wikipedia.Site('en', 'wikipedia'), nameen)
         if pageen.exists():
             print 'Existe en la inglesa'
-            continue
+            continue"""
         
         iws.sort()
         iws_plain = ''
