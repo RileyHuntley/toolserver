@@ -557,7 +557,9 @@ def main():
                             f.write((u'missing nationality = %s\n' % (nn)).encode('utf-8'))
                             f.close()
             
-            if not nationality:
+            if nationality:
+                print 'We have nationality'
+            else:
                 print 'No nationality found'
                 continue
             
@@ -577,7 +579,9 @@ def main():
                             if not 'businessman' in occupations:
                                 occupations.append('businessman')
             
-            if not occupations:
+            if occupations:
+                print 'We have occupation'
+            else:
                 print 'No occupations found'
                 continue
             
