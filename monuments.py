@@ -19,7 +19,7 @@ import re
 import wikipedia
 
 def uncode(t):
-    return unicode(t, 'latin-1').encode('utf-8')
+    return unicode(t, 'latin-1')
 
 f = gzip.open('monuments_db.sql.gz', 'rb')
 raw = f.read()
@@ -42,10 +42,13 @@ for monument in monuments:
     
     if id and name and page and image and location and lat and lon:
         year = u''
+        yearsentence = u''
         if date:
             year = date.split('-')[-1]
+            if year:
+                yearsentence = year and u" It was declared ''[[Bien de Interés Cultural]]'' in %s." % (year) or u''
         
-        print '#'*50, '\n', name, '#'*50
+        print '#'*50, '\n', name, '\n', '#'*50
         c += 1
         
         output = u"""{{Infobox Historic Site
@@ -67,7 +70,7 @@ for monument in monuments:
 | designation1_offname = %s
 | designation1_type = Non-movable
 | designation1_criteria = Monument
-| designation1_date = 1994<ref name="bic" />
+| designation1_date = %s<ref name="bic" />
 | designation1_number = %s
 }}
 
@@ -76,7 +79,7 @@ The '''%s''' ([[Spanish language|Spanish]]: ''%s'') is a %s located in %s, [[Spa
 == References ==
 {{reflist}}
 
-{{Spain-struct-stub}}""" % (name, name, image, lat, lon, location, name, year and year or '', id, name, name, type_ and type or u'XYZ', location, year and u" It was declared ''[[Bien de Interés Cultural]]'' in %s." % (year) or u'')
-
+{{Spain-struct-stub}}""" % (name, name, image, lat, lon, location, name, year and year or u'', id, name, name, type_ and type_ or u'XYZ', location, yearsentence)
+        print output
 
 print c
