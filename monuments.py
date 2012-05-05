@@ -30,11 +30,11 @@ def translatename(name):
     nameen = re.sub(ur"(?im)^Catedral (de )?", ur"Cathedral of ", nameen)
     nameen = re.sub(ur"(?im)^Concatedral (de )?", ur"Co-cathedral of ", nameen)
     nameen = re.sub(ur"(?im)^Ermita (de )?", ur"Hermitage of ", nameen)
-    nameen = re.sub(ur"(?im)^Iglesia (de )?", ur"Church of ", nameen)
-    nameen = re.sub(ur"(?im)^Monasterio (de )?", ur"Monastery of ", nameen)
+    nameen = re.sub(ur"(?im)^Iglesia (Parroquial|Fortificada)? ?(de )?", ur"Church of ", nameen)
+    nameen = re.sub(ur"(?im)^Monasterio (Cisterciense )?(de )?", ur"Monastery of ", nameen)
     nameen = re.sub(ur"(?im)^Muralla (de )?", ur"Walls of ", nameen)
     nameen = re.sub(ur"(?im)^Palacio (de )?", ur"Palace of ", nameen)
-    nameen = re.sub(ur"(?im)^Puente (de )?", ur"Bridge of ", nameen)
+    nameen = re.sub(ur"(?im)^Puente (Romano)? ?(de )?", ur"Bridge of ", nameen)
     nameen = re.sub(ur"(?im)^Puerta (de )?", ur"Gate of ", nameen)
     nameen = re.sub(ur"(?im)^Teatro (de )?", ur"Theatre of ", nameen)
     return nameen
@@ -62,6 +62,7 @@ for monument in monuments:
     if id and name and pagename and image and location and lat and lon and types.has_key(type_):
         #check if exists
         skip = False
+        iws = ''
         pagees = wikipedia.Page(wikipedia.Site('es', 'wikipedia'), pagename)
         if pagees.exists():
             while pagees.isRedirectPage():
@@ -78,6 +79,11 @@ for monument in monuments:
         if pageen.exists():
             print 'Existe en la inglesa'
             continue
+        
+        iws.sort()
+        iws_plain = ''
+        for iwlang, iwtitle in iws:
+            iws_plain += u'[[%s:%s]]\n' % (iwlang, iwtitle)
         
         year = u''
         yearsentence = u''
@@ -117,8 +123,16 @@ The '''%s''' ([[Spanish language|Spanish]]: ''%s'') is a %s located in %s, [[Spa
 == References ==
 {{reflist}}
 
-{{Spain-struct-stub}}""" % (nameen, name, image, lat, lon, location, name, year and year or u'', id, nameen, name, type_ and types[type_] or u'monument', location, yearsentence)
+[[Category:Bien de Interés Cultural buildings]]
+
+%s
+{{Spain-struct-stub}}""" % (nameen, name, image, lat, lon, location, name, year and year or u'', id, nameen, name, type_ and types[type_] or u'monument', location, yearsentence, iws_plain)
+        print 'Guardando...'
+        output = u'\n\n== [[%s]] ([[:es:%s|es]]) ==\n<pre>\n%s\n</pre>' % (nameen, pagename, output)
         print output
-        print 'Creando...'
+        
+        f = open('monuments.output.txt', 'a')
+        f.write(output.encode('utf-8'))
+        f.close()
 
 print c
