@@ -62,7 +62,7 @@ for monument in monuments:
     if id and name and pagename and image and location and lat and lon and types.has_key(type_):
         #check if exists
         skip = False
-        iws = ''
+        iws = []
         pagees = wikipedia.Page(wikipedia.Site('es', 'wikipedia'), pagename)
         if pagees.exists():
             while pagees.isRedirectPage():
@@ -73,6 +73,10 @@ for monument in monuments:
                     print 'Existe en la inglesa'
                     skip = True
                     break
+            iws.append(pagees) #inside this if, add only if pagees exists!
+        else:
+            pagees = ''
+        
         if skip:
             continue
         pageen = wikipedia.Page(wikipedia.Site('en', 'wikipedia'), nameen)
@@ -95,7 +99,7 @@ for monument in monuments:
         c += 1
         print '#'*50, '\n', c, name, '\n', '#'*50
         
-        output = u"""{{Infobox Historic Site
+        output = u"""%s{{Infobox Historic Site
 | name = %s
 | native_name = %s
 | native_language = Spanish
@@ -126,7 +130,7 @@ The '''%s''' ([[Spanish language|Spanish]]: ''%s'') is a %s located in %s, [[Spa
 [[Category:Bien de Interés Cultural buildings]]
 
 %s
-{{Spain-struct-stub}}""" % (nameen, name, image, lat, lon, location, name, year and year or u'', id, nameen, name, type_ and types[type_] or u'monument', location, yearsentence, iws_plain)
+{{Spain-struct-stub}}""" % (pagees and u"{{Expand Spanish|%s}}\n" % (pagees.title()) or '', nameen, name, image, lat, lon, location, name, year and year or u'', id, nameen, name, type_ and types[type_] or u'monument', location, yearsentence, iws_plain)
         print 'Guardando...'
         output = u'\n\n== [[%s]] ([[:es:%s|es]]) ==\n<pre>\n%s\n</pre>' % (nameen, pagename, output)
         print output
