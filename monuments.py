@@ -26,7 +26,7 @@ def uncode(t):
 def translatename(name):
     nameen = name
     nameen = re.sub(ur"(?im)^Castillo de ", ur"Castle of ", nameen)
-    nameen = re.sub(ur"(?im)^Castillo (\(.*?\))", ur"Castle of \1", nameen)
+    nameen = re.sub(ur"(?im)^Castillo \((.*?)\)", ur"Castle of \1", nameen)
     nameen = re.sub(ur"(?im)^Catedral de ", ur"Cathedral of ", nameen)
     nameen = re.sub(ur"(?im)^Concatedral de ", ur"Co-cathedral of ", nameen)
     nameen = re.sub(ur"(?im)^Ermita de ", ur"Hermitage of ", nameen)
