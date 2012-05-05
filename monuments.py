@@ -18,8 +18,27 @@ import gzip
 import re
 import wikipedia
 
+types = {'arco': 'arch', 'arco romano': 'Roman arch', 'castillo': 'castle', 'catedral': 'cathedral', 'concatedral': 'co-cathedral', 'ermita': 'hermitage', 'iglesia': 'church', 'monasterio': 'monastery', 'muralla': 'wall', 'palacio': 'palace', 'puente': 'bridge', 'puerta': 'gate', 'teatro': 'theatre'}
+
 def uncode(t):
     return unicode(t, 'latin-1')
+
+def translatename(name):
+    nameen = name
+    nameen = re.sub(ur"(?im)^Castillo de ", ur"Castle of ", nameen)
+    nameen = re.sub(ur"(?im)^Castillo \(.*?\)", ur"Castle of \1", nameen)
+    nameen = re.sub(ur"(?im)^Catedral de ", ur"Cathedral of ", nameen)
+    nameen = re.sub(ur"(?im)^Concatedral de ", ur"Co-cathedral of ", nameen)
+    nameen = re.sub(ur"(?im)^Ermita de ", ur"Hermitage of ", nameen)
+    nameen = re.sub(ur"(?im)^Iglesia de ", ur"Church of ", nameen)
+    nameen = re.sub(ur"(?im)^Monasterio de ", ur"Monastery of ", nameen)
+    nameen = re.sub(ur"(?im)^Muralla de ", ur"Walls of ", nameen)
+    nameen = re.sub(ur"(?im)^Palacio de ", ur"Palace of ", nameen)
+    nameen = re.sub(ur"(?im)^Puente de ", ur"Bridge of ", nameen)
+    nameen = re.sub(ur"(?im)^Puerta de ", ur"Gate of ", nameen)
+    nameen = re.sub(ur"(?im)^Teatro de ", ur"Theatre of ", nameen)
+    nameen = re.sub(ur"(?im)^Teatro ", ur"Theatre ", nameen)
+    return nameen
 
 f = gzip.open('monuments_db.sql.gz', 'rb')
 raw = f.read()
@@ -32,7 +51,8 @@ c = 0
 for monument in monuments:
     id = uncode(monument.group('id'))
     name = uncode(monument.group('name'))
-    type_ = uncode(monument.group('type'))
+    nameen = translatename(name)
+    type_ = uncode(monument.group('type')).lower()
     page = uncode(monument.group('page'))
     image = uncode(monument.group('image'))
     date = uncode(monument.group('date'))
@@ -40,16 +60,16 @@ for monument in monuments:
     lat = uncode(monument.group('lat'))
     lon = uncode(monument.group('lon'))
     
-    if id and name and page and image and location and lat and lon:
+    if id and name and page and image and location and lat and lon and types.has_key(type_):
         year = u''
         yearsentence = u''
         if date:
-            year = date.split('-')[-1]
+            year = date.split('-')[-1].split('/')[-1]
             if year:
                 yearsentence = year and u" It was declared ''[[Bien de Interés Cultural]]'' in %s." % (year) or u''
         
-        print '#'*50, '\n', name, '\n', '#'*50
         c += 1
+        print '#'*50, '\n', c, name, '\n', '#'*50
         
         output = u"""{{Infobox Historic Site
 | name = %s
@@ -79,7 +99,7 @@ The '''%s''' ([[Spanish language|Spanish]]: ''%s'') is a %s located in %s, [[Spa
 == References ==
 {{reflist}}
 
-{{Spain-struct-stub}}""" % (name, name, image, lat, lon, location, name, year and year or u'', id, name, name, type_ and type_ or u'XYZ', location, yearsentence)
+{{Spain-struct-stub}}""" % (nameen, name, image, lat, lon, location, name, year and year or u'', id, nameen, name, type_ and types[type_] or u'monument', location, yearsentence)
         print output
 
 print c
