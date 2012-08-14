@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright (C) 2011 emijrp <emijrp@gmail.com>
+# Copyright (C) 2011-2012 emijrp <emijrp@gmail.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -65,12 +65,13 @@ anexos = {
 'asturias': [u'es:Anexo:Bienes de interés cultural de Asturias', ],
 'avila': [u'es:Anexo:Bienes de interés cultural de la provincia de Ávila', ],
 'badajoz': [u'es:Anexo:Bienes de interés cultural de la provincia de Badajoz', ],
+
 'baleares': [u"ca:Llista de monuments d'Eivissa", u'ca:Llista de monuments de Formentera', 
     u"ca:Llista de monuments d'Alaior", u"ca:Llista de monuments des Castell", u"ca:Llista de monuments de Ciutadella", u"ca:Llista de monuments de Ferreries", u"ca:Llista de monuments de Maó", u"ca:Llista de monuments des Mercadal", u"ca:Llista de monuments des Migjorn Gran", u"ca:Llista de monuments de Sant Lluís",
     
     u"ca:Llista de monuments d'Alaró", u"ca:Llista de monuments d'Alcúdia", u"ca:Llista de monuments d'Algaida", u"ca:Llista de monuments d'Andratx", u"ca:Llista de monuments d'Ariany", u"ca:Llista de monuments d'Artà", u"ca:Llista de monuments de Banyalbufar", u"ca:Llista de monuments de Binissalem", u"ca:Llista de monuments de Búger", u"ca:Llista de monuments de Bunyola", u"ca:Llista de monuments de Calvià", u"ca:Llista de monuments de Campanet", u"ca:Llista de monuments de Campos", u"ca:Llista de monuments de Capdepera", u"ca:Llista de monuments de Consell", u"ca:Llista de monuments de Costitx", u"ca:Llista de monuments de Deià", u"ca:Llista de monuments d'Escorca", u"ca:Llista de monuments d'Esporles", u"ca:Llista de monuments d'Estellencs", u"ca:Llista de monuments de Felanitx", u"ca:Llista de monuments de Fornalutx", u"ca:Llista de monuments d'Inca", u"ca:Llista de monuments de Lloret de Vistalegre", u"ca:Llista de monuments de Lloseta", u"ca:Llista de monuments de Llubí", u"ca:Llista de monuments de Llucmajor", u"ca:Llista de monuments de Manacor", u"ca:Llista de monuments de Mancor de la Vall", u"ca:Llista de monuments de Maria de la Salut", u"ca:Llista de monuments de Marratxí",  u"ca:Llista de monuments de Montuïri",  u"ca:Llista de monuments de Muro",  u"ca:Llista de monuments de Palma",  u"ca:Llista de monuments de Petra",  u"ca:Llista de monuments de sa Pobla",  u"ca:Llista de monuments de Pollença",  u"ca:Llista de monuments de Porreres",  u"ca:Llista de monuments de Puigpunyent",  u"ca:Llista de monuments de ses Salines",  u"ca:Llista de monuments de Sant Joan",  u"ca:Llista de monuments de Sant Llorenç des Cardassar",  u"ca:Llista de monuments de Santa Eugènia",  u"ca:Llista de monuments de Santa Margalida",  u"ca:Llista de monuments de Santa Maria del Camí",  u"ca:Llista de monuments de Santanyí",  u"ca:Llista de monuments de Selva",  u"ca:Llista de monuments de Sencelles",  u"ca:Llista de monuments de Sineu",  u"ca:Llista de monuments de Sóller",  u"ca:Llista de monuments de Son Servera",  u"ca:Llista de monuments de Valldemossa",  u"ca:Llista de monuments de Vilafranca de Bonany",
     ],
-    
+
 'burgos': [u'es:Anexo:Bienes de interés cultural de la provincia de Burgos', ],
 'cantabria': [u'es:Anexo:Bienes de interés cultural de Cantabria', ],
 
@@ -81,8 +82,7 @@ anexos = {
 
     'lleida': [u"ca:Llista de monuments de l'Alt Urgell", u"ca:Llista de monuments de l'Alta Ribagorça", u"ca:Llista de monuments de la Baixa Cerdanya", u"ca:Llista de monuments de les Garrigues", u"ca:Llista de monuments de la Noguera", u"ca:Llista de monuments del Pallars Jussà", u"ca:Llista de monuments del Pallars Sobirà", u"ca:Llista de monuments del Pla d'Urgell", u"ca:Llista de monuments de la Segarra", u"ca:Llista de monuments del Segrià", u"ca:Llista de monuments del Solsonès", u"ca:Llista de monuments de l'Urgell", u"ca:Llista de monuments de la Vall d'Aran", ],
 
-    #'tarragona': [u"ca:Llista de monuments de l'Alt Camp", u"ca:Llista de monuments del Baix Camp", u"ca:Llista de monuments del Baix Ebre", u"ca:Llista de monuments del Baix Penedès", u"ca:Llista de monuments de la Conca de Barberà", u"ca:Llista de monuments del Montsià", u"ca:Llista de monuments del Priorat", u"ca:Llista de monuments de la Ribera d'Ebre", u"ca:Llista de monuments del Tarragonès", u"ca:Llista de monuments de la Terra Alta",  ],
-
+    'tarragona': [u"ca:Llista de monuments de l'Alt Camp", u"ca:Llista de monuments del Baix Camp", u"ca:Llista de monuments del Baix Ebre", u"ca:Llista de monuments del Baix Penedès", u"ca:Llista de monuments de la Conca de Barberà", u"ca:Llista de monuments del Montsià", u"ca:Llista de monuments del Priorat", u"ca:Llista de monuments de la Ribera d'Ebre", u"ca:Llista de monuments del Tarragonès", u"ca:Llista de monuments de la Terra Alta",  ],
 
 'ceuta': [u'es:Anexo:Bienes de interés cultural de Ceuta', ],
 'ciudadreal': [u'es:Anexo:Bienes de interés cultural de la provincia de Ciudad Real', ],
@@ -231,7 +231,7 @@ regexp_gl = re.compile(ur"""(?im)\{\{\s*BIC\s*(\|\s*(nomeoficial\s*=\s*(?P<nombr
  | imatge = 
 }}
 """
-regexp_ca = re.compile(ur"""(?im)\{\{\s*filera (BIC|BCIN|BIC Val)\s*(\|\s*(nom\s*=\s*(?P<nombre>[^=}]*?)|nomcoor\s*=\s*(?P<nombrecoor>[^=}]*?)|tipus\s*=\s*(?P<tipobic>[^=}]*?)|estil\s*=\s*([^=}]*?)|època\s*=\s*([^=}]*?)|municipi\s*=\s*(?P<municipio>[^=}]*?)|lloc\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)|idurl\s*=\s*([^=}]*?)|prot\s*=\s*([^=}]*?)|bcin\s*=\s*([^=}]*?)|bic\s*=\s*(?P<bic>[^=}]*?)|fecha\s*=\s*(?P<fecha>[^=}]*?)|imatge\s*=\s*(?P<imagen>[^=}]*?))\s*)+\s*\|*\s*\}\}""")
+regexp_ca = re.compile(ur"""(?im)\{\{\s*filera (BIC|BCIN|BIC Val)\s*(\|\s*(nom\s*=\s*(?P<nombre>[^=}]*?)|nomcoor\s*=\s*(?P<nombrecoor>[^=}]*?)|tipus\s*=\s*(?P<tipobic>[^=}]*?)|estil\s*=\s*([^=}]*?)|època\s*=\s*([^=}]*?)|municipi\s*=\s*(?P<municipio>[^=}]*?)|lloc\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)|idurl\s*=\s*([^=}]*?)|prot\s*=\s*([^=}]*?)|bcin\s*=\s*([^=}]*?)|bic\s*=\s*(?P<bic>[^=}]*?)|fecha\s*=\s*(?P<fecha>[^=}]*?)|imatge\s*=\s*(?P<imagen>[^=}]*?)\s*)\s*)+\s*\|*\s*\}\}""")
 
 def isvalidimage(img):
     if img and not re.search(ur'(?im)(falta[_ ]imagen|\.svg)', img):
@@ -261,7 +261,7 @@ for anexoid, anexolist in anexos.items():
     if not errors.has_key(anexoid):
         errors[anexoid] = u'&nbsp;'
     for anexo in anexolist:
-        #print anexo #da problemas cuando se ejecuta con cron
+        print anexo #da problemas cuando se ejecuta con cron
         lang = anexo.split(':')[0]
         s = wikipedia.Site(lang, 'wikipedia')
         wtitle = ':'.join(anexo.split(':')[1:])
@@ -275,8 +275,10 @@ for anexoid, anexolist in anexos.items():
         if lang == 'es':
             m = regexp_es.finditer(wtext)
         elif lang == 'gl':
+            continue
             m = regexp_gl.finditer(wtext)
         elif lang == 'ca':
+            continue
             m = regexp_ca.finditer(wtext)
         if m:
             for i in m:
@@ -356,7 +358,7 @@ for anexoid, anexolist in anexos.items():
         articleurl = re.sub(u' ', u'_', articleurl)
         locatedin = props['municipio']
         if props['lat'] and props['lon']:
-            #<a href="http://commons.wikimedia.org/w/index.php?title=Special:Upload&uploadformstyle=basic&wpDestFile=%s - %s - WLM.jpg&wpUploadDescription={{Information%%0D%%0A| Description = %s%%0D%%0A| Source = {{Own}}%%0D%%0A| Date = %%0D%%0A| Author = [[User:{{subst:REVISIONUSER}}|{{subst:REVISIONUSER}}]]%%0D%%0A| Permission = %%0D%%0A| other_versions = %%0D%%0A}}%%0D%%0A{{Selected for WLM 2011 ES|%s}}" target="_blank"><b>Upload</b></a>
+            #<a href="http://commons.wikimedia.org/w/index.php?title=Special:Upload&uploadformstyle=basic&wpDestFile=%s - %s - WLM.jpg&wpUploadDescription={{Information%%0D%%0A| Description = %s%%0D%%0A| Source = {{Own}}%%0D%%0A| Date = %%0D%%0A| Author = [[User:{{subst:REVISIONUSER}}|{{subst:REVISIONUSER}}]]%%0D%%0A| Permission = %%0D%%0A| other_versions = %%0D%%0A}}%%0D%%0A{{Selected for WLM 2012 ES|%s}}" target="_blank"><b>Upload</b></a>
             output += u"""
 <Placemark>
 <name>%s</name>
@@ -486,8 +488,8 @@ for p, ptotal, pmissingcoordinates, pmissingimages in provincesstats:
     for i in anexos[p]:
         refs += u'<a href="http://%s.wikipedia.org/wiki/%s" target="_blank">[%d]</a> ' % (i.split(':')[0], ':'.join(i.split(':')[1:]), c)
         c += 1
-    refs = u"""[ <a href="javascript:showHide('%s-refs')">Show/Hide</a> ]<div id="%s-refs" style="display: none;">%s</div>""" % (p, p, refs)
-    errorstext = u"""[ <a href="javascript:showHide('%s-errors')">Show/Hide</a> ]<div id="%s-errors" style="display: none;">%s</div>""" % (p, p, errors[p])
+    refs = u"""[<a href="javascript:showHide('%s-refs')">Show/Hide</a>]<div id="%s-refs" style="display: none;">%s</div>""" % (p, p, refs)
+    errorstext = u"""[<a href="javascript:showHide('%s-errors')">Show/Hide</a>]<div id="%s-errors" style="display: none;">%s</div>""" % (p, p, errors[p])
     tablestats += u'<tr><td><a href="index.php?place=%s">%s</a></td><td>%d</td><td bgcolor=%s>%d (%.1f%%)</td><td bgcolor=%s>%d (%.1f%%)</td><td>%s</td><td>%s</td></tr>\n' % (p, placenames[p], ptotal, colors(pcoordper),ptotal-pmissingcoordinates, pcoordper, colors(pimageper), ptotal-pmissingimages, pimageper, refs, errorstext)
 
 tablestats += u'<tr><td><b>Total</b></td><td><b>%d</b></td><td bgcolor=%s><b>%d (%.1f%%)</b></td><td bgcolor=%s><b>%d (%.1f%%)</b></td><td><a href="http://ca.wikipedia.org/wiki/Categoria:Llistes_de_monuments" target="_blank">[1]</a> <a href="http://es.wikipedia.org/wiki/Categor%%C3%%ADa:Anexos:Bienes_de_inter%%C3%%A9s_cultural_en_Espa%%C3%%B1a" target="_blank">[2]</a> <a href="http://gl.wikipedia.org/wiki/Categor%%C3%%ADa:Bens_de_Interese_Cultural_de_Galicia" target="_blank">[3]</a></td><td>%d</td></tr>\n' % (total, colors((total-missingcoordinates)/(total/100.0)), total-missingcoordinates, (total-missingcoordinates)/(total/100.0), colors((total-missingimages)/(total/100.0)), total-missingimages, (total-missingimages)/(total/100.0), totalerrors)
@@ -497,7 +499,7 @@ tablestats += u'</table>\n'
 #table user stats
 tableuserstats = u'<table border=1px style="text-align: center;">\n'
 tableuserstats += u'<tr><th width=100px>User</th><th width=60px>Files</th><th width=60px>MBytes</th></tr>\n'
-cat = catlib.Category(wikipedia.Site("commons", "commons"), u"Category:Images from Wiki Loves Monuments 2011 in Spain")
+cat = catlib.Category(wikipedia.Site("commons", "commons"), u"Category:Images from Wiki Loves Monuments 2012 in Spain")
 gen = pagegenerators.CategorizedPageGenerator(cat, start="!")
 pre = pagegenerators.PreloadingGenerator(gen, pageNumber=250)
 usersranking = {}
@@ -518,7 +520,7 @@ for numpics, username, numbytes in usersranking_list:
     totalnumpics += numpics
     totalnumbytes += numbytes
     tableuserstats += u'<tr><td><a href="http://commons.wikimedia.org/wiki/User:%s" target="_blank">%s</a></td><td><a href="http://commons.wikimedia.org/w/index.php?title=Special:ListFiles&user=%s" target="_blank">%d</a></td><td>%.2f</td></tr>\n' % (username, username, username, numpics, float(numbytes)/(1024*1024))
-tableuserstats += u'<tr><td><b>Total</b></td><td><b><a href="http://commons.wikimedia.org/wiki/Category:Images_from_Wiki_Loves_Monuments_2011_in_Spain" target="_blank">%d</a></b></td><td><b>%.2f</b></td></tr>\n' % (totalnumpics, float(totalnumbytes)/(1024*1024))
+tableuserstats += u'<tr><td><b>Total</b></td><td><b><a href="http://commons.wikimedia.org/wiki/Category:Images_from_Wiki_Loves_Monuments_2012_in_Spain" target="_blank">%d</a></b></td><td><b>%.2f</b></td></tr>\n' % (totalnumpics, float(totalnumbytes)/(1024*1024))
 tableuserstats += u'</table>\n'
 #end table user stats
 
@@ -569,7 +571,7 @@ if (isset($_GET['place']))
 <center>
 <big><big><big><b><a href="http://www.wikilm.es" target="_blank">Wiki <i>Loves</i> Monuments</a></b></big></big></big>
 <br/>
-<b>Spain, September 1–30, 2011</b>
+<b>Spain, September 1–30, 2012</b>
 <br/>
 <br/>
 Total registered <i><a href="http://es.wikipedia.org/wiki/Bien_de_Inter%%C3%%A9s_Cultural" target="_blank">BICs</a></i> in Spain: %d | With coordinates: %d (%.1f%%) | With images: %d (%.1f%%)
