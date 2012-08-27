@@ -266,8 +266,7 @@ anexos['panama'] = {
 }
 
 anexos['canada'] = {
-#'alberta': [u'en:List of historic places in Alberta', ],
-'alberta': [u"fr:Liste des lieux patrimoniaux de l'Alberta", ],
+'alberta': [u'en:List of historic places in Alberta', ],
 
 }
 
@@ -424,7 +423,7 @@ regexp['panama']['es'] = re.compile(ur"""(?im)\{\{\s*Fila PCN\s*(\|\s*(nombre\s*
 
 #Canada http://wikimedia.ca/wiki/Wiki_Loves_Monuments_2012_in_Canada_Participate
 """
-in en: {{HPC row
+{{HPC row
 | name = RUSSO GREEK ORTHODOX CHURCH OF ST. PETER AND ST. PAUL 
 | address = , Smoky Lake County, Canada 
 | municipality =  
@@ -437,20 +436,8 @@ in en: {{HPC row
 | idm =  
 | image = 
 }}
-in fr: {{Ligne de tableau LPC
-| lieu = RUSSO GREEK ORTHODOX CHURCH OF ST. PETER AND ST. PAUL 
-| addresse = , Smoky Lake County, Canada
-| municipalité =  
-| cp = T0A 
-| lat = 54.0431 
-| lon = -112.134 
-| idf =  
-| idp = 1818 
-| idm =  
-| image =  
-}}
 """
-regexp['canada']['fr'] = re.compile(ur"""(?im)\{\{\s*(HPC row|Ligne de tableau LPC)\s*(\|\s*((name|lieu)\s*=\s*(?P<bic>(?P<name>[^=}]*?))|(municipality|municipalité)\s*=\s*(?P<municipio>[^=}]*?)|addresse?\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)|image\s*=\s*(?P<imagen>[^=}]*?)|(pc|cp)\s*=\s*([^=}]*?)|idf\s*=\s*([^=}]*?)|idp\s*=\s*([^=}]*?)|idm\s*=\s*([^=}]*?)|problème\s*=\s*([^=}]*?)|provinceId\s*=\s*([^=}]*?)\s*)\s*)+\s*\|*\s*\}\}""") #uso name como bic id ...
+regexp['canada']['en'] = re.compile(ur"""(?im)\{\{\s*HPC row\s*(\|\s*(name\s*=\s*(?P<name>[^=}]*?)|municipality\s*=\s*(?P<municipio>[^=}]*?)|address\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\,\-\+]*?)|lon\s*=\s*(?P<lon>[0-9\.\,\-\+]*?)|image\s*=\s*(?P<imagen>[^=}]*?)|pc\s*=\s*([^=}]*?)|idf\s*=\s*([^=}]*?)|idp\s*=\s*([^=}]*?)|idm\s*=\s*([^=}]*?)|provinceId\s*=\s*([^=}]*?)\s*)\s*)+\s*\|*\s*\}\}(?P<bic>)""") #uso name como bic id ...
 
 #main index
 output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -497,7 +484,7 @@ f.close()
 
 time.sleep(10)
 #indexes by country
-for country in ['canada',]:#'argentina', 'chile', 'panama', 'spain']:
+for country in ['argentina', 'chile', 'panama', 'spain']: #'canada', 'mexico', 'colombia'
     missingcoordinates = 0
     missingimages = 0
     total = 0
@@ -538,8 +525,8 @@ for country in ['canada',]:#'argentina', 'chile', 'panama', 'spain']:
                             #'tipo': i.group('tipo').strip(),
                             'municipio': clean(i.group('municipio').strip()),
                             'lugar': clean(i.group('lugar').strip()),
-                            'lat': i.group('lat').strip(),
-                            'lon': i.group('lon').strip(),
+                            'lat': re.sub('[,]', '.', i.group('lat').strip()),
+                            'lon': re.sub('[,]', '.', i.group('lon').strip()),
                             'bic': bic.strip(),
                             'imagen': i.group('imagen').strip(),
                         }
