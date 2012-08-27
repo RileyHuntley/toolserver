@@ -22,26 +22,23 @@ import md5
 import re
 import wikipedia
 
-#subida fácil: http://commons.wikimedia.org/w/index.php?title=Special:Upload&wpDestFile=BBBB.jpg&uploadformstyle=basic&wpUploadDescription={{Information|Description=|Source=|Date=|Author=|Permission=|other_versions=}}
+#subida fácil: http://commons.wikimedia.org/w/index.php?title=Special:Upload&wpDestFile=BBBB.jpg&uploadformstyle=basic&wpUploadDescription=\ {{Information|Description=|Source=|Date=|Author=|Permission=|other_versions=}}
 
-placenames = {
-"alava": u"Álava", "alicante": u"Alicante",
-"barcelona": u"Barcelona",
-"coruna": u"A&nbsp;Coruña", "albacete": u"Albacete", "almeria": u"Almería", "asturias": u"Asturias", "avila": u"Ávila",
-"badajoz": u"Badajoz", "burgos": u"Burgos",
-"cantabria": u"Cantabria", "castellon": u"Castellón", "catalunya": u"Catalunya", "ceuta": u"Ceuta", "ciudadreal": u"Ciudad&nbsp;Real", "cuenca": u"Cuenca", "caceres": u"Cáceres", "cadiz": u"Cádiz", "cordoba": u"Córdoba",
-"girona": u"Girona", "granada": u"Granada", "guadalajara": u"Guadalajara", "guipuzcoa": u"Guipuzkoa",
-"huelva": u"Huelva", "huesca": u"Huesca",
-"baleares": u"Illes&nbsp;Balears",
-"jaen": u"Jaén", 
-"laspalmas": u"Las&nbsp;Palmas", "leon": u"León", "lleida": u"Lleida", "lugo": u"Lugo",
-"madrid": u"Madrid", "melilla": u"Melilla", "murcia": u"Murcia", "malaga": u"Málaga", 
-"navarra": u"Navarra",
-"valencia": u"Valencia", "palencia": u"Palencia", "larioja": u"La&nbsp;Rioja", "ourense": u"Ourense", "pontevedra": u"Pontevedra",
-"salamanca": u"Salamanca", "tenerife": u"Tenerife", "segovia": u"Segovia", "sevilla": u"Sevilla", "soria": u"Soria", 
-"tarragona": u"Tarragona", "teruel": u"Teruel", "toledo": u"Toledo", "valladolid": u"Valladolid", "vizcaya": u"Vizcaya", 
-"zamora": u"Zamora", "zaragoza": u"Zaragoza",
-}
+def isvalidimage(img):
+    if img and not re.search(ur'(?im)(falta[_ ]imagen|\.svg)', img):
+        return True
+    return False
+
+def clean(t):
+    t = re.sub(ur'(?i)([\[\]]|\|.*|\<ref.*)', ur'', t).strip() #quitamos enlaces, refs, etc
+    t = re.sub(ur'(?im)<\s*/?\s*[^<>]+\s*/?\s*>', ur'-', t).strip() #fuera etiquetas HTML </br> <br/> (las refs las hemos quitado antes)
+    return t
+
+def removerefs(t):
+    t = re.sub(ur"(?im)\{\{\s*(?!(fila (BIC|BIC 2)|BIC|filera (BIC|BCIN|BIC Val)))\s*\|[^{}]*?\}\}", ur"", t)
+    t = re.sub(ur"(?im)<\s*ref[^<>]*?\s*>[^<>]*?<\s*/\s*ref\s*>", ur"", t) # <ref></ref> <ref name=""></ref>
+    t = re.sub(ur"(?im)<\s*ref\s+name[^<>]+?\s*/\s*>", ur"", t) # <ref name="" />
+    return t
 
 def colors(percent):
     if percent < 25:
@@ -56,8 +53,40 @@ def colors(percent):
         return 'lightblue'
     return 'white'
 
+wmurls = { 'spain': 'http://www.wikimedia.org.es', 'chile': 'http://www.wikimediachile.cl', 'argentina': 'http://www.wikimedia.org.ar'}
+wlmurls = { 'spain': 'http://www.wikilm.es', 'chile': 'http://www.wikilovesmonuments.cl', 'argentina': 'http://wikilovesmonuments.com.ar'}
+
+uploadcats = { 'spain': 'Images from Wiki Loves Monuments 2012 in Spain', 'chile': 'Images from Wiki Loves Monuments 2012 in Chile', 'argentina': 'Images from Wiki Loves Monuments 2012 in Argentina'}
+
+capital = { 'spain': 'madrid', 'chile': 'santiago', 'argentina': 'buenosaires' }
+
+placenames = {
+"alava": u"Álava", "alicante": u"Alicante",
+"badajoz": u"Badajoz", "burgos": u"Burgos", "barcelona": u"Barcelona",
+"coruna": u"A&nbsp;Coruña", "albacete": u"Albacete", "almeria": u"Almería", "asturias": u"Asturias", "avila": u"Ávila",
+"cantabria": u"Cantabria", "castellon": u"Castellón", "catalunya": u"Catalunya", "ceuta": u"Ceuta", "ciudadreal": u"Ciudad&nbsp;Real", "cuenca": u"Cuenca", "caceres": u"Cáceres", "cadiz": u"Cádiz", "cordoba": u"Córdoba",
+"girona": u"Girona", "granada": u"Granada", "guadalajara": u"Guadalajara", "guipuzcoa": u"Guipuzkoa",
+"huelva": u"Huelva", "huesca": u"Huesca",
+"baleares": u"Illes&nbsp;Balears",
+"jaen": u"Jaén", 
+"laspalmas": u"Las&nbsp;Palmas", "leon": u"León", "lleida": u"Lleida", "lugo": u"Lugo",
+"madrid": u"Madrid", "melilla": u"Melilla", "murcia": u"Murcia", "malaga": u"Málaga", 
+"navarra": u"Navarra",
+"valencia": u"Valencia", "palencia": u"Palencia", "larioja": u"La&nbsp;Rioja", "ourense": u"Ourense", "pontevedra": u"Pontevedra",
+"salamanca": u"Salamanca", "tenerife": u"Tenerife", "segovia": u"Segovia", "sevilla": u"Sevilla", "soria": u"Soria", 
+"tarragona": u"Tarragona", "teruel": u"Teruel", "toledo": u"Toledo", "valladolid": u"Valladolid", "vizcaya": u"Vizcaya", 
+"zamora": u"Zamora", "zaragoza": u"Zaragoza",
+}
+
+def placenamesconvert(p):
+    if placenames.has_key(p):
+        return placenames[p]
+    else:
+        return p[0].upper()+p[1:]
+
 #mejor no mezclar varios anexos de varios idiomas para una misma provincia
-anexos = {
+anexos = {}
+anexos['spain'] = {
 'alava': [u'es:Anexo:Bienes de interés cultural de la provincia de Álava', ], 
 
 'albacete': [u'es:Anexo:Bienes de interés cultural de la provincia de Albacete', ],
@@ -134,6 +163,25 @@ anexos = {
 'zaragoza': [u'es:Anexo:Bienes de interés cultural de la provincia de Zaragoza', ],
 }
 
+anexos['chile'] = {
+'antofagasta': [u'commons:Commons:Lists of South American Monuments/Chile/02', ],
+'araucania': [u'commons:Commons:Lists of South American Monuments/Chile/09', ],
+'aricayparinacota': [u'commons:Commons:Lists of South American Monuments/Chile/15', ],
+'atacama': [u'commons:Commons:Lists of South American Monuments/Chile/03', ],
+'aysen': [u'commons:Commons:Lists of South American Monuments/Chile/11', ],
+'biobio': [u'commons:Commons:Lists of South American Monuments/Chile/08', ],
+'coquimbo': [u'commons:Commons:Lists of South American Monuments/Chile/04', ],
+'libertador': [u'commons:Commons:Lists of South American Monuments/Chile/06', ],
+'loslagos': [u'commons:Commons:Lists of South American Monuments/Chile/10', ],
+'losrios': [u'commons:Commons:Lists of South American Monuments/Chile/14', ],
+'magallanes': [u'commons:Commons:Lists of South American Monuments/Chile/12', ],
+'maule': [u'commons:Commons:Lists of South American Monuments/Chile/07', ],
+'santiago': [u'commons:Commons:Lists of South American Monuments/Chile/RM', ],
+'tarapaca': [u'commons:Commons:Lists of South American Monuments/Chile/01', ],
+'valparaiso': [u'commons:Commons:Lists of South American Monuments/Chile/05', ],
+
+}
+
 """
 <?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
@@ -184,7 +232,8 @@ anexos = {
  | imagen = 
 }}
 """
-regexp_es = re.compile(ur"""(?im)\{\{\s*fila (BIC|BIC 2)\s*(\|\s*(nombre\s*=\s*(?P<nombre>[^=}]*?)|nombrecoor\s*=\s*(?P<nombrecoor>[^=}]*?)|tipobic\s*=\s*(?P<tipobic>[^=}]*?)|tipo\s*=\s*(?P<tipo>[^=}]*?)|municipio\s*=\s*(?P<municipio>[^=}]*?)|lugar\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)|bic\s*=\s*(?P<bic>[^=}]*?)|id[_ ]aut\s*=\s*(?P<id_aut>[^=}]*?)|fecha\s*=\s*(?P<fecha>[^=}]*?)|imagen\s*=\s*(?P<imagen>[^=}]*?))\s*)+\s*\|*\s*\}\}""")
+regexp = { 'spain': {}, 'chile': {}, 'argentina': {} }
+regexp['spain']['es'] = re.compile(ur"""(?im)\{\{\s*fila (BIC|BIC 2)\s*(\|\s*(nombre\s*=\s*(?P<nombre>[^=}]*?)|nombrecoor\s*=\s*(?P<nombrecoor>[^=}]*?)|tipobic\s*=\s*(?P<tipobic>[^=}]*?)|tipo\s*=\s*(?P<tipo>[^=}]*?)|municipio\s*=\s*(?P<municipio>[^=}]*?)|lugar\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)|bic\s*=\s*(?P<bic>[^=}]*?)|id[_ ]aut\s*=\s*(?P<id_aut>[^=}]*?)|fecha\s*=\s*(?P<fecha>[^=}]*?)|imagen\s*=\s*(?P<imagen>[^=}]*?))\s*)+\s*\|*\s*\}\}""")
 
 """
 {{BIC
@@ -202,7 +251,7 @@ regexp_es = re.compile(ur"""(?im)\{\{\s*fila (BIC|BIC 2)\s*(\|\s*(nombre\s*=\s*(
 """
 
 #el campo idurl no aparece en algunas listas, lo ponemos opcional
-regexp_gl = re.compile(ur"""(?im)\{\{\s*BIC\s*(\|\s*(nomeoficial\s*=\s*(?P<nombre>[^=}]*?)|\s*outrosnomes\s*=\s*(?P<nombrecoor>[^=}]*?)|\s*paxina\s*=\s*(?P<paxina>[^=}]*?)|idurl\s*=\s*(?P<idurl>[^=}]*?)|concello\s*=(?P<lugar>[^=}]*?)|lugar\s*=(?P<municipio>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)|id\s*=\s*(?P<bic>[^=}]*?)|data[_ ]declaracion\s*=\s*(?P<fecha>[^=}]*?)|imaxe\s*=\s*(?P<imagen>[^=}]*?))\s*)+\s*\|*\s*\}\}""")
+regexp['spain']['gl'] = re.compile(ur"""(?im)\{\{\s*BIC\s*(\|\s*(nomeoficial\s*=\s*(?P<nombre>[^=}]*?)|\s*outrosnomes\s*=\s*(?P<nombrecoor>[^=}]*?)|\s*paxina\s*=\s*(?P<paxina>[^=}]*?)|idurl\s*=\s*(?P<idurl>[^=}]*?)|concello\s*=(?P<lugar>[^=}]*?)|lugar\s*=(?P<municipio>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)|id\s*=\s*(?P<bic>[^=}]*?)|data[_ ]declaracion\s*=\s*(?P<fecha>[^=}]*?)|imaxe\s*=\s*(?P<imagen>[^=}]*?))\s*)+\s*\|*\s*\}\}""")
 
 """
 {{filera BIC
@@ -231,389 +280,379 @@ regexp_gl = re.compile(ur"""(?im)\{\{\s*BIC\s*(\|\s*(nomeoficial\s*=\s*(?P<nombr
  | imatge = 
 }}
 """
-regexp_ca = re.compile(ur"""(?im)\{\{\s*filera (BIC|BCIN|BIC Val)\s*(\|\s*(nom\s*=\s*(?P<nombre>[^=}]*?)|nomcoor\s*=\s*(?P<nombrecoor>[^=}]*?)|tipus\s*=\s*(?P<tipobic>[^=}]*?)|estil\s*=\s*([^=}]*?)|època\s*=\s*([^=}]*?)|municipi\s*=\s*(?P<municipio>[^=}]*?)|lloc\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)|idurl\s*=\s*([^=}]*?)|prot\s*=\s*([^=}]*?)|bcin\s*=\s*([^=}]*?)|bic\s*=\s*(?P<bic>[^=}]*?)|fecha\s*=\s*(?P<fecha>[^=}]*?)|imatge\s*=\s*(?P<imagen>[^=}]*?)\s*)\s*)+\s*\|*\s*\}\}""")
+regexp['spain']['ca'] = re.compile(ur"""(?im)\{\{\s*filera (BIC|BCIN|BIC Val)\s*(\|\s*(nom\s*=\s*(?P<nombre>[^=}]*?)|nomcoor\s*=\s*(?P<nombrecoor>[^=}]*?)|tipus\s*=\s*(?P<tipobic>[^=}]*?)|estil\s*=\s*([^=}]*?)|època\s*=\s*([^=}]*?)|municipi\s*=\s*(?P<municipio>[^=}]*?)|lloc\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)|idurl\s*=\s*([^=}]*?)|prot\s*=\s*([^=}]*?)|bcin\s*=\s*([^=}]*?)|bic\s*=\s*(?P<bic>[^=}]*?)|fecha\s*=\s*(?P<fecha>[^=}]*?)|imatge\s*=\s*(?P<imagen>[^=}]*?)\s*)\s*)+\s*\|*\s*\}\}""")
 
-def isvalidimage(img):
-    if img and not re.search(ur'(?im)(falta[_ ]imagen|\.svg)', img):
-        return True
-    return False
+#Chile http://commons.wikimedia.org/wiki/Commons:Lists_of_South_American_Monuments/Chile
+"""
+{{MonumentoChile| id               = 520
+| monumento        = Aduana de Iquique
+| monumento_desc   = 
+| comuna           = 01101
+| lat              = -20.211497
+| long             = -70.152646
+| dirección        = Aníbal Pinto s/n
+| decreto          = D. S. 1559
+| fecha            = 28-06-1971
+| imagen           = Palacio Rímac.JPG
+| tipo             = MH
+}}
+"""
+regexp['chile']['commons'] = re.compile(ur"""(?im)\{\{\s*(MonumentoChile|WLM-Chile-monumento)\s*(\|\s*(monumento\s*=\s*(?P<nombre>[^=}]*?)|tipo\s*=\s*(?P<tipo>[^=}]*?)|comuna\s*=\s*(?P<municipio>[^=}]*?)|direcci[óo]n\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|long?\s*=\s*(?P<lon>[0-9\.\-\+]*?)|id\s*=\s*(?P<bic>[^=}]*?)|fecha\s*=\s*(?P<fecha>[^=}]*?)|imagen\s*=\s*(?P<imagen>[^=}]*?)|monumento[_ ]desc\s*=\s*([^=}]*?)|monumento[_ ]enlace\s*=\s*([^=}]*?)|decreto\s*=\s*([^=}]*?)\s*)\s*)+\s*\|*\s*\}\}""")
 
-def clean(t):
-    t = re.sub(ur'(?i)([\[\]]|\|.*|\<ref.*)', ur'', t).strip() #quitamos enlaces, refs, etc
-    t = re.sub(ur'(?im)<\s*/?\s*[^<>]+\s*/?\s*>', ur'-', t).strip() #fuera etiquetas HTML </br> <br/> (las refs las hemos quitado antes)
-    return t
-
-def removerefs(t):
-    t = re.sub(ur"(?im)\{\{\s*(?!(fila (BIC|BIC 2)|BIC|filera (BIC|BCIN|BIC Val)))\s*\|[^{}]*?\}\}", ur"", t)
-    t = re.sub(ur"(?im)<\s*ref[^<>]*?\s*>[^<>]*?<\s*/\s*ref\s*>", ur"", t) # <ref></ref> <ref name=""></ref>
-    t = re.sub(ur"(?im)<\s*ref\s+name[^<>]+?\s*/\s*>", ur"", t) # <ref name="" />
-    return t
-
-
-missingcoordinates = 0
-missingimages = 0
-total = 0
-provincesstats = []
-errors = {}
-totalerrors = 0
-for anexoid, anexolist in anexos.items():
-    bics = {}
-    if not errors.has_key(anexoid):
-        errors[anexoid] = u'&nbsp;'
-    for anexo in anexolist:
-        print anexo #da problemas cuando se ejecuta con cron
-        lang = anexo.split(':')[0]
-        s = wikipedia.Site(lang, 'wikipedia')
-        wtitle = ':'.join(anexo.split(':')[1:])
-        p = wikipedia.Page(s, wtitle)
-        if p.isRedirectPage():
-            p = p.getRedirectTarget()
-        wtext = p.get()
-        wtext = removerefs(wtext)
-        
-        m = ''
-        if lang == 'es':
-            m = regexp_es.finditer(wtext)
-        elif lang == 'gl':
-            continue
-            m = regexp_gl.finditer(wtext)
-        elif lang == 'ca':
-            continue
-            m = regexp_ca.finditer(wtext)
-        if m:
-            for i in m:
-                bic = '?'
-                try:
-                    bic = i.group('bic').strip()
-                    bics[bic] = {
-                        'lang': lang,
-                        'nombre': clean(i.group('nombre').strip()),
-                        #'nombrecoor': i.group('nombrecoor').strip(),
-                        #'tipobic': i.group('tipobic').strip(),
-                        #'tipo': i.group('tipo').strip(),
-                        'municipio': clean(i.group('municipio').strip()),
-                        'lugar': clean(i.group('lugar').strip()),
-                        'lat': i.group('lat').strip(),
-                        'lon': i.group('lon').strip(),
-                        'bic': bic,
-                        'imagen': i.group('imagen').strip(),
-                    }
+for country in ['chile']:
+    missingcoordinates = 0
+    missingimages = 0
+    total = 0
+    provincesstats = []
+    errors = {}
+    totalerrors = 0
+    for anexoid, anexolist in anexos[country].items():
+        bics = {}
+        if not errors.has_key(anexoid):
+            errors[anexoid] = u'&nbsp;'
+        for anexo in anexolist:
+            print anexo #da problemas cuando se ejecuta con cron
+            lang = anexo.split(':')[0]
+            s = wikipedia.Site(lang, lang == 'commons' and 'commons' or 'wikipedia')
+            wtitle = ':'.join(anexo.split(':')[1:])
+            p = wikipedia.Page(s, wtitle)
+            if p.isRedirectPage():
+                p = p.getRedirectTarget()
+            wtext = p.get()
+            wtext = removerefs(wtext)
+            
+            m = ''
+            if lang in ['commons', 'es', 'gl', 'ca']:
+                if lang not in ['commons', 'es']: #temporal skip while fix ca: lists or ca regexp...
+                    continue
+                m = regexp[country][lang].finditer(wtext)
+            if m:
+                for i in m:
+                    print 1
+                    bic = '?'
                     try:
-                        bics[bic]['fecha'] = i.group('fecha').strip() #no existe en ca: 
+                        bic = i.group('bic').strip()
+                        bics[bic] = {
+                            'lang': lang,
+                            'nombre': clean(i.group('nombre').strip()),
+                            #'nombrecoor': i.group('nombrecoor').strip(),
+                            #'tipobic': i.group('tipobic').strip(),
+                            #'tipo': i.group('tipo').strip(),
+                            'municipio': clean(i.group('municipio').strip()),
+                            'lugar': clean(i.group('lugar').strip()),
+                            'lat': i.group('lat').strip(),
+                            'lon': i.group('lon').strip(),
+                            'bic': bic.strip(),
+                            'imagen': i.group('imagen').strip(),
+                        }
+                        try:
+                            bics[bic]['fecha'] = i.group('fecha').strip() #no existe en ca: 
+                        except:
+                            pass
                     except:
-                        pass
-                except:
-                    totalerrors += 1
-                    #print anexoid, wtitle, bic
-                    errors[anexoid] += u'<a href="http://%s.wikipedia.org/wiki/%s" target="_blank">%s</a>, \n' % (lang, wtitle, bic)
+                        totalerrors += 1
+                        #print anexoid, wtitle, bic
+                        errors[anexoid] += u'<a href="http://%s.%s.org/wiki/%s" target="_blank">%s</a>, \n' % (lang, lang == 'commons' and 'commons' or 'wikipedia', wtitle, bic)
 
-    imageyesurl = u'http://maps.google.com/mapfiles/kml/paddle/red-stars.png'
-    imagenourl = u'http://maps.google.com/mapfiles/kml/paddle/wht-blank.png'
-    output = u"""<?xml version="1.0" encoding="UTF-8"?>
-    <kml xmlns="http://www.opengis.net/kml/2.2">
-        <Document>
-        <name>Wiki Loves Monuments</name>
-        <description>A map with missing images by location</description>
-        <Style id="imageyes">
-          <IconStyle>
-            <Icon>
-              <href>%s</href>
-            </Icon>
-          </IconStyle>
-        </Style>
-        <Style id="imageno">
-          <IconStyle>
-            <Icon>
-              <href>%s</href>
-            </Icon>
-          </IconStyle>
-        </Style>
-    """ % (imageyesurl, imagenourl)
+        imageyesurl = u'http://maps.google.com/mapfiles/kml/paddle/red-stars.png'
+        imagenourl = u'http://maps.google.com/mapfiles/kml/paddle/wht-blank.png'
+        output = u"""<?xml version="1.0" encoding="UTF-8"?>
+        <kml xmlns="http://www.opengis.net/kml/2.2">
+            <Document>
+            <name>Wiki Loves Monuments</name>
+            <description>A map with missing images by location</description>
+            <Style id="imageyes">
+              <IconStyle>
+                <Icon>
+                  <href>%s</href>
+                </Icon>
+              </IconStyle>
+            </Style>
+            <Style id="imageno">
+              <IconStyle>
+                <Icon>
+                  <href>%s</href>
+                </Icon>
+              </IconStyle>
+            </Style>
+        """ % (imageyesurl, imagenourl)
 
-    submissingcoordinates = 0
-    submissingimages = 0
-    subtotal = 0
-    imagesize = '150px'
-    for bic, props in bics.items():
-        total += 1
-        subtotal += 1
-        thumburl = ''
-        commonspage = ''
-        if isvalidimage(props['imagen']):
-            #http://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Toronto_-_ON_-_CN_Tower_bei_Nacht2.jpg/398px-Toronto_-_ON_-_CN_Tower_bei_Nacht2.jpg
-            filename = re.sub(ur'(?im)([\[\]]|File:|Imagen?:|Archivo:|\|.*)', ur'', props['imagen'])
-            filename = re.sub(' ', '_', filename)
-            m5 = md5.new(filename.encode('utf-8')).hexdigest()
-            thumburl = u'http://upload.wikimedia.org/wikipedia/commons/thumb/%s/%s/%s/%s-%s' % (m5[0], m5[:2], filename, imagesize, filename)
-            commonspage = u'http://commons.wikimedia.org/wiki/File:%s' % (filename)
-        else:
-            missingimages += 1
-            submissingimages += 1
+        submissingcoordinates = 0
+        submissingimages = 0
+        subtotal = 0
+        imagesize = '150px'
+        for bic, props in bics.items():
+            total += 1
+            subtotal += 1
+            thumburl = ''
+            commonspage = ''
+            if isvalidimage(props['imagen']):
+                #http://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Toronto_-_ON_-_CN_Tower_bei_Nacht2.jpg/398px-Toronto_-_ON_-_CN_Tower_bei_Nacht2.jpg
+                filename = re.sub(ur'(?im)([\[\]]|File:|Imagen?:|Archivo:|\|.*)', ur'', props['imagen'])
+                filename = re.sub(' ', '_', filename)
+                m5 = md5.new(filename.encode('utf-8')).hexdigest()
+                thumburl = u'http://upload.wikimedia.org/wikipedia/commons/thumb/%s/%s/%s/%s-%s' % (m5[0], m5[:2], filename, imagesize, filename)
+                commonspage = u'http://commons.wikimedia.org/wiki/File:%s' % (filename)
+            else:
+                missingimages += 1
+                submissingimages += 1
+            
+            if not thumburl:
+                thumburl = 'http://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Image-missing.svg/%s-Image-missing.svg.png' % (imagesize)
+                commonspage = '#'
+            
+            articleurl = u'http://%s.wikipedia.org/wiki/%s' % (props['lang'], props['nombre'])
+            articleurl = re.sub(u' ', u'_', articleurl)
+            locatedin = props['municipio']
+            if props['lat'] and props['lon']:
+                #<a href="http://commons.wikimedia.org/w/index.php?title=Special:Upload&uploadformstyle=basic&wpDestFile=%s - %s - WLM.jpg&wpUploadDescription={{Information%%0D%%0A| Description = %s%%0D%%0A| Source = {{Own}}%%0D%%0A| Date = %%0D%%0A| Author = [[User:{{subst:REVISIONUSER}}|{{subst:REVISIONUSER}}]]%%0D%%0A| Permission = %%0D%%0A| other_versions = %%0D%%0A}}%%0D%%0A{{Selected for WLM 2012 ES|%s}}" target="_blank"><b>Upload</b></a>
+                output += u"""
+    <Placemark>
+    <name>%s</name>
+    <description>
+    <![CDATA[
+    <table border=0 cellspacing=3px cellpadding=3px>
+    <tr><td align=right width=80px style="background-color: lightgreen;"><b>BIC:</b></td><td><a href="%s" target="_blank">%s</a></td><td rowspan=4><a href="%s" target="_blank"><img src="%s" width=%s/></a></td></tr>
+    <tr><td align=right style="background-color: lightblue;"><b>Located in:</b></td><td>%s</td></tr>
+    <tr><td align=right style="background-color: yellow;"><b>ID:</b></td><td>%s</td></tr>
+    <tr><td align=center colspan=2><br/><b>This BIC has %s<br/>you can upload yours. Thanks!</b><br/><br/><span style="border: 2px solid black;background-color: pink;padding: 3px;"><a href="http://commons.wikimedia.org/w/index.php?title=Special:UploadWizard&campaign=wlm-es" target="_blank"><b>Upload</b></a></span></td></tr>
+    </table>
+    ]]>
+    </description>
+    <styleUrl>#%s</styleUrl>
+    <Point>
+    <coordinates>%s,%s</coordinates>
+    </Point>
+    </Placemark>""" % (props['nombre'], articleurl, props['nombre'], commonspage, thumburl, imagesize, locatedin, props['bic'], isvalidimage(props['imagen']) and 'images, but' or 'no images,', isvalidimage(props['imagen']) and 'imageyes' or 'imageno', props['lon'], props['lat'])
+            else:
+                missingcoordinates +=1
+                submissingcoordinates +=1
         
-        if not thumburl:
-            thumburl = 'http://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Image-missing.svg/%s-Image-missing.svg.png' % (imagesize)
-            commonspage = '#'
+        provincesstats.append([anexoid, subtotal, submissingcoordinates, submissingimages])
         
-        articleurl = u'http://%s.wikipedia.org/wiki/%s' % (props['lang'], props['nombre'])
-        articleurl = re.sub(u' ', u'_', articleurl)
-        locatedin = props['municipio']
-        if props['lat'] and props['lon']:
-            #<a href="http://commons.wikimedia.org/w/index.php?title=Special:Upload&uploadformstyle=basic&wpDestFile=%s - %s - WLM.jpg&wpUploadDescription={{Information%%0D%%0A| Description = %s%%0D%%0A| Source = {{Own}}%%0D%%0A| Date = %%0D%%0A| Author = [[User:{{subst:REVISIONUSER}}|{{subst:REVISIONUSER}}]]%%0D%%0A| Permission = %%0D%%0A| other_versions = %%0D%%0A}}%%0D%%0A{{Selected for WLM 2012 ES|%s}}" target="_blank"><b>Upload</b></a>
-            output += u"""
-<Placemark>
-<name>%s</name>
-<description>
-<![CDATA[
-<table border=0 cellspacing=3px cellpadding=3px>
-<tr><td align=right width=80px style="background-color: lightgreen;"><b>BIC:</b></td><td><a href="%s" target="_blank">%s</a></td><td rowspan=4><a href="%s" target="_blank"><img src="%s" width=%s/></a></td></tr>
-<tr><td align=right style="background-color: lightblue;"><b>Located in:</b></td><td>%s</td></tr>
-<tr><td align=right style="background-color: yellow;"><b>ID:</b></td><td>%s</td></tr>
-<tr><td align=center colspan=2><br/><b>This BIC has %s<br/>you can upload yours. Thanks!</b><br/><br/><span style="border: 2px solid black;background-color: pink;padding: 3px;"><a href="http://commons.wikimedia.org/w/index.php?title=Special:UploadWizard&campaign=wlm-es" target="_blank"><b>Upload</b></a></span></td></tr>
-</table>
-]]>
-</description>
-<styleUrl>#%s</styleUrl>
-<Point>
-<coordinates>%s,%s</coordinates>
-</Point>
-</Placemark>""" % (props['nombre'], articleurl, props['nombre'], commonspage, thumburl, imagesize, locatedin, props['bic'], isvalidimage(props['imagen']) and 'images, but' or 'no images,', isvalidimage(props['imagen']) and 'imageyes' or 'imageno', props['lon'], props['lat'])
-        else:
-            missingcoordinates +=1
-            submissingcoordinates +=1
-    
-    provincesstats.append([anexoid, subtotal, submissingcoordinates, submissingimages])
-    
-    output += u"""
-    </Document>
-</kml>"""
+        output += u"""
+        </Document>
+    </kml>"""
 
-    f = open('/home/emijrp/public_html/wlm/wlm-%s.kml' % (anexoid), 'w')
-    f.write(output.encode('utf-8'))
-    f.close()
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    #beta, enwp: article creator helper
-    'nombre''municipio''lugar''lat''lon''bic''imagen'
+        f = open('/home/emijrp/public_html/wlm/%s/wlm-%s.kml' % (country, anexoid), 'w')
+        f.write(output.encode('utf-8'))
+        f.close()
+        
+        
+
+        
+        #beta, enwp: article creator helper
+        'nombre''municipio''lugar''lat''lon''bic''imagen'
+        output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
+        <head>
+        <title>enwp: article creator helper</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+        <script type="text/javascript">
+        function SelectAll(id)
+        {
+            document.getElementById(id).focus();
+            document.getElementById(id).select();
+        }
+        </script>
+
+        <body>"""
+        for bic, props in bics.items():
+            if not props.has_key('imagen') or not props['imagen'] or \
+               not props.has_key('lat') or not props['lat'] or \
+               not props.has_key('lon') or not props['lon'] or \
+               not props.has_key('fecha') or not props['fecha']:
+                continue
+            bic_ = bic
+            bic_ = re.sub(ur"(?im)[\.\(\) ]", "", bic_)
+            #if not re.search(ur'(?im)^RI-51-\d{7}$', bic_): este año ya valen todos
+            name_ = props['nombre']
+            name_ = re.sub(ur"(?im) +\(.*$", ur"", name_)
+            fecha_ = props['fecha']
+            if len(fecha_) == 10 and re.search('-', fecha_):
+                fecha_ = fecha_.split('-')[2]
+            municipio_ = props['municipio']
+            if re.search(ur" \(", municipio_):
+                municipio_ = u"%s|%s" % (municipio_, municipio_.split(' (')[0])
+            output+=u"""<h4><a href="http://en.wikipedia.org/w/index.php?title=%s&action=edit" target="_blank">%s</a> (<a href="http://en.wikipedia.org/w/index.php?title=Talk:%s&action=edit" target="_blank">Talk</a>: <tt>{{WikiProject Spain|class=stub|importance=}}</tt>)</h4>
+    <textarea id='%s-textarea' rows=5 cols=80 onClick="SelectAll('%s-textarea');">{{Infobox Historic Site
+    | name = %s
+    | native_name = %s
+    | native_language = Spanish
+    | image = %s
+    | caption = 
+    | locmapin = Spain
+    | latitude = %s
+    | longitude = %s
+    | location = [[%s]], [[Spain]]
+    | area = 
+    | built = 
+    | architect = 
+    | architecture = 
+    | governing_body = 
+    | designation1 = Spain
+    | designation1_offname = %s
+    | designation1_type = Non-movable
+    | designation1_criteria = Monument
+    | designation1_date = %s<ref name="bic" />
+    | designation1_number = %s
+    }}
+
+    The '''%s''' ([[Spanish language|Spanish]]: ''%s'') is a XYZ located in [[%s]], [[Spain]]. It was declared ''[[Bien de Interés Cultural]]'' in %s.<ref name="bic">{{Bien de Interés Cultural}}</ref>
+
+    == References ==
+    {{reflist}}
+
+    {{Spain-struct-stub}}
+    </textarea>
+    """ % (props['nombre'], props['nombre'], props['nombre'], bic_, bic_, name_, name_, props['imagen'], props['lat'], props['lon'], municipio_, name_, fecha_, bic_, name_, name_, municipio_, fecha_)
+        output += u"""</body></html>"""
+        f = open('/home/emijrp/public_html/wlm/%s/helper-%s.html' % (country, anexoid), 'w')
+        f.write(output.encode('utf-8'))
+        f.close()
+        #beta, end enwp: article creator helper
+
+
+
+    #table bic stats
+    tablestats = u'<table border=1px style="text-align: center;">\n'
+    tablestats += u'<tr><th width=100px>Lugar</th><th width=60px>Monumentos</th><th width=140px>Con coordenadas</th><th width=100px>Con imágenes</th><th width=100px>Detalles</th><th width=100px>Errores</th></tr>\n'
+    provincesstats.sort()
+    for p, ptotal, pmissingcoordinates, pmissingimages in provincesstats:
+        pcoordper = ptotal and (ptotal-pmissingcoordinates)/(ptotal/100.0) or 0
+        pimageper = ptotal and (ptotal-pmissingimages)/(ptotal/100.0) or 0
+        refs = u''
+        c = 1
+        for i in anexos[country][p]:
+            refs += u'<a href="http://%s.wikipedia.org/wiki/%s" target="_blank">[%d]</a> ' % (i.split(':')[0], ':'.join(i.split(':')[1:]), c)
+            c += 1
+        refs = u"""[<a href="javascript:showHide('%s-refs')">Mostrar/Ocultar</a>]<div id="%s-refs" style="display: none;">%s</div>""" % (p, p, refs)
+        errorstext = u"""[<a href="javascript:showHide('%s-errors')">Mostrar/Ocultar</a>]<div id="%s-errors" style="display: none;">%s</div>""" % (p, p, errors[p])
+        tablestats += u'<tr><td><a href="index.php?place=%s">%s</a></td><td>%d</td><td bgcolor=%s>%d (%.1f%%)</td><td bgcolor=%s>%d (%.1f%%)</td><td>%s</td><td>%s</td></tr>\n' % (p, placenamesconvert(p), ptotal, colors(pcoordper),ptotal-pmissingcoordinates, pcoordper, colors(pimageper), ptotal-pmissingimages, pimageper, refs, errorstext)
+
+    tablestats += u'<tr><td><b>Total</b></td><td><b>%d</b></td><td bgcolor=%s><b>%d (%.1f%%)</b></td><td bgcolor=%s><b>%d (%.1f%%)</b></td><td></td><td>%d</td></tr>\n' % (total, colors(total and (total-missingcoordinates)/(total/100.0) or 0), total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, colors(total and (total-missingimages)/(total/100.0) or 0), total-missingimages, total and (total-missingimages)/(total/100.0) or 0, totalerrors)
+    tablestats += u'</table>\n'
+    #end table stats
+
+    #table user stats
+    tableuserstats = u'<table border=1px style="text-align: center;">\n'
+    tableuserstats += u'<tr><th width=100px>Usuario</th><th width=60px>Archivos</th><th width=60px>MBytes</th></tr>\n'
+    cat = catlib.Category(wikipedia.Site("commons", "commons"), u"Category:%s" % uploadcats[country])
+    gen = pagegenerators.CategorizedPageGenerator(cat, start="!")
+    pre = pagegenerators.PreloadingGenerator(gen, pageNumber=250)
+    usersranking = {}
+    for image in pre:
+        #(datetime, username, resolution, size, comment)
+        date, username, resolution, size, comment = image.getFileVersionHistory()[-1]
+        if usersranking.has_key(username):
+            usersranking[username][0].append(image.title())
+            usersranking[username][1] += size
+        else:
+            usersranking[username] = [[image.title()], size]
+    usersranking_list = [[len(v[0]), k, v[1]] for k, v in usersranking.items()]
+    usersranking_list.sort()
+    usersranking_list.reverse()
+    totalnumpics = 0
+    totalnumbytes = 0
+    for numpics, username, numbytes in usersranking_list:
+        totalnumpics += numpics
+        totalnumbytes += numbytes
+        tableuserstats += u'<tr><td><a href="http://commons.wikimedia.org/wiki/User:%s" target="_blank">%s</a></td><td><a href="http://commons.wikimedia.org/w/index.php?title=Special:ListFiles&user=%s" target="_blank">%d</a></td><td>%.2f</td></tr>\n' % (username, username, username, numpics, float(numbytes)/(1024*1024))
+    tableuserstats += u'<tr><td><b>Total</b></td><td><b><a href="http://commons.wikimedia.org/wiki/Category:Images_from_Wiki_Loves_Monuments_2012_in_Spain" target="_blank">%d</a></b></td><td><b>%.2f</b></td></tr>\n' % (totalnumpics, float(totalnumbytes)/(1024*1024))
+    tableuserstats += u'</table>\n'
+    #end table user stats
+
+
+    anexoskeys = anexos[country].keys()
+    anexoskeys.sort()
+
     output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
     <head>
-    <title>enwp: article creator helper</title>
+    <title>Wiki Loves Monuments</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
 
-    <script type="text/javascript">
-    function SelectAll(id)
-    {
-        document.getElementById(id).focus();
-        document.getElementById(id).select();
+    <script language="javascript">
+    function showHide(id){
+        if (document.getElementById(id).style.display == 'none') {
+            document.getElementById(id).style.display = 'block';
+        }else{
+            document.getElementById(id).style.display = 'none';
+        }
     }
+
     </script>
 
-    <body>"""
-    for bic, props in bics.items():
-        if not props.has_key('imagen') or not props['imagen'] or \
-           not props.has_key('lat') or not props['lat'] or \
-           not props.has_key('lon') or not props['lon'] or \
-           not props.has_key('fecha') or not props['fecha']:
-            continue
-        bic_ = bic
-        bic_ = re.sub(ur"(?im)[\.\(\) ]", "", bic_)
-        if not re.search(ur'(?im)^RI-51-\d{7}$', bic_):
-            continue
-        name_ = props['nombre']
-        name_ = re.sub(ur"(?im) +\(.*$", ur"", name_)
-        fecha_ = props['fecha']
-        if len(fecha_) == 10 and re.search('-', fecha_):
-            fecha_ = fecha_.split('-')[2]
-        municipio_ = props['municipio']
-        if re.search(ur" \(", municipio_):
-            municipio_ = u"%s|%s" % (municipio_, municipio_.split(' (')[0])
-        output+=u"""<h4><a href="http://en.wikipedia.org/w/index.php?title=%s&action=edit" target="_blank">%s</a> (<a href="http://en.wikipedia.org/w/index.php?title=Talk:%s&action=edit" target="_blank">Talk</a>: <tt>{{WikiProject Spain|class=stub|importance=}}</tt>)</h4>
-<textarea id='%s-textarea' rows=5 cols=80 onClick="SelectAll('%s-textarea');">{{Infobox Historic Site
-| name = %s
-| native_name = %s
-| native_language = Spanish
-| image = %s
-| caption = 
-| locmapin = Spain
-| latitude = %s
-| longitude = %s
-| location = [[%s]], [[Spain]]
-| area = 
-| built = 
-| architect = 
-| architecture = 
-| governing_body = 
-| designation1 = Spain
-| designation1_offname = %s
-| designation1_type = Non-movable
-| designation1_criteria = Monument
-| designation1_date = %s<ref name="bic" />
-| designation1_number = %s
-}}
+    </head>
 
-The '''%s''' ([[Spanish language|Spanish]]: ''%s'') is a XYZ located in [[%s]], [[Spain]]. It was declared ''[[Bien de Interés Cultural]]'' in %s.<ref name="bic">{{Bien de Interés Cultural}}</ref>
+    <?php
+    $places = array(%s );
+    $place= "%s";
+    if (isset($_GET['place']))
+    {
+        $temp = $_GET['place'];
+        if (in_array($temp, $places))
+            $place = $temp;
+    }
 
-== References ==
-{{reflist}}
+    ?>
 
-{{Spain-struct-stub}}
-</textarea>
-""" % (props['nombre'], props['nombre'], props['nombre'], bic_, bic_, name_, name_, props['imagen'], props['lat'], props['lon'], municipio_, name_, fecha_, bic_, name_, name_, municipio_, fecha_)
-    output += u"""</body></html>"""
-    f = open('/home/emijrp/public_html/wlm/helper-%s.html' % (anexoid), 'w')
+    <body style="background-color: lightblue;">
+    <center>
+    <table width=99%% style="text-align: center;">
+    <tr>
+    <td>
+    <a href="%s" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Wikimedia-es-logo.svg/80px-Wikimedia-es-logo.svg.png" /></a>
+    </td>
+    <td>
+    <center>
+    <big><big><big><b><a href="%s" target="_blank">Wiki <i>Loves</i> Monuments</a></b></big></big></big>
+    <br/>
+    <b>Del 1 al 30 de septiembre de 2012</b>
+    <br/>
+    <b>Monumentos:</b> %d [con coordenadas: %d (%.1f%%); sin imágenes: %d (%.1f%%)] | <b>Leyenda:</b> con imagen <img src="%s" width=20px title="con imagen" alt="con imagen"/>, sin imagen <img src="%s" width=20px title="sin imagen" alt="sin imagen"/>
+    </center>
+    </td>
+    <td>
+    <a href="%s" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" /></a>
+    </td>
+    </tr>
+    <tr>
+    <td colspan=3>
+    <b>Elige un lugar:</b> %s
+
+    <iframe width="99%%" height="450" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fwlm%%2F%s%%2Fwlm-<?php echo $place; ?>.kml%%3Fusecache%%3D0&amp;output=embed"></iframe>
+    <br/>
+    <br/>
+    <center>
+
+    <!-- div show/hide -->
+    <b>Otros mapas:</b> <a href="../argentina">Argentina</a> - <a href="../chile">Chile</a> - <a href="../spain">España</a> | [<a href="javascript:showHide('table-stats')">Mostrar/Ocultar estadísticas</a>]
+    <div id="table-stats" style="display: none;">
+
+    <table border=0>
+    <tr><td valign=top>%s</td><td valign=top>%s</td></tr>
+    </table>
+
+    <!-- /div show/hide -->
+    </div>
+
+    </center>
+    <i>Actualizado por última vez: %s (UTC). Desarrollado por <a href="http://toolserver.org/~emijrp/">emijrp</a>.</i>
+    <br/>
+    </td>
+    </tr>
+    </table>
+
+    </center>
+    </body>
+
+    </html>
+    """ % (', '.join(['"%s"' % (i) for i in anexoskeys]), capital[country], wmurls[country], wlmurls[country], total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, wlmurls[country], ', '.join(['<a href="index.php?place=%s">%s</a>' % (i, placenamesconvert(i)) for i in anexoskeys]), country, tablestats, tableuserstats, datetime.datetime.now())
+
+    f = open('/home/emijrp/public_html/wlm/%s/index.php' % (country), 'w')
     f.write(output.encode('utf-8'))
     f.close()
-    #beta, end enwp: article creator helper
-
-
-
-#table bic stats
-tablestats = u'<table border=1px style="text-align: center;">\n'
-tablestats += u'<tr><th width=100px>Lugar</th><th width=60px>Monumentos</th><th width=140px>Con coordenadas</th><th width=100px>Con imágenes</th><th width=100px>Detalles</th><th width=100px>Errores</th></tr>\n'
-provincesstats.sort()
-for p, ptotal, pmissingcoordinates, pmissingimages in provincesstats:
-    pcoordper = ptotal and (ptotal-pmissingcoordinates)/(ptotal/100.0) or 0
-    pimageper = ptotal and (ptotal-pmissingimages)/(ptotal/100.0) or 0
-    refs = u''
-    c = 1
-    for i in anexos[p]:
-        refs += u'<a href="http://%s.wikipedia.org/wiki/%s" target="_blank">[%d]</a> ' % (i.split(':')[0], ':'.join(i.split(':')[1:]), c)
-        c += 1
-    refs = u"""[<a href="javascript:showHide('%s-refs')">Mostrar/Ocultar</a>]<div id="%s-refs" style="display: none;">%s</div>""" % (p, p, refs)
-    errorstext = u"""[<a href="javascript:showHide('%s-errors')">Mostrar/Ocultar</a>]<div id="%s-errors" style="display: none;">%s</div>""" % (p, p, errors[p])
-    tablestats += u'<tr><td><a href="index.php?place=%s">%s</a></td><td>%d</td><td bgcolor=%s>%d (%.1f%%)</td><td bgcolor=%s>%d (%.1f%%)</td><td>%s</td><td>%s</td></tr>\n' % (p, placenames[p], ptotal, colors(pcoordper),ptotal-pmissingcoordinates, pcoordper, colors(pimageper), ptotal-pmissingimages, pimageper, refs, errorstext)
-
-tablestats += u'<tr><td><b>Total</b></td><td><b>%d</b></td><td bgcolor=%s><b>%d (%.1f%%)</b></td><td bgcolor=%s><b>%d (%.1f%%)</b></td><td><a href="http://ca.wikipedia.org/wiki/Categoria:Llistes_de_monuments" target="_blank">[1]</a> <a href="http://es.wikipedia.org/wiki/Categor%%C3%%ADa:Anexos:Bienes_de_inter%%C3%%A9s_cultural_en_Espa%%C3%%B1a" target="_blank">[2]</a> <a href="http://gl.wikipedia.org/wiki/Categor%%C3%%ADa:Bens_de_Interese_Cultural_de_Galicia" target="_blank">[3]</a></td><td>%d</td></tr>\n' % (total, colors((total-missingcoordinates)/(total/100.0)), total-missingcoordinates, (total-missingcoordinates)/(total/100.0), colors((total-missingimages)/(total/100.0)), total-missingimages, (total-missingimages)/(total/100.0), totalerrors)
-tablestats += u'</table>\n'
-#end table stats
-
-#table user stats
-tableuserstats = u'<table border=1px style="text-align: center;">\n'
-tableuserstats += u'<tr><th width=100px>Usuario</th><th width=60px>Archivos</th><th width=60px>MBytes</th></tr>\n'
-cat = catlib.Category(wikipedia.Site("commons", "commons"), u"Category:Images from Wiki Loves Monuments 2012 in Spain")
-gen = pagegenerators.CategorizedPageGenerator(cat, start="!")
-pre = pagegenerators.PreloadingGenerator(gen, pageNumber=250)
-usersranking = {}
-for image in pre:
-    #(datetime, username, resolution, size, comment)
-    date, username, resolution, size, comment = image.getFileVersionHistory()[-1]
-    if usersranking.has_key(username):
-        usersranking[username][0].append(image.title())
-        usersranking[username][1] += size
-    else:
-        usersranking[username] = [[image.title()], size]
-usersranking_list = [[len(v[0]), k, v[1]] for k, v in usersranking.items()]
-usersranking_list.sort()
-usersranking_list.reverse()
-totalnumpics = 0
-totalnumbytes = 0
-for numpics, username, numbytes in usersranking_list:
-    totalnumpics += numpics
-    totalnumbytes += numbytes
-    tableuserstats += u'<tr><td><a href="http://commons.wikimedia.org/wiki/User:%s" target="_blank">%s</a></td><td><a href="http://commons.wikimedia.org/w/index.php?title=Special:ListFiles&user=%s" target="_blank">%d</a></td><td>%.2f</td></tr>\n' % (username, username, username, numpics, float(numbytes)/(1024*1024))
-tableuserstats += u'<tr><td><b>Total</b></td><td><b><a href="http://commons.wikimedia.org/wiki/Category:Images_from_Wiki_Loves_Monuments_2012_in_Spain" target="_blank">%d</a></b></td><td><b>%.2f</b></td></tr>\n' % (totalnumpics, float(totalnumbytes)/(1024*1024))
-tableuserstats += u'</table>\n'
-#end table user stats
-
-
-anexoskeys = anexos.keys()
-anexoskeys.sort()
-
-output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<title>Wiki Loves Monuments</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta http-equiv="Content-Style-Type" content="text/css" />
-
-<script language="javascript">
-function showHide(id){
-    if (document.getElementById(id).style.display == 'none') {
-        document.getElementById(id).style.display = 'block';
-    }else{
-        document.getElementById(id).style.display = 'none';
-    }
-}
-
-</script>
-
-</head>
-
-<?php
-$places = array(%s );
-$place="madrid";
-if (isset($_GET['place']))
-{
-	$temp = $_GET['place'];
-	if (in_array($temp, $places))
-		$place = $temp;
-}
-
-?>
-
-<body style="background-color: lightblue;">
-<center>
-<table width=99%% style="text-align: center;">
-<tr>
-<td>
-<a href="http://www.wikimedia.org.es/" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Wikimedia-es-logo.svg/80px-Wikimedia-es-logo.svg.png" /></a>
-</td>
-<td>
-<center>
-<big><big><big><b><a href="http://www.wikilm.es" target="_blank">Wiki <i>Loves</i> Monuments</a></b></big></big></big>
-<br/>
-<b>Del 1 al 30 de septiembre de 2012</b>
-<br/>
-<b>Monumentos:</b> %d [con coordenadas: %d (%.1f%%); sin imágenes: %d (%.1f%%)] | <b>Leyenda:</b> con imagen <img src="%s" width=20px title="con imagen" alt="con imagen"/>, sin imagen <img src="%s" width=20px title="sin imagen" alt="sin imagen"/>
-</center>
-</td>
-<td>
-<a href="http://www.wikilm.es/" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" /></a>
-</td>
-</tr>
-<tr>
-<td colspan=3>
-<b>Elige un lugar:</b> %s
-
-<iframe width="99%%" height="450" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fwlm%%2Fwlm-<?php echo $place; ?>.kml%%3Fusecache%%3D0&amp;output=embed"></iframe>
-<br/>
-<br/>
-<center>
-
-<!-- div show/hide -->
-[<a href="javascript:showHide('table-stats')">Mostrar/Ocultar estadísticas</a>]
-<div id="table-stats" style="display: none;">
-
-<table border=0>
-<tr><td valign=top>%s</td><td valign=top>%s</td></tr>
-</table>
-
-<!-- /div show/hide -->
-</div>
-
-</center>
-<i>Actualizado por última vez: %s (UTC)</i>
-<br/>
-</td>
-</tr>
-</table>
-
-</center>
-</body>
-
-</html>
-""" % (', '.join(['"%s"' % (i) for i in anexoskeys]), total, total-missingcoordinates, (total-missingcoordinates)/(total/100.0), total-missingimages, (total-missingimages)/(total/100.0), imageyesurl, imagenourl, ', '.join(['<a href="index.php?place=%s">%s</a>' % (i, placenames[i]) for i in anexoskeys]), tablestats, tableuserstats, datetime.datetime.now())
-
-f = open('/home/emijrp/public_html/wlm/index.php', 'w')
-f.write(output.encode('utf-8'))
-f.close()
 
