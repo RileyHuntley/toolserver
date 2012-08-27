@@ -25,7 +25,7 @@ import wikipedia
 #subida fácil: http://commons.wikimedia.org/w/index.php?title=Special:Upload&wpDestFile=BBBB.jpg&uploadformstyle=basic&wpUploadDescription=\ {{Information|Description=|Source=|Date=|Author=|Permission=|other_versions=}}
 
 def isvalidimage(img):
-    if img and not re.search(ur'(?im)(falta[_ ]imagen|\.svg)', img):
+    if img and not re.search(ur'(?im)(falta[_ ]imagen|\.svg|missing[\- ]monuments[\- ]image|Wiki[_ ]Loves[_ ]Monuments[_ ]Logo)', img):
         return True
     return False
 
@@ -54,6 +54,7 @@ def colors(percent):
     return 'white'
 
 wmurls = { 'spain': 'http://www.wikimedia.org.es', 'chile': 'http://www.wikimediachile.cl', 'argentina': 'http://www.wikimedia.org.ar'}
+wmlogourls = { 'spain': 'http://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Wikimedia-es-logo.svg/80px-Wikimedia-es-logo.svg.png', 'chile': 'http://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Wikimedia_Chile_logo.svg/80px-Wikimedia_Chile_logo.svg.png', 'argentina': 'http://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Wikimedia_Argentina_logo.svg/80px-Wikimedia_Argentina_logo.svg.png'}
 wlmurls = { 'spain': 'http://www.wikilm.es', 'chile': 'http://www.wikilovesmonuments.cl', 'argentina': 'http://wikilovesmonuments.com.ar'}
 
 uploadcats = { 'spain': 'Images from Wiki Loves Monuments 2012 in Spain', 'chile': 'Images from Wiki Loves Monuments 2012 in Chile', 'argentina': 'Images from Wiki Loves Monuments 2012 in Argentina'}
@@ -182,6 +183,33 @@ anexos['chile'] = {
 
 }
 
+anexos['argentina'] = {
+'buenosaires': [u'es:Anexo:Monumentos de la Ciudad de Buenos Aires', u'es:Anexo:Bienes de Interés Cultural de la Ciudad de Buenos Aires', u'es:Anexo:Monumentos de la Provincia de Buenos Aires', u'es:Anexo:Monumentos provinciales de la Provincia de Buenos Aires', u'es:Anexo:Monumentos locales de la Provincia de Buenos Aires', ],
+'catamarca': [u'es:Anexo:Monumentos de la Provincia de Catamarca', ],
+'chaco': [u'es:Anexo:Monumentos de la Provincia de Chaco', ],
+'chubut': [u'es:Anexo:Monumentos de la Provincia del Chubut', ],
+'corrientes': [u'es:Anexo:Monumentos de la Provincia de Corrientes', ],
+'cordoba': [u'es:Anexo:Monumentos de la Provincia de Córdoba', ],
+'entrerios': [u'es:Anexo:Monumentos de la Provincia de Entre Ríos', ],
+'formosa': [u'es:Anexo:Monumentos de la Provincia de Formosa', ],
+'jujuy': [u'es:Anexo:Monumentos de la Provincia de Jujuy', ],
+'lapampa': [u'es:Anexo:Monumentos de la Provincia de La Pampa', ],
+'larioja': [u'es:Anexo:Monumentos de la Provincia de La Rioja', ],
+'mendoza': [u'es:Anexo:Monumentos de la Provincia de Mendoza', ],
+'misiones': [u'es:Anexo:Monumentos de la Provincia de Misiones', ],
+'neuquen': [u'es:Anexo:Monumentos de la Provincia del Neuquén', ],
+'rionegro': [u'es:Anexo:Monumentos de la Provincia de Río Negro', ],
+'salta': [u'es:Anexo:Monumentos de la Provincia de Salta', ],
+'sanjuan': [u'es:Anexo:Monumentos de la Provincia de San Juan', ],
+'sanluis': [u'es:Anexo:Monumentos de la Provincia de San Luis', ],
+'santacruz': [u'es:Anexo:Monumentos de la Provincia de Santa Cruz', ],
+'santafe': [u'es:Anexo:Monumentos de la Provincia de Santa Fe', ],
+'santiagodelestero': [u'es:Anexo:Monumentos de la Provincia de Santiago del Estero', ],
+'tierradelfuego': [u'es:Anexo:Monumentos de la Provincia de Tierra del Fuego, Antártida e Islas del Atlántico Sur', ],
+'tucuman': [u'es:Anexo:Monumentos de la Provincia de Tucumán', ],
+
+}
+
 """
 <?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
@@ -297,9 +325,27 @@ regexp['spain']['ca'] = re.compile(ur"""(?im)\{\{\s*filera (BIC|BCIN|BIC Val)\s*
 | tipo             = MH
 }}
 """
-regexp['chile']['commons'] = re.compile(ur"""(?im)\{\{\s*(MonumentoChile|WLM-Chile-monumento)\s*(\|\s*(monumento\s*=\s*(?P<nombre>[^=}]*?)|tipo\s*=\s*(?P<tipo>[^=}]*?)|comuna\s*=\s*(?P<municipio>[^=}]*?)|direcci[óo]n\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|long?\s*=\s*(?P<lon>[0-9\.\-\+]*?)|id\s*=\s*(?P<bic>[^=}]*?)|fecha\s*=\s*(?P<fecha>[^=}]*?)|imagen\s*=\s*(?P<imagen>[^=}]*?)|monumento[_ ]desc\s*=\s*([^=}]*?)|monumento[_ ]enlace\s*=\s*([^=}]*?)|decreto\s*=\s*([^=}]*?)\s*)\s*)+\s*\|*\s*\}\}""")
+regexp['chile']['commons'] = re.compile(ur"""(?im)\{\{\s*(MonumentoChile|WLM-Chile-monumento)\s*(\|\s*(monumento\s*=\s*(?P<nombre>[^=}]*?)|tipo\s*=\s*(?P<tipo>[^=}]*?)|comuna\s*=\s*(?P<municipio>[^=}]*?)|direcci[óo]n\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|long?\s*=\s*(?P<lon>[0-9\.\-\+]*?)|id\s*=\s*(?P<bic>[^=}]*?)|fecha\s*=\s*(?P<fecha>[^=}]*?)|imagen\s*=\s*(?P<imagen>[^=}]*?)|monumento[_ ]desc\s*=\s*([^=}]*?)|monumento[_ ]enlace\s*=\s*([^=}]*?)|monumento[_ ]categoría\s*=\s*([^=}]*?)|decreto\s*=\s*([^=}]*?)\s*)\s*)+\s*\|*\s*\}\}""")
 
-for country in ['chile']:
+#Argentina http://wikilovesmonuments.com.ar/monumentos/
+"""
+{{MonumentoArgentina
+| id               = 002
+| monumento        = Algarrobo en las Barrancas de San Isidro
+| monumento_enlace = Algarrobo en las Barrancas de San Isidro
+| monumento_desc   = 
+| municipio        = [[Partido de San Isidro|San Isidro]]
+| localidad        = [[San Isidro (Buenos Aires)|San Isidro]]
+| lat              = -34.4668633
+| long             = -58.5068293
+| dirección        = Barrancas de San Isidro
+| imagen           = 
+| tipo             = Árbol Histórico
+}}
+"""
+regexp['argentina']['es'] = re.compile(ur"""(?im)\{\{\s*MonumentoArgentina\s*(\|\s*(monumento\s*=\s*(?P<nombre>[^=}]*?)|tipo\s*=\s*(?P<tipo>[^=}]*?)|localidad\s*=\s*([^=}]*?)|municipio\s*=\s*(?P<municipio>[^=}]*?)|direcci[óo]n\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|long?\s*=\s*(?P<lon>[0-9\.\-\+]*?)|id\s*=\s*(?P<bic>[^=}]*?)|imagen\s*=\s*(?P<imagen>[^=}]*?)|monumento[_ ]desc\s*=\s*([^=}]*?)|monumento[_ ]enlace\s*=\s*([^=}]*?)|monumento[_ ]categoría\s*=\s*([^=}]*?)\s*)\s*)+\s*\|*\s*\}\}""")
+
+for country in ['argentina']:
     missingcoordinates = 0
     missingimages = 0
     total = 0
@@ -328,7 +374,7 @@ for country in ['chile']:
                 m = regexp[country][lang].finditer(wtext)
             if m:
                 for i in m:
-                    print 1
+                    #print 1
                     bic = '?'
                     try:
                         bic = i.group('bic').strip()
@@ -604,7 +650,7 @@ for country in ['chile']:
     <table width=99%% style="text-align: center;">
     <tr>
     <td>
-    <a href="%s" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Wikimedia-es-logo.svg/80px-Wikimedia-es-logo.svg.png" /></a>
+    <a href="%s" target="_blank"><img src="%s" /></a>
     </td>
     <td>
     <center>
@@ -650,7 +696,7 @@ for country in ['chile']:
     </body>
 
     </html>
-    """ % (', '.join(['"%s"' % (i) for i in anexoskeys]), capital[country], wmurls[country], wlmurls[country], total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, wlmurls[country], ', '.join(['<a href="index.php?place=%s">%s</a>' % (i, placenamesconvert(i)) for i in anexoskeys]), country, tablestats, tableuserstats, datetime.datetime.now())
+    """ % (', '.join(['"%s"' % (i) for i in anexoskeys]), capital[country], wmurls[country], wmlogourls[country], wlmurls[country], total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, wlmurls[country], ', '.join(['<a href="index.php?place=%s">%s</a>' % (i, placenamesconvert(i)) for i in anexoskeys]), country, tablestats, tableuserstats, datetime.datetime.now())
 
     f = open('/home/emijrp/public_html/wlm/%s/index.php' % (country), 'w')
     f.write(output.encode('utf-8'))
