@@ -62,6 +62,8 @@ uploadcats = { 'spain': 'Images from Wiki Loves Monuments 2012 in Spain', 'chile
 capital = { 'spain': 'madrid', 'chile': 'santiago', 'argentina': 'buenosaires' }
 
 placenames = {
+
+#spain
 "alava": u"Álava", "alicante": u"Alicante",
 "badajoz": u"Badajoz", "burgos": u"Burgos", "barcelona": u"Barcelona",
 "coruna": u"A&nbsp;Coruña", "albacete": u"Albacete", "almeria": u"Almería", "asturias": u"Asturias", "avila": u"Ávila",
@@ -77,6 +79,49 @@ placenames = {
 "salamanca": u"Salamanca", "tenerife": u"Tenerife", "segovia": u"Segovia", "sevilla": u"Sevilla", "soria": u"Soria", 
 "tarragona": u"Tarragona", "teruel": u"Teruel", "toledo": u"Toledo", "valladolid": u"Valladolid", "vizcaya": u"Vizcaya", 
 "zamora": u"Zamora", "zaragoza": u"Zaragoza",
+
+#argentina
+'buenosaires': u"Buenos Aires",
+'catamarca': u"Catamarca",
+'chaco': u"Chaco",
+'chubut': u"Chubut",
+'corrientes': u"Corrientes",
+'cordoba': u"Córdoba",
+'entrerios': u"Entre Ríos",
+'formosa': u"Formosa",
+'jujuy': u"Jujuy",
+'lapampa': u"La Pampa",
+'larioja': u"La Rioja",
+'mendoza': u"Mendoza",
+'misiones': u"Misiones",
+'neuquen': u"Neuquén",
+'rionegro': u"Río Negro",
+'salta': u"Salta",
+'sanjuan': u"San Juan",
+'sanluis': u"San Luis",
+'santacruz': u"Santa Cruz",
+'santafe': u"Santa Fe",
+'santiagodelestero': u"Santiago del Estero",
+'tierradelfuego': u"Tierra del Fuego",
+'tucuman': u"Tucumán",
+
+#chile
+'antofagasta': u"Antofagasta",
+'araucania': u"Araucania",
+'aricayparinacota': u"Arica y Parinacota",
+'atacama': u"Atacama",
+'aysen': u"Aysen",
+'biobio': u"Biobio",
+'coquimbo': u"Coquimbo",
+'libertador': u"Libertador",
+'loslagos': u"Los lagos",
+'losrios': u"Los Ríos",
+'magallanes': u"Magallanes",
+'maule': u"Maule",
+'santiago': u"Santiago",
+'tarapaca': u"Tarapaca",
+'valparaiso': u"Valparaiso",
+
 }
 
 def placenamesconvert(p):
@@ -345,7 +390,7 @@ regexp['chile']['commons'] = re.compile(ur"""(?im)\{\{\s*(MonumentoChile|WLM-Chi
 """
 regexp['argentina']['es'] = re.compile(ur"""(?im)\{\{\s*MonumentoArgentina\s*(\|\s*(monumento\s*=\s*(?P<nombre>[^=}]*?)|tipo\s*=\s*(?P<tipo>[^=}]*?)|localidad\s*=\s*([^=}]*?)|municipio\s*=\s*(?P<municipio>[^=}]*?)|direcci[óo]n\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|long?\s*=\s*(?P<lon>[0-9\.\-\+]*?)|id\s*=\s*(?P<bic>[^=}]*?)|imagen\s*=\s*(?P<imagen>[^=}]*?)|monumento[_ ]desc\s*=\s*([^=}]*?)|monumento[_ ]enlace\s*=\s*([^=}]*?)|monumento[_ ]categoría\s*=\s*([^=}]*?)\s*)\s*)+\s*\|*\s*\}\}""")
 
-for country in ['argentina']:
+for country in ['argentina', 'chile', 'spain']:
     missingcoordinates = 0
     missingimages = 0
     total = 0
@@ -658,7 +703,7 @@ for country in ['argentina']:
     <br/>
     <b>Del 1 al 30 de septiembre de 2012</b>
     <br/>
-    <b>Monumentos:</b> %d [con coordenadas: %d (%.1f%%); con imágenes: %d (%.1f%%)] | <b>Leyenda:</b> con imagen <img src="%s" width=20px title="con imagen" alt="con imagen"/>, sin imagen <img src="%s" width=20px title="sin imagen" alt="sin imagen"/>
+    <b>Monumentos:</b> %d [%d con coordenadas (%.1f%%) y %d con imágenes (%.1f%%)] | <b>Leyenda:</b> con imagen <img src="%s" width=20px title="con imagen" alt="con imagen"/>, sin imagen <img src="%s" width=20px title="sin imagen" alt="sin imagen"/>
     </center>
     </td>
     <td>
@@ -702,3 +747,29 @@ for country in ['argentina']:
     f.write(output.encode('utf-8'))
     f.close()
 
+output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+    <title>Wiki Loves Monuments</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+</head>
+
+<body style="background-color: lightblue;">
+<center>
+<big><big><big><b>Wiki <i>Loves</i> Monuments</b></big></big></big>
+<br/>
+<b>Del 1 al 30 de septiembre de 2012</b>
+<br/>
+<table border=0>
+
+</table>
+</center>
+
+</body>
+</html>
+
+"""
+f = open('/home/emijrp/public_html/wlm/index.php', 'w')
+f.write(output.encode('utf-8'))
+f.close()
