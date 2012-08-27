@@ -370,7 +370,7 @@ regexp['spain']['ca'] = re.compile(ur"""(?im)\{\{\s*filera (BIC|BCIN|BIC Val)\s*
 | tipo             = MH
 }}
 """
-regexp['chile']['commons'] = re.compile(ur"""(?im)\{\{\s*(MonumentoChile|WLM-Chile-monumento)\s*(\|\s*(monumento\s*=\s*(?P<nombre>[^=}]*?)|tipo\s*=\s*(?P<tipo>[^=}]*?)|comuna\s*=\s*(?P<municipio>[^=}]*?)|direcci[óo]n\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|long?\s*=\s*(?P<lon>[0-9\.\-\+]*?)|id\s*=\s*(?P<bic>[^=}]*?)|fecha\s*=\s*(?P<fecha>[^=}]*?)|imagen\s*=\s*(?P<imagen>[^=}]*?)|monumento[_ ]desc\s*=\s*([^=}]*?)|monumento[_ ]enlace\s*=\s*([^=}]*?)|monumento[_ ]categoría\s*=\s*([^=}]*?)|decreto\s*=\s*([^=}]*?)\s*)\s*)+\s*\|*\s*\}\}""")
+regexp['chile']['es'] = re.compile(ur"""(?im)\{\{\s*(MonumentoChile|WLM-Chile-monumento)\s*(\|\s*(monumento\s*=\s*(?P<nombre>[^=}]*?)|tipo\s*=\s*(?P<tipo>[^=}]*?)|comuna\s*=\s*(?P<municipio>[^=}]*?)|direcci[óo]n\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|long?\s*=\s*(?P<lon>[0-9\.\-\+]*?)|id\s*=\s*(?P<bic>[^=}]*?)|fecha\s*=\s*(?P<fecha>[^=}]*?)|imagen\s*=\s*(?P<imagen>[^=}]*?)|monumento[_ ]desc\s*=\s*([^=}]*?)|monumento[_ ]enlace\s*=\s*([^=}]*?)|monumento[_ ]categoría\s*=\s*([^=}]*?)|decreto\s*=\s*([^=}]*?)\s*)\s*)+\s*\|*\s*\}\}""")
 
 #Argentina http://wikilovesmonuments.com.ar/monumentos/
 """
