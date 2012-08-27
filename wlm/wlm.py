@@ -612,7 +612,7 @@ for country in ['chile']:
     <br/>
     <b>Del 1 al 30 de septiembre de 2012</b>
     <br/>
-    <b>Monumentos:</b> %d [con coordenadas: %d (%.1f%%); sin imágenes: %d (%.1f%%)] | <b>Leyenda:</b> con imagen <img src="%s" width=20px title="con imagen" alt="con imagen"/>, sin imagen <img src="%s" width=20px title="sin imagen" alt="sin imagen"/>
+    <b>Monumentos:</b> %d [con coordenadas: %d (%.1f%%); con imágenes: %d (%.1f%%)] | <b>Leyenda:</b> con imagen <img src="%s" width=20px title="con imagen" alt="con imagen"/>, sin imagen <img src="%s" width=20px title="sin imagen" alt="sin imagen"/>
     </center>
     </td>
     <td>
