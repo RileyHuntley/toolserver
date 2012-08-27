@@ -573,7 +573,8 @@ if (isset($_GET['place']))
 <br/>
 <b>Del 1 al 30 de septiembre de 2012</b>
 <br/>
-<b>Monumentos totales:</b> %d [con coordenadas: %d (%.1f%%); sin imágenes: %d (%.1f%%)] | <b>Leyenda:</b> con imagen <img src="%s" width=20px title="con imagen" alt="con imagen"/>, sin imagen <img src="%s" width=20px title="sin imagen" alt="sin imagen"/>
+<b>Monumentos:</b> %d [con coordenadas: %d (%.1f%%); sin imágenes: %d (%.1f%%)] | <b>Leyenda:</b> con imagen <img src="%s" width=20px title="con imagen" alt="con imagen"/>, sin imagen <img src="%s" width=20px title="sin imagen" alt="sin imagen"/>
+</center>
 </td>
 <td>
 <a href="http://www.wikilm.es/" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" /></a>
@@ -597,13 +598,14 @@ if (isset($_GET['place']))
 </table>
 
 <!-- /div show/hide -->
+</div>
+
 </center>
 <i>Actualizado por última vez: %s (UTC)</i>
 <br/>
 </td>
 </tr>
 </table>
-</div>
 
 </center>
 </body>
