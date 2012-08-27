@@ -54,13 +54,14 @@ def colors(percent):
         return 'lightblue'
     return 'white'
 
-wmurls = { 'spain': 'http://www.wikimedia.org.es', 'chile': 'http://www.wikimediachile.cl', 'argentina': 'http://www.wikimedia.org.ar'}
-wmlogourls = { 'spain': 'http://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Wikimedia-es-logo.svg/80px-Wikimedia-es-logo.svg.png', 'chile': 'http://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Wikimedia_Chile_logo.svg/80px-Wikimedia_Chile_logo.svg.png', 'argentina': 'http://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Wikimedia_Argentina_logo.svg/80px-Wikimedia_Argentina_logo.svg.png'}
-wlmurls = { 'spain': 'http://www.wikilm.es', 'chile': 'http://www.wikilovesmonuments.cl', 'argentina': 'http://wikilovesmonuments.com.ar'}
+wmurls = { 'spain': 'http://www.wikimedia.org.es', 'chile': 'http://www.wikimediachile.cl', 'argentina': 'http://www.wikimedia.org.ar', 'panama': 'http://wlmpanama.org.pa', 'canada': 'http://wikimedia.ca' }
+#generic logo http://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/80px-Wikimedia-logo.svg.png
+wmlogourls = { 'spain': 'http://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Wikimedia-es-logo.svg/80px-Wikimedia-es-logo.svg.png', 'chile': 'http://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Wikimedia_Chile_logo.svg/80px-Wikimedia_Chile_logo.svg.png', 'argentina': 'http://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Wikimedia_Argentina_logo.svg/80px-Wikimedia_Argentina_logo.svg.png', 'panama': 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/80px-Wikimedia-logo.svg.png', 'canada': 'http://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Wikimedia_Canada_logo.svg/80px-Wikimedia_Canada_logo.svg.png'}
+wlmurls = { 'spain': 'http://www.wikilm.es', 'chile': 'http://www.wikilovesmonuments.cl', 'argentina': 'http://wikilovesmonuments.com.ar', 'panama': 'http://wlmpanama.org.pa', 'canada': 'http://wikimedia.ca/wiki/Wiki_Loves_Monuments_2012_in_Canada' }
 
-uploadcats = { 'spain': 'Images from Wiki Loves Monuments 2012 in Spain', 'chile': 'Images from Wiki Loves Monuments 2012 in Chile', 'argentina': 'Images from Wiki Loves Monuments 2012 in Argentina'}
+uploadcats = { 'spain': 'Images from Wiki Loves Monuments 2012 in Spain', 'chile': 'Images from Wiki Loves Monuments 2012 in Chile', 'argentina': 'Images from Wiki Loves Monuments 2012 in Argentina', 'panama': 'Images from Wiki Loves Monuments 2012 in Panama', 'canada': 'Images from Wiki Loves Monuments 2012 in Canada'}
 
-capital = { 'spain': 'madrid', 'chile': 'santiago', 'argentina': 'buenosaires' }
+capital = { 'spain': 'madrid', 'chile': 'santiago', 'argentina': 'buenosaires', 'panama': 'panama', 'canada': 'ontario' } #where is the capital?
 
 placenames = {
 
@@ -122,6 +123,9 @@ placenames = {
 'santiago': u"Santiago",
 'tarapaca': u"Tarapaca",
 'valparaiso': u"Valparaiso",
+
+#panama
+'panama': u"Panamá", 
 
 }
 
@@ -256,6 +260,16 @@ anexos['argentina'] = {
 
 }
 
+anexos['panama'] = {
+'panama': [u'es:Anexo:Monumentos Históricos de Panamá', ],
+
+}
+
+anexos['canada'] = {
+'alberta': [u'en:List of historic places in Alberta', ],
+
+}
+
 """
 <?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
@@ -306,7 +320,7 @@ anexos['argentina'] = {
  | imagen = 
 }}
 """
-regexp = { 'spain': {}, 'chile': {}, 'argentina': {} }
+regexp = { 'spain': {}, 'chile': {}, 'argentina': {}, 'panama': {}, 'canada': {}, }
 regexp['spain']['es'] = re.compile(ur"""(?im)\{\{\s*fila (BIC|BIC 2)\s*(\|\s*(nombre\s*=\s*(?P<nombre>[^=}]*?)|nombrecoor\s*=\s*(?P<nombrecoor>[^=}]*?)|tipobic\s*=\s*(?P<tipobic>[^=}]*?)|tipo\s*=\s*(?P<tipo>[^=}]*?)|municipio\s*=\s*(?P<municipio>[^=}]*?)|lugar\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)|bic\s*=\s*(?P<bic>[^=}]*?)|id[_ ]aut\s*=\s*(?P<id_aut>[^=}]*?)|fecha\s*=\s*(?P<fecha>[^=}]*?)|imagen\s*=\s*(?P<imagen>[^=}]*?))\s*)+\s*\|*\s*\}\}""")
 
 """
@@ -391,6 +405,40 @@ regexp['chile']['es'] = re.compile(ur"""(?im)\{\{\s*(MonumentoChile|WLM-Chile-mo
 """
 regexp['argentina']['es'] = re.compile(ur"""(?im)\{\{\s*MonumentoArgentina\s*(\|\s*(monumento\s*=\s*(?P<nombre>[^=}]*?)|tipo\s*=\s*(?P<tipo>[^=}]*?)|localidad\s*=\s*([^=}]*?)|municipio\s*=\s*(?P<municipio>[^=}]*?)|direcci[óo]n\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|long?\s*=\s*(?P<lon>[0-9\.\-\+]*?)|id\s*=\s*(?P<bic>[^=}]*?)|imagen\s*=\s*(?P<imagen>[^=}]*?)|monumento[_ ]desc\s*=\s*([^=}]*?)|monumento[_ ]enlace\s*=\s*([^=}]*?)|monumento[_ ]categoría\s*=\s*([^=}]*?)\s*)\s*)+\s*\|*\s*\}\}""")
 
+#Panama http://wikilovesmonuments.com.ar/monumentos/
+"""
+{{Fila PCN
+|registro=02-003-DSA
+|imagen=
+|nombre=Parque Arqueológico de El Caño
+|descripción= Parque arqueológico que recoge las excavaciones de una población pre-colombina. En el sitio arqueológico El Caño en Natá, se realizaban rituales funerarios, donde se encontraron seis grandes tumbas múltiples. 
+|artículo= 
+|dirección=[[Natá de los Caballeros]]
+|lat=8.331996
+|lon=-80.515237
+|provincia=[[Provincia de Coclé|Coclé]]
+}}
+"""
+regexp['panama']['es'] = re.compile(ur"""(?im)\{\{\s*Fila PCN\s*(\|\s*(nombre\s*=\s*(?P<nombre>[^=}]*?)|provincia\s*=\s*(?P<municipio>[^=}]*?)|direcci[óo]n\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|lon?\s*=\s*(?P<lon>[0-9\.\-\+]*?)|registro\s*=\s*(?P<bic>[^=}]*?)|imagen\s*=\s*(?P<imagen>[^=}]*?)|descripci[óo]n\s*=\s*([^=}]*?)|art[íi]culo\s*=\s*([^=}]*?)\s*)\s*)+\s*\|*\s*\}\}""")
+
+#Canada http://wikimedia.ca/wiki/Wiki_Loves_Monuments_2012_in_Canada_Participate
+"""
+{{HPC row
+| name = RUSSO GREEK ORTHODOX CHURCH OF ST. PETER AND ST. PAUL 
+| address = , Smoky Lake County, Canada 
+| municipality =  
+| pc = T0A 
+| lat = 54,0431 
+| lon = -112,134 
+| provinceId = 100074 
+| idf =  
+| idp = 1818 
+| idm =  
+| image = 
+}}
+"""
+regexp['canada']['en'] = re.compile(ur"""(?im)\{\{\s*HPC row\s*(\|\s*(name\s*=\s*(?P<nombre>[^=}]*?)|municipality\s*=\s*(?P<municipio>[^=}]*?)|address\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|lon?\s*=\s*(?P<lon>[0-9\.\-\+]*?)|name\s*=\s*(?P<bic>[^=}]*?)|image\s*=\s*(?P<imagen>[^=}]*?)|pc\s*=\s*([^=}]*?)|idf\s*=\s*([^=}]*?)|idp\s*=\s*([^=}]*?)|idm\s*=\s*([^=}]*?)|provinceId\s*=\s*([^=}]*?)\s*)\s*)+\s*\|*\s*\}\}""") #uso name como bic id ...
+
 #main index
 output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
@@ -404,20 +452,27 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 <br/>
 <br/>
 <br/>
-<br/>
 <center>
 <img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/300px-LUSITANA_WLM_2011_d.svg.png" />
 <br/>
 <br/>
 <b>Del 1 al 30 de septiembre de 2012</b>
 <br/>
-<table border=0 style="padding: 15px;text-align: center;">
-<tr>
-<td><big><big><big><b><a href="argentina/">Argentina</a>&nbsp;&nbsp;‒</b></big></big></big></td>
-<td><big><big><big><b>&nbsp;&nbsp;<a href="chile/">Chile</a>&nbsp;‒</b></big></big></big></td>
-<td><big><big><big><b>&nbsp;&nbsp;<a href="spain/">España</a></b></big></big></big></td>
-</tr>
-</table>
+<br/>
+
+<big><big><big><b><a href="argentina/">Argentina</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
+<big><big><big><b>Canada</b> &nbsp;&nbsp;&nbsp;</big></big></big>
+<big><big><big><b><a href="chile/">Chile</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
+<big><big><big><b>Colombia</b> &nbsp;&nbsp;&nbsp;</big></big></big>
+
+<br/>
+<big><big><big><b><a href="spain/">España</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
+<big><big><big><b>México</b> &nbsp;&nbsp;&nbsp;</big></big></big>
+<big><big><big><b><a href="panama/">Panamá</a></b></big></big></big>
+
+<br/><br/>
+<a href="http://en.wikipedia.org/wiki/User_talk:Emijrp">Request a map</a>
+
 </center>
 
 </body>
@@ -429,7 +484,7 @@ f.close()
 
 time.sleep(10)
 #indexes by country
-for country in ['argentina', 'chile', 'spain']:
+for country in ['canada',]:#'argentina', 'chile', 'panama', 'spain']:
     missingcoordinates = 0
     missingimages = 0
     total = 0
@@ -759,7 +814,7 @@ for country in ['argentina', 'chile', 'spain']:
     <center>
 
     <!-- div show/hide -->
-    <b>Otros mapas:</b> <a href="../argentina">Argentina</a> - <a href="../chile">Chile</a> - <a href="../spain">España</a> | [<a href="javascript:showHide('table-stats')">Mostrar/Ocultar estadísticas</a>]
+    <b>Otros mapas:</b> <a href="../argentina">Argentina</a> - <a href="../chile">Chile</a> - <a href="../spain">España</a> - <a href="../panama">Panamá</a> | [<a href="javascript:showHide('table-stats')">Mostrar/Ocultar estadísticas</a>]
     <div id="table-stats" style="display: none;">
 
     <table border=0>
