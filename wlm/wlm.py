@@ -20,6 +20,7 @@ import pagegenerators
 import datetime
 import md5
 import re
+import time
 import wikipedia
 
 #subida fácil: http://commons.wikimedia.org/w/index.php?title=Special:Upload&wpDestFile=BBBB.jpg&uploadformstyle=basic&wpUploadDescription=\ {{Information|Description=|Source=|Date=|Author=|Permission=|other_versions=}}
@@ -390,6 +391,44 @@ regexp['chile']['es'] = re.compile(ur"""(?im)\{\{\s*(MonumentoChile|WLM-Chile-mo
 """
 regexp['argentina']['es'] = re.compile(ur"""(?im)\{\{\s*MonumentoArgentina\s*(\|\s*(monumento\s*=\s*(?P<nombre>[^=}]*?)|tipo\s*=\s*(?P<tipo>[^=}]*?)|localidad\s*=\s*([^=}]*?)|municipio\s*=\s*(?P<municipio>[^=}]*?)|direcci[óo]n\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|long?\s*=\s*(?P<lon>[0-9\.\-\+]*?)|id\s*=\s*(?P<bic>[^=}]*?)|imagen\s*=\s*(?P<imagen>[^=}]*?)|monumento[_ ]desc\s*=\s*([^=}]*?)|monumento[_ ]enlace\s*=\s*([^=}]*?)|monumento[_ ]categoría\s*=\s*([^=}]*?)\s*)\s*)+\s*\|*\s*\}\}""")
 
+#main index
+output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+    <title>Wiki Loves Monuments</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+</head>
+
+<body style="background-color: lightblue;">
+<br/>
+<br/>
+<br/>
+<br/>
+<center>
+<img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/300px-LUSITANA_WLM_2011_d.svg.png" />
+<br/>
+<br/>
+<b>Del 1 al 30 de septiembre de 2012</b>
+<br/>
+<table border=0 style="padding: 15px;text-align: center;">
+<tr>
+<td><big><big><big><b><a href="argentina/">Argentina</a>&nbsp;&nbsp;‒</b></big></big></big></td>
+<td><big><big><big><b>&nbsp;&nbsp;<a href="chile/">Chile</a>&nbsp;‒</b></big></big></big></td>
+<td><big><big><big><b>&nbsp;&nbsp;<a href="spain/">España</a></b></big></big></big></td>
+</tr>
+</table>
+</center>
+
+</body>
+</html>
+"""
+f = open('/home/emijrp/public_html/wlm/index.php', 'w')
+f.write(output.encode('utf-8'))
+f.close()
+
+time.sleep(100)
+#indexes by country
 for country in ['argentina', 'chile', 'spain']:
     missingcoordinates = 0
     missingimages = 0
@@ -746,37 +785,3 @@ for country in ['argentina', 'chile', 'spain']:
     f = open('/home/emijrp/public_html/wlm/%s/index.php' % (country), 'w')
     f.write(output.encode('utf-8'))
     f.close()
-
-output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-    <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-    <title>Wiki Loves Monuments</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta http-equiv="Content-Style-Type" content="text/css" />
-</head>
-
-<body style="background-color: lightblue;">
-<br/>
-<br/>
-<br/>
-<br/>
-<center>
-<big><big><big><b>Wiki <i>Loves</i> Monuments</b></big></big></big>
-<br/>
-<b>Del 1 al 30 de septiembre de 2012</b>
-<br/>
-<table border=0>
-<tr>
-<td><big><big><big><b><a href="argentina/">Argentina</a></b></big></big></big></td>
-<td><big><big><big><b><a href="chile/">Chile</a></b></big></big></big></td>
-<td><big><big><big><b><a href="spain/">España</a></b></big></big></big></td>
-</tr>
-</table>
-</center>
-
-</body>
-</html>
-"""
-f = open('/home/emijrp/public_html/wlm/index.php', 'w')
-f.write(output.encode('utf-8'))
-f.close()
