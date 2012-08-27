@@ -562,7 +562,7 @@ if (isset($_GET['place']))
 
 <body style="background-color: lightblue;">
 <center>
-<table width=99% style="text-align: center;">
+<table width=99%% style="text-align: center;">
 <tr>
 <td>
 <a href="http://www.wikimedia.org.es/" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Wikimedia-es-logo.svg/80px-Wikimedia-es-logo.svg.png" /></a>
@@ -574,7 +574,7 @@ if (isset($_GET['place']))
 <b>Del 1 al 30 de septiembre de 2012</b>
 <br/>
 <br/>
-Monumentos totales: %d [Con coordenadas: %d (%.1f%%); Sin imágenes: %d (%.1f%%)] | Leyenda: con imagen <img src="%s" width=20px title="With image" alt="With image"/>, sin imagen <img src="%s" width=20px title="Without image" alt="Without image"/>
+Monumentos totales: %d [con coordenadas: %d (%.1f%%); sin imágenes: %d (%.1f%%)] | Leyenda: con imagen <img src="%s" width=20px title="con imagen" alt="con imagen"/>, sin imagen <img src="%s" width=20px title="sin imagen" alt="sin imagen"/>
 </td>
 <td>
 <a href="http://www.wikilm.es/" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" /></a>
@@ -584,7 +584,7 @@ Monumentos totales: %d [Con coordenadas: %d (%.1f%%); Sin imágenes: %d (%.1f%%)
 <td colspan=3>
 Elige un lugar: %s
 
-<iframe width="99%" height="450" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fwlm%%2Fwlm-<?php echo $place; ?>.kml%%3Fusecache%%3D0&amp;output=embed"></iframe>
+<iframe width="99%%" height="450" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fwlm%%2Fwlm-<?php echo $place; ?>.kml%%3Fusecache%%3D0&amp;output=embed"></iframe>
 <br/>
 <br/>
 <center>
