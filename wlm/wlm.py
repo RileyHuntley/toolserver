@@ -756,6 +756,10 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 </head>
 
 <body style="background-color: lightblue;">
+<br/>
+<br/>
+<br/>
+<br/>
 <center>
 <big><big><big><b>Wiki <i>Loves</i> Monuments</b></big></big></big>
 <br/>
@@ -772,7 +776,6 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 
 </body>
 </html>
-
 """
 f = open('/home/emijrp/public_html/wlm/index.php', 'w')
 f.write(output.encode('utf-8'))
