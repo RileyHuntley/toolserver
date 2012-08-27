@@ -573,8 +573,7 @@ if (isset($_GET['place']))
 <br/>
 <b>Del 1 al 30 de septiembre de 2012</b>
 <br/>
-<br/>
-Monumentos totales: %d [con coordenadas: %d (%.1f%%); sin imágenes: %d (%.1f%%)] | Leyenda: con imagen <img src="%s" width=20px title="con imagen" alt="con imagen"/>, sin imagen <img src="%s" width=20px title="sin imagen" alt="sin imagen"/>
+<b>Monumentos totales:</b> %d [con coordenadas: %d (%.1f%%); sin imágenes: %d (%.1f%%)] | <b>Leyenda:</b> con imagen <img src="%s" width=20px title="con imagen" alt="con imagen"/>, sin imagen <img src="%s" width=20px title="sin imagen" alt="sin imagen"/>
 </td>
 <td>
 <a href="http://www.wikilm.es/" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" /></a>
@@ -582,7 +581,7 @@ Monumentos totales: %d [con coordenadas: %d (%.1f%%); sin imágenes: %d (%.1f%%)
 </tr>
 <tr>
 <td colspan=3>
-Elige un lugar: %s
+<b>Elige un lugar:</b> %s
 
 <iframe width="99%%" height="450" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fwlm%%2Fwlm-<?php echo $place; ?>.kml%%3Fusecache%%3D0&amp;output=embed"></iframe>
 <br/>
