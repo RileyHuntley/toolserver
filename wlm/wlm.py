@@ -210,21 +210,21 @@ anexos['spain'] = {
 }
 
 anexos['chile'] = {
-'antofagasta': [u'commons:Commons:Lists of South American Monuments/Chile/02', ],
-'araucania': [u'commons:Commons:Lists of South American Monuments/Chile/09', ],
-'aricayparinacota': [u'commons:Commons:Lists of South American Monuments/Chile/15', ],
-'atacama': [u'commons:Commons:Lists of South American Monuments/Chile/03', ],
-'aysen': [u'commons:Commons:Lists of South American Monuments/Chile/11', ],
-'biobio': [u'commons:Commons:Lists of South American Monuments/Chile/08', ],
-'coquimbo': [u'commons:Commons:Lists of South American Monuments/Chile/04', ],
-'libertador': [u'commons:Commons:Lists of South American Monuments/Chile/06', ],
-'loslagos': [u'commons:Commons:Lists of South American Monuments/Chile/10', ],
-'losrios': [u'commons:Commons:Lists of South American Monuments/Chile/14', ],
-'magallanes': [u'commons:Commons:Lists of South American Monuments/Chile/12', ],
-'maule': [u'commons:Commons:Lists of South American Monuments/Chile/07', ],
-'santiago': [u'commons:Commons:Lists of South American Monuments/Chile/RM', ],
-'tarapaca': [u'commons:Commons:Lists of South American Monuments/Chile/01', ],
-'valparaiso': [u'commons:Commons:Lists of South American Monuments/Chile/05', ],
+'antofagasta': [u'es:Anexo:Monumentos nacionales de la Región de Antofagasta', ],
+'araucania': [u'es:Anexo:Monumentos nacionales de la Región de La Araucanía', ],
+'aricayparinacota': [u'es:Anexo:Monumentos nacionales de la Región de Arica y Parinacota', ],
+'atacama': [u'es:Anexo:Monumentos nacionales de la Región de Atacama', ],
+'aysen': [u'es:Anexo:Monumentos nacionales de la Región de Aysén del General Carlos Ibáñez del Campo', ],
+'biobio': [u'es:Anexo:Monumentos nacionales de la Región del Biobío', ],
+'coquimbo': [u'es:Anexo:Monumentos nacionales de la Región de Coquimbo', ],
+'libertador': [u"es:Anexo:Monumentos nacionales de la Región del Libertador General Bernardo O'Higgins", ],
+'loslagos': [u'es:Anexo:Monumentos nacionales de la Región de Los Lagos', ],
+'losrios': [u'es:Anexo:Monumentos nacionales de la Región de Los Ríos', ],
+'magallanes': [u'es:Anexo:Monumentos nacionales de la Región de Magallanes y de la Antártica Chilena', ],
+'maule': [u'es:Anexo:Monumentos nacionales de la Región del Maule', ],
+'santiago': [u'es:Anexo:Monumentos nacionales de la Región Metropolitana de Santiago', ],
+'tarapaca': [u'es:Anexo:Monumentos nacionales de la Región de Tarapacá', ],
+'valparaiso': [u'es:Anexo:Monumentos nacionales de la Región de Valparaíso', ],
 
 }
 
