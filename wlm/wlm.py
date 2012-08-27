@@ -427,7 +427,7 @@ f = open('/home/emijrp/public_html/wlm/index.php', 'w')
 f.write(output.encode('utf-8'))
 f.close()
 
-time.sleep(100)
+time.sleep(10)
 #indexes by country
 for country in ['argentina', 'chile', 'spain']:
     missingcoordinates = 0
