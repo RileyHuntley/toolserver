@@ -762,7 +762,11 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 <b>Del 1 al 30 de septiembre de 2012</b>
 <br/>
 <table border=0>
-
+<tr>
+<td><big><big><big><b><a href="argentina/">Argentina</a></b></big></big></big></td>
+<td><big><big><big><b><a href="chile/">Chile</a></b></big></big></big></td>
+<td><big><big><big><b><a href="spain/">España</a></b></big></big></big></td>
+</tr>
 </table>
 </center>
 
