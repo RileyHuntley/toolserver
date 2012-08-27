@@ -352,7 +352,7 @@ for anexoid, anexolist in anexos.items():
         
         if not thumburl:
             thumburl = 'http://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Image-missing.svg/%s-Image-missing.svg.png' % (imagesize)
-            commonspage = ''
+            commonspage = '#'
         
         articleurl = u'http://%s.wikipedia.org/wiki/%s' % (props['lang'], props['nombre'])
         articleurl = re.sub(u' ', u'_', articleurl)
@@ -478,7 +478,7 @@ The '''%s''' ([[Spanish language|Spanish]]: ''%s'') is a XYZ located in [[%s]], 
 
 #table bic stats
 tablestats = u'<table border=1px style="text-align: center;">\n'
-tablestats += u'<tr><th width=100px>Place</th><th width=60px>BICs</th><th width=140px>With coordinates</th><th width=100px>With images</th><th width=100px>Details</th><th width=100px>Errors</th></tr>\n'
+tablestats += u'<tr><th width=100px>Lugar</th><th width=60px>Monumentos</th><th width=140px>Con coordenadas</th><th width=100px>Con imágenes</th><th width=100px>Detalles</th><th width=100px>Errores</th></tr>\n'
 provincesstats.sort()
 for p, ptotal, pmissingcoordinates, pmissingimages in provincesstats:
     pcoordper = ptotal and (ptotal-pmissingcoordinates)/(ptotal/100.0) or 0
@@ -488,8 +488,8 @@ for p, ptotal, pmissingcoordinates, pmissingimages in provincesstats:
     for i in anexos[p]:
         refs += u'<a href="http://%s.wikipedia.org/wiki/%s" target="_blank">[%d]</a> ' % (i.split(':')[0], ':'.join(i.split(':')[1:]), c)
         c += 1
-    refs = u"""[<a href="javascript:showHide('%s-refs')">Show/Hide</a>]<div id="%s-refs" style="display: none;">%s</div>""" % (p, p, refs)
-    errorstext = u"""[<a href="javascript:showHide('%s-errors')">Show/Hide</a>]<div id="%s-errors" style="display: none;">%s</div>""" % (p, p, errors[p])
+    refs = u"""[<a href="javascript:showHide('%s-refs')">Mostrar/Ocultar</a>]<div id="%s-refs" style="display: none;">%s</div>""" % (p, p, refs)
+    errorstext = u"""[<a href="javascript:showHide('%s-errors')">Mostrar/Ocultar</a>]<div id="%s-errors" style="display: none;">%s</div>""" % (p, p, errors[p])
     tablestats += u'<tr><td><a href="index.php?place=%s">%s</a></td><td>%d</td><td bgcolor=%s>%d (%.1f%%)</td><td bgcolor=%s>%d (%.1f%%)</td><td>%s</td><td>%s</td></tr>\n' % (p, placenames[p], ptotal, colors(pcoordper),ptotal-pmissingcoordinates, pcoordper, colors(pimageper), ptotal-pmissingimages, pimageper, refs, errorstext)
 
 tablestats += u'<tr><td><b>Total</b></td><td><b>%d</b></td><td bgcolor=%s><b>%d (%.1f%%)</b></td><td bgcolor=%s><b>%d (%.1f%%)</b></td><td><a href="http://ca.wikipedia.org/wiki/Categoria:Llistes_de_monuments" target="_blank">[1]</a> <a href="http://es.wikipedia.org/wiki/Categor%%C3%%ADa:Anexos:Bienes_de_inter%%C3%%A9s_cultural_en_Espa%%C3%%B1a" target="_blank">[2]</a> <a href="http://gl.wikipedia.org/wiki/Categor%%C3%%ADa:Bens_de_Interese_Cultural_de_Galicia" target="_blank">[3]</a></td><td>%d</td></tr>\n' % (total, colors((total-missingcoordinates)/(total/100.0)), total-missingcoordinates, (total-missingcoordinates)/(total/100.0), colors((total-missingimages)/(total/100.0)), total-missingimages, (total-missingimages)/(total/100.0), totalerrors)
@@ -498,7 +498,7 @@ tablestats += u'</table>\n'
 
 #table user stats
 tableuserstats = u'<table border=1px style="text-align: center;">\n'
-tableuserstats += u'<tr><th width=100px>User</th><th width=60px>Files</th><th width=60px>MBytes</th></tr>\n'
+tableuserstats += u'<tr><th width=100px>Usuario</th><th width=60px>Archivos</th><th width=60px>MBytes</th></tr>\n'
 cat = catlib.Category(wikipedia.Site("commons", "commons"), u"Category:Images from Wiki Loves Monuments 2012 in Spain")
 gen = pagegenerators.CategorizedPageGenerator(cat, start="!")
 pre = pagegenerators.PreloadingGenerator(gen, pageNumber=250)
@@ -560,45 +560,51 @@ if (isset($_GET['place']))
 
 ?>
 
-<body>
+<body style="background-color: lightblue;">
 <center>
-<table width=1000px style="text-align: center;">
+<table width=99% style="text-align: center;">
 <tr>
 <td>
-<a href="http://www.wikimedia.org.es/" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Wikimedia-es-logo.svg/100px-Wikimedia-es-logo.svg.png" /></a>
+<a href="http://www.wikimedia.org.es/" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Wikimedia-es-logo.svg/80px-Wikimedia-es-logo.svg.png" /></a>
 </td>
 <td>
 <center>
 <big><big><big><b><a href="http://www.wikilm.es" target="_blank">Wiki <i>Loves</i> Monuments</a></b></big></big></big>
 <br/>
-<b>Spain, September 1–30, 2012</b>
+<b>Del 1 al 30 de septiembre de 2012</b>
 <br/>
 <br/>
-Total registered <i><a href="http://es.wikipedia.org/wiki/Bien_de_Inter%%C3%%A9s_Cultural" target="_blank">BICs</a></i> in Spain: %d | With coordinates: %d (%.1f%%) | With images: %d (%.1f%%)
-<br/>
-Legend: With image <img src="%s" width=20px title="With image" alt="With image"/>, Without image <img src="%s" width=20px title="Without image" alt="Without image"/>
+Monumentos totales: %d [Con coordenadas: %d (%.1f%%); Sin imágenes: %d (%.1f%%)] | Leyenda: con imagen <img src="%s" width=20px title="With image" alt="With image"/>, sin imagen <img src="%s" width=20px title="Without image" alt="Without image"/>
 </td>
 <td>
-<a href="http://www.wikilm.es/" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/100px-LUSITANA_WLM_2011_d.svg.png" /></a>
+<a href="http://www.wikilm.es/" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" /></a>
 </td>
 </tr>
 <tr>
 <td colspan=3>
-Select a place: %s
+Elige un lugar: %s
 
-<iframe width="1000" height="450" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fwlm%%2Fwlm-<?php echo $place; ?>.kml%%3Fusecache%%3D0&amp;output=embed"></iframe>
+<iframe width="99%" height="450" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fwlm%%2Fwlm-<?php echo $place; ?>.kml%%3Fusecache%%3D0&amp;output=embed"></iframe>
 <br/>
 <br/>
 <center>
+
+<!-- div show/hide -->
+[<a href="javascript:showHide('table-stats')">Mostrar/Ocultar estadísticas</a>]
+<div id="table-stats" style="display: none;">
+
 <table border=0>
 <tr><td valign=top>%s</td><td valign=top>%s</td></tr>
 </table>
+
+<!-- /div show/hide -->
 </center>
-<i>Last update: %s (UTC)</i>
+<i>Actualizado por última vez: %s (UTC)</i>
 <br/>
 </td>
 </tr>
 </table>
+</div>
 
 </center>
 </body>
