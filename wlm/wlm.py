@@ -579,7 +579,7 @@ f.close()
 
 time.sleep(10)
 #indexes by country
-for country in ['argentina', 'chile', 'panama', 'mexico']: #'spain'
+for country in ['argentina', 'chile', 'panama', 'mexico', 'spain', ]: #'spain'
     if not os.path.exists('%s/%s/' % (path, country)):
         os.makedirs('%s/%s/' % (path, country))
     missingcoordinates = 0
