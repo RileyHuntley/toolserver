@@ -566,6 +566,12 @@ for country in ['mexico']: #['argentina', 'chile', 'panama', 'spain']: #'canada'
                     #print 1
                     bic = '?'
                     try:
+                        #excluding bad coordinates in 0, 0
+                        lat = re.sub('[,]', '.', i.group('lat').strip())
+                        lon = re.sub('[,]', '.', i.group('lon').strip())
+                        if lat.startswith('0.') and lon.startswith('0.'):
+                            raise
+                        
                         bic = i.group('bic').strip()
                         bics[bic] = {
                             'lang': lang,
@@ -575,8 +581,8 @@ for country in ['mexico']: #['argentina', 'chile', 'panama', 'spain']: #'canada'
                             #'tipo': i.group('tipo').strip(),
                             'municipio': clean(i.group('municipio').strip()),
                             'lugar': clean(i.group('lugar').strip()),
-                            'lat': re.sub('[,]', '.', i.group('lat').strip()),
-                            'lon': re.sub('[,]', '.', i.group('lon').strip()),
+                            'lat': lat,
+                            'lon': lon,
                             'bic': bic.strip(),
                             'imagen': i.group('imagen').strip(),
                         }
