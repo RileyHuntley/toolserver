@@ -293,6 +293,18 @@ anexos['panama'] = {
 
 anexos['canada'] = {
 'alberta': [u'en:List of historic places in Alberta', ],
+'britishcolumbia': [u'en:List of historic places in British Columbia', ],
+'manitoba': [u'en:List of historic places in Manitoba', ],
+'newbrunswick': [u'en:List of historic places in New Brunswick', ],
+'newfoundlandandlabrador': [u'en:List of historic places in Newfoundland and Labrador', ],
+'novascotia': [u'en:List of historic places in Nova Scotia', ],
+'ontario': [u'en:List of historic places in Ontario', ],
+'princeedwardisland': [u'en:List of historic places in Prince Edward Island', ],
+'quebec': [u'en:List of historic places in Quebec', ],
+'saskatchewan': [u'en:List of historic places in Saskatchewan', ],
+'northwestterritories': [u'en:List of historic places in Northwest Territories', ],
+'nunavut': [u'en:List of historic places in Nunavut', ],
+'yukon': [u'en:List of historic places in Yukon', ],
 
 }
 
@@ -515,7 +527,7 @@ regexp['panama']['es'] = re.compile(ur"""(?im)\{\{\s*Fila PCN\s*(\|\s*(nombre\s*
 | image = 
 }}
 """
-regexp['canada']['en'] = re.compile(ur"""(?im)\{\{\s*HPC row\s*(\|\s*(name\s*=\s*(?P<name>[^=}]*?)|municipality\s*=\s*(?P<municipio>[^=}]*?)|address\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\,\-\+]*?)|lon\s*=\s*(?P<lon>[0-9\.\,\-\+]*?)|image\s*=\s*(?P<imagen>[^=}]*?)|pc\s*=\s*([^=}]*?)|idf\s*=\s*([^=}]*?)|idp\s*=\s*([^=}]*?)|idm\s*=\s*([^=}]*?)|provinceId\s*=\s*([^=}]*?)\s*)\s*)+\s*\|*\s*\}\}(?P<bic>)""") #uso name como bic id ...
+regexp['canada']['en'] = re.compile(ur"""(?im)\{\{\s*HPC[_ ]row\s*(\|\s*(name\s*=\s*(?P<nombre>[^=}]*?)|municipality\s*=\s*(?P<municipio>[^=}]*?)|address\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\,\-\+]*?)|lon\s*=\s*(?P<lon>[0-9\.\,\-\+]*?)|image\s*=\s*(?P<imagen>[^=}]*?)|pc\s*=\s*([^=}]*?)|idf\s*=\s*(?P<idf>[^=}]*?)|idp\s*=\s*(?P<idp>[^=}]*?)|idm\s*=\s*(?P<idm>[^=}]*?)|provinceId\s*=\s*([^=}]*?)\s*)\s*)+\s*\|*\s*\}\}(?P<bic>)""")
 
 #Mexico http://es.wikipedia.org/wiki/Especial:LoQueEnlazaAqu%C3%AD/Plantilla:MonumentoM%C3%A9xico
 """
@@ -579,7 +591,7 @@ f.close()
 
 time.sleep(10)
 #indexes by country
-for country in ['argentina', 'chile', 'panama', 'mexico', 'spain', ]: #'spain'
+for country in ['canada']:# ['argentina', 'chile', 'panama', 'mexico', 'spain', ]: #'spain'
     if not os.path.exists('%s/%s/' % (path, country)):
         os.makedirs('%s/%s/' % (path, country))
     missingcoordinates = 0
@@ -612,27 +624,35 @@ for country in ['argentina', 'chile', 'panama', 'mexico', 'spain', ]: #'spain'
                     bic = '?'
                     try:
                         #excluding bad coordinates in 0, 0
-                        lat = re.sub('[,]', '.', i.group('lat').strip())
-                        lon = re.sub('[,]', '.', i.group('lon').strip())
-                        if lat.startswith('0.') and lon.startswith('0.'):
+                        lat = re.sub(ur'[,]', ur'.', i.group('lat').strip())
+                        lon = re.sub(ur'[,]', ur'.', i.group('lon').strip())
+                        if (lat.startswith('0.') and lon.startswith('0.')) or (lat == 0 and lon == 0):
                             raise
                         
                         bic = i.group('bic').strip()
+                        if not bic and country == 'canada': #canada uses 3 level ids...
+                            if i.group('idf').strip():
+                                bic = i.group('idf').strip()
+                            elif i.group('idp').strip():
+                                bic = i.group('idp').strip()
+                            elif i.group('idm').strip():
+                                bic = i.group('idm').strip()
+                        
                         bics[bic] = {
                             'lang': lang,
-                            'nombre': clean(i.group('nombre').strip()),
+                            'nombre': i.group('nombre') and clean(i.group('nombre').strip()) or '',
                             #'nombrecoor': i.group('nombrecoor').strip(),
                             #'tipobic': i.group('tipobic').strip(),
                             #'tipo': i.group('tipo').strip(),
-                            'municipio': clean(i.group('municipio').strip()),
-                            'lugar': clean(i.group('lugar').strip()),
+                            'municipio': i.group('municipio') and clean(i.group('municipio').strip()) or '',
+                            'lugar': i.group('lugar') and clean(i.group('lugar').strip()) or '',
                             'lat': lat,
                             'lon': lon,
-                            'bic': bic.strip(),
-                            'imagen': i.group('imagen').strip(),
+                            'bic': bic and bic.strip() or '?',
+                            'imagen': i.group('imagen') and i.group('imagen').strip() or '',
                         }
                         try:
-                            bics[bic]['fecha'] = i.group('fecha').strip() #no existe en ca: 
+                            bics[bic]['fecha'] = i.group('fecha').strip() #no existe en ca: ni en otros
                         except:
                             pass
                     except:
