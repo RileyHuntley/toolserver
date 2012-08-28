@@ -132,7 +132,24 @@ placenames = {
 #canada
 
 #mexico
-
+'aguascalientes': u"Aguascalientes",
+'bajacalifornia': u"Baja California",
+'bajacaliforniasur': u"Baja California Sur",
+'campeche': u"Campeche",
+'chiapas': u"Chiapas",
+'coahuila': u"Coahuila",
+'chihuahua': u"Chihuahua",
+'df': u"México, D.F.",
+'durango': u"Durango",
+'guanajuato': u"Guanajuato",
+'guerrero': u"Guerrero",
+'hidalgo': u"Hidalgo",
+'jalisco': u"Jalisco",
+'morelos': u"Morelos",
+'nayarit': u"Nayarit",
+'nuevoleon': u"Nuevo León",
+'oaxaca': u"Oaxaca",
+'puebla': u"Puebla",
 
 }
 
