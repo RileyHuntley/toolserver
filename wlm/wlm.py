@@ -63,6 +63,7 @@ wmlogourls = { 'spain': 'http://upload.wikimedia.org/wikipedia/commons/thumb/0/0
 wlmurls = { 'spain': 'http://www.wikilm.es', 'chile': 'http://www.wikilovesmonuments.cl', 'argentina': 'http://wikilovesmonuments.com.ar', 'panama': 'http://wlmpanama.org.pa', 'canada': 'http://wikimedia.ca/wiki/Wiki_Loves_Monuments_2012_in_Canada', 'mexico': 'http://wikilovesmonuments.mx' }
 
 uploadcats = { 'spain': 'Images from Wiki Loves Monuments 2012 in Spain', 'chile': 'Images from Wiki Loves Monuments 2012 in Chile', 'argentina': 'Images from Wiki Loves Monuments 2012 in Argentina', 'panama': 'Images from Wiki Loves Monuments 2012 in Panama', 'canada': 'Images from Wiki Loves Monuments 2012 in Canada', 'mexico': 'Images from Wiki Loves Monuments 2012 in Mexico'}
+campaigns = { 'spain': 'wlm-es', 'chile': 'wlm-cl', 'argentina': 'wlm-ar', 'panama': 'wlm-pa', 'canada': 'wlm-ca', 'mexico': 'wlm-mx', }
 
 capital = { 'spain': 'madrid', 'chile': 'santiago', 'argentina': 'buenosaires', 'panama': 'panama', 'canada': 'ontario', 'mexico': 'df' } #where is the capital?
 
@@ -700,7 +701,7 @@ for country in ['argentina', 'chile', 'panama', 'mexico']: #'spain'
     <tr><td align=right width=80px style="background-color: lightgreen;"><b>BIC:</b></td><td><a href="%s" target="_blank">%s</a></td><td rowspan=4><a href="%s" target="_blank"><img src="%s" width=%s/></a></td></tr>
     <tr><td align=right style="background-color: lightblue;"><b>Located in:</b></td><td>%s</td></tr>
     <tr><td align=right style="background-color: yellow;"><b>ID:</b></td><td>%s</td></tr>
-    <tr><td align=center colspan=2><br/><b>This BIC has %s<br/>you can upload yours. Thanks!</b><br/><br/><span style="border: 2px solid black;background-color: pink;padding: 3px;"><a href="http://commons.wikimedia.org/w/index.php?title=Special:UploadWizard&campaign=wlm-es" target="_blank"><b>Upload</b></a></span></td></tr>
+    <tr><td align=center colspan=2><br/><b>This BIC has %s<br/>you can upload yours. Thanks!</b><br/><br/><span style="border: 2px solid black;background-color: pink;padding: 3px;"><a href="http://commons.wikimedia.org/w/index.php?title=Special:UploadWizard&campaign=%s" target="_blank"><b>Upload</b></a></span></td></tr>
     </table>
     ]]>
     </description>
@@ -708,7 +709,7 @@ for country in ['argentina', 'chile', 'panama', 'mexico']: #'spain'
     <Point>
     <coordinates>%s,%s</coordinates>
     </Point>
-    </Placemark>""" % (props['nombre'], articleurl, props['nombre'], commonspage, thumburl, imagesize, locatedin, props['bic'], isvalidimage(props['imagen']) and 'images, but' or 'no images,', isvalidimage(props['imagen']) and 'imageyes' or 'imageno', props['lon'], props['lat'])
+    </Placemark>""" % (props['nombre'], articleurl, props['nombre'], commonspage, thumburl, imagesize, locatedin, props['bic'], isvalidimage(props['imagen']) and 'images, but' or 'no images,', campaigns[country], isvalidimage(props['imagen']) and 'imageyes' or 'imageno', props['lon'], props['lat'])
             else:
                 missingcoordinates +=1
                 submissingcoordinates +=1
