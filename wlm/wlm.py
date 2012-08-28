@@ -19,6 +19,7 @@ import catlib
 import pagegenerators
 import datetime
 import md5
+import os
 import re
 import time
 import wikipedia
@@ -54,14 +55,15 @@ def colors(percent):
         return 'lightblue'
     return 'white'
 
-wmurls = { 'spain': 'http://www.wikimedia.org.es', 'chile': 'http://www.wikimediachile.cl', 'argentina': 'http://www.wikimedia.org.ar', 'panama': 'http://wlmpanama.org.pa', 'canada': 'http://wikimedia.ca' }
+path = '/home/emijrp/public_html/wlm'
+wmurls = { 'spain': 'http://www.wikimedia.org.es', 'chile': 'http://www.wikimediachile.cl', 'argentina': 'http://www.wikimedia.org.ar', 'panama': 'http://wlmpanama.org.pa', 'canada': 'http://wikimedia.ca', 'mexico': 'http://mx.wikimedia.org' }
 #generic logo http://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/80px-Wikimedia-logo.svg.png
-wmlogourls = { 'spain': 'http://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Wikimedia-es-logo.svg/80px-Wikimedia-es-logo.svg.png', 'chile': 'http://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Wikimedia_Chile_logo.svg/80px-Wikimedia_Chile_logo.svg.png', 'argentina': 'http://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Wikimedia_Argentina_logo.svg/80px-Wikimedia_Argentina_logo.svg.png', 'panama': 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/80px-Wikimedia-logo.svg.png', 'canada': 'http://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Wikimedia_Canada_logo.svg/80px-Wikimedia_Canada_logo.svg.png'}
-wlmurls = { 'spain': 'http://www.wikilm.es', 'chile': 'http://www.wikilovesmonuments.cl', 'argentina': 'http://wikilovesmonuments.com.ar', 'panama': 'http://wlmpanama.org.pa', 'canada': 'http://wikimedia.ca/wiki/Wiki_Loves_Monuments_2012_in_Canada' }
+wmlogourls = { 'spain': 'http://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Wikimedia-es-logo.svg/80px-Wikimedia-es-logo.svg.png', 'chile': 'http://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Wikimedia_Chile_logo.svg/80px-Wikimedia_Chile_logo.svg.png', 'argentina': 'http://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Wikimedia_Argentina_logo.svg/80px-Wikimedia_Argentina_logo.svg.png', 'panama': 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/80px-Wikimedia-logo.svg.png', 'canada': 'http://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Wikimedia_Canada_logo.svg/80px-Wikimedia_Canada_logo.svg.png', 'mexico': 'http://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Wikimedia_Mexico.svg/80px-Wikimedia_Mexico.svg.png' }
+wlmurls = { 'spain': 'http://www.wikilm.es', 'chile': 'http://www.wikilovesmonuments.cl', 'argentina': 'http://wikilovesmonuments.com.ar', 'panama': 'http://wlmpanama.org.pa', 'canada': 'http://wikimedia.ca/wiki/Wiki_Loves_Monuments_2012_in_Canada', 'mexico': 'http://wikilovesmonuments.mx' }
 
-uploadcats = { 'spain': 'Images from Wiki Loves Monuments 2012 in Spain', 'chile': 'Images from Wiki Loves Monuments 2012 in Chile', 'argentina': 'Images from Wiki Loves Monuments 2012 in Argentina', 'panama': 'Images from Wiki Loves Monuments 2012 in Panama', 'canada': 'Images from Wiki Loves Monuments 2012 in Canada'}
+uploadcats = { 'spain': 'Images from Wiki Loves Monuments 2012 in Spain', 'chile': 'Images from Wiki Loves Monuments 2012 in Chile', 'argentina': 'Images from Wiki Loves Monuments 2012 in Argentina', 'panama': 'Images from Wiki Loves Monuments 2012 in Panama', 'canada': 'Images from Wiki Loves Monuments 2012 in Canada', 'mexico': 'Images from Wiki Loves Monuments 2012 in Mexico'}
 
-capital = { 'spain': 'madrid', 'chile': 'santiago', 'argentina': 'buenosaires', 'panama': 'panama', 'canada': 'ontario' } #where is the capital?
+capital = { 'spain': 'madrid', 'chile': 'santiago', 'argentina': 'buenosaires', 'panama': 'panama', 'canada': 'ontario', 'mexico': 'mexicodf' } #where is the capital?
 
 placenames = {
 
@@ -126,6 +128,11 @@ placenames = {
 
 #panama
 'panama': u"Panamá", 
+
+#canada
+
+#mexico
+
 
 }
 
@@ -270,6 +277,28 @@ anexos['canada'] = {
 
 }
 
+anexos['mexico'] = {
+'aguascalientes': [u'es:Anexo:Monumentos de Aguascalientes', ],
+'bajacalifornia': [u'es:Anexo:Monumentos de Baja California', ],
+'bajacaliforniasur': [u'es:Anexo:Monumentos de Baja California Sur', ],
+'campeche': [u'es:Anexo:Monumentos de Campeche', ],
+'chiapas': [u'es:Anexo:Monumentos de Chiapas', ],
+'coahuila': [u'es:Anexo:Monumentos de Coahuila', ],
+'chihuahua': [u'es:Anexo:Monumentos de Chihuahua', ],
+'df': [u'es:Anexo:Monumentos de México, D.F.', ],
+'durango': [u'es:Anexo:Monumentos de Durango', ],
+'guanajuato': [u'es:Anexo:Monumentos de Guanajuato', ],
+'guerrero': [u'es:Anexo:Monumentos de Guerrero', ],
+'hidalgo': [u'es:Anexo:Monumentos de Hidalgo', ],
+'jalisco': [u'es:Anexo:Monumentos de Jalisco', ],
+'morelos': [u'es:Anexo:Monumentos de Morelos', ],
+'nayarit': [u'es:Anexo:Monumentos de Nayarit', ],
+'nuevoleon': [u'es:Anexo:Monumentos de Nuevo León', ],
+'oaxaca': [u'es:Anexo:Monumentos de Oaxaca', ],
+'puebla': [u'es:Anexo:Monumentos de Puebla', ],
+
+}
+
 """
 <?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
@@ -320,7 +349,7 @@ anexos['canada'] = {
  | imagen = 
 }}
 """
-regexp = { 'spain': {}, 'chile': {}, 'argentina': {}, 'panama': {}, 'canada': {}, }
+regexp = { 'spain': {}, 'chile': {}, 'argentina': {}, 'panama': {}, 'canada': {}, 'mexico': {}, }
 regexp['spain']['es'] = re.compile(ur"""(?im)\{\{\s*fila (BIC|BIC 2)\s*(\|\s*(nombre\s*=\s*(?P<nombre>[^=}]*?)|nombrecoor\s*=\s*(?P<nombrecoor>[^=}]*?)|tipobic\s*=\s*(?P<tipobic>[^=}]*?)|tipo\s*=\s*(?P<tipo>[^=}]*?)|municipio\s*=\s*(?P<municipio>[^=}]*?)|lugar\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)|bic\s*=\s*(?P<bic>[^=}]*?)|id[_ ]aut\s*=\s*(?P<id_aut>[^=}]*?)|fecha\s*=\s*(?P<fecha>[^=}]*?)|imagen\s*=\s*(?P<imagen>[^=}]*?))\s*)+\s*\|*\s*\}\}""")
 
 """
@@ -439,6 +468,25 @@ regexp['panama']['es'] = re.compile(ur"""(?im)\{\{\s*Fila PCN\s*(\|\s*(nombre\s*
 """
 regexp['canada']['en'] = re.compile(ur"""(?im)\{\{\s*HPC row\s*(\|\s*(name\s*=\s*(?P<name>[^=}]*?)|municipality\s*=\s*(?P<municipio>[^=}]*?)|address\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\,\-\+]*?)|lon\s*=\s*(?P<lon>[0-9\.\,\-\+]*?)|image\s*=\s*(?P<imagen>[^=}]*?)|pc\s*=\s*([^=}]*?)|idf\s*=\s*([^=}]*?)|idp\s*=\s*([^=}]*?)|idm\s*=\s*([^=}]*?)|provinceId\s*=\s*([^=}]*?)\s*)\s*)+\s*\|*\s*\}\}(?P<bic>)""") #uso name como bic id ...
 
+#Mexico http://es.wikipedia.org/wiki/Especial:LoQueEnlazaAqu%C3%AD/Plantilla:MonumentoM%C3%A9xico
+"""
+{{MonumentoMéxico
+| id = ZA-084
+| monumento = Teotihuacan
+| monumento_enlace = Teotihuacan
+| monumento_categoría = Teotihuacan
+| monumento_desc = Edificio principal y algunos adjuntos
+| municipio = [[San Juan Teotihuacan]]
+| localidad = [[Teotihuacan de Arista]]
+| lat = 19.692052
+| long = -98.846226
+| dirección = A 45 kilómetros de la Ciudad de México
+| imagen = SSA41434.JPG
+| tipo = 
+}} 
+"""
+regexp['mexico']['es'] = re.compile(ur"""(?im)\{\{\s*MonumentoMéxico\s*(\|\s*(monumento\s*=\s*(?P<nombre>[^=}]*?)|municipio\s*=\s*(?P<municipio>[^=}]*?)|direcci[óo]n\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|long?\s*=\s*(?P<lon>[0-9\.\-\+]*?)|id\s*=\s*(?P<bic>[^=}]*?)|imagen\s*=\s*(?P<imagen>[^=}]*?)|localidad\s*=\s*([^=}]*?)|tipo\s*=\s*([^=}]*?)|monumento[_ ]desc\s*=\s*([^=}]*?)|monumento[_ ]categor[íi]a\s*=\s*([^=}]*?)|monumento[_ ]enlace\s*=\s*([^=}]*?)\s*)\s*)+\s*\|*\s*\}\}""")
+
 #main index
 output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
@@ -467,7 +515,7 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 
 <br/>
 <big><big><big><b><a href="spain/">España</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
-<big><big><big><b>México</b> &nbsp;&nbsp;&nbsp;</big></big></big>
+<big><big><big><b><a href="mexico/">México</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
 <big><big><big><b><a href="panama/">Panamá</a></b></big></big></big>
 
 <br/><br/>
@@ -478,13 +526,15 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 </body>
 </html>
 """
-f = open('/home/emijrp/public_html/wlm/index.php', 'w')
+f = open('%s/index.php' % (path), 'w')
 f.write(output.encode('utf-8'))
 f.close()
 
 time.sleep(10)
 #indexes by country
-for country in ['argentina', 'chile', 'panama', 'spain']: #'canada', 'mexico', 'colombia'
+for country in ['mexico']: #['argentina', 'chile', 'panama', 'spain']: #'canada', 'mexico', 'colombia'
+    if not os.path.exists('%s/%s/' % (path, country)):
+        os.makedirs('%s/%s/' % (path, country))
     missingcoordinates = 0
     missingimages = 0
     total = 0
@@ -496,7 +546,7 @@ for country in ['argentina', 'chile', 'panama', 'spain']: #'canada', 'mexico', '
         if not errors.has_key(anexoid):
             errors[anexoid] = u'&nbsp;'
         for anexo in anexolist:
-            print anexo #da problemas cuando se ejecuta con cron
+            wikipedia.output(anexo) #da problemas cuando se ejecuta con cron
             lang = anexo.split(':')[0]
             s = wikipedia.Site(lang, lang == 'commons' and 'commons' or 'wikipedia')
             wtitle = ':'.join(anexo.split(':')[1:])
@@ -619,7 +669,7 @@ for country in ['argentina', 'chile', 'panama', 'spain']: #'canada', 'mexico', '
         </Document>
     </kml>"""
 
-        f = open('/home/emijrp/public_html/wlm/%s/wlm-%s.kml' % (country, anexoid), 'w')
+        f = open('%s/%s/wlm-%s.kml' % (path, country, anexoid), 'w')
         f.write(output.encode('utf-8'))
         f.close()
         
@@ -693,7 +743,7 @@ for country in ['argentina', 'chile', 'panama', 'spain']: #'canada', 'mexico', '
     </textarea>
     """ % (props['nombre'], props['nombre'], props['nombre'], bic_, bic_, name_, name_, props['imagen'], props['lat'], props['lon'], municipio_, name_, fecha_, bic_, name_, name_, municipio_, fecha_)
         output += u"""</body></html>"""
-        f = open('/home/emijrp/public_html/wlm/%s/helper-%s.html' % (country, anexoid), 'w')
+        f = open('%s/%s/helper-%s.html' % (path, country, anexoid), 'w')
         f.write(output.encode('utf-8'))
         f.close()
         #beta, end enwp: article creator helper
@@ -837,6 +887,6 @@ for country in ['argentina', 'chile', 'panama', 'spain']: #'canada', 'mexico', '
     </html>
     """ % (', '.join(['"%s"' % (i) for i in anexoskeys]), capital[country], wmurls[country], wmlogourls[country], wlmurls[country], total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, wlmurls[country], ', '.join(['<a href="index.php?place=%s">%s</a>' % (i, placenamesconvert(i)) for i in anexoskeys]), country, tablestats, tableuserstats, datetime.datetime.now())
 
-    f = open('/home/emijrp/public_html/wlm/%s/index.php' % (country), 'w')
+    f = open('%s/%s/index.php' % (path, country), 'w')
     f.write(output.encode('utf-8'))
     f.close()
