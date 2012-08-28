@@ -40,6 +40,7 @@ def removerefs(t):
     t = re.sub(ur"(?im)\{\{\s*(?!(fila[_ ]BIC|Fila[_ ]BIC[_ ]2|BIC|filera[_ ]BIC|filera[_ ]BCIN|filera[_ ]BIC[_ ]Val|filera[_ ]IPA|MonumentoChile|MonumentoArgentina|Fila[_ ]PCN|HPC[_ ]row|MonumentoMéxico))\s*\|[^{}]*?\}\}", ur"", t) #remove templates
     t = re.sub(ur"(?im)<\s*ref[^<>]*?\s*>[^<>]*?<\s*/\s*ref\s*>", ur"", t) # <ref></ref> <ref name=""></ref>
     t = re.sub(ur"(?im)<\s*ref\s+name[^<>]+?\s*/\s*>", ur"", t) # <ref name="" />
+    t = re.sub(ur"(?im)<!--.*?-->", ur"", t) # <!-- html comments -->
     return t
 
 def colors(percent):
