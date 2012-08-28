@@ -389,28 +389,30 @@ regexp['spain']['gl'] = re.compile(ur"""(?im)\{\{\s*BIC\s*(\|\s*(nomeoficial\s*=
 
 """
 {{filera BIC
- | nom = [[Murades d'Eivissa|Antigues murades]] i Torre del Campanar
- | nomcoor = Antigues murades i Torre del Campanar (Eivissa)
- | tipus = Arquitectura militar
- | municipi = [[Eivissa (municipi)|Eivissa]]
- | lloc = Dalt Vila
- | lat = 38.908252 | lon = 1.436645
- | bic = RI-51-0001114
- | imatge = EIVISSA 03 (1590948910).jpg
+ | nom = 
+ | nomcoor = 
+ | tipus = 
+ | prot = 
+ | municipi = 
+ | lloc = 
+ | lat =  | lon = 
+ | idurl = 
+ | bic = 
+ | imatge = 
 }}
 
 {{filera BCIN
- | nom = [[Palau dels Barons de Pinós|El Palau]] <br/>''Castell de Bagà''
- | nomcoor = El Palau (Bagà)
- | estil = Obra popular, barroc
- | època = XIII / XVIII
- | municipi = [[Bagà]]
- | lloc = Pujada del Palau, 7
- | lat = 42.253394 | lon = 1.861108
- | idurl = 576
- | prot = BCIN
- | bcin = 497-MH
- | bic = RI-51-0005193
+ | nom = 
+ | nomcoor = 
+ | estil = 
+ | època = 
+ | municipi = 
+ | lloc = 
+ | lat =  | lon = 
+ | idurl = 
+ | prot = 
+ | bic = 
+ | bcin = 
  | imatge = 
 }}
 """
@@ -525,6 +527,7 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 <br/>
 
 <big><big><big><b><a href="argentina/">Argentina</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
+<big><big><big><b><a href="belarus/">Белару́сь</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
 <big><big><big><b>Canada</b> &nbsp;&nbsp;&nbsp;</big></big></big>
 <big><big><big><b><a href="chile/">Chile</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
 <big><big><big><b>Colombia</b> &nbsp;&nbsp;&nbsp;</big></big></big>
@@ -548,7 +551,7 @@ f.close()
 
 time.sleep(10)
 #indexes by country
-for country in ['mexico']: #['argentina', 'chile', 'panama', 'spain']: #'canada', 'mexico', 'colombia'
+for country in ['spain']: #['argentina', 'chile', 'panama', 'spain']: #'canada', 'mexico', 'colombia'
     if not os.path.exists('%s/%s/' % (path, country)):
         os.makedirs('%s/%s/' % (path, country))
     missingcoordinates = 0
@@ -572,11 +575,9 @@ for country in ['mexico']: #['argentina', 'chile', 'panama', 'spain']: #'canada'
             wtext = p.get()
             wtext = removerefs(wtext)
             
-            m = ''
-            if lang in ['commons', 'es', 'gl', 'ca']:
-                if lang not in ['commons', 'es']: #temporal skip while fix ca: lists or ca regexp...
-                    continue
-                m = regexp[country][lang].finditer(wtext)
+            if lang not in ['ca']: #'commons', 'es']: #temporal skip while fix ca: lists or ca regexp...
+                continue
+            m = regexp[country][lang].finditer(wtext)
             if m:
                 for i in m:
                     #print 1
@@ -886,7 +887,7 @@ for country in ['mexico']: #['argentina', 'chile', 'panama', 'spain']: #'canada'
     <center>
 
     <!-- div show/hide -->
-    <b>Otros mapas:</b> <a href="../argentina">Argentina</a> - <a href="../chile">Chile</a> - <a href="../spain">España</a> - <a href="../mexico">México</a> - <a href="../panama">Panamá</a> | [<a href="javascript:showHide('table-stats')">Mostrar/Ocultar estadísticas</a>]
+    <b>Otros mapas:</b> <a href="../argentina">Argentina</a> - <a href="../belarus">Белару́сь</a> - <a href="../chile">Chile</a> - <a href="../spain">España</a> - <a href="../mexico">México</a> - <a href="../panama">Panamá</a> | [<a href="javascript:showHide('table-stats')">Mostrar/Ocultar estadísticas</a>]
     <div id="table-stats" style="display: none;">
 
     <table border=0>
