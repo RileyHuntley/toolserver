@@ -516,7 +516,6 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 <body style="background-color: lightblue;">
 <br/>
 <br/>
-<br/>
 <center>
 <img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/300px-LUSITANA_WLM_2011_d.svg.png" />
 <br/>
