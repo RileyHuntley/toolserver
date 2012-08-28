@@ -187,7 +187,7 @@ anexos['spain'] = {
 
     'lleida': [u"ca:Llista de monuments de l'Alt Urgell", u"ca:Llista de monuments de l'Alta Ribagorça", u"ca:Llista de monuments de la Baixa Cerdanya", u"ca:Llista de monuments de les Garrigues", u"ca:Llista de monuments de la Noguera", u"ca:Llista de monuments del Pallars Jussà", u"ca:Llista de monuments del Pallars Sobirà", u"ca:Llista de monuments del Pla d'Urgell", u"ca:Llista de monuments de la Segarra", u"ca:Llista de monuments del Segrià", u"ca:Llista de monuments del Solsonès", u"ca:Llista de monuments de l'Urgell", u"ca:Llista de monuments de la Vall d'Aran", ],
 
-    'tarragona': [u"ca:Llista de monuments de l'Alt Camp", u"ca:Llista de monuments del Baix Camp", u"ca:Llista de monuments del Baix Ebre", u"ca:Llista de monuments del Baix Penedès", u"ca:Llista de monuments de la Conca de Barberà", u"ca:Llista de monuments del Montsià", u"ca:Llista de monuments del Priorat", u"ca:Llista de monuments de la Ribera d'Ebre", u"ca:Llista de monuments del Tarragonès", u"ca:Llista de monuments de la Terra Alta",  ],
+    'tarragona': [u"ca:Llista de monuments de l'Alt Camp", u"ca:Llista de monuments del Baix Camp", u"ca:Llista de monuments del Baix Ebre", u"ca:Llista de monuments del Baix Penedès", u"ca:Llista de monuments de la Conca de Barberà", u"ca:Llista de monuments del Montsià", u"ca:Llista de monuments del Priorat", u"ca:Llista de monuments de la Ribera d'Ebre", u"ca:Llista de monuments de la Terra Alta",  ], #u"ca:Llista de monuments del Tarragonès",
 
 'ceuta': [u'es:Anexo:Bienes de interés cultural de Ceuta', ],
 'ciudadreal': [u'es:Anexo:Bienes de interés cultural de la provincia de Ciudad Real', ],
