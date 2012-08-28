@@ -132,6 +132,19 @@ placenames = {
 'panama': u"Panamá", 
 
 #canada
+'alberta': u"Alberta",
+'britishcolumbia': u"British Columbia",
+'manitoba': u"Manitoba",
+'newbrunswick': u"ew Brunswick",
+'newfoundlandandlabrador': u"Newfoundland and Labrador",
+'novascotia': u"Nova Scotia",
+'ontario': u"Ontario",
+'princeedwardisland': u"Prince Edward Island",
+'quebec': u"Quebec",
+'saskatchewan': u"Saskatchewan",
+'northwestterritories': u"Northwest Territories",
+'nunavut': u"Nunavut",
+'yukon': u"Yukon",
 
 #mexico
 'aguascalientes': u"Aguascalientes",
@@ -568,7 +581,7 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 
 <big><big><big><b><a href="argentina/">Argentina</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
 <big><big><big><b>Белару́сь</b> &nbsp;&nbsp;&nbsp;</big></big></big>
-<big><big><big><b>Canada</b> &nbsp;&nbsp;&nbsp;</big></big></big>
+<big><big><big><b><a href="canada/">Canada</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
 <big><big><big><b><a href="chile/">Chile</a></b></big></big></big>
 
 <br/>
@@ -626,7 +639,7 @@ for country in ['canada']:# ['argentina', 'chile', 'panama', 'mexico', 'spain', 
                         #excluding bad coordinates in 0, 0
                         lat = re.sub(ur'[,]', ur'.', i.group('lat').strip())
                         lon = re.sub(ur'[,]', ur'.', i.group('lon').strip())
-                        if (lat.startswith('0.') and lon.startswith('0.')) or (lat == 0 and lon == 0):
+                        if (lat.startswith('0.') and lon.startswith('0.')) or (lat == '0' and lon == '0'):
                             raise
                         
                         bic = i.group('bic').strip()
