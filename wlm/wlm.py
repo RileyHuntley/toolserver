@@ -400,7 +400,6 @@ regexp['spain']['gl'] = re.compile(ur"""(?im)\{\{\s*BIC\s*(\|\s*(nomeoficial\s*=
  | bic = 
  | imatge = 
 }}
-
 {{filera BCIN
  | nom = 
  | nomcoor = 
@@ -415,8 +414,22 @@ regexp['spain']['gl'] = re.compile(ur"""(?im)\{\{\s*BIC\s*(\|\s*(nomeoficial\s*=
  | bcin = 
  | imatge = 
 }}
+{{filera BIC Val
+ | nom = 
+ | nomcoor = 
+ | estil = 
+ | època = 
+ | municipi = 
+ | lloc = 
+ | lat =  | lon = 
+ | idurl = 
+ | prot = 
+ | bic = 
+ | imatge = 
+ | commonscat = 
+}}
 """
-regexp['spain']['ca'] = re.compile(ur"""(?im)\{\{\s*filera (BIC|BCIN|BIC Val)\s*(\|\s*(nom\s*=\s*(?P<nombre>[^=}]*?)|nomcoor\s*=\s*(?P<nombrecoor>[^=}]*?)|tipus\s*=\s*(?P<tipobic>[^=}]*?)|estil\s*=\s*([^=}]*?)|època\s*=\s*([^=}]*?)|municipi\s*=\s*(?P<municipio>[^=}]*?)|lloc\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)|idurl\s*=\s*([^=}]*?)|prot\s*=\s*([^=}]*?)|bcin\s*=\s*([^=}]*?)|bic\s*=\s*(?P<bic>[^=}]*?)|fecha\s*=\s*(?P<fecha>[^=}]*?)|imatge\s*=\s*(?P<imagen>[^=}]*?)\s*)\s*)+\s*\|*\s*\}\}""")
+regexp['spain']['ca'] = re.compile(ur"""(?im)\{\{\s*filera (BIC|BCIN|BIC Val)\s*(\|\s*(nom\s*=\s*(?P<nombre>[^=}]*?)|nomcoor\s*=\s*(?P<nombrecoor>[^=}]*?)|tipus\s*=\s*(?P<tipobic>[^=}]*?)|estil\s*=\s*([^=}]*?)|època\s*=\s*([^=}]*?)|municipi\s*=\s*(?P<municipio>[^=}]*?)|lloc\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)|idurl\s*=\s*([^=}]*?)|prot\s*=\s*([^=}]*?)|commonscat\s*=\s*([^=}]*?)|bcin\s*=\s*([^=}]*?)|bic\s*=\s*(?P<bic>[^=}]*?)|fecha\s*=\s*(?P<fecha>[^=}]*?)|imatge\s*=\s*(?P<imagen>[^=}]*?)\s*)\s*)+\s*\|*\s*\}\}""")
 
 #Chile http://commons.wikimedia.org/wiki/Commons:Lists_of_South_American_Monuments/Chile
 """
