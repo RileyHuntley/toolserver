@@ -135,7 +135,7 @@ placenames = {
 'alberta': u"Alberta",
 'britishcolumbia': u"British Columbia",
 'manitoba': u"Manitoba",
-'newbrunswick': u"ew Brunswick",
+'newbrunswick': u"New Brunswick",
 'newfoundlandandlabrador': u"Newfoundland and Labrador",
 'novascotia': u"Nova Scotia",
 'ontario': u"Ontario",
@@ -948,7 +948,7 @@ for country in ['canada']:# ['argentina', 'chile', 'panama', 'mexico', 'spain', 
     <center>
 
     <!-- div show/hide -->
-    <b>Otros mapas:</b> <a href="../argentina">Argentina</a> - <a href="../belarus">Белару́сь</a> - <a href="../chile">Chile</a> - <a href="../spain">España</a> - <a href="../mexico">México</a> - <a href="../panama">Panamá</a> | [<a href="javascript:showHide('table-stats')">Mostrar/Ocultar estadísticas</a>]
+    <b>Otros mapas:</b> <a href="../argentina">Argentina</a> - <a href="../belarus">Белару́сь</a> - <a href="../canada">Canada</a> - <a href="../chile">Chile</a> - <a href="../spain">España</a> - <a href="../mexico">México</a> - <a href="../panama">Panamá</a> | [<a href="javascript:showHide('table-stats')">Mostrar/Ocultar estadísticas</a>]
     <div id="table-stats" style="display: none;">
 
     <table border=0>
