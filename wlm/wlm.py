@@ -37,7 +37,7 @@ def clean(t):
     return t
 
 def removerefs(t):
-    t = re.sub(ur"(?im)\{\{\s*(?!(fila (BIC|BIC 2)|BIC|filera (BIC|BCIN|BIC Val)))\s*\|[^{}]*?\}\}", ur"", t)
+    t = re.sub(ur"(?im)\{\{\s*(?!(fila[_ ]BIC|Fila[_ ]BIC[_ ]2|BIC|filera[_ ]BIC|filera[_ ]BCIN|filera[_ ]BIC[_ ]Val|filera[_ ]IPA|MonumentoChile|MonumentoArgentina|Fila[_ ]PCN|HPC[_ ]row|MonumentoMéxico))\s*\|[^{}]*?\}\}", ur"", t) #remove templates
     t = re.sub(ur"(?im)<\s*ref[^<>]*?\s*>[^<>]*?<\s*/\s*ref\s*>", ur"", t) # <ref></ref> <ref name=""></ref>
     t = re.sub(ur"(?im)<\s*ref\s+name[^<>]+?\s*/\s*>", ur"", t) # <ref name="" />
     return t
@@ -444,7 +444,7 @@ regexp['spain']['gl'] = re.compile(ur"""(?im)\{\{\s*BIC\s*(\|\s*(nomeoficial\s*=
  | imatge = 
 }}
 """
-regexp['spain']['ca'] = re.compile(ur"""(?im)\{\{\s*filera (BIC|BCIN|BIC Val|IPA)\s*(\|\s*(nom\s*=\s*(?P<nombre>[^=}]*?)|nomcoor\s*=\s*(?P<nombrecoor>[^=}]*?)|tipus\s*=\s*(?P<tipobic>[^=}]*?)|estil\s*=\s*([^=}]*?)|època\s*=\s*([^=}]*?)|municipi\s*=\s*(?P<municipio>[^=}]*?)|lloc\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)|idurl\s*=\s*([^=}]*?)|idurl2\s*=\s*([^=}]*?)|prot\s*=\s*([^=}]*?)|idprot\s*=\s*([^=}]*?)|commonscat\s*=\s*([^=}]*?)|bcin\s*=\s*([^=}]*?)|(bic|id)\s*=\s*(?P<bic>[^=}]*?)|fecha\s*=\s*(?P<fecha>[^=}]*?)|imatge\s*=\s*(?P<imagen>[^=}]*?)\s*)\s*)+\s*\|*\s*\}\}""")
+regexp['spain']['ca'] = re.compile(ur"""(?im)\{\{\s*filera[_ ](BIC|BCIN|BIC Val|IPA)\s*(\|\s*(nom\s*=\s*(?P<nombre>[^=}]*?)|nomcoor\s*=\s*(?P<nombrecoor>[^=}]*?)|tipus\s*=\s*(?P<tipobic>[^=}]*?)|estil\s*=\s*([^=}]*?)|època\s*=\s*([^=}]*?)|municipi\s*=\s*(?P<municipio>[^=}]*?)|lloc\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)|idurl\s*=\s*([^=}]*?)|idurl2\s*=\s*([^=}]*?)|prot\s*=\s*([^=}]*?)|idprot\s*=\s*([^=}]*?)|commonscat\s*=\s*([^=}]*?)|bcin\s*=\s*([^=}]*?)|(bic|id)\s*=\s*(?P<bic>[^=}]*?)|fecha\s*=\s*(?P<fecha>[^=}]*?)|imatge\s*=\s*(?P<imagen>[^=}]*?)\s*)\s*)+\s*\|*\s*\}\}""")
 
 #Chile http://commons.wikimedia.org/wiki/Commons:Lists_of_South_American_Monuments/Chile
 """
@@ -601,8 +601,8 @@ for country in ['spain']: #['argentina', 'chile', 'panama', 'spain']: #'canada',
             wtext = p.get()
             wtext = removerefs(wtext)
             
-            if lang not in ['ca']: #'commons', 'es']: #temporal skip while fix ca: lists or ca regexp...
-                continue
+            #if lang not in ['es']: #'commons', 'es']: #temporal skip while fix ca: lists or ca regexp...
+            #    continue
             m = regexp[country][lang].finditer(wtext)
             if m:
                 for i in m:
@@ -924,7 +924,7 @@ for country in ['spain']: #['argentina', 'chile', 'panama', 'spain']: #'canada',
     </div>
 
     </center>
-    <i>Actualizado por última vez: %s (UTC). Desarrollado por <a href="http://toolserver.org/~emijrp/">emijrp</a>.</i>
+    <i>Actualizado por última vez: %s (UTC). Desarrollado por <a href="http://toolserver.org/~emijrp/">emijrp</a>. Visitas totales: <?php include ("../../visits.php"); ?></i>
     <br/>
     </td>
     </tr>
