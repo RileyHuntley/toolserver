@@ -63,7 +63,7 @@ wlmurls = { 'spain': 'http://www.wikilm.es', 'chile': 'http://www.wikilovesmonum
 
 uploadcats = { 'spain': 'Images from Wiki Loves Monuments 2012 in Spain', 'chile': 'Images from Wiki Loves Monuments 2012 in Chile', 'argentina': 'Images from Wiki Loves Monuments 2012 in Argentina', 'panama': 'Images from Wiki Loves Monuments 2012 in Panama', 'canada': 'Images from Wiki Loves Monuments 2012 in Canada', 'mexico': 'Images from Wiki Loves Monuments 2012 in Mexico'}
 
-capital = { 'spain': 'madrid', 'chile': 'santiago', 'argentina': 'buenosaires', 'panama': 'panama', 'canada': 'ontario', 'mexico': 'mexicodf' } #where is the capital?
+capital = { 'spain': 'madrid', 'chile': 'santiago', 'argentina': 'buenosaires', 'panama': 'panama', 'canada': 'ontario', 'mexico': 'df' } #where is the capital?
 
 placenames = {
 
@@ -870,7 +870,7 @@ for country in ['mexico']: #['argentina', 'chile', 'panama', 'spain']: #'canada'
     <center>
 
     <!-- div show/hide -->
-    <b>Otros mapas:</b> <a href="../argentina">Argentina</a> - <a href="../chile">Chile</a> - <a href="../spain">España</a> - <a href="../panama">Panamá</a> | [<a href="javascript:showHide('table-stats')">Mostrar/Ocultar estadísticas</a>]
+    <b>Otros mapas:</b> <a href="../argentina">Argentina</a> - <a href="../chile">Chile</a> - <a href="../spain">España</a> - <a href="../mexico">México</a> - <a href="../panama">Panamá</a> | [<a href="javascript:showHide('table-stats')">Mostrar/Ocultar estadísticas</a>]
     <div id="table-stats" style="display: none;">
 
     <table border=0>
