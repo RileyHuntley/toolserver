@@ -536,37 +536,35 @@ regexp['mexico']['es'] = re.compile(ur"""(?im)\{\{\s*MonumentoMéxico\s*(\|\s*(m
 
 #main index
 output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-    <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-    <title>Wiki Loves Monuments</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta http-equiv="Content-Style-Type" content="text/css" />
+<html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Wiki Loves Monuments</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
 </head>
 
-<body style="background-color: lightblue;">
+<body style="background-color: white;">
 <br/>
 <br/>
 <center>
 <img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/300px-LUSITANA_WLM_2011_d.svg.png" />
 <br/>
 <br/>
-<b>Del 1 al 30 de septiembre de 2012</b>
-<br/>
 <br/>
 
 <big><big><big><b><a href="argentina/">Argentina</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
-<big><big><big><b><a href="belarus/">Белару́сь</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
+<big><big><big><b>Белару́сь</b> &nbsp;&nbsp;&nbsp;</big></big></big>
 <big><big><big><b>Canada</b> &nbsp;&nbsp;&nbsp;</big></big></big>
-<big><big><big><b><a href="chile/">Chile</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
-<big><big><big><b>Colombia</b> &nbsp;&nbsp;&nbsp;</big></big></big>
+<big><big><big><b><a href="chile/">Chile</a></b></big></big></big>
 
 <br/>
+<big><big><big><b>Colombia</b> &nbsp;&nbsp;&nbsp;</big></big></big>
 <big><big><big><b><a href="spain/">España</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
 <big><big><big><b><a href="mexico/">México</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
 <big><big><big><b><a href="panama/">Panamá</a></b></big></big></big>
 
 <br/><br/>
-<a href="http://en.wikipedia.org/wiki/User_talk:Emijrp">Request a map</a> · <a href="http://en.wikipedia.org/wiki/Wikipedia:There_is_a_deadline">There is a deadline</a>
+<a href="http://en.wikipedia.org/wiki/User_talk:Emijrp">Request a map</a> <b>·</b> <a href="http://en.wikipedia.org/wiki/Wikipedia:There_is_a_deadline">There is a deadline</a>
 
 </center>
 
