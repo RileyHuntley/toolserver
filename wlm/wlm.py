@@ -535,7 +535,7 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 <big><big><big><b><a href="panama/">Panamá</a></b></big></big></big>
 
 <br/><br/>
-<a href="http://en.wikipedia.org/wiki/User_talk:Emijrp">Request a map</a>
+<a href="http://en.wikipedia.org/wiki/User_talk:Emijrp">Request a map</a> · <a href="http://en.wikipedia.org/wiki/Wikipedia:There_is_a_deadline">There is a deadline</a>
 
 </center>
 
