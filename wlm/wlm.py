@@ -57,15 +57,15 @@ def colors(percent):
     return 'white'
 
 path = '/home/emijrp/public_html/wlm'
-wmurls = { 'spain': 'http://www.wikimedia.org.es', 'chile': 'http://www.wikimediachile.cl', 'argentina': 'http://www.wikimedia.org.ar', 'panama': 'http://wlmpanama.org.pa', 'canada': 'http://wikimedia.ca', 'mexico': 'http://mx.wikimedia.org' }
+wmurls = { 'spain': 'http://www.wikimedia.org.es', 'chile': 'http://www.wikimediachile.cl', 'argentina': 'http://www.wikimedia.org.ar', 'panama': 'http://wlmpanama.org.pa', 'canada': 'http://wikimedia.ca', 'mexico': 'http://mx.wikimedia.org', 'belarus': 'http://wikimedia.by' }
 #generic logo http://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/80px-Wikimedia-logo.svg.png
-wmlogourls = { 'spain': 'http://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Wikimedia-es-logo.svg/80px-Wikimedia-es-logo.svg.png', 'chile': 'http://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Wikimedia_Chile_logo.svg/80px-Wikimedia_Chile_logo.svg.png', 'argentina': 'http://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Wikimedia_Argentina_logo.svg/80px-Wikimedia_Argentina_logo.svg.png', 'panama': 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/80px-Wikimedia-logo.svg.png', 'canada': 'http://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Wikimedia_Canada_logo.svg/80px-Wikimedia_Canada_logo.svg.png', 'mexico': 'http://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Wikimedia_Mexico.svg/80px-Wikimedia_Mexico.svg.png' }
-wlmurls = { 'spain': 'http://www.wikilm.es', 'chile': 'http://www.wikilovesmonuments.cl', 'argentina': 'http://wikilovesmonuments.com.ar', 'panama': 'http://wlmpanama.org.pa', 'canada': 'http://wikimedia.ca/wiki/Wiki_Loves_Monuments_2012_in_Canada', 'mexico': 'http://wikilovesmonuments.mx' }
+wmlogourls = { 'spain': 'http://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Wikimedia-es-logo.svg/80px-Wikimedia-es-logo.svg.png', 'chile': 'http://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Wikimedia_Chile_logo.svg/80px-Wikimedia_Chile_logo.svg.png', 'argentina': 'http://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Wikimedia_Argentina_logo.svg/80px-Wikimedia_Argentina_logo.svg.png', 'panama': 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/80px-Wikimedia-logo.svg.png', 'canada': 'http://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Wikimedia_Canada_logo.svg/80px-Wikimedia_Canada_logo.svg.png', 'mexico': 'http://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Wikimedia_Mexico.svg/80px-Wikimedia_Mexico.svg.png', 'belarus': 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/80px-Wikimedia-logo.svg.png', }
+wlmurls = { 'spain': 'http://www.wikilm.es', 'chile': 'http://www.wikilovesmonuments.cl', 'argentina': 'http://wikilovesmonuments.com.ar', 'panama': 'http://wlmpanama.org.pa', 'canada': 'http://wikimedia.ca/wiki/Wiki_Loves_Monuments_2012_in_Canada', 'mexico': 'http://wikilovesmonuments.mx', 'belarus': 'http://wikilovesmonuments.by' }
 
-uploadcats = { 'spain': 'Images from Wiki Loves Monuments 2012 in Spain', 'chile': 'Images from Wiki Loves Monuments 2012 in Chile', 'argentina': 'Images from Wiki Loves Monuments 2012 in Argentina', 'panama': 'Images from Wiki Loves Monuments 2012 in Panama', 'canada': 'Images from Wiki Loves Monuments 2012 in Canada', 'mexico': 'Images from Wiki Loves Monuments 2012 in Mexico'}
-campaigns = { 'spain': 'wlm-es', 'chile': 'wlm-cl', 'argentina': 'wlm-ar', 'panama': 'wlm-pa', 'canada': 'wlm-ca', 'mexico': 'wlm-mx', }
+uploadcats = { 'spain': 'Images from Wiki Loves Monuments 2012 in Spain', 'chile': 'Images from Wiki Loves Monuments 2012 in Chile', 'argentina': 'Images from Wiki Loves Monuments 2012 in Argentina', 'panama': 'Images from Wiki Loves Monuments 2012 in Panama', 'canada': 'Images from Wiki Loves Monuments 2012 in Canada', 'mexico': 'Images from Wiki Loves Monuments 2012 in Mexico', 'belarus': 'Images from Wiki Loves Monuments 2012 in Belarus'}
+campaigns = { 'spain': 'wlm-es', 'chile': 'wlm-cl', 'argentina': 'wlm-ar', 'panama': 'wlm-pa', 'canada': 'wlm-ca', 'mexico': 'wlm-mx', 'belarus': 'wlm-by', }
 
-capital = { 'spain': 'madrid', 'chile': 'santiago', 'argentina': 'buenosaires', 'panama': 'panama', 'canada': 'ontario', 'mexico': 'df' } #where is the capital?
+capital = { 'spain': 'madrid', 'chile': 'santiago', 'argentina': 'buenosaires', 'panama': 'panama', 'canada': 'ontario', 'mexico': 'df', 'belarus': u'Берасьцейшчына', } #where is the capital?
 
 placenames = {
 
@@ -343,6 +343,11 @@ anexos['mexico'] = {
 
 }
 
+anexos['belarus'] = {
+u'Берасьцейшчына': [u'be-x-old:Вікіпэдыя:Праект:Вікі любіць славутасьці/Сьпісы славутасьцяў/Берасьцейшчына/Берасьце', u'be-x-old:Вікіпэдыя:Праект:Вікі любіць славутасьці/Сьпісы славутасьцяў/Берасьцейшчына/Баранавіччына', u'be-x-old:Вікіпэдыя:Праект:Вікі любіць славутасьці/Сьпісы славутасьцяў/Берасьцейшчына/Берасьцейшчына', u'be-x-old:Вікіпэдыя:Праект:Вікі любіць славутасьці/Сьпісы славутасьцяў/Берасьцейшчына/Бярозаўшчына', u'be-x-old:Вікіпэдыя:Праект:Вікі любіць славутасьці/Сьпісы славутасьцяў/Берасьцейшчына/Ганцавіччына', u'be-x-old:Вікіпэдыя:Праект:Вікі любіць славутасьці/Сьпісы славутасьцяў/Берасьцейшчына/Драгічыншчына', u'be-x-old:Вікіпэдыя:Праект:Вікі любіць славутасьці/Сьпісы славутасьцяў/Берасьцейшчына/Жабінкаўшчына', u'be-x-old:Вікіпэдыя:Праект:Вікі любіць славутасьці/Сьпісы славутасьцяў/Берасьцейшчына/Іванаўшчына', u'be-x-old:Вікіпэдыя:Праект:Вікі любіць славутасьці/Сьпісы славутасьцяў/Берасьцейшчына/Івацэвіччына', u'be-x-old:Вікіпэдыя:Праект:Вікі любіць славутасьці/Сьпісы славутасьцяў/Берасьцейшчына/Камянеччына', u'be-x-old:Вікіпэдыя:Праект:Вікі любіць славутасьці/Сьпісы славутасьцяў/Берасьцейшчына/Кобрыншчына', u'be-x-old:Вікіпэдыя:Праект:Вікі любіць славутасьці/Сьпісы славутасьцяў/Берасьцейшчына/Лунінеччына', u'be-x-old:Вікіпэдыя:Праект:Вікі любіць славутасьці/Сьпісы славутасьцяў/Берасьцейшчына/Ляхавіччына', u'be-x-old:Вікіпэдыя:Праект:Вікі любіць славутасьці/Сьпісы славутасьцяў/Берасьцейшчына/Маларыччына', u'be-x-old:Вікіпэдыя:Праект:Вікі любіць славутасьці/Сьпісы славутасьцяў/Берасьцейшчына/Піншчына', u'be-x-old:Вікіпэдыя:Праект:Вікі любіць славутасьці/Сьпісы славутасьцяў/Берасьцейшчына/Пружаншчына', u'be-x-old:Вікіпэдыя:Праект:Вікі любіць славутасьці/Сьпісы славутасьцяў/Берасьцейшчына/Століншчына', ],
+
+}
+
 """
 <?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
@@ -393,7 +398,7 @@ anexos['mexico'] = {
  | imagen = 
 }}
 """
-regexp = { 'spain': {}, 'chile': {}, 'argentina': {}, 'panama': {}, 'canada': {}, 'mexico': {}, }
+regexp = { 'spain': {}, 'chile': {}, 'argentina': {}, 'panama': {}, 'canada': {}, 'mexico': {}, 'belarus': {}}
 regexp['spain']['es'] = re.compile(ur"""(?im)\{\{\s*fila (BIC|BIC 2)\s*(\|\s*(nombre\s*=\s*(?P<nombre>[^=}]*?)|nombrecoor\s*=\s*(?P<nombrecoor>[^=}]*?)|tipobic\s*=\s*(?P<tipobic>[^=}]*?)|tipo\s*=\s*(?P<tipo>[^=}]*?)|municipio\s*=\s*(?P<municipio>[^=}]*?)|lugar\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)|bic\s*=\s*(?P<bic>[^=}]*?)|id[_ ]aut\s*=\s*(?P<id_aut>[^=}]*?)|fecha\s*=\s*(?P<fecha>[^=}]*?)|imagen\s*=\s*(?P<imagen>[^=}]*?))\s*)+\s*\|*\s*\}\}""")
 
 """
@@ -561,6 +566,22 @@ regexp['canada']['en'] = re.compile(ur"""(?im)\{\{\s*HPC[_ ]row\s*(\|\s*(name\s*
 """
 regexp['mexico']['es'] = re.compile(ur"""(?im)\{\{\s*MonumentoMéxico\s*(\|\s*(monumento\s*=\s*(?P<nombre>[^=}]*?)|municipio\s*=\s*(?P<municipio>[^=}]*?)|direcci[óo]n\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|long?\s*=\s*(?P<lon>[0-9\.\-\+]*?)|id\s*=\s*(?P<bic>[^=}]*?)|imagen\s*=\s*(?P<imagen>[^=}]*?)|localidad\s*=\s*([^=}]*?)|tipo\s*=\s*([^=}]*?)|monumento[_ ]desc\s*=\s*([^=}]*?)|monumento[_ ]categor[íi]a\s*=\s*([^=}]*?)|monumento[_ ]enlace\s*=\s*([^=}]*?)\s*)\s*)+\s*\|*\s*\}\}""")
 
+#Belarus http://be-x-old.wikipedia.org/wiki/%D0%92%D1%96%D0%BA%D1%96%D0%BF%D1%8D%D0%B4%D1%8B%D1%8F:%D0%9F%D1%80%D0%B0%D0%B5%D0%BA%D1%82:%D0%92%D1%96%D0%BA%D1%96_%D0%BB%D1%8E%D0%B1%D1%96%D1%86%D1%8C_%D1%81%D0%BB%D0%B0%D0%B2%D1%83%D1%82%D0%B0%D1%81%D1%8C%D1%86%D1%96/%D0%A1%D1%8C%D0%BF%D1%96%D1%81%D1%8B_%D1%81%D0%BB%D0%B0%D0%B2%D1%83%D1%82%D0%B0%D1%81%D1%8C%D1%86%D1%8F%D1%9E
+"""
+{{Вікі любіць славутасьці/Элемэнт сьпісу
+| шыфр           = 113Г000003
+| назва          = Будынак Берасьцейскай абласной філярмоніі
+| датаваньне     = 1901 год, 1930-я гады
+| населены пункт = г. [[Берасьце]]
+| адрэса         = вул. Арджанікідзэ, 14
+| катэгорыя      = 3
+| шырата         = 52.098511
+| даўгата        = 23.684496
+| выява          = 
+}}
+"""
+regexp['belarus']['be-x-old'] = re.compile(ur"""(?im)\{\{\s*Вікі любіць славутасьці/Элемэнт сьпісу\s*(\|\s*(назва\s*=\s*(?P<nombre>[^=}]*?)|населены пункт\s*=\s*(?P<municipio>[^=}]*?)|адрэса\s*=(?P<lugar>[^=}]*?)|шырата\s*=\s*(?P<lat>[0-9\.\-\+]*?)|даўгата\s*=\s*(?P<lon>[0-9\.\-\+]*?)|шыфр\s*=\s*(?P<bic>[^=}]*?)|выява\s*=\s*(?P<imagen>[^=}]*?)|датаваньне\s*=\s*([^=}]*?)|катэгорыя\s*=\s*([^=}]*?)\s*)\s*)+\s*\|*\s*\}\}""")
+
 #main index
 output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
@@ -580,7 +601,7 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 <br/>
 
 <big><big><big><b><a href="argentina/">Argentina</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
-<big><big><big><b>Белару́сь</b> &nbsp;&nbsp;&nbsp;</big></big></big>
+<big><big><big><b><a href="belarus/">Белару́сь</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
 <big><big><big><b><a href="canada/">Canada</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
 <big><big><big><b><a href="chile/">Chile</a></b></big></big></big>
 
@@ -604,7 +625,7 @@ f.close()
 
 time.sleep(10)
 #indexes by country
-for country in ['canada']:# ['argentina', 'chile', 'panama', 'mexico', 'spain', ]: #'spain'
+for country in ['belarus']:# ['canada', 'argentina', 'chile', 'panama', 'mexico', 'spain', ]: #'spain'
     if not os.path.exists('%s/%s/' % (path, country)):
         os.makedirs('%s/%s/' % (path, country))
     missingcoordinates = 0
@@ -969,7 +990,7 @@ for country in ['canada']:# ['argentina', 'chile', 'panama', 'mexico', 'spain', 
     </body>
 
     </html>
-    """ % (', '.join(['"%s"' % (i) for i in anexoskeys]), capital[country], wmurls[country], wmlogourls[country], wlmurls[country], total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, wlmurls[country], ', '.join(['<a href="index.php?place=%s">%s</a>' % (i, placenamesconvert(i)) for i in anexoskeys]), country, tablestats, tableuserstats, datetime.datetime.now())
+    """ % (u', '.join([u'"%s"' % (i) for i in anexoskeys]), capital[country], wmurls[country], wmlogourls[country], wlmurls[country], total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, wlmurls[country], u', '.join([u'<a href="index.php?place=%s">%s</a>' % (i, placenamesconvert(i)) for i in anexoskeys]), country, tablestats, tableuserstats, datetime.datetime.now())
 
     f = open('%s/%s/index.php' % (path, country), 'w')
     f.write(output.encode('utf-8'))
