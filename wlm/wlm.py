@@ -165,6 +165,18 @@ placenames = {
 'nuevoleon': u"Nuevo León",
 'oaxaca': u"Oaxaca",
 'puebla': u"Puebla",
+'queretaro': u"Querétaro",
+'quintanaroo': u"Quintana Roo",
+'sanluispotosi': u"San Luis Potosí",
+'sinaloa': u"Sinaloa",
+'sonora': u"Sonora",
+'tabasco': u"Tabasco",
+'tamaulipas': u"Tamaulipas",
+'tlaxcala': u"Tlaxcala",
+'veracruz': u"Veracruz",
+'yucatan': u"Yucatán",
+'zacatecas': u"Zacatecas",
+
 
 }
 
@@ -340,6 +352,17 @@ anexos['mexico'] = {
 'nuevoleon': [u'es:Anexo:Monumentos de Nuevo León', ],
 'oaxaca': [u'es:Anexo:Monumentos de Oaxaca', ],
 'puebla': [u'es:Anexo:Monumentos de Puebla', ],
+'queretaro': [u'es:Anexo:Monumentos de Querétaro', ],
+'quintanaroo': [u'es:Anexo:Monumentos de Quintana Roo', ],
+'sanluispotosi': [u'es:Anexo:Monumentos de San Luis Potosí', ],
+'sinaloa': [u'es:Anexo:Monumentos de Sinaloa', ],
+'sonora': [u'es:Anexo:Monumentos de Sonora', ],
+'tabasco': [u'es:Anexo:Monumentos de Tabasco', ],
+'tamaulipas': [u'es:Anexo:Monumentos de Tamaulipas', ],
+'tlaxcala': [u'es:Anexo:Monumentos de Tlaxcala', ],
+'veracruz': [u'es:Anexo:Monumentos de Veracruz', ],
+'yucatan': [u'es:Anexo:Monumentos de Yucatán', ],
+'zacatecas': [u'es:Anexo:Monumentos de Zacatecas', ],
 
 }
 
@@ -628,7 +651,7 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 <big><big><big><b>Україна</b></big></big></big>
 
 <br/><br/>
-<a href="http://en.wikipedia.org/wiki/User_talk:Emijrp">Request a map</a> <b>·</b> <a href="http://en.wikipedia.org/wiki/Wikipedia:There_is_a_deadline">There is a deadline</a>
+<a href="http://en.wikipedia.org/wiki/User_talk:Emijrp">Request a map</a>&nbsp;&nbsp;<b>·</b>&nbsp;&nbsp;<a href="http://en.wikipedia.org/wiki/Wikipedia:There_is_a_deadline">There <i>is</i> a deadline</a>
 
 </center>
 
