@@ -65,7 +65,7 @@ wlmurls = { 'spain': 'http://www.wikilm.es', 'chile': 'http://www.wikilovesmonum
 uploadcats = { 'spain': 'Images from Wiki Loves Monuments 2012 in Spain', 'chile': 'Images from Wiki Loves Monuments 2012 in Chile', 'argentina': 'Images from Wiki Loves Monuments 2012 in Argentina', 'panama': 'Images from Wiki Loves Monuments 2012 in Panama', 'canada': 'Images from Wiki Loves Monuments 2012 in Canada', 'mexico': 'Images from Wiki Loves Monuments 2012 in Mexico', 'belarus': 'Images from Wiki Loves Monuments 2012 in Belarus', 'poland': 'Images from Wiki Loves Monuments 2012 in Poland', 'ukraine': 'Images from Wiki Loves Monuments 2012 in Ukraine' }
 campaigns = { 'spain': 'wlm-es', 'chile': 'wlm-cl', 'argentina': 'wlm-ar', 'panama': 'wlm-pa', 'canada': 'wlm-ca', 'mexico': 'wlm-mx', 'belarus': 'wlm-by', 'poland': 'wlm-pl', 'ukraine': 'wlm-uk', }
 
-capital = { 'spain': 'madrid', 'chile': 'santiago', 'argentina': 'buenosaires', 'panama': 'panama', 'canada': 'ontario', 'mexico': 'df', 'belarus': u'Берасьцейшчына', 'poland': '', 'ukraine': '' } #where is the capital?
+capital = { 'spain': 'madrid', 'chile': 'santiago', 'argentina': 'buenosaires', 'panama': 'panama', 'canada': 'ontario', 'mexico': 'df', 'belarus': u'Менск', 'poland': '', 'ukraine': '' } #where is the capital?
 
 placenames = {
 
