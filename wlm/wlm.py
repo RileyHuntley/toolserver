@@ -764,10 +764,10 @@ for country in ['belarus']:# ['canada', 'argentina', 'chile', 'panama', 'mexico'
     <description>
     <![CDATA[
     <table border=0 cellspacing=3px cellpadding=3px>
-    <tr><td align=right width=80px style="background-color: lightgreen;"><b>BIC:</b></td><td><a href="%s" target="_blank">%s</a></td><td rowspan=4><a href="%s" target="_blank"><img src="%s" width=%s/></a></td></tr>
-    <tr><td align=right style="background-color: lightblue;"><b>Located in:</b></td><td>%s</td></tr>
+    <tr><td align=right width=80px style="background-color: lightgreen;"><b>Name:</b></td><td><a href="%s" target="_blank">%s</a></td><td rowspan=4><a href="%s" target="_blank"><img src="%s" width=%s/></a></td></tr>
+    <tr><td align=right style="background-color: lightblue;"><b>Location:</b></td><td>%s</td></tr>
     <tr><td align=right style="background-color: yellow;"><b>ID:</b></td><td>%s</td></tr>
-    <tr><td align=center colspan=2><br/><b>This BIC has %s<br/>you can upload yours. Thanks!</b><br/><br/><span style="border: 2px solid black;background-color: pink;padding: 3px;"><a href="http://commons.wikimedia.org/w/index.php?title=Special:UploadWizard&campaign=%s" target="_blank"><b>Upload</b></a></span></td></tr>
+    <tr><td align=center colspan=2><br/><b>This monument has %s<br/>you can upload yours. Thanks!</b><br/><br/><span style="border: 2px solid black;background-color: pink;padding: 3px;"><a href="http://commons.wikimedia.org/w/index.php?title=Special:UploadWizard&campaign=%s" target="_blank"><b>Upload</b></a></span></td></tr>
     </table>
     ]]>
     </description>
