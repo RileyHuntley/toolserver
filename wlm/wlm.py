@@ -616,12 +616,15 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 <big><big><big><b><a href="belarus/">Белару́сь</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
 <big><big><big><b><a href="canada/">Canada</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
 <big><big><big><b><a href="chile/">Chile</a></b></big></big></big>
+<big><big><big><b>Colombia</b> &nbsp;&nbsp;&nbsp;</big></big></big>
 
 <br/>
-<big><big><big><b>Colombia</b> &nbsp;&nbsp;&nbsp;</big></big></big>
+
 <big><big><big><b><a href="spain/">España</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
 <big><big><big><b><a href="mexico/">México</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
-<big><big><big><b><a href="panama/">Panamá</a></b></big></big></big>
+<big><big><big><b><a href="panama/">Panamá</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
+<big><big><big><b>Polska</b> &nbsp;&nbsp;&nbsp;</big></big></big>
+<big><big><big><b>Україна</b></big></big></big>
 
 <br/><br/>
 <a href="http://en.wikipedia.org/wiki/User_talk:Emijrp">Request a map</a> <b>·</b> <a href="http://en.wikipedia.org/wiki/Wikipedia:There_is_a_deadline">There is a deadline</a>
@@ -981,7 +984,7 @@ for country in ['belarus']:# ['canada', 'argentina', 'chile', 'panama', 'mexico'
     <center>
 
     <!-- div show/hide -->
-    <b>Otros mapas:</b> <a href="../argentina">Argentina</a> - <a href="../belarus">Белару́сь</a> - <a href="../canada">Canada</a> - <a href="../chile">Chile</a> - <a href="../spain">España</a> - <a href="../mexico">México</a> - <a href="../panama">Panamá</a> | [<a href="javascript:showHide('table-stats')">Mostrar/Ocultar estadísticas</a>]
+    <b>Otros mapas:</b> <a href="../argentina">Argentina</a> - <a href="../belarus">Белару́сь</a> - <a href="../canada">Canada</a> - <a href="../chile">Chile</a> - <a href="../spain">España</a> - <a href="../mexico">México</a> - <a href="../panama">Panamá</a> - <a href="../polska">Poland</a> - <a href="../ukraine">Україна</a> | [<a href="javascript:showHide('table-stats')">Mostrar/Ocultar estadísticas</a>]
     <div id="table-stats" style="display: none;">
 
     <table border=0>
