@@ -613,18 +613,18 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 <br/>
 <br/>
 
-<big><big><big><b><a href="argentina/">Argentina</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
-<big><big><big><b><a href="belarus/">Белару́сь</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
-<big><big><big><b><a href="canada/">Canada</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
-<big><big><big><b><a href="chile/">Chile</a></b></big></big></big>
-<big><big><big><b>Colombia</b> &nbsp;&nbsp;&nbsp;</big></big></big>
+<big><big><big><b><a href="argentina/">Argentina</a></b> &nbsp;&nbsp;</big></big></big>
+<big><big><big><b><a href="belarus/">Белару́сь</a></b> &nbsp;&nbsp;</big></big></big>
+<big><big><big><b><a href="canada/">Canada</a></b> &nbsp;&nbsp;</big></big></big>
+<big><big><big><b><a href="chile/">Chile</a></b> &nbsp;&nbsp;</big></big></big>
+<big><big><big><b>Colombia</b></big></big></big>
 
 <br/>
 
-<big><big><big><b><a href="spain/">España</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
-<big><big><big><b><a href="mexico/">México</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
-<big><big><big><b><a href="panama/">Panamá</a></b> &nbsp;&nbsp;&nbsp;</big></big></big>
-<big><big><big><b>Polska</b> &nbsp;&nbsp;&nbsp;</big></big></big>
+<big><big><big><b><a href="spain/">España</a></b> &nbsp;&nbsp;</big></big></big>
+<big><big><big><b><a href="mexico/">México</a></b> &nbsp;&nbsp;</big></big></big>
+<big><big><big><b><a href="panama/">Panamá</a></b> &nbsp;&nbsp;</big></big></big>
+<big><big><big><b>Polska</b> &nbsp;&nbsp;</big></big></big>
 <big><big><big><b>Україна</b></big></big></big>
 
 <br/><br/>
