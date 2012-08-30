@@ -631,9 +631,44 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 <br/>
 <br/>
 <center>
-<img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/300px-LUSITANA_WLM_2011_d.svg.png" />
-<br/>
-<br/>
+<table border=0 cellpadding=10px>
+<tr>
+<td>
+<script charset="utf-8" src="http://widgets.twimg.com/j/2/widget.js"></script>
+<script>
+new TWTR.Widget({
+  version: 2,
+  type: 'search',
+  search: 'wikilovesmonuments OR \"wiki loves monuments\"',
+  interval: 4000,
+  title: 'Wiki Loves Monuments 2012',
+  subject: '',
+  width: 300,
+  height: 275,
+  theme: {
+    shell: {
+      background: '#8ec1da',
+      color: '#ffffff'
+    },
+    tweets: {
+      background: '#ffffff',
+      color: '#444444',
+      links: '#1985b5'
+    }
+  },
+  features: {
+    scrollbar: false,
+    loop: true,
+    live: true,
+    behavior: 'default'
+  }
+}).render().start();
+</script>
+</td>
+<td><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/300px-LUSITANA_WLM_2011_d.svg.png" /></td>
+</tr>
+</table>
+
 <br/>
 
 <big><big><big><b><a href="argentina/">Argentina</a></b> &nbsp;&nbsp;</big></big></big>
