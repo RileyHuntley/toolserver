@@ -230,7 +230,7 @@ anexos['spain'] = {
 
 'huelva': [u'es:Anexo:Bienes de interés cultural de la provincia de Huelva', ],
 
-'huesca': [u'es:Anexo:Bienes de interés cultural de la provincia de Huesca', ],
+'huesca': [u'es:Anexo:Bienes de interés cultural de la provincia de Huesca', u'es:Anexo:Bienes catalogados de la provincia de Huesca', ],
 'jaen': [u'es:Anexo:Bienes de interés cultural de la provincia de Jaén', ],
 'laspalmas': [u'es:Anexo:Bienes de interés cultural de la provincia de Las Palmas', ],
 'leon': [u'es:Anexo:Bienes de interés cultural de la provincia de León', ],
@@ -249,7 +249,7 @@ anexos['spain'] = {
 'segovia': [u'es:Anexo:Bienes de interés cultural de la provincia de Segovia', ],
 'sevilla': [u'es:Anexo:Bienes de interés cultural de la provincia de Sevilla', ],
 'soria': [u'es:Anexo:Bienes de interés cultural de la provincia de Soria', ],
-'teruel': [u'es:Anexo:Bienes de Interés Cultural de la provincia de Teruel', ],
+'teruel': [u'es:Anexo:Bienes de Interés Cultural de la provincia de Teruel', u'es:Anexo:Bienes catalogados de la provincia de Teruel', ],
 'toledo': [u'es:Anexo:Bienes de interés cultural de la provincia de Toledo', ],
 
 #país valenciá
@@ -262,7 +262,7 @@ anexos['spain'] = {
 'valladolid': [u'es:Anexo:Bienes de interés cultural de la provincia de Valladolid', ],
 'vizcaya': [u'es:Anexo:Bienes de interés cultural de la provincia de Vizcaya', ],
 'zamora': [u'es:Anexo:Bienes de interés cultural de la provincia de Zamora', ],
-'zaragoza': [u'es:Anexo:Bienes de interés cultural de la provincia de Zaragoza', ],
+'zaragoza': [u'es:Anexo:Bienes de interés cultural de la provincia de Zaragoza', u'es:Anexo:Bienes catalogados de la provincia de Zaragoza', ],
 }
 
 anexos['chile'] = {
