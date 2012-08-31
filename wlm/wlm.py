@@ -740,7 +740,7 @@ for v, k in globalpiechartdata[:limit]:
 globalpiechart += u"""<tr><td></td><td>Other</td><td>%s</td></tr>\n""" % (sum([v for v, k in globalpiechartdata[limit:]]))
 globalpiechart += u"""<tr><td></td><td><b>Total</b></td><td><b><a href="http://commons.wikimedia.org/wiki/Category:Images_from_Wiki_Loves_Monuments_2012">%s</a></b></td></tr>\n""" % (sum([v for v, k in globalpiechartdata]))
 
-globalpiechart = u"""<table border=0 style="text-align: center;">
+globalpiechart = u"""<table class="wikitable" style="text-align: center;">
 <tr><th>#</th><th>Country</th><th>Files</th></tr>
 %s
 </table>""" % (globalpiechart)
@@ -752,7 +752,34 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta http-equiv="Content-Style-Type" content="text/css" />
     <style type="text/css">
-        body {font-family: Verdana, sans-serif;}
+        body {font-family: Arial, sans-serif;}
+        
+        /**
+         * wikitable class for skinning normal tables
+         * keep in sync with commonPrint.css
+         */
+        table.wikitable {
+            margin: 1em 1em 1em 0;
+            background-color: #f9f9f9;
+            border: 1px #aaa solid;
+            border-collapse: collapse;
+            color: black;
+        }
+        table.wikitable > tr > th,
+        table.wikitable > tr > td,
+        table.wikitable > * > tr > th,
+        table.wikitable > * > tr > td {
+            border: 1px #aaa solid;
+            padding: 0.2em;
+        }
+        table.wikitable > tr > th,
+        table.wikitable > * > tr > th {
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+        table.wikitable > caption {
+            font-weight: bold;
+        }
     </style>
 </head>
 
