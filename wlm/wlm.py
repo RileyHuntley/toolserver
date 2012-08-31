@@ -15,13 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import catlib
-import pagegenerators
 import datetime
 import md5
 import os
 import re
 import time
+
+import catlib
+import pagegenerators
 import wikipedia
 
 #subida fácil: http://commons.wikimedia.org/w/index.php?title=Special:Upload&wpDestFile=BBBB.jpg&uploadformstyle=basic&wpUploadDescription=\ {{Information|Description=|Source=|Date=|Author=|Permission=|other_versions=}}
@@ -50,49 +51,134 @@ def colors(percent):
         return 'pink'
     elif percent < 75:
         return 'yellow'
-    elif percent < 100:
+    elif percent >= 75:
         return 'lightgreen'
-    elif percent == 100:
-        return 'lightblue'
     return 'white'
 
+def placenamesconvert(p):
+    if placenames.has_key(p):
+        return placenames[p]
+    else:
+        return p[0].upper()+p[1:]
+
 path = '/home/emijrp/public_html/wlm'
-wmurls = { 'spain': 'http://www.wikimedia.org.es', 'chile': 'http://www.wikimediachile.cl', 'argentina': 'http://www.wikimedia.org.ar', 'panama': 'http://wlmpanama.org.pa', 'canada': 'http://wikimedia.ca', 'mexico': 'http://mx.wikimedia.org', 'belarus': 'http://wikimedia.by', 'poland': '', 'ukraine': '' }
+wmurls = { 
+    'argentina': 'http://www.wikimedia.org.ar', 
+    'belarus': 'http://wikimedia.by', 
+    'canada': 'http://wikimedia.ca', 
+    'chile': 'http://www.wikimediachile.cl', 
+    'mexico': 'http://mx.wikimedia.org', 
+    'panama': 'http://wlmpanama.org.pa', 
+    'poland': '', 
+    'spain': 'http://www.wikimedia.org.es', 
+    'ukraine': '' 
+}
+
 #generic logo http://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/80px-Wikimedia-logo.svg.png
 wmlogourls = { 'spain': 'http://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Wikimedia-es-logo.svg/80px-Wikimedia-es-logo.svg.png', 'chile': 'http://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Wikimedia_Chile_logo.svg/80px-Wikimedia_Chile_logo.svg.png', 'argentina': 'http://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Wikimedia_Argentina_logo.svg/80px-Wikimedia_Argentina_logo.svg.png', 'panama': 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/80px-Wikimedia-logo.svg.png', 'canada': 'http://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Wikimedia_Canada_logo.svg/80px-Wikimedia_Canada_logo.svg.png', 'mexico': 'http://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Wikimedia_Mexico.svg/80px-Wikimedia_Mexico.svg.png', 'belarus': 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/80px-Wikimedia-logo.svg.png', 'poland': '', 'ukraine': '' }
 wlmurls = { 'spain': 'http://www.wikilm.es', 'chile': 'http://www.wikilovesmonuments.cl', 'argentina': 'http://wikilovesmonuments.com.ar', 'panama': 'http://wlmpanama.org.pa', 'canada': 'http://wikimedia.ca/wiki/Wiki_Loves_Monuments_2012_in_Canada', 'mexico': 'http://wikilovesmonuments.mx', 'belarus': 'http://wikilovesmonuments.by', 'poland': '', 'ukraine': '' }
 
-uploadcats = { 
-'andorra': 'Images from Wiki Loves Monuments 2012 in Andorra', 
-'argentina': 'Images from Wiki Loves Monuments 2012 in Argentina', 
-'austria': 'Images from Wiki Loves Monuments 2012 in Austria', 
-'belarus': 'Images from Wiki Loves Monuments 2012 in Belarus', 
-'belgium': 'Images from Wiki Loves Monuments 2012 in Belgium', 
-'canada': 'Images from Wiki Loves Monuments 2012 in Canada', 
-'chile': 'Images from Wiki Loves Monuments 2012 in Chile', 
-'colombia': 'Images from Wiki Loves Monuments 2012 in Colombia', 
-'czechrepublic‎': 'Images from Wiki Loves Monuments 2012 in the Czech Republic‎', 
-'denmark': 'Images from Wiki Loves Monuments 2012 in Denmark', 
-'estonia': 'Images from Wiki Loves Monuments 2012 in Estonia', 
-'france': 'Images from Wiki Loves Monuments 2012 in France', 
-'germany': 'Images from Wiki Loves Monuments 2012 in Germany', 
-'ghana': 'Images from Wiki Loves Monuments 2012 in Ghana', 
-'hungary': 'Images from Wiki Loves Monuments 2012 in Hungary', 
-'india': 'Images from Wiki Loves Monuments 2012 in India', 
-'israel': 'Images from Wiki Loves Monuments 2012 in Israel', 
-'italy': 'Images from Wiki Loves Monuments 2012 in Italy', 
-'kenya': 'Images from Wiki Loves Monuments 2012 in Kenya', 
-'liechtenstein‎': 'Images from Wiki Loves Monuments 2012 in Liechtenstein‎', 
-'mexico': 'Images from Wiki Loves Monuments 2012 in Mexico', 
-'panama': 'Images from Wiki Loves Monuments 2012 in Panama', 
-'poland': 'Images from Wiki Loves Monuments 2012 in Poland', 
-'spain': 'Images from Wiki Loves Monuments 2012 in Spain', 
-'ukraine': 'Images from Wiki Loves Monuments 2012 in Ukraine', 
+country = { 
+    u'andorra': u'Andorra', 
+    u'argentina': u'Argentina', 
+    u'austria': u'Austria', 
+    u'belarus': u'Belarus', 
+    u'belgium': u'Belgium', 
+    u'canada': u'Canada', 
+    u'chile': u'Chile', 
+    u'colombia': u'Colombia', 
+    u'czechrepublic‎': u'Czech Republic‎', 
+    u'denmark': u'Denmark', 
+    u'estonia': u'Estonia', 
+    u'france': u'France', 
+    u'germany': u'Germany', 
+    u'ghana': 'uGhana', 
+    u'hungary': u'Hungary', 
+    u'india': u'India', 
+    u'israel': u'Israel', 
+    u'italy': u'Italy', 
+    u'kenya': u'Kenya', 
+    u'liechtenstein‎': u'Liechtenstein‎', 
+    u'luxembourg‎': u'Luxembourg‎', 
+    u'mexico': u'Mexico', 
+    u'netherlands‎': u'Netherlands‎', 
+    u'norway‎': u'Norway‎', 
+    u'panama': u'Panama', 
+    u'philippines‎': u'Philippines‎', 
+    u'poland': u'Poland', 
+    u'romania': u'Romania', 
+    u'russia': u'Russia', 
+    u'serbia': u'Serbia', 
+    u'southafrica': u'South Africa', 
+    u'spain': u'Spain', 
+    u'sweden': u'Sweden', 
+    u'switzerland‎': u'Switzerland‎', 
+    u'ukraine': u'Ukraine', 
+    u'unitedstates': u'United States', 
 }
 
-campaigns = { 'spain': 'wlm-es', 'chile': 'wlm-cl', 'argentina': 'wlm-ar', 'panama': 'wlm-pa', 'canada': 'wlm-ca', 'mexico': 'wlm-mx', 'belarus': 'wlm-by', 'poland': 'wlm-pl', 'ukraine': 'wlm-uk', }
+uploadcats = { 
+    u'andorra': u'Images from Wiki Loves Monuments 2012 in Andorra', 
+    u'argentina': u'Images from Wiki Loves Monuments 2012 in Argentina', 
+    u'austria': u'Images from Wiki Loves Monuments 2012 in Austria', 
+    u'belarus': u'Images from Wiki Loves Monuments 2012 in Belarus', 
+    u'belgium': u'Images from Wiki Loves Monuments 2012 in Belgium', 
+    u'canada': u'Images from Wiki Loves Monuments 2012 in Canada', 
+    u'chile': u'Images from Wiki Loves Monuments 2012 in Chile', 
+    u'colombia': u'Images from Wiki Loves Monuments 2012 in Colombia', 
+    u'czechrepublic‎': u'Images from Wiki Loves Monuments 2012 in the Czech Republic‎', 
+    u'denmark': u'Images from Wiki Loves Monuments 2012 in Denmark', 
+    u'estonia': u'Images from Wiki Loves Monuments 2012 in Estonia', 
+    u'france': u'Images from Wiki Loves Monuments 2012 in France', 
+    u'germany': u'Images from Wiki Loves Monuments 2012 in Germany', 
+    u'ghana': 'uImages from Wiki Loves Monuments 2012 in Ghana', 
+    u'hungary': u'Images from Wiki Loves Monuments 2012 in Hungary', 
+    u'india': u'Images from Wiki Loves Monuments 2012 in India', 
+    u'israel': u'Images from Wiki Loves Monuments 2012 in Israel', 
+    u'italy': u'Images from Wiki Loves Monuments 2012 in Italy', 
+    u'kenya': u'Images from Wiki Loves Monuments 2012 in Kenya', 
+    u'liechtenstein‎': u'Images from Wiki Loves Monuments 2012 in Liechtenstein‎', 
+    u'luxembourg‎': u'Images from Wiki Loves Monuments 2012 in Luxembourg‎', 
+    u'mexico': u'Images from Wiki Loves Monuments 2012 in Mexico', 
+    u'netherlands‎': u'Images from Wiki Loves Monuments 2012 in the Netherlands‎', 
+    u'norway‎': u'Images from Wiki Loves Monuments 2012 in Norway‎', 
+    u'panama': u'Images from Wiki Loves Monuments 2012 in Panama', 
+    u'philippines‎': u'Images from Wiki Loves Monuments 2012 in the Philippines‎', 
+    u'poland': u'Images from Wiki Loves Monuments 2012 in Poland', 
+    u'romania': u'Images from Wiki Loves Monuments 2012 in Romania', 
+    u'russia': u'Images from Wiki Loves Monuments 2012 in Russia', 
+    u'serbia': u'Images from Wiki Loves Monuments 2012 in Serbia', 
+    u'southafrica': u'Images from Wiki Loves Monuments 2012 in South Africa', 
+    u'spain': u'Images from Wiki Loves Monuments 2012 in Spain', 
+    u'sweden': u'Images from Wiki Loves Monuments 2012 in Sweden', 
+    u'switzerland‎': u'Images from Wiki Loves Monuments 2012 in Switzerland‎', 
+    u'ukraine': u'Images from Wiki Loves Monuments 2012 in Ukraine', 
+    u'unitedstates': u'Images from Wiki Loves Monuments 2012 in the United States', 
+}
 
-capital = { 'spain': 'madrid', 'chile': 'santiago', 'argentina': 'buenosaires', 'panama': 'panama', 'canada': 'ontario', 'mexico': 'df', 'belarus': u'Менск', 'poland': '', 'ukraine': '' } #where is the capital?
+campaigns = { 
+    'argentina': 'wlm-ar', 
+    'belarus': 'wlm-by', 
+    'canada': 'wlm-ca', 
+    'chile': 'wlm-cl', 
+    'mexico': 'wlm-mx', 
+    'panama': 'wlm-pa', 
+    'poland': 'wlm-pl', 
+    'spain': 'wlm-es', 
+    'ukraine': 'wlm-uk', 
+}
+
+capital = { #where is the capital?
+    'argentina': 'buenosaires', 
+    'belarus': u'Менск', 
+    'canada': 'ontario', 
+    'chile': 'santiago', 
+    'mexico': 'df', 
+    'panama': 'panama', 
+    'poland': '', 
+    'spain': 'madrid', 
+    'ukraine': '' 
+}
 
 placenames = {
 
@@ -204,14 +290,7 @@ placenames = {
 'yucatan': u"Yucatán",
 'zacatecas': u"Zacatecas",
 
-
 }
-
-def placenamesconvert(p):
-    if placenames.has_key(p):
-        return placenames[p]
-    else:
-        return p[0].upper()+p[1:]
 
 #mejor no mezclar varios anexos de varios idiomas para una misma provincia
 anexos = {}
@@ -647,10 +726,24 @@ regexp['belarus']['be-x-old'] = re.compile(ur"""(?im)\{\{\s*Вікі любіц�
 
 #main index
 globalpiechartpage = wikipedia.Page(wikipedia.Site('commons', 'commons'), u"User:Emijrp/WLM")
-globalpiechartpage.put(u'\n'.join([u'%s;{{subst:PAGESINCAT:%s}}' % (k, uploadcats[k]) for k in uploadcats.keys()]))
+globalpiechartpage.put(u'\n'.join([u'%s;{{subst:PAGESINCAT:%s|files}}' % (k, uploadcats[k]) for k in uploadcats.keys()]), u'BOT - updating WLM ranking...')
 globalpiechartpage = wikipedia.Page(wikipedia.Site('commons', 'commons'), u"User:Emijrp/WLM")
 globalpiecharttext = globalpiechartpage.get()
-globalpiechart = u"""%s""" % (globalpiecharttext)
+globalpiechartdata = [[int(i.split(';')[1]), i.split(';')[0]] for i in globalpiecharttext.strip().splitlines()]
+globalpiechartdata.sort(reverse=1)
+globalpiechart = u''
+c = 0
+limit = 10
+for v, k in globalpiechartdata[:limit]:
+    c += 1
+    globalpiechart += u"""<tr><td>%s</td><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/Category:%s">%s</a></td></tr>\n""" % (c, country[k], uploadcats[k], v)
+globalpiechart += u"""<tr><td></td><td>Other</td><td>%s</td></tr>\n""" % (sum([v for v, k in globalpiechartdata[limit:]]))
+globalpiechart += u"""<tr><td></td><td><b>Total</b></td><td><b><a href="http://commons.wikimedia.org/wiki/Category:Images_from_Wiki_Loves_Monuments_2012">%s</a></b></td></tr>\n""" % (sum([v for v, k in globalpiechartdata]))
+
+globalpiechart = u"""<table border=0 style="text-align: center;">
+<tr><th>#</th><th>Country</th><th>Files</th></tr>
+%s
+</table>""" % (globalpiechart)
 
 output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
@@ -658,6 +751,9 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 <title>Wiki Loves Monuments</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta http-equiv="Content-Style-Type" content="text/css" />
+    <style type="text/css">
+        body {font-family: Verdana, sans-serif;}
+    </style>
 </head>
 
 <body style="background-color: white;">
@@ -700,9 +796,7 @@ new TWTR.Widget({
 </td>
 <td><a href="http://www.wikilovesmonuments.org"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/300px-LUSITANA_WLM_2011_d.svg.png" /></a></td>
 <td>
-<!--
 %s
--->
 </td>
 </tr>
 </table>
