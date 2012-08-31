@@ -34,12 +34,13 @@ def isvalidimage(img):
     return False
 
 def clean(t):
-    t = re.sub(ur'(?i)([\[\]]|\|.*|\<ref.*)', ur'', t).strip() #quitamos enlaces, refs, etc
+    t = re.sub(ur'(?i)([\[\]]|\|.*|\<ref.*?</ref>|\<ref name.*\>)', ur'', t).strip() #quitamos enlaces, refs, etc
     t = re.sub(ur'(?im)<\s*/?\s*[^<>]+\s*/?\s*>', ur'-', t).strip() #fuera etiquetas HTML </br> <br/> (las refs las hemos quitado antes)
     return t
 
 def removerefs(t):
-    t = re.sub(ur"(?im)\{\{\s*(?!(fila[_ ]BIC|Fila[_ ]BIC[_ ]2|BIC|filera[_ ]BIC|filera[_ ]BCIN|filera[_ ]BIC[_ ]Val|filera[_ ]IPA|MonumentoChile|MonumentoArgentina|Fila[_ ]PCN|HPC[_ ]row|MonumentoMéxico|Вікі[_ ]любіць[_ ]славутасьці/Элемэнт[_ ]сьпісу))\s*\|[^{}]*?\}\}", ur"", t) #remove templates
+    t = re.sub(ur"(?im)\{\{\s*(?!(fila[_ ]BIC|Fila[_ ]BIC[_ ]2|BIC|filera[_ ]BIC|filera[_ ]BCIN|filera[_ ]BIC[_ ]Val|filera[_ ]IPA|MonumentoChile|MonumentoArgentina|Fila[_ ]PCN|HPC[_ ]row|MonumentoMéxico|Вікі[_ ]любіць[_ ]славутасьці/Элемэнт[_ ]сьпісу|NRHP[_ ]row))\s*\|[^{}]*?\}\}", ur"", t) #remove templates
+    t = re.sub(ur"(?im)<\s*(small|big|sub|sup)\s*>.*?<\s*/\s*\1\s*>", ur"", t)
     t = re.sub(ur"(?im)<\s*ref[^<>]*?\s*>[^<>]*?<\s*/\s*ref\s*>", ur"", t) # <ref></ref> <ref name=""></ref>
     t = re.sub(ur"(?im)<\s*ref\s+name[^<>]+?\s*/\s*>", ur"", t) # <ref name="" />
     t = re.sub(ur"(?im)<!--.*?-->", ur"", t) # <!-- html comments -->
@@ -77,12 +78,13 @@ wmurls = {
     'panama': 'http://wlmpanama.org.pa', 
     'poland': '', 
     'spain': 'http://www.wikimedia.org.es', 
-    'ukraine': '' 
+    'ukraine': '' ,
+    'unitedstates': 'http://wikimedia.org' 
 }
 
 #generic logo http://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/80px-Wikimedia-logo.svg.png
-wmlogourls = { 'spain': 'http://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Wikimedia-es-logo.svg/80px-Wikimedia-es-logo.svg.png', 'chile': 'http://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Wikimedia_Chile_logo.svg/80px-Wikimedia_Chile_logo.svg.png', 'argentina': 'http://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Wikimedia_Argentina_logo.svg/80px-Wikimedia_Argentina_logo.svg.png', 'panama': 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/80px-Wikimedia-logo.svg.png', 'canada': 'http://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Wikimedia_Canada_logo.svg/80px-Wikimedia_Canada_logo.svg.png', 'mexico': 'http://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Wikimedia_Mexico.svg/80px-Wikimedia_Mexico.svg.png', 'belarus': 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/80px-Wikimedia-logo.svg.png', 'poland': '', 'ukraine': '' }
-wlmurls = { 'spain': 'http://www.wikilm.es', 'chile': 'http://www.wikilovesmonuments.cl', 'argentina': 'http://wikilovesmonuments.com.ar', 'panama': 'http://wlmpanama.org.pa', 'canada': 'http://wikimedia.ca/wiki/Wiki_Loves_Monuments_2012_in_Canada', 'mexico': 'http://wikilovesmonuments.mx', 'belarus': 'http://wikilovesmonuments.by', 'poland': '', 'ukraine': '' }
+wmlogourls = { 'spain': 'http://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Wikimedia-es-logo.svg/80px-Wikimedia-es-logo.svg.png', 'chile': 'http://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Wikimedia_Chile_logo.svg/80px-Wikimedia_Chile_logo.svg.png', 'argentina': 'http://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Wikimedia_Argentina_logo.svg/80px-Wikimedia_Argentina_logo.svg.png', 'panama': 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/80px-Wikimedia-logo.svg.png', 'canada': 'http://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Wikimedia_Canada_logo.svg/80px-Wikimedia_Canada_logo.svg.png', 'mexico': 'http://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Wikimedia_Mexico.svg/80px-Wikimedia_Mexico.svg.png', 'belarus': 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/80px-Wikimedia-logo.svg.png', 'poland': '', 'ukraine': '', 'unitedstates': 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/80px-Wikimedia-logo.svg.png' }
+wlmurls = { 'spain': 'http://www.wikilm.es', 'chile': 'http://www.wikilovesmonuments.cl', 'argentina': 'http://wikilovesmonuments.com.ar', 'panama': 'http://wlmpanama.org.pa', 'canada': 'http://wikimedia.ca/wiki/Wiki_Loves_Monuments_2012_in_Canada', 'mexico': 'http://wikilovesmonuments.mx', 'belarus': 'http://wikilovesmonuments.by', 'poland': '', 'ukraine': '', 'unitedstates': 'http://wikilovesmonuments.us' }
 
 country = { 
     u'andorra': u'Andorra', 
@@ -172,6 +174,7 @@ campaigns = {
     'poland': 'wlm-pl', 
     'spain': 'wlm-es', 
     'ukraine': 'wlm-uk', 
+    'unitedstates': 'wlm-us',
 }
 
 capital = { #where is the capital?
@@ -183,7 +186,8 @@ capital = { #where is the capital?
     'panama': 'panama', 
     'poland': '', 
     'spain': 'madrid', 
-    'ukraine': '' 
+    'ukraine': '',
+    'unitedstates': '',
 }
 
 placenames = {
@@ -495,6 +499,12 @@ u'Менск': [u'be-x-old:Вікіпэдыя:Праект:Вікі любіць
 
 }
 
+anexos['unitedstates'] = {
+u'washington': [u'en:National Register of Historic Places listings in Washington state', ],
+u'oregon': [u'en:National Register of Historic Places listings in Baker County, Oregon', ],
+
+}
+
 """
 <?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
@@ -545,7 +555,7 @@ u'Менск': [u'be-x-old:Вікіпэдыя:Праект:Вікі любіць
  | imagen = 
 }}
 """
-regexp = { 'spain': {}, 'chile': {}, 'argentina': {}, 'panama': {}, 'canada': {}, 'mexico': {}, 'belarus': {}}
+regexp = { 'spain': {}, 'chile': {}, 'argentina': {}, 'panama': {}, 'canada': {}, 'mexico': {}, 'belarus': {}, 'unitedstates': {}, }
 regexp['spain']['es'] = re.compile(ur"""(?im)\{\{\s*fila (BIC|BIC 2)\s*(\|\s*(nombre\s*=\s*(?P<nombre>[^=}]*?)|nombrecoor\s*=\s*(?P<nombrecoor>[^=}]*?)|tipobic\s*=\s*(?P<tipobic>[^=}]*?)|tipo\s*=\s*(?P<tipo>[^=}]*?)|municipio\s*=\s*(?P<municipio>[^=}]*?)|lugar\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)|bic\s*=\s*(?P<bic>[^=}]*?)|id[_ ]aut\s*=\s*(?P<id_aut>[^=}]*?)|fecha\s*=\s*(?P<fecha>[^=}]*?)|imagen\s*=\s*(?P<imagen>[^=}]*?))\s*)+\s*\|*\s*\}\}""")
 
 """
@@ -730,6 +740,28 @@ regexp['mexico']['es'] = re.compile(ur"""(?im)\{\{\s*MonumentoMéxico\s*(\|\s*(m
 """
 regexp['belarus']['be-x-old'] = re.compile(ur"""(?im)\{\{\s*Вікі любіць славутасьці/Элемэнт сьпісу\s*(\|\s*(назва\s*=\s*(?P<nombre>[^=}]*?)|населены пункт\s*=\s*(?P<municipio>[^=}]*?)|адрэса\s*=(?P<lugar>[^=}]*?)|шырата\s*=\s*(?P<lat>[0-9\.\-\+]*?)|даўгата\s*=\s*(?P<lon>[0-9\.\-\+]*?)|шыфр\s*=\s*(?P<bic>[^=}]*?)|выява\s*=\s*(?P<imagen>[^=}]*?)|датаваньне\s*=\s*([^=}]*?)|катэгорыя\s*=\s*([^=}]*?)\s*)\s*)+\s*\|*\s*\}\}""")
 
+#United States http://commons.wikimedia.org/wiki/Commons:Wiki_Loves_Monuments_2012_in_the_United_States/Get_Started 
+"""
+{{NRHP row
+|pos=
+|refnum=
+|type=
+|article=
+|name=
+|address=
+|city=
+|county=
+|date=
+|image=
+|lat=
+|lon=
+|state_iso=
+|description=
+|nolatlon=
+}}
+"""
+regexp['unitedstates']['en'] = re.compile(ur"""(?im)\{\{\s*NRHP[_ ]row\s*(\|\s*(name\s*=\s*(?P<nombre>[^=}]*?)|city\s*=\s*(?P<municipio>[^=}]*?)|address\s*=(?P<lugar>[^=}]*?)|lat\s*=\s*(?P<lat>[0-9\.\-\+]*?)|lon\s*=\s*(?P<lon>[0-9\.\-\+]*?)|refnum\s*=\s*(?P<bic>[^=}]*?)|image\s*=\s*(?P<imagen>[^=}]*?)|nolatlon\s*=\s*([^=}]*?)|description\s*=\s*([^=}]*?)|county\s*=\s*([^=}]*?)|date\s*=\s*([^=}]*?)|county\s*=\s*([^=}]*?)|article\s*=\s*([^=}]*?)|pos\s*=\s*([^=}]*?)|type\s*=\s*([^=}]*?)\s*)\s*)+\s*\|*\s*\}\}""")
+
 #main index
 globalpiechartpage = wikipedia.Page(wikipedia.Site('commons', 'commons'), u"User:Emijrp/WLM")
 globalpiechartpage.put(u'\n'.join([u'%s;{{subst:PAGESINCAT:%s|files|R}}' % (k, uploadcats[k]) for k in uploadcats.keys()]), u'BOT - Updating WLM ranking...')
@@ -839,7 +871,7 @@ if onlymainpage:
 
 time.sleep(10)
 #indexes by country
-for country in ['canada', 'argentina', 'chile', 'panama', 'mexico', 'spain', 'belarus']:# ['canada', 'argentina', 'chile', 'panama', 'mexico', 'spain', ]: #'spain'
+for country in ['canada', 'argentina', 'chile', 'panama', 'mexico', 'spain', 'belarus']:
     if not os.path.exists('%s/%s/' % (path, country)):
         os.makedirs('%s/%s/' % (path, country))
     missingcoordinates = 0
@@ -877,6 +909,12 @@ for country in ['canada', 'argentina', 'chile', 'panama', 'mexico', 'spain', 'be
                         if (lat.startswith('0.') and lon.startswith('0.')) or (lat == '0' and lon == '0'):
                             raise
                         
+                        if not lat and not lon:
+                            if country == 'unitedstates':
+                                if re.search(ur"(?im)\{\{\s*coord\s*\|.*?format=dms", i.group('lugar')): #{{coord|44.7805|-117.8344|
+                                    lat = i.group('lugar').split('coord')[1].split('|')[1].split('|')[0].strip()
+                                    lon = i.group('lugar').split('coord')[1].split('|')[1].split('|')[1].split('|')[0].strip()
+                        
                         bic = i.group('bic').strip()
                         if not bic and country == 'canada': #canada uses 3 level ids...
                             if i.group('idf').strip():
@@ -893,7 +931,7 @@ for country in ['canada', 'argentina', 'chile', 'panama', 'mexico', 'spain', 'be
                             #'tipobic': i.group('tipobic').strip(),
                             #'tipo': i.group('tipo').strip(),
                             'municipio': i.group('municipio') and clean(i.group('municipio').strip()) or '',
-                            'lugar': i.group('lugar') and clean(i.group('lugar').strip()) or '',
+                            #'lugar': i.group('lugar') and clean(i.group('lugar').strip()) or '',
                             'lat': lat,
                             'lon': lon,
                             'bic': bic and bic.strip() or '?',
