@@ -732,7 +732,7 @@ regexp['belarus']['be-x-old'] = re.compile(ur"""(?im)\{\{\s*Вікі любіц�
 
 #main index
 globalpiechartpage = wikipedia.Page(wikipedia.Site('commons', 'commons'), u"User:Emijrp/WLM")
-globalpiechartpage.put(u'\n'.join([u'%s;{{subst:PAGESINCAT:%s|files}}' % (k, uploadcats[k]) for k in uploadcats.keys()]), u'BOT - updating WLM ranking...')
+globalpiechartpage.put(u'\n'.join([u'%s;{{subst:PAGESINCAT:%s|files|R}}' % (k, uploadcats[k]) for k in uploadcats.keys()]), u'BOT - Updating WLM ranking...')
 globalpiechartpage = wikipedia.Page(wikipedia.Site('commons', 'commons'), u"User:Emijrp/WLM")
 globalpiecharttext = globalpiechartpage.get()
 globalpiechartdata = [[int(i.split(';')[1]), i.split(';')[0]] for i in globalpiecharttext.strip().splitlines()]
