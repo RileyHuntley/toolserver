@@ -822,7 +822,7 @@ new TWTR.Widget({
 <big><big><big><b>Україна</b></big></big></big>
 
 <br/><br/>
-<a href="http://commons.wikimedia.org/wiki/Commons:Wiki_Loves_Monuments_2012/Participating_countries">More countries</a>&nbsp;&nbsp;<b>·</b>&nbsp;&nbsp;<a href="http://en.wikipedia.org/wiki/User_talk:Emijrp">Request a map</a>&nbsp;&nbsp;<b>·</b>&nbsp;&nbsp;<a href="http://en.wikipedia.org/wiki/Wikipedia:There_is_a_deadline">There <i>is</i> a deadline</a>
+<a href="http://commons.wikimedia.org/wiki/Commons:Wiki_Loves_Monuments_2012/Participating_countries">More countries</a>&nbsp;&nbsp;<b>·</b>&nbsp;&nbsp;<a href="http://en.wikipedia.org/wiki/User_talk:Emijrp">Request a map</a>&nbsp;&nbsp;<b>·</b>&nbsp;&nbsp;<a href="http://en.wikipedia.org/wiki/Wikipedia:There_is_a_deadline">There <i>is</i> a deadline</a>&nbsp;&nbsp;<b>·</b>&nbsp;&nbsp;<a href="http://toolserver.org/~erfgoed/stream/">Uploads stream visualization</a>
 
 </center>
 
