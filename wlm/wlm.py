@@ -1070,7 +1070,7 @@ for country in ['canada', 'argentina', 'chile', 'panama', 'mexico', 'spain', 'be
 
 
     #table bic stats
-    tablestats = u'<table border=1px style="text-align: center;">\n'
+    tablestats = u'<table class="wikitable" style="text-align: center;">\n'
     tablestats += u'<tr><th width=100px>Lugar</th><th width=60px>Monumentos</th><th width=140px>Con coordenadas</th><th width=100px>Con imágenes</th><th width=100px>Detalles</th><th width=100px>Errores</th></tr>\n'
     provincesstats.sort()
     for p, ptotal, pmissingcoordinates, pmissingimages in provincesstats:
@@ -1090,7 +1090,7 @@ for country in ['canada', 'argentina', 'chile', 'panama', 'mexico', 'spain', 'be
     #end table stats
 
     #table user stats
-    tableuserstats = u'<table border=1px style="text-align: center;">\n'
+    tableuserstats = u'<table class="wikitable" style="text-align: center;">\n'
     tableuserstats += u'<tr><th width=100px>Usuario</th><th width=60px>Archivos</th><th width=60px>MBytes</th></tr>\n'
     cat = catlib.Category(wikipedia.Site("commons", "commons"), u"Category:%s" % uploadcats[country])
     gen = pagegenerators.CategorizedPageGenerator(cat, start="!")
