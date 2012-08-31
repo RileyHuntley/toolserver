@@ -62,7 +62,34 @@ wmurls = { 'spain': 'http://www.wikimedia.org.es', 'chile': 'http://www.wikimedi
 wmlogourls = { 'spain': 'http://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Wikimedia-es-logo.svg/80px-Wikimedia-es-logo.svg.png', 'chile': 'http://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Wikimedia_Chile_logo.svg/80px-Wikimedia_Chile_logo.svg.png', 'argentina': 'http://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Wikimedia_Argentina_logo.svg/80px-Wikimedia_Argentina_logo.svg.png', 'panama': 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/80px-Wikimedia-logo.svg.png', 'canada': 'http://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Wikimedia_Canada_logo.svg/80px-Wikimedia_Canada_logo.svg.png', 'mexico': 'http://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Wikimedia_Mexico.svg/80px-Wikimedia_Mexico.svg.png', 'belarus': 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/80px-Wikimedia-logo.svg.png', 'poland': '', 'ukraine': '' }
 wlmurls = { 'spain': 'http://www.wikilm.es', 'chile': 'http://www.wikilovesmonuments.cl', 'argentina': 'http://wikilovesmonuments.com.ar', 'panama': 'http://wlmpanama.org.pa', 'canada': 'http://wikimedia.ca/wiki/Wiki_Loves_Monuments_2012_in_Canada', 'mexico': 'http://wikilovesmonuments.mx', 'belarus': 'http://wikilovesmonuments.by', 'poland': '', 'ukraine': '' }
 
-uploadcats = { 'spain': 'Images from Wiki Loves Monuments 2012 in Spain', 'chile': 'Images from Wiki Loves Monuments 2012 in Chile', 'argentina': 'Images from Wiki Loves Monuments 2012 in Argentina', 'panama': 'Images from Wiki Loves Monuments 2012 in Panama', 'canada': 'Images from Wiki Loves Monuments 2012 in Canada', 'mexico': 'Images from Wiki Loves Monuments 2012 in Mexico', 'belarus': 'Images from Wiki Loves Monuments 2012 in Belarus', 'poland': 'Images from Wiki Loves Monuments 2012 in Poland', 'ukraine': 'Images from Wiki Loves Monuments 2012 in Ukraine' }
+uploadcats = { 
+'andorra': 'Images from Wiki Loves Monuments 2012 in Andorra', 
+'argentina': 'Images from Wiki Loves Monuments 2012 in Argentina', 
+'austria': 'Images from Wiki Loves Monuments 2012 in Austria', 
+'belarus': 'Images from Wiki Loves Monuments 2012 in Belarus', 
+'belgium': 'Images from Wiki Loves Monuments 2012 in Belgium', 
+'canada': 'Images from Wiki Loves Monuments 2012 in Canada', 
+'chile': 'Images from Wiki Loves Monuments 2012 in Chile', 
+'colombia': 'Images from Wiki Loves Monuments 2012 in Colombia', 
+'czechrepublic‎': 'Images from Wiki Loves Monuments 2012 in the Czech Republic‎', 
+'denmark': 'Images from Wiki Loves Monuments 2012 in Denmark', 
+'estonia': 'Images from Wiki Loves Monuments 2012 in Estonia', 
+'france': 'Images from Wiki Loves Monuments 2012 in France', 
+'germany': 'Images from Wiki Loves Monuments 2012 in Germany', 
+'ghana': 'Images from Wiki Loves Monuments 2012 in Ghana', 
+'hungary': 'Images from Wiki Loves Monuments 2012 in Hungary', 
+'india': 'Images from Wiki Loves Monuments 2012 in India', 
+'israel': 'Images from Wiki Loves Monuments 2012 in Israel', 
+'italy': 'Images from Wiki Loves Monuments 2012 in Italy', 
+'kenya': 'Images from Wiki Loves Monuments 2012 in Kenya', 
+'liechtenstein‎': 'Images from Wiki Loves Monuments 2012 in Liechtenstein‎', 
+'mexico': 'Images from Wiki Loves Monuments 2012 in Mexico', 
+'panama': 'Images from Wiki Loves Monuments 2012 in Panama', 
+'poland': 'Images from Wiki Loves Monuments 2012 in Poland', 
+'spain': 'Images from Wiki Loves Monuments 2012 in Spain', 
+'ukraine': 'Images from Wiki Loves Monuments 2012 in Ukraine', 
+}
+
 campaigns = { 'spain': 'wlm-es', 'chile': 'wlm-cl', 'argentina': 'wlm-ar', 'panama': 'wlm-pa', 'canada': 'wlm-ca', 'mexico': 'wlm-mx', 'belarus': 'wlm-by', 'poland': 'wlm-pl', 'ukraine': 'wlm-uk', }
 
 capital = { 'spain': 'madrid', 'chile': 'santiago', 'argentina': 'buenosaires', 'panama': 'panama', 'canada': 'ontario', 'mexico': 'df', 'belarus': u'Менск', 'poland': '', 'ukraine': '' } #where is the capital?
@@ -619,6 +646,12 @@ regexp['mexico']['es'] = re.compile(ur"""(?im)\{\{\s*MonumentoMéxico\s*(\|\s*(m
 regexp['belarus']['be-x-old'] = re.compile(ur"""(?im)\{\{\s*Вікі любіць славутасьці/Элемэнт сьпісу\s*(\|\s*(назва\s*=\s*(?P<nombre>[^=}]*?)|населены пункт\s*=\s*(?P<municipio>[^=}]*?)|адрэса\s*=(?P<lugar>[^=}]*?)|шырата\s*=\s*(?P<lat>[0-9\.\-\+]*?)|даўгата\s*=\s*(?P<lon>[0-9\.\-\+]*?)|шыфр\s*=\s*(?P<bic>[^=}]*?)|выява\s*=\s*(?P<imagen>[^=}]*?)|датаваньне\s*=\s*([^=}]*?)|катэгорыя\s*=\s*([^=}]*?)\s*)\s*)+\s*\|*\s*\}\}""")
 
 #main index
+globalpiechartpage = wikipedia.Page(wikipedia.Site('commons', 'commons'), u"User:Emijrp/WLM")
+globalpiechartpage.put(u'\n'.join([u'%s;{{subst:PAGESINCAT:%s}}' % (k, uploadcats[k]) for k in uploadcats.keys()]))
+globalpiechartpage = wikipedia.Page(wikipedia.Site('commons', 'commons'), u"User:Emijrp/WLM")
+globalpiecharttext = globalpiechartpage.get()
+globalpiechart = u"""%s""" % (globalpiecharttext)
+
 output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -665,7 +698,12 @@ new TWTR.Widget({
 }).render().start();
 </script>
 </td>
-<td><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/300px-LUSITANA_WLM_2011_d.svg.png" /></td>
+<td><a href="http://www.wikilovesmonuments.org"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/300px-LUSITANA_WLM_2011_d.svg.png" /></a></td>
+<td>
+<!--
+%s
+-->
+</td>
 </tr>
 </table>
 
@@ -686,20 +724,21 @@ new TWTR.Widget({
 <big><big><big><b>Україна</b></big></big></big>
 
 <br/><br/>
-<a href="http://en.wikipedia.org/wiki/User_talk:Emijrp">Request a map</a>&nbsp;&nbsp;<b>·</b>&nbsp;&nbsp;<a href="http://en.wikipedia.org/wiki/Wikipedia:There_is_a_deadline">There <i>is</i> a deadline</a>
+<a href="http://commons.wikimedia.org/wiki/Commons:Wiki_Loves_Monuments_2012/Participating_countries">More countries</a>&nbsp;&nbsp;<b>·</b>&nbsp;&nbsp;<a href="http://en.wikipedia.org/wiki/User_talk:Emijrp">Request a map</a>&nbsp;&nbsp;<b>·</b>&nbsp;&nbsp;<a href="http://en.wikipedia.org/wiki/Wikipedia:There_is_a_deadline">There <i>is</i> a deadline</a>
 
 </center>
 
 </body>
 </html>
-"""
+""" % (globalpiechart)
+
 f = open('%s/index.php' % (path), 'w')
 f.write(output.encode('utf-8'))
 f.close()
 
 time.sleep(10)
 #indexes by country
-for country in ['belarus']:# ['canada', 'argentina', 'chile', 'panama', 'mexico', 'spain', ]: #'spain'
+for country in ['canada', 'argentina', 'chile', 'panama', 'mexico', 'spain', 'belarus']:# ['canada', 'argentina', 'chile', 'panama', 'mexico', 'spain', ]: #'spain'
     if not os.path.exists('%s/%s/' % (path, country)):
         os.makedirs('%s/%s/' % (path, country))
     missingcoordinates = 0
