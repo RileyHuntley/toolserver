@@ -19,6 +19,7 @@ import datetime
 import md5
 import os
 import re
+import sys
 import time
 
 import catlib
@@ -60,6 +61,11 @@ def placenamesconvert(p):
         return placenames[p]
     else:
         return p[0].upper()+p[1:]
+
+onlymainpage = False
+if len(sys.argv) > 1:
+    if sys.argv[1] == '--onlymainpage':
+        onlymainpage = True
 
 path = '/home/emijrp/public_html/wlm'
 wmurls = { 
@@ -751,36 +757,7 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 <title>Wiki Loves Monuments</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta http-equiv="Content-Style-Type" content="text/css" />
-    <style type="text/css">
-        body {font-family: Arial, sans-serif;}
-        
-        /**
-         * wikitable class for skinning normal tables
-         * keep in sync with commonPrint.css
-         */
-        table.wikitable {
-            margin: 1em 1em 1em 0;
-            background-color: #f9f9f9;
-            border: 1px #aaa solid;
-            border-collapse: collapse;
-            color: black;
-        }
-        table.wikitable > tr > th,
-        table.wikitable > tr > td,
-        table.wikitable > * > tr > th,
-        table.wikitable > * > tr > td {
-            border: 1px #aaa solid;
-            padding: 0.2em;
-        }
-        table.wikitable > tr > th,
-        table.wikitable > * > tr > th {
-            background-color: #f2f2f2;
-            text-align: center;
-        }
-        table.wikitable > caption {
-            font-weight: bold;
-        }
-    </style>
+<link rel="stylesheet" type="text/css" href="wlm.css" />
 </head>
 
 <body style="background-color: white;">
@@ -856,6 +833,9 @@ new TWTR.Widget({
 f = open('%s/index.php' % (path), 'w')
 f.write(output.encode('utf-8'))
 f.close()
+
+if onlymainpage:
+    sys.exit()
 
 time.sleep(10)
 #indexes by country
@@ -1146,7 +1126,7 @@ for country in ['canada', 'argentina', 'chile', 'panama', 'mexico', 'spain', 'be
     <head>
     <title>Wiki Loves Monuments</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <link rel="stylesheet" type="text/css" href="../wlm.css" />
 
     <script language="javascript">
     function showHide(id){
