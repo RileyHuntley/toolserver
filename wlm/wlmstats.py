@@ -134,7 +134,10 @@ def main():
             if image.title() not in [i[0] for i in files]:
                 if len(files) % 50 == 0:
                     print len(files)
-                date, username, resolution, size, comment = image.getFileVersionHistory()[-1]
+                try:
+                    date, username, resolution, size, comment = image.getFileVersionHistory()[-1]
+                except:
+                    continue
                 comment = re.sub(ur"(?im)\s", ur" ", comment)
                 files.append([image.title(), country, date, username, resolution, str(size), comment])
 
