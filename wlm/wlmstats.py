@@ -167,9 +167,10 @@ def main():
         else:
             users[username] = {'files': 1, 'size': int(size)}
         if resolutions.has_key(resolution):
-            resolutions[resolution] += 1
+            resolutions[resolution]['files'] += 1
+            resolutions[resolution]['size'] += int(size)
         else:
-            resolutions[resolution] = 1
+            resolutions[resolution] = {'files': 1, 'size': int(size)}
         sizes_list.append(size)
 
     sizes_list.sort(reverse=1)
@@ -221,7 +222,7 @@ def main():
         c += 1
         countries_rank += u'<tr><td>%s</td><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/Category:%s">%s</a></td><td>%d</td><td>%.1f</td></tr>\n' % (c, countrynames[k], uploadcats[k], countries[k]['files'], len(countries[k]['uploaders']), countries[k]['size']/1024.0/1024)
     countries_rank += u'<tr><td></td><td><b>Total</b></td><td><b><a href="http://commons.wikimedia.org/wiki/Category:Images from Wiki Loves Monuments 2012">%s</a></b></td><td><b>%d</b></td><td><b>%.1f</b></td></tr>\n' % (sum([countries[k]['files'] for k in countries.keys()]), sum([len(countries[k]['uploaders']) for k in countries.keys()]), sum([countries[k]['size'] for k in countries.keys()])/1024.0/1024)
-    countries_rank = u"""<table class="wikitable" style="text-align: center;">
+    countries_rank = u"""<table id="countries" class="wikitable" style="text-align: center;">
     <tr><th>#</th><th>Country</th><th>Files</th><th>Uploaders</th><th>MBytes</th></tr>
     %s
     </table>""" % (countries_rank)
@@ -232,10 +233,21 @@ def main():
         c += 1
         users_rank += u'<tr><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/User:%s">%s</a></td><td><a href="http://commons.wikimedia.org/wiki/Special:ListFiles/%s">%s</a></td><td>%.1f</td></tr>' % (c, k, k, k, users[k]['files'], users[k]['size']/1024.0/1024)
     users_rank += u'<tr><td></td><td><b>Total</b></td><td><b><a href="http://commons.wikimedia.org/wiki/Category:Images from Wiki Loves Monuments 2012">%s</a></b></td><td><b>%.1f</b></td></tr>' % (sum([users[k]['files'] for k in users.keys()]), sum([users[k]['size'] for k in users.keys()])/1024.0/1024)
-    users_rank = u"""<table class="wikitable" style="text-align: center;">
+    users_rank = u"""<table id="users" class="wikitable" style="text-align: center;">
     <tr><th>#</th><th>Uploader</th><th>Files</th><th>MBytes</th></tr>
     %s
     </table>""" % (users_rank)
+    
+    resolutions_rank = u''
+    c = 0
+    for k, v in resolutions_list[:15]:
+        c += 1
+        resolutions_rank += u'<tr><td>%s</td><td>%s</td><td>%s</td><td>%.1f</td></tr>' % (c, k, resolutions[k]['files'], resolutions[k]['size']/1024.0/1024)
+    resolutions_rank += u'<tr><td></td><td><b>Total</b></td><td><b>%s</b></td><td><b>%.1f</b></td></tr>' % (sum([resolutions[k]['files'] for k in resolutions.keys()]), sum([resolutions[k]['size'] for k in resolutions.keys()])/1024.0/1024)
+    resolutions_rank = u"""<table id="users" class="wikitable" style="text-align: center;">
+    <tr><th>#</th><th>Resolution</th><th>Files</th><th>MBytes</th></tr>
+    %s
+    </table>""" % (resolutions_rank)
     
     intro = u"%s files by %s uploaders from %s countries so far" % (sum([countries[k]['files'] for k in countries.keys()]), len(users.keys()), len(countries.keys()))
     output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -255,7 +267,7 @@ def main():
     <table border=0 cellpadding=10px width=%s style="text-align: center;">
     <tr>
     <td><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/100px-LUSITANA_WLM_2011_d.svg.png" /></td>
-    <td valign=top width=99%%><big><big><big><b><a href="index.php">Wiki <i>Loves</i> Monuments</a></b></big></big></big><br/><b>September 2012</b><br/><br/>%s<br/><a href="#day">Uploads per day</a> - <a href="#hour">Uploads per hour</a> - <a href="#detailed">Countries ranking</a> - <a href="#detailed">Uploaders ranking</a></td>
+    <td valign=top width=99%%><big><big><big><b><a href="index.php">Wiki <i>Loves</i> Monuments</a></b></big></big></big><br/><b>September 2012</b><br/><br/>%s<br/><a href="#day">Uploads per day</a> - <a href="#hour">Uploads per hour</a> - <a href="#countries">Countries ranking</a> - <a href="#uploaders">Uploaders ranking</a> - <a href="#files">Files ranking</a></td>
     <td><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/100px-LUSITANA_WLM_2011_d.svg.png" /></td>
     </tr>
     </table>
@@ -269,7 +281,13 @@ def main():
     <h2 id="detailed">Detailed statistics</h2>
     <table border=0>
     <tr>
-    <td valign=top>%s</td><td valign=top>%s</td>
+    <td valign=top>
+    <!-- countries rank -->%s
+    <!-- resolutions rank -->%s
+    </td>
+    <td valign=top>
+    <!-- users rank -->%s
+    </td>
     </tr>
     </table>
     
@@ -282,7 +300,7 @@ def main():
 
     </body>
     </html>
-    """ % (width, intro, dates_graph, hours_graph, countries_rank, users_rank, datetime.datetime.now())
+    """ % (width, intro, dates_graph, hours_graph, countries_rank, resolutions_rank, users_rank, datetime.datetime.now())
 
     f = open('%s/stats.php' % (path), 'w')
     f.write(output.encode('utf-8'))
