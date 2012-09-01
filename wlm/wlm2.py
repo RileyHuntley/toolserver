@@ -151,6 +151,7 @@ def placenamesconvert(i):
 
 def main():
     for country in countrynames.keys():
+        print 'Loading', country
         country_ = re.sub(' ', '', countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
             os.makedirs('%s/%s/' % (path, country_))
@@ -195,10 +196,13 @@ def main():
             admins = list(set([v['adm%s' % (adm)] for k, v in monuments.items()]))
         else:
             admins = [country]
-
+        admins.sort()
+        
         for admin in admins:
             if not admin:
                 admin = 'other'
+            
+            print 'Generating', country, admin
             
             imageyesurl = u'http://maps.google.com/mapfiles/kml/paddle/red-stars.png'
             imagenourl = u'http://maps.google.com/mapfiles/kml/paddle/wht-blank.png'
@@ -247,8 +251,7 @@ def main():
                 <tr><td align=right width=80px style="background-color: lightgreen;"><b>Name:</b></td><td><a href="http://%s.wikipedia.org/wiki/%s" target="_blank">%s</a></td><td rowspan=4><a href="http://commons.wikimedia.org/wiki/File:%s" target="_blank"><img src="%s" width=%s/></a></td></tr>
                 <tr><td align=right style="background-color: lightblue;"><b>Location:</b></td><td>%s</td></tr>
                 <tr><td align=right style="background-color: yellow;"><b>ID:</b></td><td>%s</td></tr>
-                <tr><td align=center colspan=2><br/><b>This monument has %s<br/>you can upload yours. Thanks!</b><br/><br/><span style="border: 2px solid black;background-color: pink;padding: 3px;"><a href="http://commons.wikimedia.org/w/index.php?title=Special:UploadWizard&campaign=wlm-%s&id=%s&lat=%s&lon=%s&descriptionlang=%s
-        #&description=%s" target="_blank"><b>Upload</b></a></span></td></tr>
+                <tr><td align=center colspan=2><br/><b>This monument has %s<br/>you can upload yours. Thanks!</b><br/><br/><span style="border: 2px solid black;background-color: pink;padding: 3px;"><a href="http://commons.wikimedia.org/w/index.php?title=Special:UploadWizard&campaign=wlm-%s&id=%s&lat=%s&lon=%s&descriptionlang=%s&description=%s" target="_blank"><b>Upload</b></a></span></td></tr>
                 </table>
                 ]]>
                 </description>
@@ -337,7 +340,7 @@ def main():
         </body>
 
         </html>
-        """ % (u', '.join([u'"%s"' % (i) for i in admins]), admins[0], wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or '', wlmurls.has_key(country) and wlmurls[country] or '', total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, wlmurls.has_key(country) and wlmurls[country] or '', u', '.join([u'<a href="index.php?place=%s">%s</a>' % (i, placenamesconvert(i)) for i in admins]), country, datetime.datetime.now())
+        """ % (u', '.join([u'"%s"' % (i) for i in admins]), admins[0], wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or '', wlmurls.has_key(country) and wlmurls[country] or '', total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, wlmurls.has_key(country) and wlmurls[country] or '', u', '.join([u'<a href="index.php?place=%s">%s</a>' % (i, placenamesconvert(i)) for i in admins]), country_, datetime.datetime.now())
 
         f = open('%s/%s/index.php' % (path, country_), 'w')
         f.write(output.encode('utf-8'))
