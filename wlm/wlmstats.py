@@ -221,12 +221,12 @@ def main():
     <table border=0 cellpadding=10px width=%s style="text-align: center;">
     <tr>
     <td><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" /></td>
-    <td valign=top width=99%%><br/><big><big><big><b><a href="index.php">Wiki <i>Loves</i> Monuments</a></b></big></big></big></td>
+    <td valign=top width=99%%><br/><big><big><big><b><a href="index.php">Wiki <i>Loves</i> Monuments</a></b></big></big></big><br/><b>September 2012</b></td>
     <td><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" /></td>
     </tr>
     </table>
 
-    <h2>September statistics</h2>
+    <h2>Monthly statistics</h2>
     %s
 
     <h2>Hourly statistics</h2>
