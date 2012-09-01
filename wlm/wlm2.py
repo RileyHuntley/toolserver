@@ -25,12 +25,24 @@ codification = 'iso-8859-1'
 conn = _mysql.connect(host='sql.toolserver.org', db='p_erfgoed_p', read_default_file='~/.my.cnf')
 countrynames = {
     'ad': 'Andorra', 
+    'ar': 'Argentina', 
+    'ch': 'Switzerland',
+    'cl': 'Chile',
     'co': 'Colombia',
+    'ee': 'Estonia',
+    'fr': 'France',
+    'ie': 'Ireland',
     'il': 'Israel',
+    'in': 'India',
     'it': 'Italy',
     'lu': 'Luxembourg', 
     'mt': 'Malta', 
     'pa': 'Panama',
+    'pt': 'Portugal',
+    'ro': 'Romania',
+    'ru': 'Russia',
+    'sk': 'Slovakia',
+    'za': 'South Africa',
 }
 for country in countrynames.keys():
     country_ = re.sub(' ', '', countrynames[country].lower())
@@ -50,76 +62,85 @@ for country in countrynames.keys():
             'monument_article': unicode(row[0]['monument_article'], codification),
             'name': unicode(row[0]['name'], codification),
             'municipality': unicode(row[0]['municipality'], codification),
-            'adm0': row[0]['adm0'], 
-            'adm1': row[0]['adm1'], 
-            'adm2': row[0]['adm2'], 
-            'adm3': row[0]['adm3'], 
-            'adm4': row[0]['adm4'], 
+            'adm0': row[0]['adm0'] and row[0]['adm0'].lower() or '', 
+            'adm1': row[0]['adm1'] and row[0]['adm1'].lower() or '', 
+            'adm2': row[0]['adm2'] and row[0]['adm2'].lower() or '', 
+            'adm3': row[0]['adm3'] and row[0]['adm3'].lower() or '', 
+            'adm4': row[0]['adm4'] and row[0]['adm4'].lower() or '', 
             'address': unicode(row[0]['address'], codification), 
-            'lat': row[0]['lat'] != 'None' and row[0]['lat'] or 0,  
-            'lon': row[0]['lon'] != 'None' and row[0]['lon'] or 0, 
-            'image': unicode(row[0]['image'], codification), 
+            'lat': row[0]['lat'] and row[0]['lat'] or 0,  
+            'lon': row[0]['lon'] and row[0]['lon'] or 0, 
+            'image': row[0]['image'] and unicode(row[0]['image'], codification) or '', 
         }
         row=r.fetch_row(maxrows=1, how=1)
     
-    imageyesurl = u'http://maps.google.com/mapfiles/kml/paddle/red-stars.png'
-    imagenourl = u'http://maps.google.com/mapfiles/kml/paddle/wht-blank.png'
-    output = u"""<?xml version="1.0" encoding="UTF-8"?>
-    <kml xmlns="http://www.opengis.net/kml/2.2">
-        <Document>
-        <name>Wiki Loves Monuments</name>
-        <description>A map with missing images by location</description>
-        <Style id="imageyes">
-          <IconStyle>
-            <Icon>
-              <href>%s</href>
-            </Icon>
-          </IconStyle>
-        </Style>
-        <Style id="imageno">
-          <IconStyle>
-            <Icon>
-              <href>%s</href>
-            </Icon>
-          </IconStyle>
-        </Style>
-    """ % (imageyesurl, imagenourl)
+    adm = 0
+    if len(monuments.keys()) >= 1000:
+        adm = 1
     
-    imagesize = '150px'
-    for id, props in monuments.items():
-        if props['lat'] == 0 and props['lon'] == 0:
-            continue
+    for admname in set([v['adm%s' % (adm)] for k, v in monuments.items()]):
+        imageyesurl = u'http://maps.google.com/mapfiles/kml/paddle/red-stars.png'
+        imagenourl = u'http://maps.google.com/mapfiles/kml/paddle/wht-blank.png'
+        output = u"""<?xml version="1.0" encoding="UTF-8"?>
+        <kml xmlns="http://www.opengis.net/kml/2.2">
+            <Document>
+            <name>Wiki Loves Monuments</name>
+            <description>A map with missing images by location</description>
+            <Style id="imageyes">
+              <IconStyle>
+                <Icon>
+                  <href>%s</href>
+                </Icon>
+              </IconStyle>
+            </Style>
+            <Style id="imageno">
+              <IconStyle>
+                <Icon>
+                  <href>%s</href>
+                </Icon>
+              </IconStyle>
+            </Style>
+        """ % (imageyesurl, imagenourl)
         
-        imagefilename = re.sub(' ', '_', props['image'])
-        m5 = md5.new(imagefilename.encode('utf-8')).hexdigest()
-        thumburl = u'http://upload.wikimedia.org/wikipedia/commons/thumb/%s/%s/%s/%s-%s' % (m5[0], m5[:2], imagefilename, imagesize, imagefilename)
+        imagesize = '150px'
+        for id, props in monuments.items():
+            if props['lat'] == 0 and props['lon'] == 0:
+                continue
+            
+            if adm:
+                if props['adm%s' % (adm)] != admname:
+                    continue
+            
+            imagefilename = re.sub(' ', '_', props['image'])
+            m5 = md5.new(imagefilename.encode('utf-8')).hexdigest()
+            thumburl = u'http://upload.wikimedia.org/wikipedia/commons/thumb/%s/%s/%s/%s-%s' % (m5[0], m5[:2], imagefilename, imagesize, imagefilename)
 
+            output += u"""
+            <Placemark>
+            <name>%s</name>
+            <description>
+            <![CDATA[
+            <table border=0 cellspacing=3px cellpadding=3px>
+            <tr><td align=right width=80px style="background-color: lightgreen;"><b>Name:</b></td><td><a href="http://%s.wikipedia.org/wiki/%s" target="_blank">%s</a></td><td rowspan=4><a href="http://commons.wikimedia.org/wiki/File:%s" target="_blank"><img src="%s" width=%s/></a></td></tr>
+            <tr><td align=right style="background-color: lightblue;"><b>Location:</b></td><td>%s</td></tr>
+            <tr><td align=right style="background-color: yellow;"><b>ID:</b></td><td>%s</td></tr>
+            <tr><td align=center colspan=2><br/><b>This monument has %s<br/>you can upload yours. Thanks!</b><br/><br/><span style="border: 2px solid black;background-color: pink;padding: 3px;"><a href="http://commons.wikimedia.org/w/index.php?title=Special:UploadWizard&campaign=wlm-%s&id=%s&lat=%s&lon=%s&descriptionlang=%s
+    #&description=%s" target="_blank"><b>Upload</b></a></span></td></tr>
+            </table>
+            ]]>
+            </description>
+            <styleUrl>#%s</styleUrl>
+            <Point>
+            <coordinates>%s,%s</coordinates>
+            </Point>
+            </Placemark>""" % (props['name'], props['lang'], props['monument_article'], props['name'], props['image'], thumburl, imagesize, props['municipality'], id, props['image'] and 'images, but' or 'no images,', country, id, props['lat'], props['lon'], props['lang'], props['name'], props['image'] and 'imageyes' or 'imageno', props['lon'], props['lat'])
+        
         output += u"""
-        <Placemark>
-        <name>%s</name>
-        <description>
-        <![CDATA[
-        <table border=0 cellspacing=3px cellpadding=3px>
-        <tr><td align=right width=80px style="background-color: lightgreen;"><b>Name:</b></td><td><a href="http://%s.wikipedia.org/wiki/%s" target="_blank">%s</a></td><td rowspan=4><a href="http://commons.wikimedia.org/wiki/File:%s" target="_blank"><img src="%s" width=%s/></a></td></tr>
-        <tr><td align=right style="background-color: lightblue;"><b>Location:</b></td><td>%s</td></tr>
-        <tr><td align=right style="background-color: yellow;"><b>ID:</b></td><td>%s</td></tr>
-        <tr><td align=center colspan=2><br/><b>This monument has %s<br/>you can upload yours. Thanks!</b><br/><br/><span style="border: 2px solid black;background-color: pink;padding: 3px;"><a href="http://commons.wikimedia.org/w/index.php?title=Special:UploadWizard&campaign=wlm-%s&id=%s&lat=%s&lon=%s&descriptionlang=%s
-#&description=%s" target="_blank"><b>Upload</b></a></span></td></tr>
-        </table>
-        ]]>
-        </description>
-        <styleUrl>#%s</styleUrl>
-        <Point>
-        <coordinates>%s,%s</coordinates>
-        </Point>
-        </Placemark>""" % (props['name'], props['lang'], props['monument_article'], props['name'], props['image'], thumburl, imagesize, props['municipality'], id, props['image'] and 'images, but' or 'no images,', country, id, props['lat'], props['lon'], props['lang'], props['name'], props['image'] and 'imageyes' or 'imageno', props['lon'], props['lat'])
-    
-    output += u"""
-        </Document>
-    </kml>"""
-    
-    f = open('%s/%s/wlm-%s.kml' % (path, country_, country_), 'w')
-    f.write(output.encode('utf-8'))
-    f.close()
+            </Document>
+        </kml>"""
+        
+        f = open('%s/%s/wlm-%s.kml' % (path, country_, adm == 0 and country_ or admname), 'w')
+        f.write(output.encode('utf-8'))
+        f.close()
     
     
