@@ -20,6 +20,7 @@ import datetime
 import os
 import pagegenerators
 import re
+import time
 import wikipedia
 
 #wlm counter con contador de subidas y megabytes
@@ -106,6 +107,14 @@ countrynames = {
     u'unitedstates': u'United States', 
 }
 
+def convert2unix(mwtimestamp):
+    #from wmchart0000.py
+    #2010-12-25T12:12:12Z
+    [year, month, day] = [int(mwtimestamp[0:4]), int(mwtimestamp[5:7]), int(mwtimestamp[8:10])]
+    [hour, minute, second] = [int(mwtimestamp[11:13]), int(mwtimestamp[14:16]), int(mwtimestamp[17:19])]
+    d = datetime.datetime(year=year, month=month, day=day, hour=hour, minute=minute, second=second)
+    return int((time.mktime(d.timetuple())+1e-6*d.microsecond)*1000)
+
 def main():
     #loading files metadata
     filename = 'files.txt'
@@ -116,6 +125,7 @@ def main():
 
     #adding new files metadata
     for country in uploadcats.keys():
+        continue
         cat = catlib.Category(wikipedia.Site("commons", "commons"), u"Category:%s" % uploadcats[country])
         gen = pagegenerators.CategorizedPageGenerator(cat, start="!")
         pre = pagegenerators.PreloadingGenerator(gen, pageNumber=250)
@@ -151,7 +161,7 @@ def main():
                 countries[country]['uploaders'].append(username)
         else:
             countries[country] = { 'files': 1, 'size': int(size), 'uploaders': [username]}
-        d = date.split('T')[0].split('-')[2]
+        d = '%sT00:00:00Z' % (date.split('T')[0])
         h = date.split('T')[1].split(':')[0]
         if dates.has_key(d):
             dates[d] += 1
@@ -190,7 +200,7 @@ def main():
 
     width = '800px'
     height = '250px'
-    dates_graph_data = u', '.join([u'["%s", %s]' % (k, v) for k, v in dates_list])
+    dates_graph_data = u', '.join([u'["%s", %s]' % (convert2unix(k), v) for k, v in dates_list])
     dates_graph = u"""<div id="dates_graph" style="width: %s;height: %s;"></div>
     <script type="text/javascript">
     $(function () {
@@ -198,7 +208,8 @@ def main():
        
         var dates_graph = $("#dates_graph");
         var dates_graph_data = [ dates_graph_data, ];
-        var dates_graph_options = { xaxis: { mode: null, tickSize: 1, tickDecimals: 0, min: 1, max: 30}, bars: { show: true, barWidth: 0.6 }, points: { show: false }, legend: { noColumns: 1 }, grid: { hoverable: true }, };
+        var dates_graph_options = { xaxis: { mode: "time", min: (new Date("2012/08/31")).getTime(), max: (new Date("2012/09/30")).getTime() }, bars: { show: false, barWidth: 0.6 }, lines: { show: true }, points: { show: true }, legend: { noColumns: 1 }, grid: { hoverable: true }, clickable: true, hoverable: true
+};
         $.plot(dates_graph, dates_graph_data, dates_graph_options);
     });
     </script>""" % (width, height, dates_graph_data)
@@ -253,8 +264,8 @@ def main():
     c = 0
     for size, title, username, country in sizes_list[:15]: 
         c += 1
-        sizes_rank += u'<tr><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/%s">%s...</a></td><td>%s</td><td>%.1f</td></tr>' % (c, title, title[5:15], size/1024.0/1024, username, countrynames[country])
-    sizes_rank += u'<tr><td></td><td><b>Total</b></td><td><b>%s</b></td><td></td><td></td></tr>' % (sum([resolutions[k]['size'] for k in resolutions.keys()])/1024.0/1024)
+        sizes_rank += u'<tr><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/%s">%s</a></td><td>%.1f</td><td><a href="http://commons.wikimedia.org/wiki/User:%s">%s</a></td><td>%s</td></tr>' % (c, title, len(title)>5+15 and (u'%s...' % title[5:15]) or title[5:], size/1024.0/1024, username, username, countrynames[country])
+    sizes_rank += u'<tr><td></td><td><b>Total</b></td><td><b>%.1f</b></td><td></td><td></td></tr>' % (sum([resolutions[k]['size'] for k in resolutions.keys()])/1024.0/1024)
     sizes_rank = u"""<table id="sizes" class="wikitable" style="text-align: center;">
     <tr><th>#</th><th>File</th><th>MBytes</th><th>Uploader</th><th>Country</th></tr>
     %s
