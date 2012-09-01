@@ -216,9 +216,9 @@ def main():
     c = 0
     for k, v in countries_list:
         c += 1
-        countries_rank += u'<tr><td>%s</td><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/Category:%s">%s</a></td><td>%d</td><td>%d</td></tr>' % (c, countrynames[k], uploadcats[k], countries[k]['files'], countries[k]['size']/1024/1024, len(countries[k]['uploaders']))
+        countries_rank += u'<tr><td>%s</td><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/Category:%s">%s</a></td><td>%d</td><td>%d</td></tr>' % (c, countrynames[k], uploadcats[k], countries[k]['files'], len(countries[k]['uploaders']), countries[k]['size']/1024/1024))
     countries_rank = u"""<table class="wikitable" style="text-align: center;">
-    <tr><th>#</th><th>Country</th><th>Files</th><th>MBytes</th><th>Uploaders</th></tr>
+    <tr><th>#</th><th>Country</th><th>Files</th><th>Uploaders</th><th>MBytes</th></tr>
     %s
     </table>""" % (countries_rank)
     
@@ -226,7 +226,7 @@ def main():
     c = 0
     for k, v in users_list:
         c += 1
-        users_rank += u'<tr><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/User:%s">%s</a></td><td><a href="http://commons.wikimedia.org/wiki/Special:Contributions/%s">%s</a></td><td>%d</td></tr>' % (c, k, k, k, users[k]['files'], users[k]['size']/1024/1024)
+        users_rank += u'<tr><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/User:%s">%s</a></td><td><a href="http://commons.wikimedia.org/wiki/Special:ListFiles/%s">%s</a></td><td>%d</td></tr>' % (c, k, k, k, users[k]['files'], users[k]['size']/1024/1024)
     users_rank = u"""<table class="wikitable" style="text-align: center;">
     <tr><th>#</th><th>Uploader</th><th>Files</th><th>MBytes</th></tr>
     %s
@@ -267,6 +267,9 @@ def main():
     <td valign=top>%s</td><td valign=top>%s</td>
     </tr>
     </table>
+    
+    (<a href="files.txt">Download metadata and make your own statistics</a>)
+    <br/>
     
     <i>Last update: %s (UTC)</i>
     
