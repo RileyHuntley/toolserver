@@ -177,13 +177,13 @@ def main():
                 'adm3': row[0]['adm3'] and row[0]['adm3'].lower() or '', 
                 'adm4': row[0]['adm4'] and row[0]['adm4'].lower() or '', 
                 'address': unicode(row[0]['address'], codification), 
-                'lat': row[0]['lat'] and row[0]['lat'] or 0,  
-                'lon': row[0]['lon'] and row[0]['lon'] or 0, 
+                'lat': row[0]['lat'] and row[0]['lat'] != '0' and row[0]['lat'] or 0,  
+                'lon': row[0]['lon'] and row[0]['lon'] != '0' and row[0]['lon'] or 0, 
                 'image': row[0]['image'] and unicode(row[0]['image'], codification) or '', 
             }
-            if not row[0]['image']:
+            if not monuments[row[0]['id']]['image']:
                 missingimages += 1
-            if not row[0]['lat'] or not row[0]['lon']:
+            if not monuments[row[0]['id']]['lat'] or not monuments[row[0]['id']]['lon']:
                 missingcoordinates += 1
             row=r.fetch_row(maxrows=1, how=1)
         total = len(monuments.keys())
