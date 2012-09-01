@@ -201,7 +201,7 @@ def main():
     resolutions_list.sort(reverse=1)
     resolutions_list = [[k, v] for v, k in resolutions_list]
 
-    width = '800px'
+    width = '1000px'
     height = '250px'
     dates_graph_data = u', '.join([u'["%s", %s]' % (convert2unix(k), v) for k, v in dates_list])
     dates_graph = u"""<div id="dates_graph" style="width: %s;height: %s;"></div>
