@@ -181,6 +181,8 @@ def main():
                 'lon': row[0]['lon'] and row[0]['lon'] != '0' and row[0]['lon'] or 0, 
                 'image': row[0]['image'] and unicode(row[0]['image'], codification) or '', 
             }
+            if re.search(ur"(?im)(falta[_ ]imagen|\.svg|missing[\- ]monuments[\- ]image|Wiki[_ ]Loves[_ ]Monuments[_ ]Logo|insert[_ ]image[_ ]here)", monuments[row[0]['id']]['image']):
+                monuments[row[0]['id']]['image'] = ''
             if not monuments[row[0]['id']]['image']:
                 missingimages += 1
             if not monuments[row[0]['id']]['lat'] or not monuments[row[0]['id']]['lon']:
