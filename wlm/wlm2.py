@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import _mysql
+import datetime
 import md5
 import os
 import re
@@ -338,7 +339,7 @@ def main():
         </html>
         """ % (u', '.join([u'"%s"' % (i) for i in admins]), admins[0], wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or '', wlmurls.has_key(country) and wlmurls[country] or '', total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, wlmurls.has_key(country) and wlmurls[country] or '', u', '.join([u'<a href="index.php?place=%s">%s</a>' % (i, placenamesconvert(i)) for i in admins]), country, datetime.datetime.now())
 
-        f = open('%s/%s/index.php' % (path, country), 'w')
+        f = open('%s/%s/index.php' % (path, country_), 'w')
         f.write(output.encode('utf-8'))
         f.close()
     
