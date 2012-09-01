@@ -142,11 +142,11 @@ def main():
     for title, country, date, username, resolution, size, comment in files:
         if countries.has_key(country):
             countries[country]['files'] += 1
-            countries[country]['sizes'] += size
+            countries[country]['size'] += int(size)
             if not username in countries[country]['uploaders']:
                 countries[country]['uploaders'].append(username)
         else:
-            countries[country] = { 'files': 1, 'size': size, 'uploaders': [username]}
+            countries[country] = { 'files': 1, 'size': int(size), 'uploaders': [username]}
         d = date.split('T')[0].split('-')[2]
         h = date.split('T')[1].split(':')[0]
         if dates.has_key(d):
@@ -214,8 +214,8 @@ def main():
     c = 0
     for k, v in countries_list:
         c += 1
-        countries_rank += u'<tr><td>%s</td><td>%s</td><td>%s</td><td>%d</td></tr>' % (c, countrynames[k], countries[k]['files'], countries[k]['size']/1024/1024)
-    countries_rank = u"""<table>
+        countries_rank += u'<tr><td>%s</td><td>%s</td><td>%s</td><td>%d</td><td>%d</td></tr>' % (c, countrynames[k], countries[k]['files'], countries[k]['size']/1024/1024, len(countries[k]['uploaders']))
+    countries_rank = u"""<table class="wikitable" style="text-align: center;">
     <tr><th>#</th><th>Country</th><th>Files</th><th>MBytes</th><th>Uploaders</th></tr>
     %s
     </table>""" % (countries_rank)    
@@ -229,7 +229,7 @@ def main():
     <title>Wiki Loves Monuments statistics</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta http-equiv="Content-Style-Type" content="text/css" />
-    <link rel="stylesheet" type="text/css" href="" />
+    <link rel="stylesheet" type="text/css" href="wlm.css" />
     <script language="javascript" type="text/javascript" src="modules/jquery.js"></script>
     <script language="javascript" type="text/javascript" src="modules/jquery.flot.js"></script>
     </head>
