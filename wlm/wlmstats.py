@@ -253,7 +253,7 @@ def main():
     c = 0
     for size, title, username, country in sizes_list[:15]: 
         c += 1
-        sizes_rank += u'<tr><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/%s">%s</a></td><td>%s</td><td>%.1f</td></tr>' % (c, title, title[:10], size/1024.0/1024, username, countrynames[country])
+        sizes_rank += u'<tr><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/%s">%s...</a></td><td>%s</td><td>%.1f</td></tr>' % (c, title, title[5:15], size/1024.0/1024, username, countrynames[country])
     sizes_rank += u'<tr><td></td><td><b>Total</b></td><td><b>%s</b></td><td></td><td></td></tr>' % (sum([resolutions[k]['size'] for k in resolutions.keys()])/1024.0/1024)
     sizes_rank = u"""<table id="sizes" class="wikitable" style="text-align: center;">
     <tr><th>#</th><th>File</th><th>MBytes</th><th>Uploader</th><th>Country</th></tr>
