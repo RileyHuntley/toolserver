@@ -171,7 +171,7 @@ def main():
             resolutions[resolution]['size'] += int(size)
         else:
             resolutions[resolution] = {'files': 1, 'size': int(size)}
-        sizes_list.append(size)
+        sizes_list.append([size, title, username, country])
 
     sizes_list.sort(reverse=1)
     countries_list = [[v['files'], k] for k, v in countries.items()]
@@ -243,11 +243,22 @@ def main():
     for k, v in resolutions_list[:15]:
         c += 1
         resolutions_rank += u'<tr><td>%s</td><td>%s</td><td>%s</td><td>%.1f</td></tr>' % (c, k, resolutions[k]['files'], resolutions[k]['size']/1024.0/1024)
-    resolutions_rank += u'<tr><td></td><td><b>Total</b></td><td><b>%s</b></td><td><b>%.1f</b></td></tr>' % (sum([resolutions[k]['files'] for k in resolutions.keys()]), sum([resolutions[k]['size'] for k in resolutions.keys()])/1024.0/1024)
+    resolutions_rank += u'<tr><td></td><td><b>Total</b></td><td><b><a href="http://commons.wikimedia.org/wiki/Category:Images from Wiki Loves Monuments 2012">%s</a></b></td><td><b>%.1f</b></td></tr>' % (sum([resolutions[k]['files'] for k in resolutions.keys()]), sum([resolutions[k]['size'] for k in resolutions.keys()])/1024.0/1024)
     resolutions_rank = u"""<table id="users" class="wikitable" style="text-align: center;">
     <tr><th>#</th><th>Resolution</th><th>Files</th><th>MBytes</th></tr>
     %s
     </table>""" % (resolutions_rank)
+    
+    sizes_rank = u''
+    c = 0
+    for size, title, username, country in sizes_list[:15]: 
+        c += 1
+        sizes_rank += u'<tr><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/%s">%s</a></td><td>%s</td><td>%.1f</td></tr>' % (c, title, title[:10], size/1024.0/1024, username, countrynames[country])
+    sizes_rank += u'<tr><td></td><td><b>Total</b></td><td><b>%s</b></td><td></td><td></td></tr>' % (sum([resolutions[k]['size'] for k in resolutions.keys()])/1024.0/1024)
+    sizes_rank = u"""<table id="sizes" class="wikitable" style="text-align: center;">
+    <tr><th>#</th><th>File</th><th>MBytes</th><th>Uploader</th><th>Country</th></tr>
+    %s
+    </table>""" % (sizes_rank)
     
     intro = u"%s files by %s uploaders from %s countries so far" % (sum([countries[k]['files'] for k in countries.keys()]), len(users.keys()), len(countries.keys()))
     output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -264,10 +275,10 @@ def main():
     <body style="background-color: white;">
 
     <center>
-    <table border=0 cellpadding=10px width=%s style="text-align: center;">
+    <table border=0 cellpadding=5px width=%s style="text-align: center;">
     <tr>
     <td><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/100px-LUSITANA_WLM_2011_d.svg.png" /></td>
-    <td valign=top width=99%%><big><big><big><b><a href="index.php">Wiki <i>Loves</i> Monuments</a></b></big></big></big><br/><b>September 2012</b><br/><br/>%s<br/><a href="#day">Uploads per day</a> - <a href="#hour">Uploads per hour</a> - <a href="#countries">Countries ranking</a> - <a href="#uploaders">Uploaders ranking</a> - <a href="#files">Files ranking</a></td>
+    <td valign=top width=99%%><big><big><big><b><a href="index.php">Wiki <i>Loves</i> Monuments</a></b></big></big></big><br/><b>September 2012</b><br/><br/>%s<br/><a href="#day">Uploads per day</a> - <a href="#hour">Uploads per hour</a> - <a href="#countries">Countries ranking</a> - <a href="#uploaders">Uploaders ranking</a> - <a href="#sizes">Sizes ranking</a> - <a href="#resolutions">Resolutions ranking</a></td>
     <td><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/100px-LUSITANA_WLM_2011_d.svg.png" /></td>
     </tr>
     </table>
@@ -282,11 +293,16 @@ def main():
     <table border=0>
     <tr>
     <td valign=top>
+    <center>
     <!-- countries rank -->%s
     <!-- resolutions rank -->%s
+    <!-- sizes rank -->%s
+    </center>
     </td>
     <td valign=top>
+    <center>
     <!-- users rank -->%s
+    </center>
     </td>
     </tr>
     </table>
@@ -300,7 +316,7 @@ def main():
 
     </body>
     </html>
-    """ % (width, intro, dates_graph, hours_graph, countries_rank, resolutions_rank, users_rank, datetime.datetime.now())
+    """ % (width, intro, dates_graph, hours_graph, countries_rank, resolutions_rank, sizes_rank, users_rank, datetime.datetime.now())
 
     f = open('%s/stats.php' % (path), 'w')
     f.write(output.encode('utf-8'))
