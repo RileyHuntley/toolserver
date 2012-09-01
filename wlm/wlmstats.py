@@ -171,7 +171,7 @@ def main():
             resolutions[resolution]['size'] += int(size)
         else:
             resolutions[resolution] = {'files': 1, 'size': int(size)}
-        sizes_list.append([size, title, username, country])
+        sizes_list.append([int(size), title, username, country])
 
     sizes_list.sort(reverse=1)
     countries_list = [[v['files'], k] for k, v in countries.items()]
