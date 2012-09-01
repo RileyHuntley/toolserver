@@ -158,9 +158,10 @@ def main():
         else:
             hours[h] = 1
         if users.has_key(username):
-            users[username] += 1
+            users[username]['files'] += 1
+            users[username]['size'] += size
         else:
-            users[username] = 1
+            users[username] = {'files': 1, 'size': size}
         if resolutions.has_key(resolution):
             resolutions[resolution] += 1
         else:
@@ -214,13 +215,20 @@ def main():
     c = 0
     for k, v in countries_list:
         c += 1
-        countries_rank += u'<tr><td>%s</td><td>%s</td><td>%s</td><td>%d</td><td>%d</td></tr>' % (c, countrynames[k], countries[k]['files'], countries[k]['size']/1024/1024, len(countries[k]['uploaders']))
+        countries_rank += u'<tr><td>%s</td><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/Category:%s">%s</a></td><td>%d</td><td>%d</td></tr>' % (c, countrynames[k], uploadcats[k], countries[k]['files'], countries[k]['size']/1024/1024, len(countries[k]['uploaders']))
     countries_rank = u"""<table class="wikitable" style="text-align: center;">
     <tr><th>#</th><th>Country</th><th>Files</th><th>MBytes</th><th>Uploaders</th></tr>
     %s
-    </table>""" % (countries_rank)    
+    </table>""" % (countries_rank)
     
-    users_rank = u""" """
+    c = 0
+    for k, v in users_list:
+        c += 1
+        users_rank += u'<tr><td>%s</td><td>%s</td><td>%s</td><td>%d</td></tr>' % (c, k, users[k]['files'], users[k]['size']/1024/1024)
+    users_rank = u"""<table class="wikitable" style="text-align: center;">
+    <tr><th>#</th><th>Uploader</th><th>Files</th><th>MBytes</th></tr>
+    %s
+    </table>""" % (users_rank)
     
     
     output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
