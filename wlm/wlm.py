@@ -833,7 +833,7 @@ new TWTR.Widget({
 <td><a href="http://www.wikilovesmonuments.org"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/300px-LUSITANA_WLM_2011_d.svg.png" /></a></td>
 <td>
 %s
-<center><a href="stats.html">See more stats</a></center>
+<center><a href="stats.php">See more stats</a></center>
 </td>
 </tr>
 </table>

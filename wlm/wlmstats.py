@@ -282,7 +282,7 @@ def main():
     </html>
     """ % (width, dates_graph, hours_graph, countries_rank, users_rank, datetime.datetime.now())
 
-    f = open('%s/stats.html' % (path), 'w')
+    f = open('%s/stats.php' % (path), 'w')
     f.write(output.encode('utf-8'))
     f.close()
 
