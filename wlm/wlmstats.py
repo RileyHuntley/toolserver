@@ -113,7 +113,7 @@ def main():
         files = []
 
     #adding new files metadata
-    for country in ['russia']:# uploadcats.keys():
+    for country in uploadcats.keys():
         cat = catlib.Category(wikipedia.Site("commons", "commons"), u"Category:%s" % uploadcats[country])
         gen = pagegenerators.CategorizedPageGenerator(cat, start="!")
         pre = pagegenerators.PreloadingGenerator(gen, pageNumber=250)
