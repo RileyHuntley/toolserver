@@ -23,6 +23,7 @@ import re
 import wikipedia
 
 #wlm counter con contador de subidas y megabytes
+#http://commons.wikimedia.org/wiki/Commons:Wiki_Loves_Monuments_2012/CentralNotice
 
 path = "/home/emijrp/public_html/wlm"
 uploadcats = { 
@@ -216,7 +217,8 @@ def main():
     c = 0
     for k, v in countries_list:
         c += 1
-        countries_rank += u'<tr><td>%s</td><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/Category:%s">%s</a></td><td>%d</td><td>%.1f</td></tr>' % (c, countrynames[k], uploadcats[k], countries[k]['files'], len(countries[k]['uploaders']), countries[k]['size']/1024.0/1024)
+        countries_rank += u'<tr><td>%s</td><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/Category:%s">%s</a></td><td>%d</td><td>%.1f</td></tr>\n' % (c, countrynames[k], uploadcats[k], countries[k]['files'], len(countries[k]['uploaders']), countries[k]['size']/1024.0/1024)
+    countries_rank += u'<tr><td></td><td><b>Total</b></td><td><a href="http://commons.wikimedia.org/wiki/Category:Images from Wiki Loves Monuments 2012">%s</a></td><td>%d</td><td>%.1f</td></tr>\n' % (sum([countries[k]['files'] for k in countries.keys()]), sum([len(countries[k]['uploaders']) for k in countries.keys()]), sum([countries[k]['size'] for k in countries.keys()])/1024.0/1024)
     countries_rank = u"""<table class="wikitable" style="text-align: center;">
     <tr><th>#</th><th>Country</th><th>Files</th><th>Uploaders</th><th>MBytes</th></tr>
     %s
@@ -224,7 +226,7 @@ def main():
     
     users_rank = u''
     c = 0
-    for k, v in users_list:
+    for k, v in users_list[:100]:
         c += 1
         users_rank += u'<tr><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/User:%s">%s</a></td><td><a href="http://commons.wikimedia.org/wiki/Special:ListFiles/%s">%s</a></td><td>%.1f</td></tr>' % (c, k, k, k, users[k]['files'], users[k]['size']/1024.0/1024)
     users_rank = u"""<table class="wikitable" style="text-align: center;">
