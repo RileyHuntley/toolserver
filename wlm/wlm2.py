@@ -184,14 +184,14 @@ def main():
             if not row[0]['lat'] or not row[0]['lon']:
                 missingcoordinates += 1
             row=r.fetch_row(maxrows=1, how=1)
-        total = monuments.keys()
+        total = len(monuments.keys())
         
         adm = 0
         if len(monuments.keys()) >= 1000:
             adm = 1
         
         if adm:
-            admins = set([v['adm%s' % (adm)] for k, v in monuments.items()])
+            admins = list(set([v['adm%s' % (adm)] for k, v in monuments.items()]))
         else:
             admins = [country]
 
