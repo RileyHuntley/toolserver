@@ -159,9 +159,9 @@ def main():
             hours[h] = 1
         if users.has_key(username):
             users[username]['files'] += 1
-            users[username]['size'] += size
+            users[username]['size'] += int(size)
         else:
-            users[username] = {'files': 1, 'size': size}
+            users[username] = {'files': 1, 'size': int(size)}
         if resolutions.has_key(resolution):
             resolutions[resolution] += 1
         else:
