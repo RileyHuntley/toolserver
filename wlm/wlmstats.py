@@ -235,7 +235,7 @@ def main():
     %s
     </table>""" % (users_rank)
     
-    
+    intro = u"%s files by %s uploaders from %s countries so far" % (sum([countries[k]['files'] for k in countries.keys()]), len(users.keys()), len(countries.keys()))
     output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -253,7 +253,7 @@ def main():
     <table border=0 cellpadding=10px width=%s style="text-align: center;">
     <tr>
     <td><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" /></td>
-    <td valign=top width=99%%><br/><big><big><big><b><a href="index.php">Wiki <i>Loves</i> Monuments</a></b></big></big></big><br/><b>September 2012</b></td>
+    <td valign=top width=99%%><br/><big><big><big><b><a href="index.php">Wiki <i>Loves</i> Monuments</a></b></big></big></big><br/><b>September 2012</b><br/>%s</td>
     <td><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" /></td>
     </tr>
     </table>
@@ -283,7 +283,7 @@ def main():
 
     </body>
     </html>
-    """ % (width, dates_graph, hours_graph, countries_rank, users_rank, datetime.datetime.now())
+    """ % (width, intro, dates_graph, hours_graph, countries_rank, users_rank, datetime.datetime.now())
 
     f = open('%s/stats.php' % (path), 'w')
     f.write(output.encode('utf-8'))
