@@ -253,13 +253,10 @@ def main():
     <table border=0 cellpadding=10px width=%s style="text-align: center;">
     <tr>
     <td><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/100px-LUSITANA_WLM_2011_d.svg.png" /></td>
-    <td valign=top width=99%%><big><big><big><b><a href="index.php">Wiki <i>Loves</i> Monuments</a></b></big></big></big><br/><b>September 2012</b><br/><br/>%s</td>
+    <td valign=top width=99%%><big><big><big><b><a href="index.php">Wiki <i>Loves</i> Monuments</a></b></big></big></big><br/><b>September 2012</b><br/><br/>%s<br/><a href="#day">Uploads per day</a> - <a href="#hour">Uploads per hour</a> - <a href="#detailed">Countries ranking</a> - <a href="#detailed">Uploaders ranking</a></td>
     <td><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/100px-LUSITANA_WLM_2011_d.svg.png" /></td>
     </tr>
     </table>
-    
-    <a href="#day">Uploads per day</a> - <a href="#hour">Uploads per hour</a> - <a href="#detailed">Countries ranking</a> - <a href="#detailed">Uploaders ranking</a>
-    <br/>
     
     <h2 id="day">Uploads per day</h2>
     %s
