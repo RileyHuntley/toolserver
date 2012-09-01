@@ -26,10 +26,13 @@ conn = _mysql.connect(host='sql.toolserver.org', db='p_erfgoed_p', read_default_
 countrynames = {
     'ad': 'Andorra', 
     'ar': 'Argentina', 
+    'at': 'Austria', 
     'ch': 'Switzerland',
     'cl': 'Chile',
     'co': 'Colombia',
+    'cz': 'Czech Republic',
     'ee': 'Estonia',
+    'es': 'Spain',
     'fr': 'France',
     'ie': 'Ireland',
     'il': 'Israel',
@@ -37,11 +40,14 @@ countrynames = {
     'it': 'Italy',
     'lu': 'Luxembourg', 
     'mt': 'Malta', 
+    'nl': 'Netherlands', 
     'pa': 'Panama',
     'pt': 'Portugal',
     'ro': 'Romania',
     'ru': 'Russia',
     'sk': 'Slovakia',
+    'ua': 'Ukraine',
+    'us': 'United States',
     'za': 'South Africa',
 }
 for country in countrynames.keys():
@@ -79,6 +85,9 @@ for country in countrynames.keys():
         adm = 1
     
     for admname in set([v['adm%s' % (adm)] for k, v in monuments.items()]):
+        if not admname:
+            admname = 'other'
+        
         imageyesurl = u'http://maps.google.com/mapfiles/kml/paddle/red-stars.png'
         imagenourl = u'http://maps.google.com/mapfiles/kml/paddle/wht-blank.png'
         output = u"""<?xml version="1.0" encoding="UTF-8"?>
