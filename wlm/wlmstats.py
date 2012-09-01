@@ -141,9 +141,12 @@ def main():
     sizes_list = []
     for title, country, date, username, resolution, size, comment in files:
         if countries.has_key(country):
-            countries[country] += 1
+            countries[country]['files'] += 1
+            countries[country]['sizes'] += size
+            if not username in countries[country]['uploaders']:
+                countries[country]['uploaders'].append(username)
         else:
-            countries[country] = 1
+            countries[country] = { 'files': 1, 'size': size, 'uploaders': [username]}
         d = date.split('T')[0].split('-')[2]
         h = date.split('T')[1].split(':')[0]
         if dates.has_key(d):
@@ -165,6 +168,9 @@ def main():
         sizes_list.append(size)
 
     sizes_list.sort(reverse=1)
+    countries_list = [[v['files'], k] for k, v in countries.items()]
+    countries_list.sort(reverse=1)
+    countries_list = [[k, v] for v, k in countries_list]
     dates_list = [[k, v] for k, v in dates.items()]
     dates_list.sort()
     hours_list = [[k, v] for k, v in hours.items()]
@@ -203,7 +209,20 @@ def main():
         $.plot(hours_graph, hours_graph_data, hours_graph_options);
     });
     </script>""" % (width, height, hours_graph_data)
-
+    
+    countries_rank = u''
+    c = 0
+    for k, v in countries_list:
+        c += 1
+        countries_rank += u'<tr><td>%s</td><td>%s</td><td>%s</td><td>%d</td></tr>' % (c, countrynames[k], countries[k]['files'], countries[k]['size']/1024/1024)
+    countries_rank = u"""<table>
+    <tr><th>#</th><th>Country</th><th>Files</th><th>MBytes</th><th>Uploaders</th></tr>
+    %s
+    </table>""" % (countries_rank)    
+    
+    users_rank = u""" """
+    
+    
     output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -231,12 +250,19 @@ def main():
 
     <h2>Hourly statistics</h2>
     %s
-
+    
+    
+    <table border=0>
+    <tr>
+    <td>%s</td><td>%s</td>
+    </tr>
+    </table>
+    
     </center>
 
     </body>
     </html>
-    """ % (width, dates_graph, hours_graph)
+    """ % (width, dates_graph, hours_graph, countries_rank, users_rank)
 
     f = open('%s/stats.html' % (path), 'w')
     f.write(output.encode('utf-8'))
