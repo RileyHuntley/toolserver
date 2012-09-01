@@ -871,7 +871,7 @@ if onlymainpage:
 
 time.sleep(10)
 #indexes by country
-for country in ['canada', 'argentina', 'chile', 'panama', 'mexico', 'spain', 'belarus']:
+for country in ['canada', 'argentina', 'chile', 'panama', 'mexico', 'belarus', 'spain', ]:
     if not os.path.exists('%s/%s/' % (path, country)):
         os.makedirs('%s/%s/' % (path, country))
     missingcoordinates = 0
