@@ -216,7 +216,7 @@ def main():
     c = 0
     for k, v in countries_list:
         c += 1
-        countries_rank += u'<tr><td>%s</td><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/Category:%s">%s</a></td><td>%d</td><td>%.1f</td></tr>' % (c, countrynames[k], uploadcats[k], countries[k]['files'], len(countries[k]['uploaders']), countries[k]['size']/1024/1024)
+        countries_rank += u'<tr><td>%s</td><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/Category:%s">%s</a></td><td>%d</td><td>%.1f</td></tr>' % (c, countrynames[k], uploadcats[k], countries[k]['files'], len(countries[k]['uploaders']), countries[k]['size']/1024.0/1024)
     countries_rank = u"""<table class="wikitable" style="text-align: center;">
     <tr><th>#</th><th>Country</th><th>Files</th><th>Uploaders</th><th>MBytes</th></tr>
     %s
@@ -226,7 +226,7 @@ def main():
     c = 0
     for k, v in users_list:
         c += 1
-        users_rank += u'<tr><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/User:%s">%s</a></td><td><a href="http://commons.wikimedia.org/wiki/Special:ListFiles/%s">%s</a></td><td>%.1f</td></tr>' % (c, k, k, k, users[k]['files'], users[k]['size']/1024/1024)
+        users_rank += u'<tr><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/User:%s">%s</a></td><td><a href="http://commons.wikimedia.org/wiki/Special:ListFiles/%s">%s</a></td><td>%.1f</td></tr>' % (c, k, k, k, users[k]['files'], users[k]['size']/1024.0/1024)
     users_rank = u"""<table class="wikitable" style="text-align: center;">
     <tr><th>#</th><th>Uploader</th><th>Files</th><th>MBytes</th></tr>
     %s
@@ -254,14 +254,17 @@ def main():
     <td><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" /></td>
     </tr>
     </table>
-
-    <h2>Uploads per day</h2>
+    
+    <a href="#day">Uploads per day</a> - <a href="#hour">Uploads per hour</a> - <a href="#detailed">Countries ranking</a> - <a href="#detailed">Uploaders ranking</a>
+    <br/><br/>
+    
+    <h2 id="day">Uploads per day</h2>
     %s
 
-    <h2>Uploads per hour</h2>
+    <h2 id="hour">Uploads per hour</h2>
     %s
     
-    <h2>Detailed statistics</h2>
+    <h2 id="detailed">Detailed statistics</h2>
     <table border=0>
     <tr>
     <td valign=top>%s</td><td valign=top>%s</td>
@@ -271,7 +274,7 @@ def main():
     (<a href="files.txt">Download metadata and make your own statistics</a>)
     <br/><br/>
     
-    <i>Last update: %s (UTC)</i>
+    <i>Last update: %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a>. Visits: <?php include ("../visits.php"); ?></i>
     
     </center>
 
