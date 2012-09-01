@@ -218,20 +218,18 @@ def main():
     <body style="background-color: white;">
 
     <center>
-    <table border=0 width=%s>
+    <table border=0 cellpadding=10px width=%s style="text-align: center;">
     <tr>
-    <td>
-    <img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" />
-    <big><big><big><b><a href="index.php">Wiki <i>Loves</i> Monuments</a></b></big></big></big>
-    <img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" />
-    </td>
+    <td><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" /></td>
+    <td valign=top width=99%%><br/><big><big><big><b><a href="index.php">Wiki <i>Loves</i> Monuments</a></b></big></big></big></td>
+    <td><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" /></td>
     </tr>
     </table>
 
-    <h2>September statistics</b>
+    <h2>September statistics</h2>
     %s
 
-    <h2>Hourly statistics</b>
+    <h2>Hourly statistics</h2>
     %s
 
     </center>
