@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright (C) 2011-2012 emijrp <emijrp@gmail.com>
+# Copyright (C) 2012 emijrp <emijrp@gmail.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -27,6 +27,8 @@ countrynames = {
     'ad': 'Andorra', 
     'ar': 'Argentina', 
     'at': 'Austria', 
+    'by': 'Belarus',
+    'ca': 'Canada',
     'ch': 'Switzerland',
     'cl': 'Chile',
     'co': 'Colombia',
@@ -42,6 +44,7 @@ countrynames = {
     'mt': 'Malta', 
     'nl': 'Netherlands', 
     'pa': 'Panama',
+    'pl': 'Poland',
     'pt': 'Portugal',
     'ro': 'Romania',
     'ru': 'Russia',
@@ -50,6 +53,98 @@ countrynames = {
     'us': 'United States',
     'za': 'South Africa',
 }
+wmurls = { 
+    #'ad': '',
+    'ar': 'http://www.wikimedia.org.ar', 
+    #'at': '',
+    'by': 'http://wikimedia.by', 
+    'ca': 'http://wikimedia.ca', 
+    'cl': 'http://www.wikimediachile.cl', 
+    #'co': '',
+    #'cz': '',
+    #'ee': '',
+    'es': 'http://www.wikimedia.org.es',
+    #'fr': '',
+    #'ie': '',
+    #'il': '',
+    #'in': '',
+    #'it': '',
+    #'lu': '',
+    'mx': 'http://mx.wikimedia.org', 
+    #'mt': '',
+    #'nl': '',
+    'pa': 'http://wlmpanama.org.pa', 
+    #'pl': '',
+    #'pt': '',
+    #'ro': '',
+    #'ru': '',
+    #'sk': '', 
+    #'ua': '' ,
+    'us': 'http://wikimedia.org',
+    #'za': '',
+}
+#generic logo http://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/80px-Wikimedia-logo.svg.png
+wmlogourls = { 
+    #'ad': '',
+    'ar': 'http://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Wikimedia_Argentina_logo.svg/80px-Wikimedia_Argentina_logo.svg.png', 
+    #'at': '',
+    'by': 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/80px-Wikimedia-logo.svg.png', 
+    'ca': 'http://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Wikimedia_Canada_logo.svg/80px-Wikimedia_Canada_logo.svg.png', 
+    'cl': 'http://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Wikimedia_Chile_logo.svg/80px-Wikimedia_Chile_logo.svg.png', 
+    #'co': '',
+    #'cz': '',
+    #'ee': '',
+    'es': 'http://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Wikimedia-es-logo.svg/80px-Wikimedia-es-logo.svg.png',
+    #'fr': '',
+    #'ie': '',
+    #'il': '',
+    #'in': '',
+    #'it': '',
+    #'lu': '',
+    'mx': 'http://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Wikimedia_Mexico.svg/80px-Wikimedia_Mexico.svg.png', 
+    #'mt': '',
+    #'nl': '',
+    'pa': 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/80px-Wikimedia-logo.svg.png', 
+    #'pl': '',
+    #'pt': '',
+    #'ro': '',
+    #'ru': '',
+    #'sk': '', 
+    #'ua': '' ,
+    'us': 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/80px-Wikimedia-logo.svg.png',
+    #'za': '',
+}
+wlmurls = { 
+    #'ad': '',
+    'ar': 'http://wikilovesmonuments.com.ar', 
+    #'at': '',
+    'by': 'http://wikilovesmonuments.by', 
+    'ca': 'http://wikimedia.ca/wiki/Wiki_Loves_Monuments_2012_in_Canada', 
+    'cl': 'http://www.wikilovesmonuments.cl', 
+    #'co': '',
+    #'cz': '',
+    #'ee': '',
+    'es': 'http://www.wikilm.es',
+    #'fr': '',
+    #'ie': '',
+    #'il': '',
+    #'in': '',
+    #'it': '',
+    #'lu': '',
+    'mx': 'http://wikilovesmonuments.mx', 
+    #'mt': '',
+    #'nl': '',
+    'pa': 'http://wlmpanama.org.pa', 
+    #'pl': '',
+    #'pt': '',
+    #'ro': '',
+    #'ru': '',
+    #'sk': '', 
+    #'ua': '' ,
+    'us': 'http://wikilovesmonuments.us',
+    #'za': '',
+}
+
 for country in countrynames.keys():
     country_ = re.sub(' ', '', countrynames[country].lower())
     if not os.path.exists('%s/%s/' % (path, country_)):
@@ -84,12 +179,18 @@ for country in countrynames.keys():
     if len(monuments.keys()) >= 1000:
         adm = 1
     
-    for admname in set([v['adm%s' % (adm)] for k, v in monuments.items()]):
-        if not admname:
-            admname = 'other'
+    if adm:
+        admins = set([v['adm%s' % (adm)] for k, v in monuments.items()])
+    else:
+        admins = [country]
+    for admin in admins:
+        if not admin:
+            admin = 'other'
         
         imageyesurl = u'http://maps.google.com/mapfiles/kml/paddle/red-stars.png'
         imagenourl = u'http://maps.google.com/mapfiles/kml/paddle/wht-blank.png'
+        
+        #admin kml
         output = u"""<?xml version="1.0" encoding="UTF-8"?>
         <kml xmlns="http://www.opengis.net/kml/2.2">
             <Document>
@@ -117,7 +218,7 @@ for country in countrynames.keys():
                 continue
             
             if adm:
-                if props['adm%s' % (adm)] != admname:
+                if props['adm%s' % (adm)] != admin: #skip those outside this administrative division
                     continue
             
             imagefilename = re.sub(' ', '_', props['image'])
@@ -148,8 +249,86 @@ for country in countrynames.keys():
             </Document>
         </kml>"""
         
-        f = open('%s/%s/wlm-%s.kml' % (path, country_, adm == 0 and country_ or admname), 'w')
+        f = open('%s/%s/wlm-%s.kml' % (path, country_, admin), 'w')
         f.write(output.encode('utf-8'))
         f.close()
     
+    #country html
+    output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+    <title>Wiki Loves Monuments</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="../wlm.css" />
+    <script language="javascript">
+    function showHide(id){
+        if (document.getElementById(id).style.display == 'none') {
+            document.getElementById(id).style.display = 'block';
+        }else{
+            document.getElementById(id).style.display = 'none';
+        }
+    }
+    </script>
+    </head>
+    
+    <?php
+    $places = array(%s );
+    $place= "%s";
+    if (isset($_GET['place']))
+    {
+        $temp = $_GET['place'];
+        if (in_array($temp, $places))
+            $place = $temp;
+    }
+    ?>
+    
+    <body style="background-color: lightblue;">
+    <center>
+    <table width=99%% style="text-align: center;">
+    <tr>
+    <td>
+    <a href="%s" target="_blank"><img src="%s" /></a>
+    </td>
+    <td>
+    <center>
+    <big><big><big><b><a href="%s" target="_blank">Wiki <i>Loves</i> Monuments</a></b></big></big></big>
+    <br/>
+    <b>September 2012</b>
+    <br/>
+    <b>Monuments:</b> %d [%d with coordinates (%.1f%%) and %d with images (%.1f%%)] | <b>Legend:</b> with image <img src="%s" width=20px title="with image" alt="with image"/>, without image <img src="%s" width=20px title="without image" alt="without image"/>
+    </center>
+    </td>
+    <td>
+    <a href="%s" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" /></a>
+    </td>
+    </tr>
+    <tr>
+    <td colspan=3>
+    <b>Choose a place:</b> %s
+
+    <iframe width="99%%" height="450" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fwlm%%2F%s%%2Fwlm-<?php echo $place; ?>.kml%%3Fusecache%%3D0&amp;output=embed"></iframe>
+    <br/>
+    <br/>
+    <center>
+
+    <b>More maps:</b> <a href="../argentina">Argentina</a> - <a href="../belarus">Белару́сь</a> - <a href="../canada">Canada</a> - <a href="../chile">Chile</a> - <a href="../spain">España</a> - <a href="../mexico">México</a> - <a href="../panama">Panamá</a> - <a href="../polska">Poland</a> - <a href="../ukraine">Україна</a>
+
+    </center>
+    <i>Last update: %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a> using erfgoed database. Visits: <?php include ("../../visits.php"); ?></i>
+    <br/>
+    </td>
+    </tr>
+    </table>
+
+    </center>
+    </body>
+
+    </html>
+    """ % (u', '.join([u'"%s"' % (i) for i in admins]), admins[0], wmurls[country], wmlogourls[country], wlmurls[country], 
+    
+    total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, wlmurls[country], u', '.join([u'<a href="index.php?place=%s">%s</a>' % (i, placenamesconvert(i)) for i in anexoskeys]), country, tablestats, tableuserstats, datetime.datetime.now())
+
+    f = open('%s/%s/index.php' % (path, country), 'w')
+    f.write(output.encode('utf-8'))
+    f.close()
     
