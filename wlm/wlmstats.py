@@ -229,7 +229,7 @@ def main():
     for k, v in users_list[:100]:
         c += 1
         users_rank += u'<tr><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/User:%s">%s</a></td><td><a href="http://commons.wikimedia.org/wiki/Special:ListFiles/%s">%s</a></td><td>%.1f</td></tr>' % (c, k, k, k, users[k]['files'], users[k]['size']/1024.0/1024)
-    users_rank += u'<tr><td></td><td><b>Total</b></td><td><b>%s</b></td><td><b>%.1f</b></td></tr>' % (sum([users[k]['files'] for k in users.keys()]), sum([users[k]['size'] for k in users.keys()])/1024.0/1024)
+    users_rank += u'<tr><td></td><td><b>Total</b></td><td><b><a href="http://commons.wikimedia.org/wiki/Category:Images from Wiki Loves Monuments 2012">%s</a></b></td><td><b>%.1f</b></td></tr>' % (sum([users[k]['files'] for k in users.keys()]), sum([users[k]['size'] for k in users.keys()])/1024.0/1024)
     users_rank = u"""<table class="wikitable" style="text-align: center;">
     <tr><th>#</th><th>Uploader</th><th>Files</th><th>MBytes</th></tr>
     %s
