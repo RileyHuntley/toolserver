@@ -145,190 +145,202 @@ wlmurls = {
     #'za': '',
 }
 
-for country in countrynames.keys():
-    country_ = re.sub(' ', '', countrynames[country].lower())
-    if not os.path.exists('%s/%s/' % (path, country_)):
-        os.makedirs('%s/%s/' % (path, country_))
-    adm0 = country
-    conn.query("SELECT * from monuments_all where country='%s';" % (country))
-    r=conn.use_result()
-    row=r.fetch_row(maxrows=1, how=1)
-    monuments = {}
-    while row:
-        #print row[0]
-        monuments[row[0]['id']] = {
-            'id': unicode(row[0]['id'], codification),
-            'lang': row[0]['lang'],
-            'registrant_url': row[0]['registrant_url'],
-            'monument_article': unicode(row[0]['monument_article'], codification),
-            'name': unicode(row[0]['name'], codification),
-            'municipality': unicode(row[0]['municipality'], codification),
-            'adm0': row[0]['adm0'] and row[0]['adm0'].lower() or '', 
-            'adm1': row[0]['adm1'] and row[0]['adm1'].lower() or '', 
-            'adm2': row[0]['adm2'] and row[0]['adm2'].lower() or '', 
-            'adm3': row[0]['adm3'] and row[0]['adm3'].lower() or '', 
-            'adm4': row[0]['adm4'] and row[0]['adm4'].lower() or '', 
-            'address': unicode(row[0]['address'], codification), 
-            'lat': row[0]['lat'] and row[0]['lat'] or 0,  
-            'lon': row[0]['lon'] and row[0]['lon'] or 0, 
-            'image': row[0]['image'] and unicode(row[0]['image'], codification) or '', 
-        }
-        row=r.fetch_row(maxrows=1, how=1)
-    
-    adm = 0
-    if len(monuments.keys()) >= 1000:
-        adm = 1
-    
-    if adm:
-        admins = set([v['adm%s' % (adm)] for k, v in monuments.items()])
-    else:
-        admins = [country]
-    for admin in admins:
-        if not admin:
-            admin = 'other'
-        
-        imageyesurl = u'http://maps.google.com/mapfiles/kml/paddle/red-stars.png'
-        imagenourl = u'http://maps.google.com/mapfiles/kml/paddle/wht-blank.png'
-        
-        #admin kml
-        output = u"""<?xml version="1.0" encoding="UTF-8"?>
-        <kml xmlns="http://www.opengis.net/kml/2.2">
-            <Document>
-            <name>Wiki Loves Monuments</name>
-            <description>A map with missing images by location</description>
-            <Style id="imageyes">
-              <IconStyle>
-                <Icon>
-                  <href>%s</href>
-                </Icon>
-              </IconStyle>
-            </Style>
-            <Style id="imageno">
-              <IconStyle>
-                <Icon>
-                  <href>%s</href>
-                </Icon>
-              </IconStyle>
-            </Style>
-        """ % (imageyesurl, imagenourl)
-        
-        imagesize = '150px'
-        for id, props in monuments.items():
-            if props['lat'] == 0 and props['lon'] == 0:
-                continue
-            
-            if adm:
-                if props['adm%s' % (adm)] != admin: #skip those outside this administrative division
-                    continue
-            
-            imagefilename = re.sub(' ', '_', props['image'])
-            m5 = md5.new(imagefilename.encode('utf-8')).hexdigest()
-            thumburl = u'http://upload.wikimedia.org/wikipedia/commons/thumb/%s/%s/%s/%s-%s' % (m5[0], m5[:2], imagefilename, imagesize, imagefilename)
+def placenamesconvert(i):
+    return i
 
+def main():
+    for country in countrynames.keys():
+        country_ = re.sub(' ', '', countrynames[country].lower())
+        if not os.path.exists('%s/%s/' % (path, country_)):
+            os.makedirs('%s/%s/' % (path, country_))
+        adm0 = country
+        conn.query("SELECT * from monuments_all where country='%s';" % (country))
+        r=conn.use_result()
+        row=r.fetch_row(maxrows=1, how=1)
+        missingcoordinates = 0
+        missingimages = 0
+        monuments = {}
+        while row:
+            #print row[0]
+            monuments[row[0]['id']] = {
+                'id': unicode(row[0]['id'], codification),
+                'lang': row[0]['lang'],
+                'registrant_url': row[0]['registrant_url'],
+                'monument_article': unicode(row[0]['monument_article'], codification),
+                'name': unicode(row[0]['name'], codification),
+                'municipality': unicode(row[0]['municipality'], codification),
+                'adm0': row[0]['adm0'] and row[0]['adm0'].lower() or '', 
+                'adm1': row[0]['adm1'] and row[0]['adm1'].lower() or '', 
+                'adm2': row[0]['adm2'] and row[0]['adm2'].lower() or '', 
+                'adm3': row[0]['adm3'] and row[0]['adm3'].lower() or '', 
+                'adm4': row[0]['adm4'] and row[0]['adm4'].lower() or '', 
+                'address': unicode(row[0]['address'], codification), 
+                'lat': row[0]['lat'] and row[0]['lat'] or 0,  
+                'lon': row[0]['lon'] and row[0]['lon'] or 0, 
+                'image': row[0]['image'] and unicode(row[0]['image'], codification) or '', 
+            }
+            if not row[0]['image']:
+                missingimages += 1
+            if not row[0]['lat'] or not row[0]['lon']:
+                missingcoordinates += 1
+            row=r.fetch_row(maxrows=1, how=1)
+        total = monuments.keys()
+        
+        adm = 0
+        if len(monuments.keys()) >= 1000:
+            adm = 1
+        
+        if adm:
+            admins = set([v['adm%s' % (adm)] for k, v in monuments.items()])
+        else:
+            admins = [country]
+
+        for admin in admins:
+            if not admin:
+                admin = 'other'
+            
+            imageyesurl = u'http://maps.google.com/mapfiles/kml/paddle/red-stars.png'
+            imagenourl = u'http://maps.google.com/mapfiles/kml/paddle/wht-blank.png'
+            
+            #admin kml
+            output = u"""<?xml version="1.0" encoding="UTF-8"?>
+            <kml xmlns="http://www.opengis.net/kml/2.2">
+                <Document>
+                <name>Wiki Loves Monuments</name>
+                <description>A map with missing images by location</description>
+                <Style id="imageyes">
+                  <IconStyle>
+                    <Icon>
+                      <href>%s</href>
+                    </Icon>
+                  </IconStyle>
+                </Style>
+                <Style id="imageno">
+                  <IconStyle>
+                    <Icon>
+                      <href>%s</href>
+                    </Icon>
+                  </IconStyle>
+                </Style>
+            """ % (imageyesurl, imagenourl)
+            
+            imagesize = '150px'
+            for id, props in monuments.items():
+                if props['lat'] == 0 and props['lon'] == 0:
+                    continue
+                
+                if adm:
+                    if props['adm%s' % (adm)] != admin: #skip those outside this administrative division
+                        continue
+                
+                imagefilename = re.sub(' ', '_', props['image'])
+                m5 = md5.new(imagefilename.encode('utf-8')).hexdigest()
+                thumburl = u'http://upload.wikimedia.org/wikipedia/commons/thumb/%s/%s/%s/%s-%s' % (m5[0], m5[:2], imagefilename, imagesize, imagefilename)
+
+                output += u"""
+                <Placemark>
+                <name>%s</name>
+                <description>
+                <![CDATA[
+                <table border=0 cellspacing=3px cellpadding=3px>
+                <tr><td align=right width=80px style="background-color: lightgreen;"><b>Name:</b></td><td><a href="http://%s.wikipedia.org/wiki/%s" target="_blank">%s</a></td><td rowspan=4><a href="http://commons.wikimedia.org/wiki/File:%s" target="_blank"><img src="%s" width=%s/></a></td></tr>
+                <tr><td align=right style="background-color: lightblue;"><b>Location:</b></td><td>%s</td></tr>
+                <tr><td align=right style="background-color: yellow;"><b>ID:</b></td><td>%s</td></tr>
+                <tr><td align=center colspan=2><br/><b>This monument has %s<br/>you can upload yours. Thanks!</b><br/><br/><span style="border: 2px solid black;background-color: pink;padding: 3px;"><a href="http://commons.wikimedia.org/w/index.php?title=Special:UploadWizard&campaign=wlm-%s&id=%s&lat=%s&lon=%s&descriptionlang=%s
+        #&description=%s" target="_blank"><b>Upload</b></a></span></td></tr>
+                </table>
+                ]]>
+                </description>
+                <styleUrl>#%s</styleUrl>
+                <Point>
+                <coordinates>%s,%s</coordinates>
+                </Point>
+                </Placemark>""" % (props['name'], props['lang'], props['monument_article'], props['name'], props['image'], thumburl, imagesize, props['municipality'], id, props['image'] and 'images, but' or 'no images,', country, id, props['lat'], props['lon'], props['lang'], props['name'], props['image'] and 'imageyes' or 'imageno', props['lon'], props['lat'])
+            
             output += u"""
-            <Placemark>
-            <name>%s</name>
-            <description>
-            <![CDATA[
-            <table border=0 cellspacing=3px cellpadding=3px>
-            <tr><td align=right width=80px style="background-color: lightgreen;"><b>Name:</b></td><td><a href="http://%s.wikipedia.org/wiki/%s" target="_blank">%s</a></td><td rowspan=4><a href="http://commons.wikimedia.org/wiki/File:%s" target="_blank"><img src="%s" width=%s/></a></td></tr>
-            <tr><td align=right style="background-color: lightblue;"><b>Location:</b></td><td>%s</td></tr>
-            <tr><td align=right style="background-color: yellow;"><b>ID:</b></td><td>%s</td></tr>
-            <tr><td align=center colspan=2><br/><b>This monument has %s<br/>you can upload yours. Thanks!</b><br/><br/><span style="border: 2px solid black;background-color: pink;padding: 3px;"><a href="http://commons.wikimedia.org/w/index.php?title=Special:UploadWizard&campaign=wlm-%s&id=%s&lat=%s&lon=%s&descriptionlang=%s
-    #&description=%s" target="_blank"><b>Upload</b></a></span></td></tr>
-            </table>
-            ]]>
-            </description>
-            <styleUrl>#%s</styleUrl>
-            <Point>
-            <coordinates>%s,%s</coordinates>
-            </Point>
-            </Placemark>""" % (props['name'], props['lang'], props['monument_article'], props['name'], props['image'], thumburl, imagesize, props['municipality'], id, props['image'] and 'images, but' or 'no images,', country, id, props['lat'], props['lon'], props['lang'], props['name'], props['image'] and 'imageyes' or 'imageno', props['lon'], props['lat'])
+                </Document>
+            </kml>"""
+            
+            f = open('%s/%s/wlm-%s.kml' % (path, country_, admin), 'w')
+            f.write(output.encode('utf-8'))
+            f.close()
         
-        output += u"""
-            </Document>
-        </kml>"""
+        #country html
+        output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
+        <head>
+        <title>Wiki Loves Monuments</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="stylesheet" type="text/css" href="../wlm.css" />
+        <script language="javascript">
+        function showHide(id){
+            if (document.getElementById(id).style.display == 'none') {
+                document.getElementById(id).style.display = 'block';
+            }else{
+                document.getElementById(id).style.display = 'none';
+            }
+        }
+        </script>
+        </head>
         
-        f = open('%s/%s/wlm-%s.kml' % (path, country_, admin), 'w')
+        <?php
+        $places = array(%s );
+        $place= "%s";
+        if (isset($_GET['place']))
+        {
+            $temp = $_GET['place'];
+            if (in_array($temp, $places))
+                $place = $temp;
+        }
+        ?>
+        
+        <body style="background-color: lightblue;">
+        <center>
+        <table width=99%% style="text-align: center;">
+        <tr>
+        <td>
+        <a href="%s" target="_blank"><img src="%s" /></a>
+        </td>
+        <td>
+        <center>
+        <big><big><big><b><a href="%s" target="_blank">Wiki <i>Loves</i> Monuments</a></b></big></big></big>
+        <br/>
+        <b>September 2012</b>
+        <br/>
+        <b>Monuments:</b> %d [%d with coordinates (%.1f%%) and %d with images (%.1f%%)] | <b>Legend:</b> with image <img src="%s" width=20px title="with image" alt="with image"/>, without image <img src="%s" width=20px title="without image" alt="without image"/>
+        </center>
+        </td>
+        <td>
+        <a href="%s" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" /></a>
+        </td>
+        </tr>
+        <tr>
+        <td colspan=3>
+        <b>Choose a place:</b> %s
+
+        <iframe width="99%%" height="450" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fwlm%%2F%s%%2Fwlm-<?php echo $place; ?>.kml%%3Fusecache%%3D0&amp;output=embed"></iframe>
+        <br/>
+        <br/>
+        <center>
+
+        <b>More maps:</b> <a href="../argentina">Argentina</a> - <a href="../belarus">Белару́сь</a> - <a href="../canada">Canada</a> - <a href="../chile">Chile</a> - <a href="../spain">España</a> - <a href="../mexico">México</a> - <a href="../panama">Panamá</a> - <a href="../polska">Poland</a> - <a href="../ukraine">Україна</a>
+
+        </center>
+        <i>Last update: %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a> using erfgoed database. Visits: <?php include ("../../visits.php"); ?></i>
+        <br/>
+        </td>
+        </tr>
+        </table>
+
+        </center>
+        </body>
+
+        </html>
+        """ % (u', '.join([u'"%s"' % (i) for i in admins]), admins[0], wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or '', wlmurls.has_key(country) and wlmurls[country] or '', total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, wlmurls.has_key(country) and wlmurls[country] or '', u', '.join([u'<a href="index.php?place=%s">%s</a>' % (i, placenamesconvert(i)) for i in admins]), country, datetime.datetime.now())
+
+        f = open('%s/%s/index.php' % (path, country), 'w')
         f.write(output.encode('utf-8'))
         f.close()
     
-    #country html
-    output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-    <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-    <title>Wiki Loves Monuments</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" type="text/css" href="../wlm.css" />
-    <script language="javascript">
-    function showHide(id){
-        if (document.getElementById(id).style.display == 'none') {
-            document.getElementById(id).style.display = 'block';
-        }else{
-            document.getElementById(id).style.display = 'none';
-        }
-    }
-    </script>
-    </head>
-    
-    <?php
-    $places = array(%s );
-    $place= "%s";
-    if (isset($_GET['place']))
-    {
-        $temp = $_GET['place'];
-        if (in_array($temp, $places))
-            $place = $temp;
-    }
-    ?>
-    
-    <body style="background-color: lightblue;">
-    <center>
-    <table width=99%% style="text-align: center;">
-    <tr>
-    <td>
-    <a href="%s" target="_blank"><img src="%s" /></a>
-    </td>
-    <td>
-    <center>
-    <big><big><big><b><a href="%s" target="_blank">Wiki <i>Loves</i> Monuments</a></b></big></big></big>
-    <br/>
-    <b>September 2012</b>
-    <br/>
-    <b>Monuments:</b> %d [%d with coordinates (%.1f%%) and %d with images (%.1f%%)] | <b>Legend:</b> with image <img src="%s" width=20px title="with image" alt="with image"/>, without image <img src="%s" width=20px title="without image" alt="without image"/>
-    </center>
-    </td>
-    <td>
-    <a href="%s" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" /></a>
-    </td>
-    </tr>
-    <tr>
-    <td colspan=3>
-    <b>Choose a place:</b> %s
-
-    <iframe width="99%%" height="450" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fwlm%%2F%s%%2Fwlm-<?php echo $place; ?>.kml%%3Fusecache%%3D0&amp;output=embed"></iframe>
-    <br/>
-    <br/>
-    <center>
-
-    <b>More maps:</b> <a href="../argentina">Argentina</a> - <a href="../belarus">Белару́сь</a> - <a href="../canada">Canada</a> - <a href="../chile">Chile</a> - <a href="../spain">España</a> - <a href="../mexico">México</a> - <a href="../panama">Panamá</a> - <a href="../polska">Poland</a> - <a href="../ukraine">Україна</a>
-
-    </center>
-    <i>Last update: %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a> using erfgoed database. Visits: <?php include ("../../visits.php"); ?></i>
-    <br/>
-    </td>
-    </tr>
-    </table>
-
-    </center>
-    </body>
-
-    </html>
-    """ % (u', '.join([u'"%s"' % (i) for i in admins]), admins[0], wmurls[country], wmlogourls[country], wlmurls[country], 
-    
-    total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, wlmurls[country], u', '.join([u'<a href="index.php?place=%s">%s</a>' % (i, placenamesconvert(i)) for i in anexoskeys]), country, tablestats, tableuserstats, datetime.datetime.now())
-
-    f = open('%s/%s/index.php' % (path, country), 'w')
-    f.write(output.encode('utf-8'))
-    f.close()
-    
+if __name__ == "__main__":
+    main()
