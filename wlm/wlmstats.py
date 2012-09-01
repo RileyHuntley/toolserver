@@ -144,7 +144,7 @@ def main():
             countries[country] += 1
         else:
             countries[country] = 1
-        d = date.split('T')[0]
+        d = date.split('T')[0].split('-')[2]
         h = date.split('T')[1].split(':')[0]
         if dates.has_key(d):
             dates[d] += 1
@@ -178,7 +178,7 @@ def main():
 
     width = '800px'
     height = '250px'
-    dates_graph_data = u', '.join([u'["%s", %s]' % (k.split('-')[2], v) for k, v in dates_list])
+    dates_graph_data = u', '.join([u'["%s", %s]' % (k, v) for k, v in dates_list])
     dates_graph = u"""<div id="dates_graph" style="width: %s;height: %s;"></div>
     <script type="text/javascript">
     $(function () {
@@ -198,7 +198,7 @@ def main():
         var hours_graph_data = [%s];
        
         var hours_graph = $("#hours_graph");
-        var hours_graph_data = [ dates_graph_data, ];
+        var hours_graph_data = [ hours_graph_data, ];
         var hours_graph_options = { xaxis: { mode: null, tickSize: 1, tickDecimals: 0, min: 1, max: 23}, bars: { show: true, barWidth: 0.6 }, points: { show: false }, legend: { noColumns: 1 }, grid: { hoverable: true }, };
         $.plot(hours_graph, hours_graph_data, hours_graph_options);
     });
