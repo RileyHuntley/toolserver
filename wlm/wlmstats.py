@@ -221,6 +221,7 @@ def main():
     %s
     </table>""" % (countries_rank)
     
+    users_rank = u''
     c = 0
     for k, v in users_list:
         c += 1
