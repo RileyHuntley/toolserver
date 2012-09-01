@@ -259,7 +259,7 @@ def main():
     </table>
     
     <a href="#day">Uploads per day</a> - <a href="#hour">Uploads per hour</a> - <a href="#detailed">Countries ranking</a> - <a href="#detailed">Uploaders ranking</a>
-    <br/><br/>
+    <br/>
     
     <h2 id="day">Uploads per day</h2>
     %s
