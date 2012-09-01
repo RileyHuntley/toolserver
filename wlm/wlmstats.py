@@ -255,7 +255,7 @@ def main():
         c += 1
         resolutions_rank += u'<tr><td>%s</td><td>%s</td><td>%s</td><td>%.1f</td></tr>' % (c, k, resolutions[k]['files'], resolutions[k]['size']/1024.0/1024)
     resolutions_rank += u'<tr><td></td><td><b>Total</b></td><td><b><a href="http://commons.wikimedia.org/wiki/Category:Images from Wiki Loves Monuments 2012">%s</a></b></td><td><b>%.1f</b></td></tr>' % (sum([resolutions[k]['files'] for k in resolutions.keys()]), sum([resolutions[k]['size'] for k in resolutions.keys()])/1024.0/1024)
-    resolutions_rank = u"""<table id="users" class="wikitable" style="text-align: center;">
+    resolutions_rank = u"""<table id="resolutions" class="wikitable" style="text-align: center;">
     <tr><th>#</th><th>Resolution</th><th>Files</th><th>MBytes</th></tr>
     %s
     </table>""" % (resolutions_rank)
