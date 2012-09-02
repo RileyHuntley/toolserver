@@ -313,6 +313,43 @@ iso3166 = {
     'FR-T': u"Poitou-Charentes",
     'FR-U': u"Provence-Alpes-Côte d'Azur",
     'FR-V': u"Rhône-Alpes",
+    
+    'IN':    u"India",
+    'IN-AP': u"Andhra Pradesh",
+    'IN-AR': u"Arunachal Pradesh",
+    'IN-AS': u"Assam",
+    'IN-BR': u"Bihar",
+    'IN-CT': u"Chhattisgarh",
+    'IN-GA': u"Goa",
+    'IN-GJ': u"Gujarat",
+    'IN-HR': u"Haryana",
+    'IN-HP': u"Himachal Pradesh",
+    'IN-JK': u"Jammu and Kashmir",
+    'IN-JH': u"Jharkhand",
+    'IN-KA': u"Karnataka",
+    'IN-KL': u"Kerala",
+    'IN-MP': u"Madhya Pradesh",
+    'IN-MH': u"Maharashtra",
+    'IN-MN': u"Manipur",
+    'IN-ML': u"Meghalaya",
+    'IN-MZ': u"Mizoram",
+    'IN-NL': u"Nagaland",
+    'IN-OR': u"Orissa",
+    'IN-PB': u"Punjab",
+    'IN-RJ': u"Rajasthan",
+    'IN-SK': u"Sikkim",
+    'IN-TN': u"Tamil Nadu",
+    'IN-TR': u"Tripura",
+    'IN-UT': u"Uttarakhand",
+    'IN-UP': u"Uttar Pradesh",
+    'IN-WB': u"West Bengal",
+    'IN-AN': u"Andaman and Nicobar Islands",
+    'IN-CH': u"Chandigarh",
+    'IN-DN': u"Dadra and Nagar Haveli",
+    'IN-DD': u"Daman and Diu",
+    'IN-DL': u"Delhi",
+    'IN-LD': u"Lakshadweep",
+    'IN-PY': u"Pondicherry (Puducherry)",
 }
 
 def placenamesconvert(country, i):
@@ -557,6 +594,7 @@ def main():
         </table>
         
         <b>More maps:</b> %s 
+        <br/>
         <i>Last update: %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a> using <a href="http://wlm.wikimedia.org/api/api.php">erfgoed database</a>. Visits: <?php include ("../../visits.php"); ?></i>
         
         <br/>
