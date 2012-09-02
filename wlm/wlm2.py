@@ -261,6 +261,24 @@ iso3166 = {
     'CZ-VY': u"Vysočina",
     'CZ-ZL': u"Zlínský kraj",
     
+    'EE':    u"Estonia",
+    'EE-37': u"Harjumaa",
+    'EE-39': u"Hiiumaa",
+    'EE-44': u"Ida-Virumaa",
+    'EE-49': u"Jõgevamaa",
+    'EE-51': u"Järvamaa",
+    'EE-57': u"Läänemaa",
+    'EE-59': u"Lääne-Virumaa",
+    'EE-65': u"Põlvamaa",
+    'EE-67': u"Pärnumaa",
+    'EE-70': u"Raplamaa",
+    'EE-74': u"Saaremaa",
+    'EE-78': u"Tartumaa",
+    'EE-82': u"Valgamaa",
+    'EE-84': u"Viljandimaa",
+    'EE-86': u"Võrumaa",
+    
+    
 }
 
 def placenamesconvert(country, i):
@@ -277,7 +295,7 @@ def removebrackets(t):
     return t
 
 def main():
-    for country in ['cz']:#countrynames.keys():
+    for country in ['ee']:#countrynames.keys():
         print 'Loading', country
         country_ = re.sub(' ', '', countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
