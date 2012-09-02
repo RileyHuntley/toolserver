@@ -244,6 +244,23 @@ iso3166 = {
     'CL-RM': u"Región Metropolitana de Santiago",
     'CL-TA': u"Tarapacá",
     'CL-VS': u"Valparaíso",
+    
+    'CO': u"Colombia",
+    
+    'CZ': u"Czech Republic",
+    'CZ-JC': u"Jihočeský kraj",
+    'CZ-JM': u"Jihomoravský kraj",
+    'CZ-KA': u"Karlovarský kraj",
+    'CZ-KR': u"Královéhradecký kraj",
+    'CZ-LI': u"Liberecký kraj",
+    'CZ-MO': u"Moravskoslezský kraj",
+    'CZ-PA': u"Pardubický kraj",
+    'CZ-PR': u"Praha, hlavní město",
+    'CZ-ST': u"Středočeský kraj",
+    'CZ-US': u"Ústecký kraj",
+    'CZ-VY': u"Vysočina",
+    'CZ-ZL': u"Zlínský kraj",
+    
 }
 
 def placenamesconvert(country, i):
@@ -260,7 +277,7 @@ def removebrackets(t):
     return t
 
 def main():
-    for country in ['cl']:#countrynames.keys():
+    for country in ['cz']:#countrynames.keys():
         print 'Loading', country
         country_ = re.sub(' ', '', countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
@@ -370,7 +387,7 @@ def main():
                 <description>
                 <![CDATA[
                 <table border=0 cellspacing=3px cellpadding=3px>
-                <tr><td width=150px><a href="http://%s.wikipedia.org/wiki/%s" target="_blank">%s</a> (%s, ID: %s)<br/><span style="font-size: 200%%;border: 2px solid black;background-color: pink;padding: 3px;"><a href="%s" target="_blank"><b>Upload now!</b></a></span></td>
+                <tr><td width=200px><b><a href="http://%s.wikipedia.org/wiki/%s" target="_blank">%s</a></b><br/>(%s, ID: %s)<br/><br/><br/><span style="font-size: 150%%;border: 2px solid black;background-color: pink;padding: 3px;"><a href="%s" target="_blank"><b>Upload now!</b></a></span></td>
                 <td><a href="%s" target="_blank"><img src="%s" width=%s title="%s" /></a></td></tr>
                 </table>
                 ]]>
