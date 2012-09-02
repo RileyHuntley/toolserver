@@ -145,8 +145,26 @@ wlmurls = {
     'us': 'http://wikilovesmonuments.us',
     #'za': '',
 }
+iso3166 = {
+    'CA-AB': "Alberta",
+    'CA-BC': "British Columbia",
+    'CA-MB': "Manitoba",
+    'CA-NB': "New Brunswick",
+    'CA-NL': "Newfoundland",
+    'CA-NS': "Nova Scotia",
+    'CA-NU': "Nunavut",
+    'CA-ON': "Ontario",
+    'CA-PE': "Prince Edward Island",
+    'CA-QC': "Quebec",
+    'CA-SK': "Saskatchewan",
+    'CA-NT': "Northwest Territories",
+    'CA-YT': "Yukon Territory",
+}
 
 def placenamesconvert(i):
+    ii = i.upper()
+    if iso3166.has_key(ii):
+        return iso3166[ii]
     return i
 
 def main():
@@ -242,8 +260,8 @@ def main():
                     continue
                 
                 if adm:
-                    if props['adm%s' % (adm)] != admin: #skip those outside this administrative division
-                        continue
+                    if props['adm%s' % (adm)] and props['adm%s' % (adm)] != admin: #skip those outside this administrative division, if not defined then use 'other'
+                            continue
                 
                 uploadlink = u'http://commons.wikimedia.org/w/index.php?title=Special:UploadWizard&campaign=wlm-%s&id=%s&lat=%s&lon=%s' % (country, id, props['lat'], props['lon'])
                 if props['image']:
@@ -256,14 +274,13 @@ def main():
                     commonspage = uploadlink
 
                 output += u"""<Placemark>
-                <name>%s</name>
                 <description>
                 <![CDATA[
                 <table border=0 cellspacing=3px cellpadding=3px>
                 <tr><td align=right width=80px style="background-color: lightgreen;"><b>Name:</b></td><td><a href="http://%s.wikipedia.org/wiki/%s" target="_blank">%s</a></td><td rowspan=4><a href="%s" target="_blank"><img src="%s" width=%s title="%s" /></a></td></tr>
                 <tr><td align=right style="background-color: lightblue;"><b>Location:</b></td><td>%s</td></tr>
                 <tr><td align=right style="background-color: yellow;"><b>ID:</b></td><td>%s</td></tr>
-                <tr><td align=center colspan=2><br/><b>This monument has %s<br/>you can upload yours. Thanks!</b><br/><br/><span style="border: 2px solid black;background-color: pink;padding: 3px;"><a href="%s" target="_blank"><b>Upload now!</b></a></span></td></tr>
+                <tr><td align=center colspan=2><br/><span style="border: 2px solid black;background-color: pink;padding: 3px;"><a href="%s" target="_blank"><b>Upload now!</b></a></span></td></tr>
                 </table>
                 ]]>
                 </description>
@@ -272,7 +289,7 @@ def main():
                 <coordinates>%s,%s</coordinates>
                 </Point>
                 </Placemark>
-                """ % (props['name'], props['lang'], props['monument_article'], props['name'], commonspage, thumburl, imagesize, props['image'] and '' or u"Click here to upload your image!", props['municipality'], id, props['image'] and 'images, but' or 'no images,', uploadlink, props['image'] and 'imageyes' or 'imageno', props['lon'], props['lat'])
+                """ % (props['lang'], props['monument_article'], props['name'], commonspage, thumburl, imagesize, props['image'] and '' or u"Click here to upload your image!", props['municipality'], id, uploadlink, props['image'] and 'imageyes' or 'imageno', props['lon'], props['lat'])
             
             output += u"""
                 </Document>
