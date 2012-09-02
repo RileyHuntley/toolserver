@@ -651,9 +651,7 @@ def main():
                     continue
                 
                 if adm: #if adm is > 0 then there are subdivisons, else all points in the same kml
-                    if admin == 'other' and props['adm%s' % (adm)] == '':
-                        pass
-                    elif props['adm%s' % (adm)] != admin:
+                    if (props['adm%s' % (adm)] != admin) or (admin == 'other' and props['adm%s' % (adm)] != ''):
                         continue
                 
                 try:
