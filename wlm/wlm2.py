@@ -35,7 +35,7 @@ countrynames = {
     'co': 'Colombia',
     'cz': 'Czech Republic',
     'ee': 'Estonia',
-    'es': 'Spain',
+    #'es': 'Spain',
     'fr': 'France',
     'ie': 'Ireland',
     'il': 'Israel',
@@ -150,7 +150,7 @@ def placenamesconvert(i):
     return i
 
 def main():
-    for country in countrynames.keys():
+    for country in ['ca']:#countrynames.keys():
         print 'Loading', country
         country_ = re.sub(' ', '', countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
@@ -240,20 +240,25 @@ def main():
                     if props['adm%s' % (adm)] != admin: #skip those outside this administrative division
                         continue
                 
-                imagefilename = re.sub(' ', '_', props['image'])
-                m5 = md5.new(imagefilename.encode('utf-8')).hexdigest()
-                thumburl = u'http://upload.wikimedia.org/wikipedia/commons/thumb/%s/%s/%s/%s-%s' % (m5[0], m5[:2], imagefilename, imagesize, imagefilename)
+                uploadlink = u'http://commons.wikimedia.org/w/index.php?title=Special:UploadWizard&campaign=wlm-%s&id=%s&lat=%s&lon=%s' % (country, id, props['lat'], props['lon'])
+                if props['image']:
+                    imagefilename = re.sub(' ', '_', props['image'])
+                    m5 = md5.new(imagefilename.encode('utf-8')).hexdigest()
+                    thumburl = u'http://upload.wikimedia.org/wikipedia/commons/thumb/%s/%s/%s/%s-%s' % (m5[0], m5[:2], imagefilename, imagesize, imagefilename)
+                    commonspage = u'http://commons.wikimedia.org/wiki/File:%s' % (props['image'])
+                else:
+                    thumburl = u'http://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Image-missing.svg/%s-Image-missing.svg.png' % (imagesize)
+                    commonspage = uploadlink
 
-                output += u"""
-                <Placemark>
+                output += u"""<Placemark>
                 <name>%s</name>
                 <description>
                 <![CDATA[
                 <table border=0 cellspacing=3px cellpadding=3px>
-                <tr><td align=right width=80px style="background-color: lightgreen;"><b>Name:</b></td><td><a href="http://%s.wikipedia.org/wiki/%s" target="_blank">%s</a></td><td rowspan=4><a href="http://commons.wikimedia.org/wiki/File:%s" target="_blank"><img src="%s" width=%s/></a></td></tr>
+                <tr><td align=right width=80px style="background-color: lightgreen;"><b>Name:</b></td><td><a href="http://%s.wikipedia.org/wiki/%s" target="_blank">%s</a></td><td rowspan=4><a href="%s" target="_blank"><img src="%s" width=%s title="%s" /></a></td></tr>
                 <tr><td align=right style="background-color: lightblue;"><b>Location:</b></td><td>%s</td></tr>
                 <tr><td align=right style="background-color: yellow;"><b>ID:</b></td><td>%s</td></tr>
-                <tr><td align=center colspan=2><br/><b>This monument has %s<br/>you can upload yours. Thanks!</b><br/><br/><span style="border: 2px solid black;background-color: pink;padding: 3px;"><a href="http://commons.wikimedia.org/w/index.php?title=Special:UploadWizard&campaign=wlm-%s&id=%s&lat=%s&lon=%s&descriptionlang=%s&description=%s" target="_blank"><b>Upload</b></a></span></td></tr>
+                <tr><td align=center colspan=2><br/><b>This monument has %s<br/>you can upload yours. Thanks!</b><br/><br/><span style="border: 2px solid black;background-color: pink;padding: 3px;"><a href="%s" target="_blank"><b>Upload now!</b></a></span></td></tr>
                 </table>
                 ]]>
                 </description>
@@ -261,7 +266,8 @@ def main():
                 <Point>
                 <coordinates>%s,%s</coordinates>
                 </Point>
-                </Placemark>""" % (props['name'], props['lang'], props['monument_article'], props['name'], props['image'], thumburl, imagesize, props['municipality'], id, props['image'] and 'images, but' or 'no images,', country, id, props['lat'], props['lon'], props['lang'], props['name'], props['image'] and 'imageyes' or 'imageno', props['lon'], props['lat'])
+                </Placemark>
+                """ % (props['name'], props['lang'], props['monument_article'], props['name'], commonspage, thumburl, imagesize, props['image'] and '' or u"Click here to upload your image!", props['municipality'], id, props['image'] and 'images, but' or 'no images,', uploadlink, props['image'] and 'imageyes' or 'imageno', props['lon'], props['lat'])
             
             output += u"""
                 </Document>
