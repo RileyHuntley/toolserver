@@ -357,7 +357,40 @@ iso3166 = {
     
     'MT': u"Malta",
     
-    'NL': u"Netherlands",
+    'NL':    u"Netherlands",
+    'NL-DR': u"Drenthe",
+    'NL-FL': u"Flevoland",
+    'NL-FR': u"Fryslân",
+    'NL-GE': u"Gelderland",
+    'NL-GR': u"Groningen",
+    'NL-LI': u"Limburg",
+    'NL-NB': u"Noord-Brabant",
+    'NL-NH': u"Noord-Holland",
+    'NL-OV': u"Overijssel",
+    'NL-UT': u"Utrecht",
+    'NL-ZE': u"Zeeland",
+    'NL-ZH': u"Zuid-Holland",
+
+    'PA': u"Panamá", 
+    
+    'PL':    u"Poland", 
+    'PL-DS': u"Dolnośląskie", 
+    'PL-KP': u"Kujawsko-pomorskie", 
+    'PL-LU': u"Lubelskie", 
+    'PL-LB': u"Lubuskie", 
+    'PL-LD': u"Łódzkie", 
+    'PL-MA': u"Małopolskie", 
+    'PL-MZ': u"Mazowieckie", 
+    'PL-OP': u"Opolskie", 
+    'PL-PK': u"Podkarpackie", 
+    'PL-PD': u"Podlaskie", 
+    'PL-PM': u"Pomorskie", 
+    'PL-SL': u"Śląskie", 
+    'PL-SK': u"Świętokrzyskie", 
+    'PL-WN': u"Warmińsko-mazurskie", 
+    'PL-WP': u"Wielkopolskie", 
+    'PL-ZP': u"Zachodniopomorskie", 
+
     
 }
 
@@ -375,7 +408,7 @@ def removebrackets(t):
     return t
 
 def main():
-    for country in ['nl']:#countrynames.keys():
+    for country in ['nl', 'pa', 'pl']:#countrynames.keys():
         print 'Loading', country
         country_ = re.sub(' ', '', countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
