@@ -625,23 +625,23 @@ def main():
             #admin kml
             output = u"""<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
-    <Document>
-    <name>Wiki Loves Monuments</name>
-    <description>A map with missing images by location</description>
-    <Style id="imageyes">
-      <IconStyle>
-        <Icon>
-          <href>%s</href>
-        </Icon>
-      </IconStyle>
-    </Style>
-    <Style id="imageno">
-      <IconStyle>
-        <Icon>
-          <href>%s</href>
-        </Icon>
-      </IconStyle>
-    </Style>
+<Document>
+<name>Wiki Loves Monuments</name>
+<description>A map with missing images by location</description>
+<Style id="y">
+  <IconStyle>
+    <Icon>
+      <href>%s</href>
+    </Icon>
+  </IconStyle>
+</Style>
+<Style id="n">
+  <IconStyle>
+    <Icon>
+      <href>%s</href>
+    </Icon>
+  </IconStyle>
+</Style>
             """ % (imageyesurl, imagenourl)
             
             imagesize = '150px'
@@ -672,10 +672,11 @@ def main():
                 output += u"""<Placemark>
 <description>
 <![CDATA[
-<table>
-<tr><td width=200px><b><a href="http://%s.wikipedia.org/wiki/%s" target="_blank">%s</a></b><br/>(%s, ID: %s)<br/><br/><br/><span style="font-size: 150%%;border: 2px solid black;background-color: pink;padding: 3px;"><a href="%s" target="_blank"><b>Upload now!</b></a></span></td>
-<td><a href="%s" target="_blank"><img src="%s" width=%s title="%s" /></a></td></tr>
-</table>
+<b>%s</b><br/>
+(%s, ID: %s)<br/><br/>
+<a href="%s"><img src="%s" width=%s title="%s" /></a><br/><br/>
+<span style="font-size: 150%%;border: 2px solid black;background-color: pink;padding: 3px;">
+<a href="%s"><b>Upload!</b></a></span>
 ]]>
 </description>
 <styleUrl>#%s</styleUrl>
@@ -683,7 +684,7 @@ def main():
 <coordinates>%s,%s</coordinates>
 </Point>
 </Placemark>
-""" % (props['lang'], props['monument_article'], props['name'], props['municipality'], id, uploadlink, commonspage, thumburl, imagesize, props['image'] and '' or u"Click here to upload your image!", props['image'] and 'imageyes' or 'imageno', props['lon'], props['lat'])
+""" % (props['monument_article'] and ('<a href="http://%s.wikipedia.org/wiki/%s">%s</a>' % (props['lang'], props['monument_article'], props['name'])) or props['name'], props['municipality'], id, commonspage, thumburl, imagesize, props['image'] and '' or u"Upload!", uploadlink, props['image'] and 'y' or 'n', props['lon'], props['lat'])
             
             output += u"""
 </Document>
@@ -736,7 +737,7 @@ def main():
         <center>
         <big><big><big><b><a href="%s">Wiki <i>Loves</i> Monuments 2012, %s</a></b></big></big></big>
         <br/>
-        <b>%d monuments</b>, %d with coordinates (%.1f%%) and %d with images (%.1f%%)<br/><b>Legend:</b> with image <img src="%s" width=20px title="with image" alt="with image"/>, without image <img src="%s" width=20px title="without image" alt="without image"/> - See <b><a href="../stats.php">detailed statistics</a></b> about the contest - <b>Share:</b> 
+        <b>%d monuments</b> and <!--%d with coordinates (%.1f%%) and %d with images (%.1f%%)-->%d of them (%.1f%%) need images! Get your camera and take photos, thanks!<br/><b>Legend:</b> with image <img src="%s" width=20px title="with image" alt="with image"/>, without image <img src="%s" width=20px title="without image" alt="without image"/> - See <b><a href="../stats.php">detailed statistics</a></b> about the contest - <b>Share:</b> 
         <a href="http://twitter.com/home?status=Find+monuments+near+to+you,+take+pics+and+upload++them+to+#wikilovesmonuments+http://toolserver.org/~emijrp/wlm/%s" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Twitter_Logo_Mini.svg/18px-Twitter_Logo_Mini.svg.png" title="Share on Twitter!" /></a>&nbsp;
         <a href="http://www.facebook.com/sharer/sharer.php?u=http://toolserver.org/~emijrp/wlm/%s" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Facebook_Logo_Mini.svg/16px-Facebook_Logo_Mini.svg.png" title="Share on Facebook!" /></a>&nbsp;
         <a href="http://identi.ca/notice/new?status_textarea=Find+monuments+near+to+you,+take+pics+and+upload++them+to+#wikilovesmonuments+http://toolserver.org/~emijrp/wlm/%s" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Identica_share_button.png/18px-Identica_share_button.png" title="Share on Identi.ca!" /></a>
@@ -758,7 +759,7 @@ def main():
         new TWTR.Widget({
           version: 2,
           type: 'search',
-          search: 'wikilovesmonuments OR "wiki loves monuments"',
+          search: 'wikilovesmonuments OR "wiki loves monuments" OR #wlm',
           interval: 4000,
           title: 'Wiki Loves Monuments 2012',
           subject: '',
@@ -804,7 +805,7 @@ def main():
         </body>
 
         </html>
-        """ % (u', '.join([u'"%s"' % (i) for i in admins]), admins[0], wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or wmlogourldefault, countrynames[country], wlmurls.has_key(country) and wlmurls[country] or '', countrynames[country], total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, country_, country_, country_, wlmurls.has_key(country) and wlmurls[country] or '', len(admins) > 1 and u'<b>Choose a place:</b> %s' % (u', '.join([u'<a href="index.php?place=%s">%s</a>' % (i, placenamesconvert(country, i)) for i in admins])) or '', country_, moremaps, datetime.datetime.now())
+        """ % (u', '.join([u'"%s"' % (i) for i in admins]), admins[0], wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or wmlogourldefault, countrynames[country], wlmurls.has_key(country) and wlmurls[country] or '', countrynames[country], total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, missingimages, total and (missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, country_, country_, country_, wlmurls.has_key(country) and wlmurls[country] or '', len(admins) > 1 and u'<b>Choose a place:</b> %s' % (u', '.join([u'<a href="index.php?place=%s">%s</a>' % (i, placenamesconvert(country, i)) for i in admins])) or '', country_, moremaps, datetime.datetime.now())
 
         f = open('%s/%s/index.php' % (path, country_), 'w')
         f.write(output.encode('utf-8'))
