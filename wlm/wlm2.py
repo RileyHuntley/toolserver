@@ -289,7 +289,29 @@ iso3166 = {
     'EE-84': u"Viljandimaa",
     'EE-86': u"Võrumaa",
     
-    
+    'FR':   u"France",
+    'FR-A': u"Alsace",
+    'FR-B': u"Aquitaine",
+    'FR-C': u"Auvergne",
+    'FR-P': u"Basse-Normandie",
+    'FR-D': u"Bourgogne",
+    'FR-E': u"Bretagne",
+    'FR-F': u"Centre",
+    'FR-G': u"Champagne-Ardenne",
+    'FR-H': u"Corse",
+    'FR-I': u"Franche-Comté",
+    'FR-Q': u"Haute-Normandie",
+    'FR-J': u"Île-de-France",
+    'FR-K': u"Languedoc-Roussillon",
+    'FR-L': u"Limousin",
+    'FR-M': u"Lorraine",
+    'FR-N': u"Midi-Pyrénées",
+    'FR-O': u"Nord-Pas-de-Calais",
+    'FR-R': u"Pays de la Loire",
+    'FR-S': u"Picardie",
+    'FR-T': u"Poitou-Charentes",
+    'FR-U': u"Provence-Alpes-Côte d'Azur",
+    'FR-V': u"Rhône-Alpes",
 }
 
 def placenamesconvert(country, i):
@@ -473,17 +495,17 @@ def main():
         <table width=99%% style="text-align: center;">
         <tr>
         <td>
-        <a href="%s" target="_blank"><img src="%s" /></a>
+        <a href="%s"><img src="%s" /></a>
         </td>
         <td>
         <center>
-        <big><big><big><b><a href="%s" target="_blank">Wiki <i>Loves</i> Monuments 2012, %s</a></b></big></big></big>
+        <big><big><big><b><a href="%s">Wiki <i>Loves</i> Monuments 2012, %s</a></b></big></big></big>
         <br/>
         <b>Monuments:</b> %d [%d with coordinates (%.1f%%) and %d with images (%.1f%%)]<br/><b>Legend:</b> with image <img src="%s" width=20px title="with image" alt="with image"/>, without image <img src="%s" width=20px title="without image" alt="without image"/>
         </center>
         </td>
         <td>
-        <a href="%s" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" /></a>
+        <a href="%s"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" /></a>
         </td>
         </tr>
         <tr>
