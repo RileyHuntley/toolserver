@@ -413,6 +413,63 @@ iso3166 = {
     'PT-20': u"Região Autónoma dos Açores",
     'PT-30': u"Região Autónoma da Madeira",
     
+    'RO':    u"Romania",
+    'RO-AB': u"Alba",
+    'RO-AR': u"Arad",
+    'RO-AG': u"Argeș",
+    'RO-BC': u"Bacău",
+    'RO-BH': u"Bihor",
+    'RO-BN': u"Bistrița-Năsăud",
+    'RO-BT': u"Botoșani",
+    'RO-BV': u"Brașov",
+    'RO-BR': u"Brăila",
+    'RO-BZ': u"Buzău",
+    'RO-CS': u"Caraș-Severin",
+    'RO-CL': u"Călărași",
+    'RO-CJ': u"Cluj",
+    'RO-CT': u"Constanța",
+    'RO-CV': u"Covasna",
+    'RO-DB': u"Dâmbovița",
+    'RO-DJ': u"Dolj",
+    'RO-GL': u"Galați",
+    'RO-GR': u"Giurgiu",
+    'RO-GJ': u"Gorj",
+    'RO-HR': u"Harghita",
+    'RO-HD': u"Hunedoara",
+    'RO-IL': u"Ialomița",
+    'RO-IS': u"Iași",
+    'RO-IF': u"Ilfov",
+    'RO-MM': u"Maramureș",
+    'RO-MH': u"Mehedinți",
+    'RO-MS': u"Mureș",
+    'RO-NT': u"Neamț",
+    'RO-OT': u"Olt",
+    'RO-PH': u"Prahova",
+    'RO-SM': u"Satu Mare",
+    'RO-SJ': u"Sălaj",
+    'RO-SB': u"Sibiu",
+    'RO-SV': u"Suceava",
+    'RO-TR': u"Teleorman",
+    'RO-TM': u"Timiș",
+    'RO-TL': u"Tulcea",
+    'RO-VS': u"Vaslui",
+    'RO-VL': u"Vâlcea",
+    'RO-VN': u"Vrancea",
+    'RO-B': u"București",
+    
+    'RU': u"Russia",
+    
+    'SK': u"Slovakia",
+    'SK-BC': u"Banskobystrický kraj",
+    'SK-BL': u"Bratislavský kraj",
+    'SK-KI': u"Košický kraj",
+    'SK-NI': u"Nitriansky kraj",
+    'SK-PV': u"Prešovský kraj",
+    'SK-TC': u"Trenčiansky kraj",
+    'SK-TA': u"Trnavský kraj",
+    'SK-ZI': u"Žilinský kraj",
+
+    
 }
 
 def placenamesconvert(country, i):
@@ -429,7 +486,7 @@ def removebrackets(t):
     return t
 
 def main():
-    for country in ['pa', 'pl', 'pt']:#countrynames.keys():
+    for country in ['sk']:#countrynames.keys():
         print 'Loading', country
         country_ = re.sub(' ', '', countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
@@ -496,27 +553,28 @@ def main():
             
             #admin kml
             output = u"""<?xml version="1.0" encoding="UTF-8"?>
-            <kml xmlns="http://www.opengis.net/kml/2.2">
-                <Document>
-                <name>Wiki Loves Monuments</name>
-                <description>A map with missing images by location</description>
-                <Style id="imageyes">
-                  <IconStyle>
-                    <Icon>
-                      <href>%s</href>
-                    </Icon>
-                  </IconStyle>
-                </Style>
-                <Style id="imageno">
-                  <IconStyle>
-                    <Icon>
-                      <href>%s</href>
-                    </Icon>
-                  </IconStyle>
-                </Style>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+    <Document>
+    <name>Wiki Loves Monuments</name>
+    <description>A map with missing images by location</description>
+    <Style id="imageyes">
+      <IconStyle>
+        <Icon>
+          <href>%s</href>
+        </Icon>
+      </IconStyle>
+    </Style>
+    <Style id="imageno">
+      <IconStyle>
+        <Icon>
+          <href>%s</href>
+        </Icon>
+      </IconStyle>
+    </Style>
             """ % (imageyesurl, imagenourl)
             
             imagesize = '150px'
+            errors = 0
             for id, props in monuments.items():
                 if props['lat'] == 0 and props['lon'] == 0:
                     continue
@@ -525,7 +583,12 @@ def main():
                     if props['adm%s' % (adm)] and props['adm%s' % (adm)] != admin: #skip those outside this administrative division, if not defined then use 'other'
                             continue
                 
-                uploadlink = u'http://commons.wikimedia.org/w/index.php?title=Special:UploadWizard&campaign=wlm-%s&id=%s&lat=%s&lon=%s' % (country, id, props['lat'], props['lon'])
+                try:
+                    uploadlink = u'http://commons.wikimedia.org/w/index.php?title=Special:UploadWizard&campaign=wlm-%s&id=%s&lat=%s&lon=%s' % (country, id, props['lat'], props['lon'])
+                except:
+                    errors += 1
+                    continue
+                
                 if props['image']:
                     imagefilename = re.sub(' ', '_', props['image'])
                     m5 = md5.new(imagefilename.encode('utf-8')).hexdigest()
@@ -536,25 +599,25 @@ def main():
                     commonspage = uploadlink
 
                 output += u"""<Placemark>
-                <description>
-                <![CDATA[
-                <table border=0 cellspacing=3px cellpadding=3px>
-                <tr><td width=200px><b><a href="http://%s.wikipedia.org/wiki/%s" target="_blank">%s</a></b><br/>(%s, ID: %s)<br/><br/><br/><span style="font-size: 150%%;border: 2px solid black;background-color: pink;padding: 3px;"><a href="%s" target="_blank"><b>Upload now!</b></a></span></td>
-                <td><a href="%s" target="_blank"><img src="%s" width=%s title="%s" /></a></td></tr>
-                </table>
-                ]]>
-                </description>
-                <styleUrl>#%s</styleUrl>
-                <Point>
-                <coordinates>%s,%s</coordinates>
-                </Point>
-                </Placemark>
-                """ % (props['lang'], props['monument_article'], props['name'], props['municipality'], id, uploadlink, commonspage, thumburl, imagesize, props['image'] and '' or u"Click here to upload your image!", props['image'] and 'imageyes' or 'imageno', props['lon'], props['lat'])
+<description>
+<![CDATA[
+<table border=0 cellspacing=3px cellpadding=3px>
+<tr><td width=200px><b><a href="http://%s.wikipedia.org/wiki/%s" target="_blank">%s</a></b><br/>(%s, ID: %s)<br/><br/><br/><span style="font-size: 150%%;border: 2px solid black;background-color: pink;padding: 3px;"><a href="%s" target="_blank"><b>Upload now!</b></a></span></td>
+<td><a href="%s" target="_blank"><img src="%s" width=%s title="%s" /></a></td></tr>
+</table>
+]]>
+</description>
+<styleUrl>#%s</styleUrl>
+<Point>
+<coordinates>%s,%s</coordinates>
+</Point>
+</Placemark>
+""" % (props['lang'], props['monument_article'], props['name'], props['municipality'], id, uploadlink, commonspage, thumburl, imagesize, props['image'] and '' or u"Click here to upload your image!", props['image'] and 'imageyes' or 'imageno', props['lon'], props['lat'])
             
             output += u"""
-                </Document>
-            </kml>"""
-            
+</Document>
+</kml>"""
+            print 'Errors', country, errors
             f = open('%s/%s/wlm-%s.kml' % (path, country_, admin), 'w')
             f.write(output.encode(codification))
             f.close()
