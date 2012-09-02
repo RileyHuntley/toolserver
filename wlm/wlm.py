@@ -796,7 +796,7 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 <br/>
 <center>
 
-<big><big><big><b>Wiki <i>Loves</i> Monuments 2012</b></big></big></big>
+<big><big><big><b><a href="http://www.wikilovesmonuments.org">Wiki <i>Loves</i> Monuments 2012</a></b></big></big></big>
 <br/>
 
 <table border=0 cellpadding=10px>
@@ -841,16 +841,16 @@ new TWTR.Widget({
 </tr>
 </table>
 
-<big><big>
-<b>Choose a map:</b><br/>
+<big>
+<b>Choose a map:</b> 
 <a href="andorra">Andorra</a> - <a href="argentina">Argentina</a> - <a href="austria">Austria</a> - <a href="belarus">Belarus</a> - <a href="canada">Canada</a> - <a href="switzerland">Switzerland</a> - <a href="chile">Chile</a> - <a href="colombia">Colombia</a> - <a href="czechrepublic">Czech Republic</a> - <a href="estonia">Estonia</a> - <a href="france">France</a> - <a href="ireland">Ireland</a> - <a href="israel">Israel</a> - <a href="india">India</a> - <a href="italy">Italy</a> - <a href="luxembourg">Luxembourg</a> - <a href="malta">Malta</a> - <a href="netherlands">Netherlands</a> - <a href="panama">Panama</a> - <a href="poland">Poland</a> - <a href="portugal">Portugal</a> - <a href="romania">Romania</a> - <a href="russia">Russia</a> - <a href="slovakia">Slovakia</a> - <a href="spain">Spain</a> - <a href="ukraine">Ukraine</a> - <a href="unitedstates">United States</a> - <a href="southafrica">South Africa</a> 
-</big></big>
+</big>
 
 <br/><br/>
 <a href="http://commons.wikimedia.org/wiki/Commons:Wiki_Loves_Monuments_2012/Participating_countries">More countries</a>&nbsp;&nbsp;<b>·</b>&nbsp;&nbsp;<a href="http://en.wikipedia.org/wiki/User_talk:Emijrp">Request a map</a>&nbsp;&nbsp;<b>·</b>&nbsp;&nbsp;<a href="http://en.wikipedia.org/wiki/Wikipedia:There_is_a_deadline">There <i>is</i> a deadline</a>&nbsp;&nbsp;<b>·</b>&nbsp;&nbsp;<a href="http://toolserver.org/~erfgoed/stream/">Uploads stream visualization</a>
 
-<br/>
-<i>Last update: %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a> using <a href="http://wlm.wikimedia.org/api/api.php">erfgoed database</a>. Visits: <?php include ("../../visits.php"); ?></i>
+<br/><br/>
+<i>Last update: %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a> using <a href="http://wlm.wikimedia.org/api/api.php">erfgoed database</a>. Visits: <?php include ("../visits.php"); ?></i>
 
 </center>
 
