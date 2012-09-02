@@ -37,22 +37,25 @@ countrynames = {
     'ee': 'Estonia',
     #'es': 'Spain',
     'fr': 'France',
-    'ie': 'Ireland',
+    #'ie': 'Ireland',
     'il': 'Israel',
     'in': 'India',
     'it': 'Italy',
     'lu': 'Luxembourg', 
-    'mt': 'Malta', 
+    #'mt': 'Malta', 
     'nl': 'Netherlands', 
     'pa': 'Panama',
     'pl': 'Poland',
-    'pt': 'Portugal',
+    #'pt': 'Portugal',
     'ro': 'Romania',
     'ru': 'Russia',
-    'sk': 'Slovakia',
+    #'sk': 'Slovakia',
     'ua': 'Ukraine',
     'us': 'United States',
     'za': 'South Africa',
+}
+capitals = {
+    'us': 'us-nj',
 }
 wmurls = { 
     #'ad': '',
@@ -805,7 +808,7 @@ def main():
         </body>
 
         </html>
-        """ % (u', '.join([u'"%s"' % (i) for i in admins]), admins[0], wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or wmlogourldefault, countrynames[country], wlmurls.has_key(country) and wlmurls[country] or '', countrynames[country], total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, missingimages, total and (missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, country_, country_, country_, wlmurls.has_key(country) and wlmurls[country] or '', len(admins) > 1 and u'<b>Choose a place:</b> %s' % (u', '.join([u'<a href="index.php?place=%s">%s</a>' % (i, placenamesconvert(country, i)) for i in admins])) or '', country_, moremaps, datetime.datetime.now())
+        """ % (u', '.join([u'"%s"' % (i) for i in admins]), capitals.has_key(country) and capitals[country] or admins[0], wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or wmlogourldefault, countrynames[country], wlmurls.has_key(country) and wlmurls[country] or '', countrynames[country], total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, missingimages, total and (missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, country_, country_, country_, wlmurls.has_key(country) and wlmurls[country] or '', len(admins) > 1 and u'<b>Choose a place:</b> %s' % (u', '.join([u'<a href="index.php?place=%s">%s</a>' % (i, placenamesconvert(country, i)) for i in admins])) or '', country_, moremaps, datetime.datetime.now())
 
         f = open('%s/%s/index.php' % (path, country_), 'w')
         f.write(output.encode('utf-8'))
