@@ -391,6 +391,27 @@ iso3166 = {
     'PL-WP': u"Wielkopolskie", 
     'PL-ZP': u"Zachodniopomorskie", 
 
+    'PT':    u"Portugal",
+    'PT-01': u"Aveiro",
+    'PT-02': u"Beja",
+    'PT-03': u"Braga",
+    'PT-04': u"Bragança",
+    'PT-05': u"Branco",
+    'PT-06': u"Coimbra",
+    'PT-07': u"Évora",
+    'PT-08': u"Faro",
+    'PT-09': u"Guarda",
+    'PT-10': u"Leiria",
+    'PT-11': u"Lisboa",
+    'PT-12': u"Portalegre",
+    'PT-13': u"Porto",
+    'PT-14': u"Santarém",
+    'PT-15': u"Setúbal",
+    'PT-16': u"Viana do Castelo",
+    'PT-17': u"Vila Real",
+    'PT-18': u"Viseu",
+    'PT-20': u"Região Autónoma dos Açores",
+    'PT-30': u"Região Autónoma da Madeira",
     
 }
 
