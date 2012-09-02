@@ -794,8 +794,11 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 
 <body style="background-color: white;">
 <br/>
-<br/>
 <center>
+
+<big><big><big><b>Wiki <i>Loves</i> Monuments 2012</b></big></big></big>
+<br/>
+
 <table border=0 cellpadding=10px>
 <tr>
 <td>
@@ -838,21 +841,10 @@ new TWTR.Widget({
 </tr>
 </table>
 
-<br/>
-
-<big><big><big><b><a href="argentina/">Argentina</a></b> &nbsp;&nbsp;</big></big></big>
-<big><big><big><b><a href="belarus/">Белару́сь</a></b> &nbsp;&nbsp;</big></big></big>
-<big><big><big><b><a href="canada/">Canada</a></b> &nbsp;&nbsp;</big></big></big>
-<big><big><big><b><a href="chile/">Chile</a></b> &nbsp;&nbsp;</big></big></big>
-<big><big><big><b>Colombia</b></big></big></big>
-
-<br/>
-
-<big><big><big><b><a href="spain/">España</a></b> &nbsp;&nbsp;</big></big></big>
-<big><big><big><b><a href="mexico/">México</a></b> &nbsp;&nbsp;</big></big></big>
-<big><big><big><b><a href="panama/">Panamá</a></b> &nbsp;&nbsp;</big></big></big>
-<big><big><big><b>Polska</b> &nbsp;&nbsp;</big></big></big>
-<big><big><big><b>Україна</b></big></big></big>
+<big><big>
+<b>Choose a map:</b><br/>
+<a href="andorra">Andorra</a> - <a href="argentina">Argentina</a> - <a href="austria">Austria</a> - <a href="belarus">Belarus</a> - <a href="canada">Canada</a> - <a href="switzerland">Switzerland</a> - <a href="chile">Chile</a> - <a href="colombia">Colombia</a> - <a href="czechrepublic">Czech Republic</a> - <a href="estonia">Estonia</a> - <a href="france">France</a> - <a href="ireland">Ireland</a> - <a href="israel">Israel</a> - <a href="india">India</a> - <a href="italy">Italy</a> - <a href="luxembourg">Luxembourg</a> - <a href="malta">Malta</a> - <a href="netherlands">Netherlands</a> - <a href="panama">Panama</a> - <a href="poland">Poland</a> - <a href="portugal">Portugal</a> - <a href="romania">Romania</a> - <a href="russia">Russia</a> - <a href="slovakia">Slovakia</a> - <a href="spain">Spain</a> - <a href="ukraine">Ukraine</a> - <a href="unitedstates">United States</a> - <a href="southafrica">South Africa</a> 
+</big></big>
 
 <br/><br/>
 <a href="http://commons.wikimedia.org/wiki/Commons:Wiki_Loves_Monuments_2012/Participating_countries">More countries</a>&nbsp;&nbsp;<b>·</b>&nbsp;&nbsp;<a href="http://en.wikipedia.org/wiki/User_talk:Emijrp">Request a map</a>&nbsp;&nbsp;<b>·</b>&nbsp;&nbsp;<a href="http://en.wikipedia.org/wiki/Wikipedia:There_is_a_deadline">There <i>is</i> a deadline</a>&nbsp;&nbsp;<b>·</b>&nbsp;&nbsp;<a href="http://toolserver.org/~erfgoed/stream/">Uploads stream visualization</a>
