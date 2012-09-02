@@ -199,16 +199,63 @@ iso3166 = {
     'CA-SK': u"Saskatchewan",
     'CA-NT': u"Northwest Territories",
     'CA-YT': u"Yukon Territory",
+    
+    'CH':    u"Switzerland",
+    'CH-AG': u"Aargau",
+    'CH-AR': u"Appenzell Ausserrhoden",
+    'CH-AI': u"Appenzell Innerrhoden",
+    'CH-BL': u"Basel-Landschaft",
+    'CH-BS': u"Basel-Stadt",
+    'CH-BE': u"Bern",
+    'CH-FR': u"Freiburg",
+    'CH-GE': u"Genève",
+    'CH-GL': u"Glarus",
+    'CH-GR': u"Graubünden",
+    'CH-JU': u"Jura",
+    'CH-LU': u"Luzern",
+    'CH-NE': u"Neuchâtel",
+    'CH-NW': u"Nidwalden",
+    'CH-OW': u"Obwalden",
+    'CH-SG': u"Sankt Gallen",
+    'CH-SH': u"Schaffhausen",
+    'CH-SZ': u"Schwyz",
+    'CH-SO': u"Solothurn",
+    'CH-TG': u"Thurgau",
+    'CH-TI': u"Ticino",
+    'CH-UR': u"Uri",
+    'CH-VS': u"Wallis",
+    'CH-VD': u"Vaud",
+    'CH-ZG': u"Zug",
+    'CH-ZH': u"Zürich",
+    
+    'CL':    u"Chile",
+    'CL-AI': u"Aisén del General Carlos Ibañez del Campo",
+    'CL-AN': u"Antofagasta",
+    'CL-AR': u"Araucanía",
+    'CL-AP': u"Arica y Parinacota",
+    'CL-AT': u"Atacama",
+    'CL-BI': u"Bío-Bío",
+    'CL-CO': u"Coquimbo",
+    'CL-LI': u"Libertador General Bernardo O'Higgins",
+    'CL-LL': u"Los Lagos",
+    'CL-LR': u"Los Ríos",
+    'CL-MA': u"Magallanes",
+    'CL-ML': u"Maule",
+    'CL-RM': u"Región Metropolitana de Santiago",
+    'CL-TA': u"Tarapacá",
+    'CL-VS': u"Valparaíso",
 }
 
-def placenamesconvert(i):
+def placenamesconvert(country, i):
+    if i == 'other':
+        return countrynames[country]
     ii = i.upper()
     if iso3166.has_key(ii):
         return iso3166[ii]
     return i
 
 def main():
-    for country in ['at']:#countrynames.keys():
+    for country in ['cl']:#countrynames.keys():
         print 'Loading', country
         country_ = re.sub(' ', '', countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
@@ -413,7 +460,7 @@ def main():
         </body>
 
         </html>
-        """ % (u', '.join([u'"%s"' % (i) for i in admins]), admins[0], wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or '', wlmurls.has_key(country) and wlmurls[country] or '', total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, wlmurls.has_key(country) and wlmurls[country] or '', u', '.join([u'<a href="index.php?place=%s">%s</a>' % (i, placenamesconvert(i)) for i in admins]), country_, moremaps, datetime.datetime.now())
+        """ % (u', '.join([u'"%s"' % (i) for i in admins]), admins[0], wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or '', wlmurls.has_key(country) and wlmurls[country] or '', total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, wlmurls.has_key(country) and wlmurls[country] or '', u', '.join([u'<a href="index.php?place=%s">%s</a>' % (i, placenamesconvert(country, i)) for i in admins]), country_, moremaps, datetime.datetime.now())
 
         f = open('%s/%s/index.php' % (path, country_), 'w')
         f.write(output.encode('utf-8'))
