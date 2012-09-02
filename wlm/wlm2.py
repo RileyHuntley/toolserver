@@ -149,7 +149,7 @@ iso3166 = {
     'AD':   u"Andorra",
     
     'AR':   u"Argentina",
-    'AR-C': "Ciudad Autónoma de Buenos Aires",
+    'AR-C': u"Ciudad Autónoma de Buenos Aires",
     'AR-B': u"Buenos Aires",
     'AR-K': u"Catamarca", 
     'AR-H': u"Chaco",
@@ -174,6 +174,17 @@ iso3166 = {
     "AR-V": u"Tierra del Fuego",
     "AR-T": u"Tucumán",
     
+    "AT":   u"Austria",
+    "AT-1": u"Burgenland",
+    "AT-2": u"Kärnten",
+    "AT-3": u"Niederösterreich",
+    "AT-4": u"Oberösterreich",
+    "AT-5": u"Salzburg",
+    "AT-6": u"Steiermark",
+    "AT-7": u"Tirol",
+    "AT-8": u"Vorarlberg",
+    "AT-9": u"Wien",
+    
     'CA':    u"Canada",
     'CA-AB': u"Alberta",
     'CA-BC': u"British Columbia",
@@ -197,7 +208,7 @@ def placenamesconvert(i):
     return i
 
 def main():
-    for country in ['ar']:#countrynames.keys():
+    for country in ['at']:#countrynames.keys():
         print 'Loading', country
         country_ = re.sub(' ', '', countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
@@ -405,7 +416,7 @@ def main():
         """ % (u', '.join([u'"%s"' % (i) for i in admins]), admins[0], wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or '', wlmurls.has_key(country) and wlmurls[country] or '', total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, wlmurls.has_key(country) and wlmurls[country] or '', u', '.join([u'<a href="index.php?place=%s">%s</a>' % (i, placenamesconvert(i)) for i in admins]), country_, moremaps, datetime.datetime.now())
 
         f = open('%s/%s/index.php' % (path, country_), 'w')
-        f.write(output.encode(codification))
+        f.write(output.encode('utf-8'))
         f.close()
     
 if __name__ == "__main__":
