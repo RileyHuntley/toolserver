@@ -306,7 +306,7 @@ def removebrackets(t):
     return t
 
 def main():
-    for country in ['ee']:#countrynames.keys():
+    for country in ['fr']:#countrynames.keys():
         print 'Loading', country
         country_ = re.sub(' ', '', countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
@@ -477,11 +477,9 @@ def main():
         </td>
         <td>
         <center>
-        <big><big><big><b><a href="%s" target="_blank">Wiki <i>Loves</i> Monuments</a></b></big></big></big>
+        <big><big><big><b><a href="%s" target="_blank">Wiki <i>Loves</i> Monuments 2012, %s</a></b></big></big></big>
         <br/>
-        <b>September 2012</b>
-        <br/>
-        <b>Monuments:</b> %d [%d with coordinates (%.1f%%) and %d with images (%.1f%%)] | <b>Legend:</b> with image <img src="%s" width=20px title="with image" alt="with image"/>, without image <img src="%s" width=20px title="without image" alt="without image"/>
+        <b>Monuments:</b> %d [%d with coordinates (%.1f%%) and %d with images (%.1f%%)]<br/><b>Legend:</b> with image <img src="%s" width=20px title="with image" alt="with image"/>, without image <img src="%s" width=20px title="without image" alt="without image"/>
         </center>
         </td>
         <td>
@@ -507,7 +505,7 @@ def main():
           title: 'Wiki Loves Monuments 2012',
           subject: '',
           width: 300,
-          height: 380,
+          height: 375,
           theme: {
             shell: {
               background: '#8ec1da',
@@ -547,7 +545,7 @@ def main():
         </body>
 
         </html>
-        """ % (u', '.join([u'"%s"' % (i) for i in admins]), admins[0], wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or '', wlmurls.has_key(country) and wlmurls[country] or '', total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, wlmurls.has_key(country) and wlmurls[country] or '', u', '.join([u'<a href="index.php?place=%s">%s</a>' % (i, placenamesconvert(country, i)) for i in admins]), country_, moremaps, datetime.datetime.now())
+        """ % (u', '.join([u'"%s"' % (i) for i in admins]), admins[0], wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or '', countrynames[country], wlmurls.has_key(country) and wlmurls[country] or '', total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, wlmurls.has_key(country) and wlmurls[country] or '', u', '.join([u'<a href="index.php?place=%s">%s</a>' % (i, placenamesconvert(country, i)) for i in admins]), country_, moremaps, datetime.datetime.now())
 
         f = open('%s/%s/index.php' % (path, country_), 'w')
         f.write(output.encode('utf-8'))
