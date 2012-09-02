@@ -796,7 +796,7 @@ output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 <br/>
 <center>
 
-<big><big><big><b><a href="http://www.wikilovesmonuments.org">Wiki <i>Loves</i> Monuments 2012</a></b></big></big></big>
+<h2><a href="http://www.wikilovesmonuments.org">Wiki <i>Loves</i> Monuments 2012</a></h2>
 <br/>
 
 <table border=0 cellpadding=10px>

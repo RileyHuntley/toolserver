@@ -274,7 +274,7 @@ def main():
     %s
     </table>""" % (sizes_rank)
     
-    intro = u"%s files by %s uploaders from %s countries so far" % (sum([countries[k]['files'] for k in countries.keys()]), len(users.keys()), len(countries.keys()))
+    intro = u"<b>%s files</b> by <b>%s uploaders</b> from <b>%s countries</b> so far" % (sum([countries[k]['files'] for k in countries.keys()]), len(users.keys()), len(countries.keys()))
     output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
     <head>

@@ -48,6 +48,7 @@ countrynames = {
     'pl': 'Poland',
     #'pt': 'Portugal',
     'ro': 'Romania',
+    'rs': 'Serbia',
     'ru': 'Russia',
     #'sk': 'Slovakia',
     'ua': 'Ukraine',
@@ -81,7 +82,8 @@ wmurls = {
     #'pl': '',
     #'pt': '',
     #'ro': '',
-    #'ru': '',
+    #'rs': '',
+    #'sr': '', 
     #'sk': '', 
     #'ua': '' ,
     'us': 'http://wikimedia.org',
@@ -113,6 +115,7 @@ wmlogourls = {
     #'pl': '',
     #'pt': '',
     #'ro': '',
+    #'rs': '', 
     #'ru': '',
     #'sk': '', 
     #'ua': '' ,
@@ -471,7 +474,9 @@ iso3166 = {
     'SK-TC': u"Trenčiansky kraj",
     'SK-TA': u"Trnavský kraj",
     'SK-ZI': u"Žilinský kraj",
-
+    
+    'RS': u"Serbia",
+    
     'UA': u"Ukraine",
     'UA-': u"",
     
