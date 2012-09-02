@@ -849,11 +849,14 @@ new TWTR.Widget({
 <br/><br/>
 <a href="http://commons.wikimedia.org/wiki/Commons:Wiki_Loves_Monuments_2012/Participating_countries">More countries</a>&nbsp;&nbsp;<b>·</b>&nbsp;&nbsp;<a href="http://en.wikipedia.org/wiki/User_talk:Emijrp">Request a map</a>&nbsp;&nbsp;<b>·</b>&nbsp;&nbsp;<a href="http://en.wikipedia.org/wiki/Wikipedia:There_is_a_deadline">There <i>is</i> a deadline</a>&nbsp;&nbsp;<b>·</b>&nbsp;&nbsp;<a href="http://toolserver.org/~erfgoed/stream/">Uploads stream visualization</a>
 
+<br/>
+<i>Last update: %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a> using <a href="http://wlm.wikimedia.org/api/api.php">erfgoed database</a>. Visits: <?php include ("../../visits.php"); ?></i>
+
 </center>
 
 </body>
 </html>
-""" % (globalpiechart)
+""" % (globalpiechart, datetime.datetime.now())
 
 f = open('%s/index.php' % (path), 'w')
 f.write(output.encode('utf-8'))
