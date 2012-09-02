@@ -350,6 +350,15 @@ iso3166 = {
     'IN-DL': u"Delhi",
     'IN-LD': u"Lakshadweep",
     'IN-PY': u"Pondicherry (Puducherry)",
+    
+    'IT': u"Italy",
+    
+    'LU': u"Luxembourg",
+    
+    'MT': u"Malta",
+    
+    'NL': u"Netherlands",
+    
 }
 
 def placenamesconvert(country, i):
@@ -366,7 +375,7 @@ def removebrackets(t):
     return t
 
 def main():
-    for country in ['fr']:#countrynames.keys():
+    for country in ['nl']:#countrynames.keys():
         print 'Loading', country
         country_ = re.sub(' ', '', countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
@@ -539,7 +548,7 @@ def main():
         <center>
         <big><big><big><b><a href="%s">Wiki <i>Loves</i> Monuments 2012, %s</a></b></big></big></big>
         <br/>
-        <b>%d monuments</b>. %d with coordinates (%.1f%%) and %d with images (%.1f%%)<br/><b>Legend:</b> with image <img src="%s" width=20px title="with image" alt="with image"/>, without image <img src="%s" width=20px title="without image" alt="without image"/>
+        <b>%d monuments</b>, %d with coordinates (%.1f%%) and %d with images (%.1f%%)<br/><b>Legend:</b> with image <img src="%s" width=20px title="with image" alt="with image"/>, without image <img src="%s" width=20px title="without image" alt="without image"/>
         </center>
         </td>
         <td>
