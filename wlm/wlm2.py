@@ -146,19 +146,48 @@ wlmurls = {
     #'za': '',
 }
 iso3166 = {
-    'CA-AB': "Alberta",
-    'CA-BC': "British Columbia",
-    'CA-MB': "Manitoba",
-    'CA-NB': "New Brunswick",
-    'CA-NL': "Newfoundland",
-    'CA-NS': "Nova Scotia",
-    'CA-NU': "Nunavut",
-    'CA-ON': "Ontario",
-    'CA-PE': "Prince Edward Island",
-    'CA-QC': "Quebec",
-    'CA-SK': "Saskatchewan",
-    'CA-NT': "Northwest Territories",
-    'CA-YT': "Yukon Territory",
+    'AD':   u"Andorra",
+    
+    'AR':   u"Argentina",
+    'AR-C': "Ciudad Autónoma de Buenos Aires",
+    'AR-B': u"Buenos Aires",
+    'AR-K': u"Catamarca", 
+    'AR-H': u"Chaco",
+    'AR-U': u"Chubut",
+    'AR-X': u"Córdoba",
+    'AR-W': u"Corrientes",
+    'AR-E': u"Entre Ríos",
+    'AR-P': u"Formosa",
+    'AR-Y': u"Jujuy",
+    'AR-L': u"La Pampa",
+    'AR-F': u"La Rioja",
+    'AR-M': u"Mendoza",
+    'AR-N': u"Misiones",
+    'AR-Q': u"Neuquén",
+    'AR-R': u"Río Negro",
+    'AR-A': u"Salta",
+    "AR-J": u"San Juan",
+    "AR-D": u"San Luis",
+    "AR-Z": u"Santa Cruz",
+    "AR-S": u"Santa Fe",
+    "AR-G": u"Santiago del Estero",
+    "AR-V": u"Tierra del Fuego",
+    "AR-T": u"Tucumán",
+    
+    'CA':    u"Canada",
+    'CA-AB': u"Alberta",
+    'CA-BC': u"British Columbia",
+    'CA-MB': u"Manitoba",
+    'CA-NB': u"New Brunswick",
+    'CA-NL': u"Newfoundland",
+    'CA-NS': u"Nova Scotia",
+    'CA-NU': u"Nunavut",
+    'CA-ON': u"Ontario",
+    'CA-PE': u"Prince Edward Island",
+    'CA-QC': u"Quebec",
+    'CA-SK': u"Saskatchewan",
+    'CA-NT': u"Northwest Territories",
+    'CA-YT': u"Yukon Territory",
 }
 
 def placenamesconvert(i):
@@ -168,7 +197,7 @@ def placenamesconvert(i):
     return i
 
 def main():
-    for country in ['ca']:#countrynames.keys():
+    for country in ['ar']:#countrynames.keys():
         print 'Loading', country
         country_ = re.sub(' ', '', countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
