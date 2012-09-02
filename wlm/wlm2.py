@@ -265,7 +265,7 @@ iso3166 = {
 
 def placenamesconvert(country, i):
     if i == 'other':
-        return countrynames[country]
+        return u'Other in %s' % (countrynames[country])
     ii = i.upper()
     if iso3166.has_key(ii):
         return iso3166[ii]
@@ -461,17 +461,54 @@ def main():
         </tr>
         <tr>
         <td colspan=3>
+        
         <b>Choose a place:</b> %s
-
+        
+        <table width=100%%>
+        <tr>
+        <td width=310px>
+        <!-- twitter widget -->
+        <script charset="utf-8" src="http://widgets.twimg.com/j/2/widget.js"></script>
+        <script>
+        new TWTR.Widget({
+          version: 2,
+          type: 'search',
+          search: 'wikilovesmonuments OR "wiki loves monuments"',
+          interval: 4000,
+          title: 'Wiki Loves Monuments 2012',
+          subject: '',
+          width: 300,
+          height: 380,
+          theme: {
+            shell: {
+              background: '#8ec1da',
+              color: '#ffffff'
+            },
+            tweets: {
+              background: '#ffffff',
+              color: '#444444',
+              links: '#1985b5'
+            }
+          },
+          features: {
+            scrollbar: false,
+            loop: true,
+            live: true,
+            behavior: 'default'
+          }
+        }).render().start();
+        </script>
+        </td>
+        <td>
+        <!-- map -->
         <iframe width="99%%" height="450" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=es&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fwlm%%2F%s%%2Fwlm-<?php echo $place; ?>.kml%%3Fusecache%%3D0&amp;output=embed"></iframe>
-        <br/>
-        <br/>
-        <center>
-
+        </td>
+        </tr>
+        </table>
+        
         <b>More maps:</b> %s 
-
-        </center>
-        <i>Last update: %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a> using erfgoed database. Visits: <?php include ("../../visits.php"); ?></i>
+        <i>Last update: %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a> using <a href="http://wlm.wikimedia.org/api/api.php">erfgoed database</a>. Visits: <?php include ("../../visits.php"); ?></i>
+        
         <br/>
         </td>
         </tr>
