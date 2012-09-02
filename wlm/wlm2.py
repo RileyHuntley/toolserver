@@ -156,6 +156,8 @@ def main():
         if not os.path.exists('%s/%s/' % (path, country_)):
             os.makedirs('%s/%s/' % (path, country_))
         adm0 = country
+        
+        #loading monuments from database
         conn.query("SELECT * from monuments_all where country='%s';" % (country))
         r=conn.use_result()
         row=r.fetch_row(maxrows=1, how=1)
@@ -183,12 +185,14 @@ def main():
             }
             if re.search(ur"(?im)(falta[_ ]imagen|\.svg|missing[\- ]monuments[\- ]image|Wiki[_ ]Loves[_ ]Monuments[_ ]Logo|insert[_ ]image[_ ]here)", monuments[row[0]['id']]['image']):
                 monuments[row[0]['id']]['image'] = ''
-            if not monuments[row[0]['id']]['image']:
-                missingimages += 1
-            if not monuments[row[0]['id']]['lat'] or not monuments[row[0]['id']]['lon']:
-                missingcoordinates += 1
             row=r.fetch_row(maxrows=1, how=1)
+        
         total = len(monuments.keys())
+        for k, props in monuments.items():
+            if not props['image']:
+                missingimages += 1
+            if not props['lat'] or not props['lon']:
+                missingcoordinates += 1
         
         adm = 0
         if len(monuments.keys()) >= 1000:
@@ -198,12 +202,13 @@ def main():
             admins = list(set([v['adm%s' % (adm)] for k, v in monuments.items()]))
         else:
             admins = [country]
+        
+        if '' in admins:
+            admins.remove('')
+            admins.append('other')
         admins.sort()
         
         for admin in admins:
-            if not admin:
-                admin = 'other'
-            
             print 'Generating', country, admin
             
             imageyesurl = u'http://maps.google.com/mapfiles/kml/paddle/red-stars.png'
