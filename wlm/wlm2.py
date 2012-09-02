@@ -255,8 +255,8 @@ def placenamesconvert(country, i):
     return i
 
 def removebrackets(t):
-    t = re.sub(ur"(?im)\[\[[^\|\]]*?\|([\|\]]*?)\]\]", ur"\1", t)
-    t = re.sub(ur"(?im)\[\[([^\]]*?)\]\]", ur"\1", t)
+    t = re.sub(ur"(?im)\[\[[^\|\]]*?\|([^\|\]]*?)\]\]", ur"\1", t)
+    t = re.sub(ur"(?im)\[\[([^\|\]]*?)\]\]", ur"\1", t)
     return t
 
 def main():
@@ -288,7 +288,7 @@ def main():
                 'adm2': row[0]['adm2'] and row[0]['adm2'].lower() or '', 
                 'adm3': row[0]['adm3'] and row[0]['adm3'].lower() or '', 
                 'adm4': row[0]['adm4'] and row[0]['adm4'].lower() or '', 
-                'address': unicode(row[0]['address'], codification), 
+                'address': removebrackets(unicode(row[0]['address'], codification)), 
                 'lat': row[0]['lat'] and row[0]['lat'] != '0' and row[0]['lat'] or 0,  
                 'lon': row[0]['lon'] and row[0]['lon'] != '0' and row[0]['lon'] or 0, 
                 'image': row[0]['image'] and unicode(row[0]['image'], codification) or '', 
@@ -363,17 +363,15 @@ def main():
                     thumburl = u'http://upload.wikimedia.org/wikipedia/commons/thumb/%s/%s/%s/%s-%s' % (m5[0], m5[:2], imagefilename, imagesize, imagefilename)
                     commonspage = u'http://commons.wikimedia.org/wiki/File:%s' % (props['image'])
                 else:
-                    thumburl = u'http://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Image-missing.svg/%s-Image-missing.svg.png' % (imagesize)
+                    thumburl = u'http://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Image_upload-tango.svg/%s-Image_upload-tango.svg.png' % (imagesize)
                     commonspage = uploadlink
 
                 output += u"""<Placemark>
                 <description>
                 <![CDATA[
                 <table border=0 cellspacing=3px cellpadding=3px>
-                <tr><td align=right width=80px style="background-color: lightgreen;"><b>Name:</b></td><td><a href="http://%s.wikipedia.org/wiki/%s" target="_blank">%s</a></td><td rowspan=4><a href="%s" target="_blank"><img src="%s" width=%s title="%s" /></a></td></tr>
-                <tr><td align=right style="background-color: lightblue;"><b>Location:</b></td><td>%s</td></tr>
-                <tr><td align=right style="background-color: yellow;"><b>ID:</b></td><td>%s</td></tr>
-                <tr><td align=center colspan=2><br/><span style="border: 2px solid black;background-color: pink;padding: 3px;"><a href="%s" target="_blank"><b>Upload now!</b></a></span></td></tr>
+                <tr><td width=150px><a href="http://%s.wikipedia.org/wiki/%s" target="_blank">%s</a> (%s, ID: %s)<br/><span style="font-size: 200%%;border: 2px solid black;background-color: pink;padding: 3px;"><a href="%s" target="_blank"><b>Upload now!</b></a></span></td>
+                <td><a href="%s" target="_blank"><img src="%s" width=%s title="%s" /></a></td></tr>
                 </table>
                 ]]>
                 </description>
@@ -382,7 +380,7 @@ def main():
                 <coordinates>%s,%s</coordinates>
                 </Point>
                 </Placemark>
-                """ % (props['lang'], props['monument_article'], props['name'], commonspage, thumburl, imagesize, props['image'] and '' or u"Click here to upload your image!", props['municipality'], id, uploadlink, props['image'] and 'imageyes' or 'imageno', props['lon'], props['lat'])
+                """ % (props['lang'], props['monument_article'], props['name'], props['municipality'], id, uploadlink, commonspage, thumburl, imagesize, props['image'] and '' or u"Click here to upload your image!", props['image'] and 'imageyes' or 'imageno', props['lon'], props['lat'])
             
             output += u"""
                 </Document>
