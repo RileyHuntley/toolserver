@@ -471,6 +471,19 @@ iso3166 = {
 
     'UA': u"Ukraine",
     'UA-': u"",
+    
+    'US': u"United States",
+    
+    'ZA':    u"South Africa",
+    'ZA-EC': u"Eastern Cape",
+    'ZA-FS': u"Free State",
+    'ZA-GP': u"Gauteng",
+    'ZA-ZN': u"KwaZulu-Natal",
+    'ZA-LP': u"Limpopo",
+    'ZA-MP': u"Mpumalanga",
+    'ZA-NC': u"Northern Cape",
+    'ZA-NW': u"North West",
+    'ZA-WC': u"Western Cape",
 }
 
 def placenamesconvert(country, i):
@@ -487,7 +500,7 @@ def removebrackets(t):
     return t
 
 def main():
-    for country in ['ua']:#countrynames.keys():
+    for country in ['za']:#countrynames.keys():
         print 'Loading', country
         country_ = re.sub(' ', '', countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
@@ -602,7 +615,7 @@ def main():
                 output += u"""<Placemark>
 <description>
 <![CDATA[
-<table border=0 cellspacing=3px cellpadding=3px>
+<table>
 <tr><td width=200px><b><a href="http://%s.wikipedia.org/wiki/%s" target="_blank">%s</a></b><br/>(%s, ID: %s)<br/><br/><br/><span style="font-size: 150%%;border: 2px solid black;background-color: pink;padding: 3px;"><a href="%s" target="_blank"><b>Upload now!</b></a></span></td>
 <td><a href="%s" target="_blank"><img src="%s" width=%s title="%s" /></a></td></tr>
 </table>
@@ -670,7 +683,7 @@ def main():
         </center>
         </td>
         <td>
-        <a href="%s"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" /></a>
+        <a href="%s"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" title="Wiki Loves Monuments 2012" /></a>
         </td>
         </tr>
         <tr>
