@@ -557,7 +557,7 @@ def removebrackets(t):
     return t
 
 def main():
-    for country in ['us']:#countrynames.keys():
+    for country in countrynames.keys():
         print 'Loading', country
         country_ = re.sub(' ', '', countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
@@ -650,9 +650,11 @@ def main():
                 if props['lat'] == 0 and props['lon'] == 0:
                     continue
                 
-                if adm:
-                    if props['adm%s' % (adm)] and props['adm%s' % (adm)] != admin: #skip those outside this administrative division, if not defined then use 'other'
-                            continue
+                if adm: #if adm is > 0 then there are subdivisons, else all points in the same kml
+                    if admin == 'other' and props['adm%s' % (adm)] == '':
+                        pass
+                    elif props['adm%s' % (adm)] != admin:
+                        continue
                 
                 try:
                     uploadlink = u'http://commons.wikimedia.org/w/index.php?title=Special:UploadWizard&campaign=wlm-%s&id=%s&lat=%s&lon=%s' % (country, id, props['lat'], props['lon'])
