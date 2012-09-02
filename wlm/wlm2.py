@@ -469,7 +469,8 @@ iso3166 = {
     'SK-TA': u"Trnavský kraj",
     'SK-ZI': u"Žilinský kraj",
 
-    
+    'UA': u"Ukraine",
+    'UA-': u"",
 }
 
 def placenamesconvert(country, i):
@@ -486,7 +487,7 @@ def removebrackets(t):
     return t
 
 def main():
-    for country in ['sk']:#countrynames.keys():
+    for country in ['ua']:#countrynames.keys():
         print 'Loading', country
         country_ = re.sub(' ', '', countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
