@@ -254,6 +254,11 @@ def placenamesconvert(country, i):
         return iso3166[ii]
     return i
 
+def removebrackets(t):
+    t = re.sub(ur"(?im)\[\[[^\|\]]*?\|([\|\]]*?)\]\]", ur"\1", t)
+    t = re.sub(ur"(?im)\[\[([^\]]*?)\]\]", ur"\1", t)
+    return t
+
 def main():
     for country in ['cl']:#countrynames.keys():
         print 'Loading', country
@@ -276,8 +281,8 @@ def main():
                 'lang': row[0]['lang'],
                 'registrant_url': row[0]['registrant_url'],
                 'monument_article': unicode(row[0]['monument_article'], codification),
-                'name': unicode(row[0]['name'], codification),
-                'municipality': unicode(row[0]['municipality'], codification),
+                'name': removebrackets(unicode(row[0]['name'], codification)),
+                'municipality': removebrackets(unicode(row[0]['municipality'], codification)),
                 'adm0': row[0]['adm0'] and row[0]['adm0'].lower() or '', 
                 'adm1': row[0]['adm1'] and row[0]['adm1'].lower() or '', 
                 'adm2': row[0]['adm2'] and row[0]['adm2'].lower() or '', 
@@ -292,6 +297,7 @@ def main():
                 monuments[row[0]['id']]['image'] = ''
             row=r.fetch_row(maxrows=1, how=1)
         
+        #total, missingimages and missingcoordinates
         total = len(monuments.keys())
         for k, props in monuments.items():
             if not props['image']:
