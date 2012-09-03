@@ -565,7 +565,7 @@ def removebrackets(t):
     return t
 
 def main():
-    for country in ['ch']:# countrynames.keys():
+    for country in countrynames.keys():
         print 'Loading', country
         country_ = re.sub(' ', '', countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
