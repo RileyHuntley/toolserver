@@ -776,12 +776,12 @@ def main():
           height: 375,
           theme: {
             shell: {
-              background: '#8ec1da',
+              background: '#A30000',
               color: '#ffffff'
             },
             tweets: {
               background: '#ffffff',
-              color: '#444444',
+              color: '#000',
               links: '#1985b5'
             }
           },
