@@ -1,3 +1,38 @@
+/*
+Theme Name: WikiLovesMonuments
+Theme URI: http://wordpress.org/extend/themes/twentyeleven
+Author: elya 
+Author URI: http://www.wikilovesmonuments.org
+Description: The new Wiki Loves Monuments theme is based on the TwentyEleven theme but redesigned to be used by local WLM teams. It needs the Cimy image rotator plugin, suggested plugin: WLMImageCounter
+Version: 0.5
+License: GNU General Public License
+License URI: license.txt
+Tags:
+*/
+
+#page {
+    background-color: #fff;
+    -moz-border-radius-topleft: 8px;
+    -moz-border-radius-topright: 8px;
+    -moz-border-radius-bottomright: 0px;
+    -moz-border-radius-bottomleft: 0px;
+    -webkit-border-radius: 8px 8px 0px 0px;
+    border-radius: 8px 8px 0px 0px; 
+    -webkit-box-shadow: 0px -3px 10px #888;
+    -moz-box-shadow: 0px -3px 10px #888;
+    box-shadow: 0px -3px 10px #888; 
+}
+
+.menu {
+    background-color:#A30000;
+    margin: 2px;
+}
+.menu a {
+    color: #fff;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
 /**
  * wikitable from MediaWiki shared.css
  */

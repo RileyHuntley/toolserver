@@ -565,7 +565,7 @@ def removebrackets(t):
     return t
 
 def main():
-    for country in countrynames.keys():
+    for country in ['ch']:# countrynames.keys():
         print 'Loading', country
         country_ = re.sub(' ', '', countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
@@ -734,8 +734,9 @@ def main():
         }
         ?>
         
-        <body style="background-color: lightblue;">
+        <body style="background-image: url('../images/bg_stripes.png'); ">
         <center>
+        <div id="page">
         <table width=99%% style="text-align: center;">
         <tr>
         <td>
@@ -757,7 +758,7 @@ def main():
         </tr>
         <tr>
         <td colspan=3>
-        <!-- choose a place -->%s
+        <!-- choose a place --><div class="menu">%s</div>
         <table width=100%%>
         <tr>
         <td width=310px>
@@ -808,10 +809,10 @@ def main():
         </td>
         </tr>
         </table>
-
+        </div>
         </center>
+        
         </body>
-
         </html>
         """ % (u', '.join([u'"%s"' % (i) for i in admins]), capitals.has_key(country) and capitals[country] or admins[0], wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or wmlogourldefault, countrynames[country], wlmurls.has_key(country) and wlmurls[country] or '', countrynames[country], total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, missingimages, total and (missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, countrynames[country], country_, country_, countrynames[country], country_, wlmurls.has_key(country) and wlmurls[country] or '', len(admins) > 1 and u'<b>Choose a place:</b> %s' % (u', '.join([u'<a href="index.php?place=%s">%s</a>' % (i, placenamesconvert(country, i)) for i in admins])) or '', country_, moremaps, datetime.datetime.now())
 
