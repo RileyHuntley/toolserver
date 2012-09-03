@@ -802,9 +802,7 @@ def main():
         </table>
         
         <!-- more maps --><div class="menu"><b>More maps:</b> %s</div>
-        <br/>
         <i>Last update: %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a> using <a href="http://wlm.wikimedia.org/api/api.php">erfgoed database</a>. Visits: <?php include ("../../visits.php"); ?></i>
-        
         <br/>
         </td>
         </tr>
