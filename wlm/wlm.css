@@ -10,6 +10,10 @@ License URI: license.txt
 Tags:
 */
 
+body {
+    font: 15px "Helvetica Neue", Arial, Helvetica, Sans, FreeSans, 'Nimbus Sans L', Garuda, sans-serif; /* many fonts to accomodate Linux users without Arial */
+}
+
 #page {
     background-color: #fff;
     -moz-border-radius-topleft: 8px;
@@ -26,11 +30,17 @@ Tags:
 .menu {
     background-color:#A30000;
     margin: 2px;
+    color: #fff;
+    text-transform: uppercase;
+    text-decoration: none;
 }
 .menu a {
     color: #fff;
     text-transform: uppercase;
     text-decoration: none;
+}
+.menu a:hover {
+    text-decoration: underline;
 }
 
 /**
