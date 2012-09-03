@@ -56,6 +56,7 @@ countrynames = {
     'za': 'South Africa',
 }
 capitals = {
+    'ar': 'ar-c',
     'us': 'us-nj',
 }
 wmurls = { 
