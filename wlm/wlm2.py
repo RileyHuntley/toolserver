@@ -681,9 +681,9 @@ def main():
 <description>
 <![CDATA[
 <b>%s</b><br/>
-(%s, ID: %s)<br/><br/>
-<a href="%s"><img src="%s" width=%s title="%s" /></a><br/><br/>
-<span style="font-size: 150%%;border: 2px solid black;background-color: pink;padding: 3px;">
+(%s, ID: %s)<br/>
+<a href="%s"><img src="%s" title="%s" /></a><br/>
+<span style="font-size:150%%;border:2px solid black;background-color:pink;padding:3px;">
 <a href="%s"><b>Upload!</b></a></span>
 ]]>
 </description>
@@ -692,7 +692,7 @@ def main():
 <coordinates>%s,%s</coordinates>
 </Point>
 </Placemark>
-""" % (props['monument_article'] and ('<a href="http://%s.wikipedia.org/wiki/%s">%s</a>' % (props['lang'], props['monument_article'], props['name'])) or props['name'], props['municipality'], id, commonspage, thumburl, imagesize, props['image'] and '' or u"Upload!", uploadlink, props['image'] and 'y' or 'n', props['lon'], props['lat'])
+""" % (props['monument_article'] and ('<a href="http://%s.wikipedia.org/wiki/%s">%s</a>' % (props['lang'], props['monument_article'], props['name'])) or props['name'], props['municipality'], id, commonspage, thumburl, props['image'] and '' or u"Upload!", uploadlink, props['image'] and 'y' or 'n', props['lon'], props['lat'])
             
             output += u"""
 </Document>
