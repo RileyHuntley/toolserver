@@ -704,9 +704,18 @@ def main():
             f.close()
         
         #country html
-        countriessort = countrynames.keys()
+        #choose a place
+        chooseaplace = u''
+        if len(admins) > 1:
+            placessort = [[placenamesconvert(country, i), i] for i in admins]
+            placessort.sort()
+            chooseaplace = u'<b>Choose a place:</b> %s' % (u', '.join([u'<a href="index.php?place=%s">%s</a>' % (v, k) for k, v in placessort]))
+        
+        #other maps
+        countriessort = [[countrynames[i], i] for i in countrynames.keys()]
         countriessort.sort()
-        moremaps = u', '.join([u'<a href="../%s">%s</a>' % (re.sub(' ', '', countrynames[cc].lower()), countrynames[cc]) for cc in countriessort])
+        moremaps = u', '.join([u'<a href="../%s">%s</a>' % (re.sub(' ', '', k.lower()), k) for k, v in countriessort])
+        
         output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
         <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
         <head>
@@ -813,7 +822,7 @@ def main():
         
         </body>
         </html>
-        """ % (u', '.join([u'"%s"' % (i) for i in admins]), capitals.has_key(country) and capitals[country] or admins[0], wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or wmlogourldefault, countrynames[country], wlmurls.has_key(country) and wlmurls[country] or '', countrynames[country], total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, missingimages, total and (missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, countrynames[country], country_, country_, countrynames[country], country_, wlmurls.has_key(country) and wlmurls[country] or '', len(admins) > 1 and u'<b>Choose a place:</b> %s' % (u', '.join([u'<a href="index.php?place=%s">%s</a>' % (i, placenamesconvert(country, i)) for i in admins])) or '', country_, moremaps, datetime.datetime.now())
+        """ % (u', '.join([u'"%s"' % (i) for i in admins]), capitals.has_key(country) and capitals[country] or admins[0], wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or wmlogourldefault, countrynames[country], wlmurls.has_key(country) and wlmurls[country] or '', countrynames[country], total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, missingimages, total and (missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, countrynames[country], country_, country_, countrynames[country], country_, wlmurls.has_key(country) and wlmurls[country] or '', chooseaplace, country_, moremaps, datetime.datetime.now())
 
         f = open('%s/%s/index.php' % (path, country_), 'w')
         f.write(output.encode('utf-8'))
