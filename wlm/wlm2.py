@@ -782,7 +782,7 @@ def main():
             tweets: {
               background: '#ffffff',
               color: '#000',
-              links: '#1985b5'
+              links: 'blue'
             }
           },
           features: {
