@@ -740,7 +740,7 @@ def main():
         <table width=99%% style="text-align: center;">
         <tr>
         <td>
-        <a href="%s"><img src="%s" title="Wikimedia %s" /></a>
+        <a href="%s"><img src="%s" title="Wikimedia %s" align="left" /></a>
         </td>
         <td>
         <center>
@@ -753,7 +753,7 @@ def main():
         </center>
         </td>
         <td>
-        <a href="%s"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" title="Wiki Loves Monuments 2012" /></a>
+        <a href="%s"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" title="Wiki Loves Monuments 2012" align="right" /></a>
         </td>
         </tr>
         <tr>
