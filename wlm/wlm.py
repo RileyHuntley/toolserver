@@ -843,7 +843,7 @@ new TWTR.Widget({
 
 <big>
 <b>Choose a map:</b> 
-<a href="andorra">Andorra</a> - <a href="argentina">Argentina</a> - <a href="austria">Austria</a> - <a href="belarus">Belarus</a> - <a href="canada">Canada</a> - <a href="switzerland">Switzerland</a> - <a href="chile">Chile</a> - <a href="colombia">Colombia</a> - <a href="czechrepublic">Czech Republic</a> - <a href="estonia">Estonia</a> - <a href="france">France</a> - <a href="israel">Israel</a> - <a href="india">India</a> - <a href="italy">Italy</a> - <a href="luxembourg">Luxembourg</a> - <a href="netherlands">Netherlands</a> - <a href="panama">Panama</a> - <a href="poland">Poland</a> - <a href="romania">Romania</a> - <a href="russia">Russia</a> - <a href="spain">Spain</a> - <a href="ukraine">Ukraine</a> - <a href="unitedstates">United States</a> - <a href="southafrica">South Africa</a> 
+<a href="andorra">Andorra</a> - <a href="argentina">Argentina</a> - <a href="austria">Austria</a> - <a href="belarus">Belarus</a> - <a href="canada">Canada</a> - <a href="switzerland">Switzerland</a> - <a href="chile">Chile</a> - <a href="colombia">Colombia</a> - <a href="czechrepublic">Czech Republic</a> - <a href="estonia">Estonia</a> - <a href="france">France</a> - <a href="israel">Israel</a> - <a href="india">India</a> - <a href="italy">Italy</a> - <a href="luxembourg">Luxembourg</a> - <a href="mexico">Mexico</a> - <a href="netherlands">Netherlands</a> - <a href="panama">Panama</a> - <a href="poland">Poland</a> - <a href="romania">Romania</a> - <a href="russia">Russia</a> - <a href="serbia">Serbia</a> - <a href="spain">Spain</a> - <a href="ukraine">Ukraine</a> - <a href="unitedstates">United States</a> - <a href="southafrica">South Africa</a> 
 </big>
 
 <br/><br/>

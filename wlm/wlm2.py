@@ -735,7 +735,7 @@ def main():
             imagenourl = u'http://maps.google.com/mapfiles/kml/paddle/wht-blank.png'
             
             #admin kml
-            output = u"""<?xml version="1.0" encoding="UTF-8"?>
+            output = u"""<?xml version="1.0" encoding="iso-8859-1"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
 <Document>
 <name>Wiki Loves Monuments</name>
@@ -797,7 +797,7 @@ def main():
 <coordinates>%s,%s</coordinates>
 </Point>
 </Placemark>
-""" % (props['monument_article'] and ('<a href="http://%s.wikipedia.org/wiki/%s">%s</a>' % (props['lang'], props['monument_article'], props['name'])) or props['name'], props['municipality'], id, commonspage, thumburl, props['image'] and '' or u"Upload!", uploadlink, props['image'] and 'y' or 'n', props['lon'], props['lat'])
+""" % (props['monument_article'] and (u'<a href="http://%s.wikipedia.org/wiki/%s">%s</a>' % (props['lang'], props['monument_article'], props['name'])) or props['name'], props['municipality'], id, commonspage, thumburl, props['image'] and '' or u"Upload!", uploadlink, props['image'] and 'y' or 'n', props['lon'], props['lat'])
                 m += 1
             
             print country, admin, m
@@ -830,7 +830,7 @@ def main():
         <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
         <head>
         <title>Wiki Loves Monuments</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
         <link rel="stylesheet" type="text/css" href="../wlm.css" />
         <script language="javascript">
         function showHide(id){
@@ -883,7 +883,7 @@ def main():
         <tr>
         <td width=310px>
         <!-- twitter widget -->
-        <script charset="utf-8" src="http://widgets.twimg.com/j/2/widget.js"></script>
+        <script charset="iso-8859-1" src="http://widgets.twimg.com/j/2/widget.js"></script>
         <script>
         new TWTR.Widget({
           version: 2,
@@ -935,7 +935,7 @@ def main():
         """ % (u', '.join([u'"%s"' % (i) for i in admins]), capitals.has_key(country) and capitals[country] or admins[0], wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or wmlogourldefault, countrynames[country], wlmurls.has_key(country) and wlmurls[country] or '', countrynames[country], total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, missingimages, total and (missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, countrynames[country], country_, country_, countrynames[country], country_, wlmurls.has_key(country) and wlmurls[country] or '', chooseaplace, country_, moremaps, datetime.datetime.now())
 
         f = open('%s/%s/index.php' % (path, country_), 'w')
-        f.write(output.encode('utf-8'))
+        f.write(output.encode(codification))
         f.close()
     
 if __name__ == "__main__":
