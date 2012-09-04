@@ -661,7 +661,7 @@ def removebrackets(t):
     return t
 
 def main():
-    for country in ['mx']: #countrynames.keys():
+    for country in ['ua']: #countrynames.keys():
         print 'Loading', country
         country_ = re.sub(' ', '', countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
@@ -720,6 +720,7 @@ def main():
             admins.append('other')
         admins.sort()
         
+        admins2 = admins
         for admin in admins:
             print 'Generating', country, admin
             
@@ -750,6 +751,7 @@ def main():
             
             imagesize = '150px'
             errors = 0
+            c = 0
             for id, props in monuments.items():
                 if props['lat'] == 0 and props['lon'] == 0:
                     continue
@@ -789,6 +791,10 @@ def main():
 </Point>
 </Placemark>
 """ % (props['monument_article'] and ('<a href="http://%s.wikipedia.org/wiki/%s">%s</a>' % (props['lang'], props['monument_article'], props['name'])) or props['name'], props['municipality'], id, commonspage, thumburl, props['image'] and '' or u"Upload!", uploadlink, props['image'] and 'y' or 'n', props['lon'], props['lat'])
+                c += 1
+            
+            if c == 0:
+                admins2.remove(admin)
             
             output += u"""
 </Document>
@@ -797,6 +803,7 @@ def main():
             f = open('%s/%s/wlm-%s.kml' % (path, country_, admin), 'w')
             f.write(output.encode(codification))
             f.close()
+        admins = admins2 #removing those admins without points
         
         #country html
         #choose a place
