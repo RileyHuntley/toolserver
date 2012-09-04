@@ -15,15 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import _mysql
 import datetime
 import md5
 import os
+import oursql
 import re
 
 path = '/home/emijrp/public_html/wlm'
-codification = 'iso-8859-1'
-conn = _mysql.connect(host='sql.toolserver.org', db='p_erfgoed_p', read_default_file='~/.my.cnf')
+conn = oursql.connect(db='p_erfgoed_p', host='sql.toolserver.org', read_default_file=os.path.expanduser("~/.my.cnf"), charset="utf8", use_unicode=True)
+curs = conn.cursor(oursql.DictCursor)
 countrynames = {
     'ad': 'Andorra', 
     'ar': 'Argentina', 
@@ -734,7 +734,7 @@ def removebrackets(t):
     return t
 
 def main():
-    for country in ['es']: #countrynames.keys():
+    for country in countrynames.keys():
         print 'Loading', country
         country_ = re.sub(' ', '', countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
@@ -742,34 +742,32 @@ def main():
         adm0 = country
         
         #loading monuments from database
-        conn.query("SELECT * from monuments_all where country='%s';" % (country))
-        r=conn.use_result()
-        row=r.fetch_row(maxrows=1, how=1)
+        curs.execute("SELECT * from monuments_all where country=?;", (country,))
+        row = curs.fetchone()
         missingcoordinates = 0
         missingimages = 0
         monuments = {}
         while row:
-            #print row[0]
-            monuments[row[0]['id']] = {
-                'id': unicode(row[0]['id'], codification),
-                'lang': row[0]['lang'],
-                'registrant_url': row[0]['registrant_url'],
-                'monument_article': unicode(row[0]['monument_article'], codification),
-                'name': removebrackets(unicode(row[0]['name'], codification)),
-                'municipality': removebrackets(unicode(row[0]['municipality'], codification)),
-                'adm0': row[0]['adm0'] and row[0]['adm0'].lower() or '', 
-                'adm1': row[0]['adm1'] and row[0]['adm1'].lower() or '', 
-                'adm2': row[0]['adm2'] and row[0]['adm2'].lower() or '', 
-                'adm3': row[0]['adm3'] and row[0]['adm3'].lower() or '', 
-                'adm4': row[0]['adm4'] and row[0]['adm4'].lower() or '', 
-                'address': removebrackets(unicode(row[0]['address'], codification)), 
-                'lat': row[0]['lat'] and row[0]['lat'] != '0' and row[0]['lat'] or 0,  
-                'lon': row[0]['lon'] and row[0]['lon'] != '0' and row[0]['lon'] or 0, 
-                'image': row[0]['image'] and unicode(row[0]['image'], codification) or '', 
+            monuments[row['id']] = {
+                'id': row['id'],
+                'lang': row['lang'],
+                'registrant_url': row['registrant_url'],
+                'monument_article': row['monument_article'],
+                'name': removebrackets(row['name']),
+                'municipality': removebrackets(row['municipality']),
+                'adm0': row['adm0'] and row['adm0'].lower() or u'', 
+                'adm1': row['adm1'] and row['adm1'].lower() or u'', 
+                'adm2': row['adm2'] and row['adm2'].lower() or u'', 
+                'adm3': row['adm3'] and row['adm3'].lower() or u'', 
+                'adm4': row['adm4'] and row['adm4'].lower() or u'', 
+                'address': removebrackets(row['address']), 
+                'lat': row['lat'] and row['lat'] != '0' and row['lat'] or 0,  
+                'lon': row['lon'] and row['lon'] != '0' and row['lon'] or 0, 
+                'image': row['image'] and row['image'] or u'', 
             }
-            if re.search(ur"(?im)(falta[_ ]imagen|\.svg|missing[\- ]monuments[\- ]image|Wiki[_ ]Loves[_ ]Monuments[_ ]Logo|insert[_ ]image[_ ]here)", monuments[row[0]['id']]['image']):
-                monuments[row[0]['id']]['image'] = ''
-            row=r.fetch_row(maxrows=1, how=1)
+            if re.search(ur"(?im)(falta[_ ]imagen|\.svg|missing[\- ]monuments[\- ]image|Wiki[_ ]Loves[_ ]Monuments[_ ]Logo|insert[_ ]image[_ ]here)", monuments[row['id']]['image']):
+                monuments[row['id']]['image'] = ''
+            row = curs.fetchone()
         
         #total, missingimages and missingcoordinates
         total = len(monuments.keys())
@@ -780,9 +778,7 @@ def main():
                 missingcoordinates += 1
         
         adm = 0
-        if country == 'es':
-            adm = 2
-        elif len(monuments.keys()) >= 1000:
+        if len(monuments.keys()) >= 1000:
             adm = 1
         
         if adm:
@@ -854,7 +850,7 @@ def main():
                 else:
                     thumburl = u'http://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Image_upload-tango.svg/%s-Image_upload-tango.svg.png' % (imagesize)
                     commonspage = uploadlink
-
+                
                 output += u"""<Placemark>
 <description>
 <![CDATA[
@@ -870,7 +866,7 @@ def main():
 <coordinates>%s,%s</coordinates>
 </Point>
 </Placemark>
-""" % (props['monument_article'] and (u'<a href="http://%s.wikipedia.org/wiki/%s">%s</a>' % (props['lang'], props['monument_article'], props['name'])) or props['name'], props['municipality'], id, commonspage, thumburl, props['image'] and '' or u"Upload!", uploadlink, props['image'] and 'y' or 'n', props['lon'], props['lat'])
+""" % (props['monument_article'] and (u'<a href="http://%s.wikipedia.org/wiki/%s">%s</a>' % (props['lang'], props['monument_article'], props['name'])) or props['name'], props['municipality'], id, commonspage, thumburl, props['image'] and u'' or u"Upload!", uploadlink, props['image'] and u'y' or u'n', props['lon'], props['lat'])
                 m += 1
             
             print country, admin, m
@@ -882,7 +878,7 @@ def main():
 </kml>"""
             print 'Errors', country, admin, errors
             f = open('%s/%s/wlm-%s.kml' % (path, country_, admin), 'w')
-            f.write(output.encode(codification))
+            f.write(output.encode('utf-8'))
             f.close()
         admins = admins2 #removing those admins without points
 
