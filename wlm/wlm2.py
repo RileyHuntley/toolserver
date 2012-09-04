@@ -935,7 +935,7 @@ def main():
         """ % (u', '.join([u'"%s"' % (i) for i in admins]), capitals.has_key(country) and capitals[country] or admins[0], wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or wmlogourldefault, countrynames[country], wlmurls.has_key(country) and wlmurls[country] or '', countrynames[country], total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, missingimages, total and (missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, countrynames[country], country_, country_, countrynames[country], country_, wlmurls.has_key(country) and wlmurls[country] or '', chooseaplace, country_, moremaps, datetime.datetime.now())
 
         f = open('%s/%s/index.php' % (path, country_), 'w')
-        f.write(output.encode(codification))
+        f.write(output.encode('utf-8'))
         f.close()
     
 if __name__ == "__main__":
