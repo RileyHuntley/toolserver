@@ -43,6 +43,7 @@ countrynames = {
     'it': 'Italy',
     'lu': 'Luxembourg', 
     #'mt': 'Malta', 
+    'mx': 'Mexico', 
     'nl': 'Netherlands', 
     'pa': 'Panama',
     'pl': 'Poland',
@@ -57,6 +58,7 @@ countrynames = {
 }
 capitals = {
     'ar': 'ar-c',
+    'mx': 'mx-mex',
     'ro': 'ro-b',
     'us': 'us-nj',
 }
@@ -659,7 +661,7 @@ def removebrackets(t):
     return t
 
 def main():
-    for country in countrynames.keys():
+    for country in ['mx']: #countrynames.keys():
         print 'Loading', country
         country_ = re.sub(' ', '', countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
@@ -791,7 +793,7 @@ def main():
             output += u"""
 </Document>
 </kml>"""
-            print 'Errors', country, errors
+            print 'Errors', country, admin, errors
             f = open('%s/%s/wlm-%s.kml' % (path, country_, admin), 'w')
             f.write(output.encode(codification))
             f.close()
