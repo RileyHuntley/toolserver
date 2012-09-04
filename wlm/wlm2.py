@@ -762,7 +762,7 @@ def removebrackets(t):
     return t
 
 def main():
-    for country in ['no']:#countrynames.keys():
+    for country in ['ro']:#countrynames.keys():
         print 'Loading', country
         country_ = re.sub(' ', '', countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
@@ -770,7 +770,7 @@ def main():
         adm0 = country
         
         #loading monuments from database
-        curs.execute("SELECT * from monuments_all where country=?;", (country,))
+        curs.execute("SELECT * FROM monuments_all WHERE country=? AND lat IS NOT NULL;", (country,))
         row = curs.fetchone()
         missingcoordinates = 0
         missingimages = 0
@@ -806,6 +806,7 @@ def main():
                 missingcoordinates += 1
         
         adm = 0
+        print len(monuments.keys())
         if len(monuments.keys()) >= 1000:
             adm = 1
         
