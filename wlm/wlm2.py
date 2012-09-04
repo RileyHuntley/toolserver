@@ -649,7 +649,7 @@ iso3166 = {
 
 def placenamesconvert(country, i):
     if i == 'other':
-        return u'Other in %s' % (countrynames[country])
+        return u'_%s' % (countrynames[country])
     ii = i.upper()
     if iso3166.has_key(ii):
         return iso3166[ii]
@@ -715,12 +715,17 @@ def main():
         else:
             admins = [country]
         
+        #when no info about administrative subdivision, we use 'other'
         if '' in admins:
             admins.remove('')
             admins.append('other')
-        admins.sort()
+            for k, v in monuments.items():
+                if v['adm%s' % (adm)] == '':
+                    monuments[k]['adm%s' % (adm)] = 'other'
         
-        admins2 = admins
+        admins.sort()
+        admins2 = []+admins #to discard admins without valid points
+        print admins
         for admin in admins:
             print 'Generating', country, admin
             
@@ -751,13 +756,13 @@ def main():
             
             imagesize = '150px'
             errors = 0
-            c = 0
+            m = 0
             for id, props in monuments.items():
                 if props['lat'] == 0 and props['lon'] == 0:
                     continue
                 
                 if adm: #if adm is > 0 then there are subdivisons, else all points in the same kml
-                    if (props['adm%s' % (adm)] != admin) or (admin == 'other' and props['adm%s' % (adm)] != ''):
+                    if props['adm%s' % (adm)] != admin:
                         continue
                 
                 try:
@@ -791,9 +796,10 @@ def main():
 </Point>
 </Placemark>
 """ % (props['monument_article'] and ('<a href="http://%s.wikipedia.org/wiki/%s">%s</a>' % (props['lang'], props['monument_article'], props['name'])) or props['name'], props['municipality'], id, commonspage, thumburl, props['image'] and '' or u"Upload!", uploadlink, props['image'] and 'y' or 'n', props['lon'], props['lat'])
-                c += 1
+                m += 1
             
-            if c == 0:
+            print country, admin, m
+            if m == 0:
                 admins2.remove(admin)
             
             output += u"""
@@ -804,7 +810,7 @@ def main():
             f.write(output.encode(codification))
             f.close()
         admins = admins2 #removing those admins without points
-        
+
         #country html
         #choose a place
         chooseaplace = u''
