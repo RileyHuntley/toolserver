@@ -60,6 +60,8 @@ capitals = {
     'ar': 'ar-c',
     'mx': 'mx-mex',
     'ro': 'ro-b',
+    'rs': 'other',
+    'ua': 'other',
     'us': 'us-nj',
 }
 wmurls = { 
@@ -649,7 +651,7 @@ iso3166 = {
 
 def placenamesconvert(country, i):
     if i == 'other':
-        return u'_%s' % (countrynames[country])
+        return countrynames[country] #antes ponia Other in Country, pero al final lo dejé como country solo
     ii = i.upper()
     if iso3166.has_key(ii):
         return iso3166[ii]
@@ -661,7 +663,7 @@ def removebrackets(t):
     return t
 
 def main():
-    for country in ['ua']: #countrynames.keys():
+    for country in ['ua', 'rs']: #countrynames.keys():
         print 'Loading', country
         country_ = re.sub(' ', '', countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
