@@ -34,6 +34,7 @@ countrynames = {
     'cl': 'Chile',
     'co': 'Colombia',
     'cz': 'Czech Republic',
+    'dk': 'Denmark',
     'ee': 'Estonia',
     'es': 'Spain',
     'fr': 'France',
@@ -762,6 +763,9 @@ def removebrackets(t):
     t = re.sub(ur"(?im)\[\[([^\|\]]*?)\]\]", ur"\1", t)
     return t
 
+def removespaces(t):
+    return re.sub(ur"(?im)\s", ur"", t)
+
 def main():
     for country in countrynames.keys():
         print 'Loading', country
@@ -771,7 +775,10 @@ def main():
         adm0 = country
         
         #loading monuments from database
-        curs.execute("SELECT * FROM monuments_all WHERE country=? AND lat IS NOT NULL;", (country,))
+        if country == 'dk':
+            curs.execute("SELECT * FROM monuments_all WHERE (country=? OR country=?) AND lat IS NOT NULL;", ('dk-bygning', 'dk-fortids'))
+        else:
+            curs.execute("SELECT * FROM monuments_all WHERE country=? AND lat IS NOT NULL;", (country,))
         row = curs.fetchone()
         missingcoordinates = 0
         missingimages = 0
@@ -784,11 +791,11 @@ def main():
                 'monument_article': row['monument_article'],
                 'name': removebrackets(row['name']),
                 'municipality': removebrackets(row['municipality']),
-                'adm0': row['adm0'] and row['adm0'].lower() or u'', 
-                'adm1': row['adm1'] and row['adm1'].lower() or u'', 
-                'adm2': row['adm2'] and row['adm2'].lower() or u'', 
-                'adm3': row['adm3'] and row['adm3'].lower() or u'', 
-                'adm4': row['adm4'] and row['adm4'].lower() or u'', 
+                'adm0': row['adm0'] and removespaces(removebrackets(row['adm0'].lower())) or u'', 
+                'adm1': row['adm1'] and removespaces(removebrackets(row['adm1'].lower())) or u'', 
+                'adm2': row['adm2'] and removespaces(removebrackets(row['adm2'].lower())) or u'', 
+                'adm3': row['adm3'] and removespaces(removebrackets(row['adm3'].lower())) or u'', 
+                'adm4': row['adm4'] and removespaces(removebrackets(row['adm4'].lower())) or u'', 
                 'address': removebrackets(row['address']), 
                 'lat': row['lat'] and row['lat'] != '0' and row['lat'] or 0,  
                 'lon': row['lon'] and row['lon'] != '0' and row['lon'] or 0, 
@@ -808,7 +815,9 @@ def main():
                 missingcoordinates += 1
         
         adm = 0
-        if len(monuments.keys()) >= 1500:
+        if country == 'dk':
+            adm = 2
+        elif len(monuments.keys()) >= 1500:
             adm = 1
         
         if adm:
@@ -1021,7 +1030,7 @@ def main():
         </table>
         
         <!-- more maps --><div class="menu"><b>More maps:</b> %s</div>
-        <i>Last update: %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a> using <a href="http://wlm.wikimedia.org/api/api.php">erfgoed database</a>. Visits: <?php include ("../../visits.php"); ?></i>
+        <i>Last update: %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a> using <a href="http://wlm.wikimedia.org/api/api.php">erfgoed database</a>. <a href="http://code.google.com/p/toolserver/source/browse/trunk/wlm/wlm2.py">Source code</a> is GPL. Visits: <?php include ("../../visits.php"); ?></i>
         <br/>
         </td>
         </tr>
