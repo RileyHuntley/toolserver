@@ -37,14 +37,16 @@ countrynames = {
     'ee': 'Estonia',
     'es': 'Spain',
     'fr': 'France',
+    'gh': 'Ghana',
     #'ie': 'Ireland',
     'il': 'Israel',
     'in': 'India',
     'it': 'Italy',
     'lu': 'Luxembourg', 
-    #'mt': 'Malta', 
     'mx': 'Mexico', 
+    #'mt': 'Malta', 
     'nl': 'Netherlands', 
+    'no': 'Norway',
     'pa': 'Panama',
     'pl': 'Poland',
     #'pt': 'Portugal',
@@ -490,7 +492,30 @@ iso3166 = {
     'NL-UT': u"Utrecht",
     'NL-ZE': u"Zeeland",
     'NL-ZH': u"Zuid-Holland",
-
+    
+    'NO': u"Norway",
+    'NO-02': u"Akershus",
+    'NO-09': u"Aust-Agder",
+    'NO-06': u"Buskerud",
+    'NO-20': u"Finnmark",
+    'NO-04': u"Hedmark",
+    'NO-12': u"Hordaland",
+    'NO-15': u"Møre og Romsdal",
+    'NO-18': u"Nordland",
+    'NO-17': u"Nord-Trøndelag",
+    'NO-05': u"Oppland",
+    'NO-03': u"Oslo",
+    'NO-11': u"Rogaland",
+    'NO-14': u"Sogn og Fjordane",
+    'NO-16': u"Sør-Trøndelag",
+    'NO-08': u"Telemark",
+    'NO-19': u"Troms",
+    'NO-10': u"Vest-Agder",
+    'NO-07': u"Vestfold",
+    'NO-01': u"Østfold",
+    'NO-22': u"Jan Mayen",
+    'NO-21': u"Svalbard",
+    
     'PA': u"Panamá", 
     
     'PL':    u"Poland", 
@@ -737,7 +762,7 @@ def removebrackets(t):
     return t
 
 def main():
-    for country in ['ru']:#countrynames.keys():
+    for country in ['no']:#countrynames.keys():
         print 'Loading', country
         country_ = re.sub(' ', '', countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
