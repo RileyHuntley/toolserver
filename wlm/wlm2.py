@@ -35,7 +35,7 @@ countrynames = {
     'co': 'Colombia',
     'cz': 'Czech Republic',
     'ee': 'Estonia',
-    #'es': 'Spain',
+    'es': 'Spain',
     'fr': 'France',
     #'ie': 'Ireland',
     'il': 'Israel',
@@ -301,6 +301,77 @@ iso3166 = {
     'EE-82': u"Valgamaa",
     'EE-84': u"Viljandimaa",
     'EE-86': u"Võrumaa",
+    
+    'ES':    u"Spain",
+    'ES-AN': u"Andalucía",
+    'ES-AR': u"Aragón",
+    'ES-AS': u"Principado de Asturias",
+    'ES-CN': u"Canarias",
+    'ES-CB': u"Cantabria",
+    'ES-CM': u"Castilla-La Mancha",
+    'ES-CL': u"Castilla y León",
+    'ES-CT': u"Catalunya",
+    'ES-EX': u"Extremadura",
+    'ES-GA': u"Galicia",
+    'ES-IB': u"Illes Balears",
+    'ES-RI': u"La Rioja",
+    'ES-MD': u"Comunidad de Madrid",
+    'ES-MC': u"Región de Murcia",
+    'ES-NC': u"Comunidad Foral de Navarra",
+    'ES-PV': u"País Vasco",
+    'ES-VC': u"Comunidad Valenciana",
+    'ES-CE': u"Ceuta",
+    'ES-ML': u"Melilla",
+    'ES-C': u"A Coruña",
+    'ES-VI': u"Álava / Araba",
+    'ES-AB': u"Albacete",
+    'ES-A': u"Alicante / Alacant",
+    'ES-AL': u"Almería",
+    'ES-O': u"Asturias",
+    'ES-AV': u"Ávila",
+    'ES-BA': u"Badajoz",
+    'ES-PM': u"Balears",
+    'ES-B': u"Barcelona",
+    'ES-BU': u"Burgos",
+    'ES-CC': u"Cáceres",
+    'ES-CA': u"Cádiz",
+    'ES-S': u"Cantabria",
+    'ES-CS': u"Castellón / Castelló",
+    'ES-CR': u"Ciudad Real",
+    'ES-CO': u"Córdoba",
+    'ES-CU': u"Cuenca",
+    'ES-GI': u"Girona",
+    'ES-GR': u"Granada",
+    'ES-GU': u"Guadalajara",
+    'ES-SS': u"Guipúzcoa / Gipuzkoa",
+    'ES-H': u"Huelva",
+    'ES-HU': u"Huesca",
+    'ES-J': u"Jaén",
+    'ES-LO': u"La Rioja",
+    'ES-GC': u"Las Palmas",
+    'ES-LE': u"León",
+    'ES-L': u"Lleida",
+    'ES-LU': u"Lugo",
+    'ES-M': u"Madrid",
+    'ES-MA': u"Málaga",
+    'ES-MU': u"Murcia",
+    'ES-NA': u"Navarra / Nafarroa",
+    'ES-OR': u"Orense",
+    'ES-P': u"Palencia",
+    'ES-PO': u"Pontevedra",
+    'ES-SA': u"Salamanca",
+    'ES-TF': u"Santa Cruz de Tenerife",
+    'ES-SG': u"Segovia",
+    'ES-SE': u"Sevilla",
+    'ES-SO': u"Soria",
+    'ES-T': u"Tarragona",
+    'ES-TE': u"Teruel",
+    'ES-TO': u"Toledo",
+    'ES-V': u"Valencia / València",
+    'ES-VA': u"Valladolid",
+    'ES-BI': u"Vizcaya / Bizkaia",
+    'ES-ZA': u"Zamora",
+    'ES-Z': u"Zaragoza",
     
     'FR':   u"France",
     'FR-A': u"Alsace",
@@ -663,7 +734,7 @@ def removebrackets(t):
     return t
 
 def main():
-    for country in ['ua', 'rs']: #countrynames.keys():
+    for country in ['es']: #countrynames.keys():
         print 'Loading', country
         country_ = re.sub(' ', '', countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
@@ -709,7 +780,9 @@ def main():
                 missingcoordinates += 1
         
         adm = 0
-        if len(monuments.keys()) >= 1000:
+        if country == 'es':
+            adm = 2
+        elif len(monuments.keys()) >= 1000:
             adm = 1
         
         if adm:
@@ -735,7 +808,7 @@ def main():
             imagenourl = u'http://maps.google.com/mapfiles/kml/paddle/wht-blank.png'
             
             #admin kml
-            output = u"""<?xml version="1.0" encoding="iso-8859-1"?>
+            output = u"""<?xml version="1.0" encoding="utf-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
 <Document>
 <name>Wiki Loves Monuments</name>
@@ -830,7 +903,7 @@ def main():
         <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
         <head>
         <title>Wiki Loves Monuments</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <link rel="stylesheet" type="text/css" href="../wlm.css" />
         <script language="javascript">
         function showHide(id){
@@ -883,7 +956,7 @@ def main():
         <tr>
         <td width=310px>
         <!-- twitter widget -->
-        <script charset="iso-8859-1" src="http://widgets.twimg.com/j/2/widget.js"></script>
+        <script charset="utf-8" src="http://widgets.twimg.com/j/2/widget.js"></script>
         <script>
         new TWTR.Widget({
           version: 2,
