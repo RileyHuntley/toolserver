@@ -53,6 +53,7 @@ countrynames = {
     'ro': 'Romania',
     'rs': 'Serbia',
     'ru': 'Russia',
+    #'se': 'Sweden',
     #'sk': 'Slovakia',
     'ua': 'Ukraine',
     'us': 'United States',
@@ -762,7 +763,7 @@ def removebrackets(t):
     return t
 
 def main():
-    for country in ['ro']:#countrynames.keys():
+    for country in ['il']:#countrynames.keys():
         print 'Loading', country
         country_ = re.sub(' ', '', countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
@@ -795,6 +796,7 @@ def main():
             }
             if re.search(ur"(?im)(falta[_ ]imagen|\.svg|missing[\- ]monuments[\- ]image|Wiki[_ ]Loves[_ ]Monuments[_ ]Logo|insert[_ ]image[_ ]here)", monuments[row['id']]['image']):
                 monuments[row['id']]['image'] = ''
+            monuments[row['id']]['image'] = re.sub(ur"(?im)^(File:)", ur"", monuments[row['id']]['image']) #clean image names (ro: requires it)
             row = curs.fetchone()
         
         #total, missingimages and missingcoordinates
@@ -806,8 +808,7 @@ def main():
                 missingcoordinates += 1
         
         adm = 0
-        print len(monuments.keys())
-        if len(monuments.keys()) >= 1000:
+        if len(monuments.keys()) >= 1500:
             adm = 1
         
         if adm:
