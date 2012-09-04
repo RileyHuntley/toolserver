@@ -269,7 +269,10 @@ iso3166 = {
     'CL-TA': u"Tarapacá",
     'CL-VS': u"Valparaíso",
     
-    'CO': u"Colombia",
+    'CO':     u"Colombia",
+    'CO-DC':  u"Distrito Capital de Bogotá",
+    'CO-VAC': u"Valle del Cauca",
+    'CO-': u"",
     
     'CZ': u"Czech Republic",
     'CZ-JC': u"Jihočeský kraj",
@@ -734,7 +737,7 @@ def removebrackets(t):
     return t
 
 def main():
-    for country in countrynames.keys():
+    for country in ['ru']:#countrynames.keys():
         print 'Loading', country
         country_ = re.sub(' ', '', countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
@@ -1001,7 +1004,7 @@ def main():
         
         </body>
         </html>
-        """ % (u', '.join([u'"%s"' % (i) for i in admins]), capitals.has_key(country) and capitals[country] or admins[0], wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or wmlogourldefault, countrynames[country], wlmurls.has_key(country) and wlmurls[country] or '', countrynames[country], total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, missingimages, total and (missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, countrynames[country], country_, country_, countrynames[country], country_, wlmurls.has_key(country) and wlmurls[country] or '', chooseaplace, country_, moremaps, datetime.datetime.now())
+        """ % (u', '.join([u'"%s"' % (i) for i in admins]), capitals.has_key(country) and capitals[country] or admins and admins[0] or '', wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or wmlogourldefault, countrynames[country], wlmurls.has_key(country) and wlmurls[country] or '', countrynames[country], total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, missingimages, total and (missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, countrynames[country], country_, country_, countrynames[country], country_, wlmurls.has_key(country) and wlmurls[country] or '', chooseaplace, country_, moremaps, datetime.datetime.now())
 
         f = open('%s/%s/index.php' % (path, country_), 'w')
         f.write(output.encode('utf-8'))
