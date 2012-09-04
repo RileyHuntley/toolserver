@@ -330,7 +330,7 @@ def main():
     (<a href="files.txt">Download metadata and make your own statistics</a>)
     <br/><br/>
     
-    <i>Last update: %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a> using <a href="http://code.google.com/p/flot/">flot</a>. Visits: <?php include ("../visits.php"); ?></i>
+    <i>Last update: %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a> using <a href="http://code.google.com/p/flot/">flot</a>. <a href="http://code.google.com/p/toolserver/source/browse/trunk/wlm/wlmstats.py">Source code</a> is GPL. Visits: <?php include ("../visits.php"); ?></i>
     
     </center>
 
