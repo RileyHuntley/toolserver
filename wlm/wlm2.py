@@ -817,6 +817,8 @@ def main():
         adm = 0
         if country == 'dk':
             adm = 2
+        elif country == 'rs':
+            adm = 0 # caben todos en un kml por ahora, si se reparte quedan mapas con pocos y queda feo
         elif len(monuments.keys()) >= 1500:
             adm = 1
         
