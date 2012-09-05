@@ -501,7 +501,8 @@ iso3166 = {
     'NL-ZE': u"Zeeland",
     'NL-ZH': u"Zuid-Holland",
     
-    'NO': u"Norway",
+    'NO':    u"Norway",
+    'NO-1':  u"Rogaland", #sale como NO-1
     'NO-02': u"Akershus",
     'NO-09': u"Aust-Agder",
     'NO-06': u"Buskerud",
@@ -945,6 +946,7 @@ def main():
             chooseaplace = u'<b>Choose a place:</b> %s' % (u', '.join([u'<a href="index.php?place=%s">%s</a>' % (v, k) for k, v in placessort]))
             if other:
                 chooseaplace += u', <a href="index.php?place=other">...and some more...</a>'
+                placessort.append([placenamesconvert(country, 'other'), 'other']) #restore 'other' to appear in the php $places var below
         
         #other maps
         countriessort = [[countrynames[i], i] for i in countrynames.keys()]
@@ -991,7 +993,7 @@ if (isset($_GET['place']))
 <center>
 <big><big><big><b><a href="%s">Wiki <i>Loves</i> Monuments 2012, %s</a></b></big></big></big>
 <br/>
-<b>%d geolocated monuments</b> and <!--%d with coordinates (%.1f%%) and %d with images (%.1f%%)-->%d of them (%.1f%%) need images! Get your camera and take photos, thanks!<br/><b>Legend:</b> with image <img src="%s" width=20px title="with image" alt="with image"/>, without image <img src="%s" width=20px title="without image" alt="without image"/> - See <b><a href="../stats.php">detailed statistics</a></b> about the contest - <b>Share:</b> 
+<b>%d geolocated monuments</b> and <!--%d with coordinates (%.1f%%) and %d with images (%.1f%%)-->%d of them (%.1f%%) need images. Get your camera and take photos, thanks!<br/><b>Legend:</b> with image <img src="%s" width=20px title="with image" alt="with image"/>, without image <img src="%s" width=20px title="without image" alt="without image"/> - See <b><a href="../stats.php">detailed statistics</a></b> about the contest - <b>Share:</b> 
 <a href="http://twitter.com/home?status=Find+monuments+near+to+you+in+%s+http://toolserver.org/~emijrp/wlm/%s+Take+photographs+and+upload+them+to+%%23WikiLovesMonuments+:))" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Twitter_Logo_Mini.svg/18px-Twitter_Logo_Mini.svg.png" title="Share on Twitter!" /></a>&nbsp;
 <a href="http://www.facebook.com/sharer/sharer.php?u=http://toolserver.org/~emijrp/wlm/%s" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Facebook_Logo_Mini.svg/16px-Facebook_Logo_Mini.svg.png" title="Share on Facebook!" /></a>&nbsp;
 <a href="http://identi.ca/notice/new?status_textarea=Find+monuments+near+to+you+in+%s+http://toolserver.org/~emijrp/wlm/%s+Take+photographs+and+upload+them+to+%%23WikiLovesMonuments+:))" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Identica_share_button.png/18px-Identica_share_button.png" title="Share on Identi.ca!" /></a> - <b><a href="https://play.google.com/store/apps/details?id=org.wikipedia.wlm">Android app!</a></b>
@@ -1003,6 +1005,22 @@ if (isset($_GET['place']))
 </tr>
 <tr>
 <td colspan=3>
+<!-- instructions -->
+<center>
+<table border=0 style="width: 1200px;">
+<tr><td valign=middle><b>Instructions:</b></td>
+<td width=1%%><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/1_%%281967-1979_New_York_City_Subway_bullet%%29.svg/35px-1_%%281967-1979_New_York_City_Subway_bullet%%29.svg.png" /></td>
+<td><a href="http://commons.wikimedia.org/w/index.php?title=Special:UserLogin">Log in</a> or <a href="http://commons.wikimedia.org/w/index.php?title=Special:UserLogin&type=signup">create a new account</a></td>
+<td width=1%%><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/2_%%281967-1979_New_York_City_Subway_bullet%%29.svg/35px-2_%%281967-1979_New_York_City_Subway_bullet%%29.svg.png" /></td>
+<td>Find monuments near to you and take photos</td>
+<td width=1%%><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/3_%%281967-1979_New_York_City_Subway_bullet%%29.svg/35px-3_%%281967-1979_New_York_City_Subway_bullet%%29.svg.png" /></td>
+<td>Click in the "Upload" links to submit your pics</td>
+<td width=1%%><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/4_%%281967-1979_New_York_City_Subway_bullet%%29.svg/35px-4_%%281967-1979_New_York_City_Subway_bullet%%29.svg.png" /></td>
+<td>Win <a href="http://www.wikilovesmonuments.org/awards/">awards</a>!</td>
+</tr>
+</table>
+</center>
+<!-- /instructions -->
 <!-- choose a place --><div class="menu">%s</div>
 <table width=100%%>
 <tr>
