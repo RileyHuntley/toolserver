@@ -767,18 +767,18 @@ def removespaces(t):
     return re.sub(ur"(?im)\s", ur"", t)
 
 def main():
-    for country in countrynames.keys():
+    for country in ['at']:# countrynames.keys():
         print 'Loading', country
-        country_ = re.sub(' ', '', countrynames[country].lower())
+        country_ = removespaces(countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
             os.makedirs('%s/%s/' % (path, country_))
         adm0 = country
         
         #loading monuments from database
         if country == 'dk':
-            curs.execute("SELECT * FROM monuments_all WHERE (country=? OR country=?) AND lat IS NOT NULL;", ('dk-bygning', 'dk-fortids'))
+            curs.execute("SELECT * FROM monuments_all WHERE (country=? OR country=?) AND lat IS NOT NULL AND lon IS NOT NULL;", ('dk-bygning', 'dk-fortids'))
         else:
-            curs.execute("SELECT * FROM monuments_all WHERE country=? AND lat IS NOT NULL;", (country,))
+            curs.execute("SELECT * FROM monuments_all WHERE country=? AND lat IS NOT NULL AND lon IS NOT NULL;", (country,))
         row = curs.fetchone()
         missingcoordinates = 0
         missingimages = 0
@@ -791,11 +791,11 @@ def main():
                 'monument_article': row['monument_article'],
                 'name': removebrackets(row['name']),
                 'municipality': removebrackets(row['municipality']),
-                'adm0': row['adm0'] and removespaces(removebrackets(row['adm0'].lower())) or u'', 
-                'adm1': row['adm1'] and removespaces(removebrackets(row['adm1'].lower())) or u'', 
-                'adm2': row['adm2'] and removespaces(removebrackets(row['adm2'].lower())) or u'', 
-                'adm3': row['adm3'] and removespaces(removebrackets(row['adm3'].lower())) or u'', 
-                'adm4': row['adm4'] and removespaces(removebrackets(row['adm4'].lower())) or u'', 
+                'adm0': row['adm0'] and removebrackets(row['adm0'].lower()) or u'', 
+                'adm1': row['adm1'] and removebrackets(row['adm1'].lower()) or u'', 
+                'adm2': row['adm2'] and removebrackets(row['adm2'].lower()) or u'', 
+                'adm3': row['adm3'] and removebrackets(row['adm3'].lower()) or u'', 
+                'adm4': row['adm4'] and removebrackets(row['adm4'].lower()) or u'', 
                 'address': removebrackets(row['address']), 
                 'lat': row['lat'] and row['lat'] != '0' and row['lat'] or 0,  
                 'lon': row['lon'] and row['lon'] != '0' and row['lon'] or 0, 
@@ -815,11 +815,13 @@ def main():
                 missingcoordinates += 1
         
         adm = 0
-        if country == 'dk':
+        if country == 'at':
+            adm = 2
+        elif country == 'dk':
             adm = 2
         elif country == 'rs':
             adm = 0 # caben todos en un kml por ahora, si se reparte quedan mapas con pocos y queda feo
-        elif len(monuments.keys()) >= 1500:
+        elif len(monuments.keys()) >= 2000:
             adm = 1
         
         if adm:
@@ -918,7 +920,7 @@ def main():
 </Document>
 </kml>"""
             print 'Errors', country, admin, errors
-            f = open('%s/%s/wlm-%s.kml' % (path, country_, admin), 'w')
+            f = open('%s/%s/wlm-%s.kml' % (path, country_, removespaces(admin)), 'w')
             f.write(output.encode('utf-8'))
             f.close()
         admins = admins2 #removing those admins without points
@@ -927,122 +929,127 @@ def main():
         #choose a place
         chooseaplace = u''
         if len(admins) > 1:
-            placessort = [[placenamesconvert(country, i), i] for i in admins]
+            placessort = [[placenamesconvert(country, i), removespaces(i)] for i in admins]
             placessort.sort()
+            other = False
+            if 'other' in placessort:
+                other = True
+                placessort.remove('other')
             chooseaplace = u'<b>Choose a place:</b> %s' % (u', '.join([u'<a href="index.php?place=%s">%s</a>' % (v, k) for k, v in placessort]))
+            if other:
+                chooseaplace += u', <a href="index.php?place=other">and some more...</a>'
         
         #other maps
         countriessort = [[countrynames[i], i] for i in countrynames.keys()]
         countriessort.sort()
-        moremaps = u', '.join([u'<a href="../%s">%s</a>' % (re.sub(' ', '', k.lower()), k) for k, v in countriessort])
+        morecountries = u', '.join([u'<a href="../%s">%s</a>' % (re.sub(' ', '', k.lower()), k) for k, v in countriessort])
         
         output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-        <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
-        <head>
-        <title>Wiki Loves Monuments</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <link rel="stylesheet" type="text/css" href="../wlm.css" />
-        <script language="javascript">
-        function showHide(id){
-            if (document.getElementById(id).style.display == 'none') {
-                document.getElementById(id).style.display = 'block';
-            }else{
-                document.getElementById(id).style.display = 'none';
-            }
-        }
-        </script>
-        </head>
-        
-        <?php
-        $places = array(%s );
-        $place= "%s";
-        if (isset($_GET['place']))
-        {
-            $temp = $_GET['place'];
-            if (in_array($temp, $places))
-                $place = $temp;
-        }
-        ?>
-        
-        <body style="background-image: url('../images/bg_stripes.png'); ">
-        <center>
-        <div id="page">
-        <table width=99%% style="text-align: center;">
-        <tr>
-        <td width=1%%>
-        <a href="%s"><img src="%s" title="Wikimedia %s" align="left" /></a>
-        </td>
-        <td width=99%%>
-        <center>
-        <big><big><big><b><a href="%s">Wiki <i>Loves</i> Monuments 2012, %s</a></b></big></big></big>
-        <br/>
-        There are <b>%d monuments</b> and <!--%d with coordinates (%.1f%%) and %d with images (%.1f%%)-->%d of them (%.1f%%) need images! Get your camera and take photos, thanks!<br/><b>Legend:</b> with image <img src="%s" width=20px title="with image" alt="with image"/>, without image <img src="%s" width=20px title="without image" alt="without image"/> - See <b><a href="../stats.php">detailed statistics</a></b> about the contest - <b>Share:</b> 
-        <a href="http://twitter.com/home?status=Find+monuments+near+to+you+in+%s+http://toolserver.org/~emijrp/wlm/%s+Take+photographs+and+upload+them+to+%%23WikiLovesMonuments+:))" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Twitter_Logo_Mini.svg/18px-Twitter_Logo_Mini.svg.png" title="Share on Twitter!" /></a>&nbsp;
-        <a href="http://www.facebook.com/sharer/sharer.php?u=http://toolserver.org/~emijrp/wlm/%s" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Facebook_Logo_Mini.svg/16px-Facebook_Logo_Mini.svg.png" title="Share on Facebook!" /></a>&nbsp;
-        <a href="http://identi.ca/notice/new?status_textarea=Find+monuments+near+to+you+in+%s+http://toolserver.org/~emijrp/wlm/%s+Take+photographs+and+upload+them+to+%%23WikiLovesMonuments+:))" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Identica_share_button.png/18px-Identica_share_button.png" title="Share on Identi.ca!" /></a> - <b><a href="https://play.google.com/store/apps/details?id=org.wikipedia.wlm">Android app!</a></b>
-        </center>
-        </td>
-        <td width=1%%>
-        <a href="%s"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" title="Wiki Loves Monuments 2012" align="right" /></a>
-        </td>
-        </tr>
-        <tr>
-        <td colspan=3>
-        <!-- choose a place --><div class="menu">%s</div>
-        <table width=100%%>
-        <tr>
-        <td width=310px>
-        <!-- twitter widget -->
-        <script charset="utf-8" src="http://widgets.twimg.com/j/2/widget.js"></script>
-        <script>
-        new TWTR.Widget({
-          version: 2,
-          type: 'search',
-          search: 'wikilovesmonuments OR "wiki loves monuments" OR #wlm',
-          interval: 4000,
-          title: 'Wiki Loves Monuments 2012',
-          subject: '',
-          width: 300,
-          height: 375,
-          theme: {
-            shell: {
-              background: '#A30000',
-              color: '#ffffff'
-            },
-            tweets: {
-              background: '#ffffff',
-              color: '#000',
-              links: 'blue'
-            }
-          },
-          features: {
-            scrollbar: false,
-            loop: true,
-            live: true,
-            behavior: 'default'
-          }
-        }).render().start();
-        </script>
-        </td>
-        <td>
-        <!-- map -->
-        <iframe width="99%%" height="450" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&amp;source=s_q&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fwlm%%2F%s%%2Fwlm-<?php echo $place; ?>.kml%%3Fusecache%%3D0&amp;output=embed"></iframe>
-        </td>
-        </tr>
-        </table>
-        
-        <!-- more maps --><div class="menu"><b>More maps:</b> %s</div>
-        <i>Last update: %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a> using <a href="http://wlm.wikimedia.org/api/api.php">erfgoed database</a>. <a href="http://code.google.com/p/toolserver/source/browse/trunk/wlm/wlm2.py">Source code</a> is GPL. Visits: <?php include ("../../visits.php"); ?></i>
-        <br/>
-        </td>
-        </tr>
-        </table>
-        </div>
-        </center>
-        
-        </body>
-        </html>
-        """ % (u', '.join([u'"%s"' % (i) for i in admins]), capitals.has_key(country) and capitals[country] or admins and admins[0] or '', wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or wmlogourldefault, countrynames[country], wlmurls.has_key(country) and wlmurls[country] or '', countrynames[country], total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, missingimages, total and (missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, countrynames[country], country_, country_, countrynames[country], country_, wlmurls.has_key(country) and wlmurls[country] or '', chooseaplace, country_, moremaps, datetime.datetime.now())
+<html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Wiki Loves Monuments</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="../wlm.css" />
+<script language="javascript">
+function showHide(id){
+    if (document.getElementById(id).style.display == 'none') {
+        document.getElementById(id).style.display = 'block';
+    }else{
+        document.getElementById(id).style.display = 'none';
+    }
+}
+</script>
+</head>
+
+<?php
+$places = array(%s );
+$place= "%s";
+if (isset($_GET['place']))
+{
+    $temp = $_GET['place'];
+    if (in_array($temp, $places))
+        $place = $temp;
+}
+?>
+
+<body style="background-image: url('../images/bg_stripes.png'); ">
+<center>
+<div id="page">
+<table width=99%% style="text-align: center;">
+<tr>
+<td width=1%%>
+<a href="%s"><img src="%s" title="Wikimedia %s" align="left" /></a>
+</td>
+<td width=99%%>
+<center>
+<big><big><big><b><a href="%s">Wiki <i>Loves</i> Monuments 2012, %s</a></b></big></big></big>
+<br/>
+There are <b>%d monuments</b> and <!--%d with coordinates (%.1f%%) and %d with images (%.1f%%)-->%d of them (%.1f%%) need images! Get your camera and take photos, thanks!<br/><b>Legend:</b> with image <img src="%s" width=20px title="with image" alt="with image"/>, without image <img src="%s" width=20px title="without image" alt="without image"/> - See <b><a href="../stats.php">detailed statistics</a></b> about the contest - <b>Share:</b> 
+<a href="http://twitter.com/home?status=Find+monuments+near+to+you+in+%s+http://toolserver.org/~emijrp/wlm/%s+Take+photographs+and+upload+them+to+%%23WikiLovesMonuments+:))" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Twitter_Logo_Mini.svg/18px-Twitter_Logo_Mini.svg.png" title="Share on Twitter!" /></a>&nbsp;
+<a href="http://www.facebook.com/sharer/sharer.php?u=http://toolserver.org/~emijrp/wlm/%s" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Facebook_Logo_Mini.svg/16px-Facebook_Logo_Mini.svg.png" title="Share on Facebook!" /></a>&nbsp;
+<a href="http://identi.ca/notice/new?status_textarea=Find+monuments+near+to+you+in+%s+http://toolserver.org/~emijrp/wlm/%s+Take+photographs+and+upload+them+to+%%23WikiLovesMonuments+:))" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Identica_share_button.png/18px-Identica_share_button.png" title="Share on Identi.ca!" /></a> - <b><a href="https://play.google.com/store/apps/details?id=org.wikipedia.wlm">Android app!</a></b>
+</center>
+</td>
+<td width=1%%>
+<a href="%s"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/80px-LUSITANA_WLM_2011_d.svg.png" title="Wiki Loves Monuments 2012" align="right" /></a>
+</td>
+</tr>
+<tr>
+<td colspan=3>
+<!-- choose a place --><div class="menu">%s</div>
+<table width=100%%>
+<tr>
+<td width=310px>
+<!-- twitter widget -->
+<script charset="utf-8" src="http://widgets.twimg.com/j/2/widget.js"></script>
+<script>
+new TWTR.Widget({
+  version: 2,
+  type: 'search',
+  search: 'wikilovesmonuments OR "wiki loves monuments" OR #wlm',
+  interval: 4000,
+  title: 'Wiki Loves Monuments 2012',
+  subject: '',
+  width: 300,
+  height: 375,
+  theme: {
+    shell: {
+      background: '#A30000',
+      color: '#ffffff'
+    },
+    tweets: {
+      background: '#ffffff',
+      color: '#000',
+      links: 'blue'
+    }
+  },
+  features: {
+    scrollbar: false,
+    loop: true,
+    live: true,
+    behavior: 'default'
+  }
+}).render().start();
+</script>
+</td>
+<td>
+<!-- map -->
+<iframe width="99%%" height="450" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&amp;source=s_q&amp;geocode=&amp;q=http:%%2F%%2Ftoolserver.org%%2F~emijrp%%2Fwlm%%2F%s%%2Fwlm-<?php echo $place; ?>.kml%%3Fusecache%%3D0&amp;output=embed"></iframe>
+</td>
+</tr>
+</table>
+
+<!-- more countries --><div class="menu"><b>More countries:</b> %s</div>
+<i>Last update: %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a> using <a href="http://wlm.wikimedia.org/api/api.php">erfgoed database</a>. <a href="http://code.google.com/p/toolserver/source/browse/trunk/wlm/wlm2.py">Source code</a> is GPL. Visits: <?php include ("../../visits.php"); ?></i>
+<br/>
+</td>
+</tr>
+</table>
+</div>
+</center>
+
+</body>
+</html>""" % (u', '.join([u'"%s"' % (removespaces(i)) for i in admins]), capitals.has_key(country) and capitals[country] in admins and capitals[country] or admins and admins[0] or '', wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or wmlogourldefault, countrynames[country], wlmurls.has_key(country) and wlmurls[country] or '', countrynames[country], total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, missingimages, total and (missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, countrynames[country], country_, country_, countrynames[country], country_, wlmurls.has_key(country) and wlmurls[country] or '', chooseaplace, country_, morecountries, datetime.datetime.now())
 
         f = open('%s/%s/index.php' % (path, country_), 'w')
         f.write(output.encode('utf-8'))
