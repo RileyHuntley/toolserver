@@ -63,6 +63,7 @@ countrynames = {
 capitals = {
     'ar': 'ar-c',
     'at': 'wien',
+    'fr': 'fr-j',
     'mx': 'mx-mex',
     'ro': 'ro-b',
     'rs': 'other',
@@ -772,7 +773,7 @@ def removespaces(t):
     return re.sub(ur"(?im)\s", ur"", t)
 
 def main():
-    for country in ['cz', 'dk']:# countrynames.keys():
+    for country in countrynames.keys():
         print 'Loading', country
         country_ = removespaces(countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
@@ -990,7 +991,7 @@ if (isset($_GET['place']))
 <center>
 <big><big><big><b><a href="%s">Wiki <i>Loves</i> Monuments 2012, %s</a></b></big></big></big>
 <br/>
-There are <b>%d monuments</b> and <!--%d with coordinates (%.1f%%) and %d with images (%.1f%%)-->%d of them (%.1f%%) need images! Get your camera and take photos, thanks!<br/><b>Legend:</b> with image <img src="%s" width=20px title="with image" alt="with image"/>, without image <img src="%s" width=20px title="without image" alt="without image"/> - See <b><a href="../stats.php">detailed statistics</a></b> about the contest - <b>Share:</b> 
+<b>%d geolocated monuments</b> and <!--%d with coordinates (%.1f%%) and %d with images (%.1f%%)-->%d of them (%.1f%%) need images! Get your camera and take photos, thanks!<br/><b>Legend:</b> with image <img src="%s" width=20px title="with image" alt="with image"/>, without image <img src="%s" width=20px title="without image" alt="without image"/> - See <b><a href="../stats.php">detailed statistics</a></b> about the contest - <b>Share:</b> 
 <a href="http://twitter.com/home?status=Find+monuments+near+to+you+in+%s+http://toolserver.org/~emijrp/wlm/%s+Take+photographs+and+upload+them+to+%%23WikiLovesMonuments+:))" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Twitter_Logo_Mini.svg/18px-Twitter_Logo_Mini.svg.png" title="Share on Twitter!" /></a>&nbsp;
 <a href="http://www.facebook.com/sharer/sharer.php?u=http://toolserver.org/~emijrp/wlm/%s" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Facebook_Logo_Mini.svg/16px-Facebook_Logo_Mini.svg.png" title="Share on Facebook!" /></a>&nbsp;
 <a href="http://identi.ca/notice/new?status_textarea=Find+monuments+near+to+you+in+%s+http://toolserver.org/~emijrp/wlm/%s+Take+photographs+and+upload+them+to+%%23WikiLovesMonuments+:))" target="_blank"><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Identica_share_button.png/18px-Identica_share_button.png" title="Share on Identi.ca!" /></a> - <b><a href="https://play.google.com/store/apps/details?id=org.wikipedia.wlm">Android app!</a></b>
@@ -1055,7 +1056,7 @@ new TWTR.Widget({
 </center>
 
 </body>
-</html>""" % (u', '.join(['"%s"' % (v) for k, v in placessort]), capitals.has_key(country) and capitals[country] in admins and capitals[country] or admins and admins[0] or '', wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or wmlogourldefault, countrynames[country], wlmurls.has_key(country) and wlmurls[country] or '', countrynames[country], total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, missingimages, total and (missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, countrynames[country], country_, country_, countrynames[country], country_, wlmurls.has_key(country) and wlmurls[country] or '', chooseaplace, country_, morecountries, datetime.datetime.now())
+</html>""" % (u', '.join(['"%s"' % (v) for k, v in placessort]), removespaces(capitals.has_key(country) and capitals[country] in admins and capitals[country] or admins and admins[0] or ''), wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or wmlogourldefault, countrynames[country], wlmurls.has_key(country) and wlmurls[country] or '', countrynames[country], total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, missingimages, total and (missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, countrynames[country], country_, country_, countrynames[country], country_, wlmurls.has_key(country) and wlmurls[country] or '', chooseaplace, country_, morecountries, datetime.datetime.now())
 
         f = open('%s/%s/index.php' % (path, country_), 'w')
         f.write(output.encode('utf-8'))
