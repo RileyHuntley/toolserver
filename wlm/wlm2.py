@@ -933,11 +933,12 @@ def main():
         #country html
         #choose a place
         chooseaplace = u''
+        placessort = []
         if len(admins) > 1:
             other = False
             if 'other' in admins:
                 other = True
-            admins.remove('other')
+                admins.remove('other')
             placessort = [[placenamesconvert(country, i), removespaces(i)] for i in admins]
             placessort.sort()
             chooseaplace = u'<b>Choose a place:</b> %s' % (u', '.join([u'<a href="index.php?place=%s">%s</a>' % (v, k) for k, v in placessort]))
@@ -1054,7 +1055,7 @@ new TWTR.Widget({
 </center>
 
 </body>
-</html>""" % (u', '.join([u'"%s"' % (removespaces(i)) for i in admins]), capitals.has_key(country) and capitals[country] in admins and capitals[country] or admins and admins[0] or '', wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or wmlogourldefault, countrynames[country], wlmurls.has_key(country) and wlmurls[country] or '', countrynames[country], total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, missingimages, total and (missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, countrynames[country], country_, country_, countrynames[country], country_, wlmurls.has_key(country) and wlmurls[country] or '', chooseaplace, country_, morecountries, datetime.datetime.now())
+</html>""" % (u', '.join(['"%s"' % (v) for k, v in placessort]), capitals.has_key(country) and capitals[country] in admins and capitals[country] or admins and admins[0] or '', wmurls.has_key(country) and wmurls[country] or '', wmlogourls.has_key(country) and wmlogourls[country] or wmlogourldefault, countrynames[country], wlmurls.has_key(country) and wlmurls[country] or '', countrynames[country], total, total-missingcoordinates, total and (total-missingcoordinates)/(total/100.0) or 0, total-missingimages, total and (total-missingimages)/(total/100.0) or 0, missingimages, total and (missingimages)/(total/100.0) or 0, imageyesurl, imagenourl, countrynames[country], country_, country_, countrynames[country], country_, wlmurls.has_key(country) and wlmurls[country] or '', chooseaplace, country_, morecountries, datetime.datetime.now())
 
         f = open('%s/%s/index.php' % (path, country_), 'w')
         f.write(output.encode('utf-8'))
