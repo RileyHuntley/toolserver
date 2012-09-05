@@ -213,6 +213,8 @@ iso3166 = {
     "AT-8": u"Vorarlberg",
     "AT-9": u"Wien",
     
+    "BY": u"Belarus",
+    
     'CA':    u"Canada",
     'CA-AB': u"Alberta",
     'CA-BC': u"British Columbia",
@@ -929,12 +931,12 @@ def main():
         #choose a place
         chooseaplace = u''
         if len(admins) > 1:
+            other = False
+            if 'other' in admins:
+                other = True
+            admins.remove('other')
             placessort = [[placenamesconvert(country, i), removespaces(i)] for i in admins]
             placessort.sort()
-            other = False
-            if 'other' in placessort:
-                other = True
-                placessort.remove('other')
             chooseaplace = u'<b>Choose a place:</b> %s' % (u', '.join([u'<a href="index.php?place=%s">%s</a>' % (v, k) for k, v in placessort]))
             if other:
                 chooseaplace += u', <a href="index.php?place=other">and some more...</a>'
