@@ -62,6 +62,7 @@ countrynames = {
 }
 capitals = {
     'ar': 'ar-c',
+    'at': 'wien',
     'mx': 'mx-mex',
     'ro': 'ro-b',
     'rs': 'other',
@@ -287,7 +288,9 @@ iso3166 = {
     'CZ-KR': u"Královéhradecký kraj",
     'CZ-LI': u"Liberecký kraj",
     'CZ-MO': u"Moravskoslezský kraj",
+    'CZ-OL': u"Olomoucký kraj",
     'CZ-PA': u"Pardubický kraj",
+    'CZ-PL': u"Plzeňský kraj",
     'CZ-PR': u"Praha, hlavní město",
     'CZ-ST': u"Středočeský kraj",
     'CZ-US': u"Ústecký kraj",
@@ -769,7 +772,7 @@ def removespaces(t):
     return re.sub(ur"(?im)\s", ur"", t)
 
 def main():
-    for country in ['at']:# countrynames.keys():
+    for country in ['cz', 'dk']:# countrynames.keys():
         print 'Loading', country
         country_ = removespaces(countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
@@ -939,7 +942,7 @@ def main():
             placessort.sort()
             chooseaplace = u'<b>Choose a place:</b> %s' % (u', '.join([u'<a href="index.php?place=%s">%s</a>' % (v, k) for k, v in placessort]))
             if other:
-                chooseaplace += u', <a href="index.php?place=other">and some more...</a>'
+                chooseaplace += u', <a href="index.php?place=other">...and some more...</a>'
         
         #other maps
         countriessort = [[countrynames[i], i] for i in countrynames.keys()]
