@@ -1065,7 +1065,7 @@ new TWTR.Widget({
 </table>
 
 <!-- more countries --><div class="menu"><b>More countries:</b> %s</div>
-<i>Last update: %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a> using <a href="http://wlm.wikimedia.org/api/api.php">erfgoed database</a>. <a href="http://code.google.com/p/toolserver/source/browse/trunk/wlm/wlm2.py">Source code</a> is GPL. Visits: <?php include ("../../visits.php"); ?></i>
+<i>Last update: %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a> using <a href="http://wlm.wikimedia.org/api/api.php">erfgoed database</a> and <a href="http://de.wikipedia.org/wiki/Benutzerin:Elya">Elya</a>'s CSS. <a href="http://code.google.com/p/toolserver/source/browse/trunk/wlm/wlm2.py">Source code</a> is GPL. Visits: <?php include ("../../visits.php"); ?></i>
 <br/>
 </td>
 </tr>
