@@ -775,7 +775,7 @@ def removespaces(t):
 
 def main():
     for country in countrynames.keys():
-        print 'Loading', country
+        print 'Generating', country
         country_ = removespaces(countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
             os.makedirs('%s/%s/' % (path, country_))
@@ -846,9 +846,9 @@ def main():
         
         admins.sort()
         admins2 = []+admins #to discard admins without valid points
-        print admins
+        #print admins
         for admin in admins:
-            print 'Generating', country, admin
+            #print 'Generating', country, admin
             
             imageyesurl = u'http://maps.google.com/mapfiles/kml/paddle/red-stars.png'
             imagenourl = u'http://maps.google.com/mapfiles/kml/paddle/wht-blank.png'
@@ -919,14 +919,14 @@ def main():
 """ % (props['monument_article'] and (u'<a href="http://%s.wikipedia.org/wiki/%s">%s</a>' % (props['lang'], props['monument_article'], props['name'])) or props['name'], props['municipality'], id, commonspage, thumburl, props['image'] and u'' or u"Upload!", uploadlink, props['image'] and u'y' or u'n', props['lon'], props['lat'])
                 m += 1
             
-            print country, admin, m
+            #print country, admin, m
             if m == 0:
                 admins2.remove(admin)
             
             output += u"""
 </Document>
 </kml>"""
-            print 'Errors', country, admin, errors
+            #print 'Errors', country, admin, errors
             f = open('%s/%s/wlm-%s.kml' % (path, country_, removespaces(admin)), 'w')
             f.write(output.encode('utf-8'))
             f.close()
