@@ -774,7 +774,7 @@ def removespaces(t):
     return re.sub(ur"(?im)\s", ur"", t)
 
 def main():
-    for country in countrynames.keys():
+    for country in ['ca']:#countrynames.keys():
         print 'Generating', country
         country_ = removespaces(countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
@@ -784,8 +784,6 @@ def main():
         #loading monuments from database
         if country == 'dk':
             curs.execute("SELECT * FROM monuments_all WHERE (country=? OR country=?) AND lat IS NOT NULL AND lon IS NOT NULL;", ('dk-bygning', 'dk-fortids'))
-        elif country == 'ca':
-            curs.execute("SELECT * FROM monuments_all WHERE country=? AND lang=? AND lat IS NOT NULL AND lon IS NOT NULL;", (country, 'en')) #la gente mete mejoras en las listas de en: mayormente, y si fr: está sin sincronizar, puede pisarme campos como el de imagen
         else:
             curs.execute("SELECT * FROM monuments_all WHERE country=? AND lat IS NOT NULL AND lon IS NOT NULL;", (country,))
         row = curs.fetchone()
@@ -793,23 +791,27 @@ def main():
         missingimages = 0
         monuments = {}
         while row:
-            monuments[row['id']] = {
-                'id': row['id'],
-                'lang': row['lang'],
-                'registrant_url': row['registrant_url'],
-                'monument_article': row['monument_article'],
-                'name': removebrackets(row['name']),
-                'municipality': removebrackets(row['municipality']),
-                'adm0': row['adm0'] and removebrackets(row['adm0'].lower()) or u'', 
-                'adm1': row['adm1'] and removebrackets(row['adm1'].lower()) or u'', 
-                'adm2': row['adm2'] and removebrackets(row['adm2'].lower()) or u'', 
-                'adm3': row['adm3'] and removebrackets(row['adm3'].lower()) or u'', 
-                'adm4': row['adm4'] and removebrackets(row['adm4'].lower()) or u'', 
-                'address': removebrackets(row['address']), 
-                'lat': row['lat'] and row['lat'] != '0' and row['lat'] or 0,  
-                'lon': row['lon'] and row['lon'] != '0' and row['lon'] or 0, 
-                'image': row['image'] and row['image'] or u'', 
-            }
+            if monuments.has_key(row['id']): # if this monuments was included from another Wikipedia and has missing fields, try to fill them
+                if not monuments[row['id']]['image'] and row['image']:
+                    monuments[row['id']]['image'] = row['image']
+            else:
+                monuments[row['id']] = {
+                    'id': row['id'],
+                    'lang': row['lang'],
+                    'registrant_url': row['registrant_url'],
+                    'monument_article': row['monument_article'],
+                    'name': removebrackets(row['name']),
+                    'municipality': removebrackets(row['municipality']),
+                    'adm0': row['adm0'] and removebrackets(row['adm0'].lower()) or u'', 
+                    'adm1': row['adm1'] and removebrackets(row['adm1'].lower()) or u'', 
+                    'adm2': row['adm2'] and removebrackets(row['adm2'].lower()) or u'', 
+                    'adm3': row['adm3'] and removebrackets(row['adm3'].lower()) or u'', 
+                    'adm4': row['adm4'] and removebrackets(row['adm4'].lower()) or u'', 
+                    'address': removebrackets(row['address']), 
+                    'lat': row['lat'] and row['lat'] != '0' and row['lat'] or 0,  
+                    'lon': row['lon'] and row['lon'] != '0' and row['lon'] or 0, 
+                    'image': row['image'] and row['image'] or u'', 
+                }
             if re.search(ur"(?im)(falta[_ ]imagen|\.svg|missing[\- ]monuments[\- ]image|Wiki[_ ]Loves[_ ]Monuments[_ ]Logo|insert[_ ]image[_ ]here)", monuments[row['id']]['image']):
                 monuments[row['id']]['image'] = ''
             monuments[row['id']]['image'] = re.sub(ur"(?im)^(File:)", ur"", monuments[row['id']]['image']) #clean image names (ro: requires it)
