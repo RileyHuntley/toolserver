@@ -41,7 +41,7 @@ uploadcats = {
     u'estonia': u'Images from Wiki Loves Monuments 2012 in Estonia', 
     u'france': u'Images from Wiki Loves Monuments 2012 in France', 
     u'germany': u'Images from Wiki Loves Monuments 2012 in Germany', 
-    u'ghana': 'uImages from Wiki Loves Monuments 2012 in Ghana', 
+    u'ghana': u'Images from Wiki Loves Monuments 2012 in Ghana', 
     u'hungary': u'Images from Wiki Loves Monuments 2012 in Hungary', 
     u'india': u'Images from Wiki Loves Monuments 2012 in India', 
     u'israel': u'Images from Wiki Loves Monuments 2012 in Israel', 
