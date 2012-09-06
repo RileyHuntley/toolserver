@@ -926,7 +926,8 @@ def main():
             output += u"""
 </Document>
 </kml>"""
-            #print 'Errors', country, admin, errors
+            errorsmsg = u'Errors %s, %s, %s' % (country, admin, errors)
+            print errorsmsg.encode('utf-8')
             f = open('%s/%s/wlm-%s.kml' % (path, country_, removespaces(admin)), 'w')
             f.write(output.encode('utf-8'))
             f.close()

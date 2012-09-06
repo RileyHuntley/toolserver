@@ -156,8 +156,10 @@ def main():
     countries = {}
     resolutions = {}
     sizes_list = []
+    c = 0
     for title, country, date, username, resolution, size, comment in files:
-        #print title
+        c += 1
+        #print c, title
         if countries.has_key(country):
             countries[country]['files'] += 1
             countries[country]['size'] += int(size)
