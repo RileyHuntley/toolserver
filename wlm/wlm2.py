@@ -784,6 +784,8 @@ def main():
         #loading monuments from database
         if country == 'dk':
             curs.execute("SELECT * FROM monuments_all WHERE (country=? OR country=?) AND lat IS NOT NULL AND lon IS NOT NULL;", ('dk-bygning', 'dk-fortids'))
+        elif country == 'ca':
+            curs.execute("SELECT * FROM monuments_all WHERE country=? AND lang=? AND lat IS NOT NULL AND lon IS NOT NULL;", (country, 'en')) #la gente mete mejoras en las listas de en: mayormente, y si fr: está sin sincronizar, puede pisarme campos como el de imagen
         else:
             curs.execute("SELECT * FROM monuments_all WHERE country=? AND lat IS NOT NULL AND lon IS NOT NULL;", (country,))
         row = curs.fetchone()
