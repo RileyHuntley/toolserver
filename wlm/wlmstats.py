@@ -81,7 +81,7 @@ countrynames = {
     u'estonia': u'Estonia', 
     u'france': u'France', 
     u'germany': u'Germany', 
-    u'ghana': 'uGhana', 
+    u'ghana': u'Ghana', 
     u'hungary': u'Hungary', 
     u'india': u'India', 
     u'israel': u'Israel', 
