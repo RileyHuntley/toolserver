@@ -774,7 +774,7 @@ def removespaces(t):
     return re.sub(ur"(?im)\s", ur"", t)
 
 def main():
-    for country in ['ca']:#countrynames.keys():
+    for country in countrynames.keys():
         print 'Generating', country
         country_ = removespaces(countrynames[country].lower())
         if not os.path.exists('%s/%s/' % (path, country_)):
