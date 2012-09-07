@@ -760,7 +760,7 @@ iso3166 = {
 
 def placenamesconvert(country, i):
     if i == 'other':
-        return countrynames[country] #antes ponia Other in Country, pero al final lo dejé como country solo
+        return countrynames[country]
     ii = i.upper()
     if iso3166.has_key(ii):
         return iso3166[ii]
@@ -939,7 +939,7 @@ def main():
 </kml>"""
             errorsmsg = u'Errors %s, %s, %s' % (country, admin, errors)
             print errorsmsg.encode('utf-8')
-            f = open('%s/%s/wlm-%s.kml' % (path, country_, generatemd5(removespaces(admin))), 'w')
+            f = open('%s/%s/wlm-%s.kml' % (path, country_, re.findall(ur"(?im)[^a-z0-9\-]", admin) and generatemd5(removespaces(admin) or removespaces(admin))), 'w')
             f.write(output.encode('utf-8'))
             f.close()
         admins = admins2 #removing those admins without points
@@ -953,7 +953,7 @@ def main():
             if 'other' in admins:
                 other = True
                 admins.remove('other')
-            placessort = [[placenamesconvert(country, i), generatemd5(removespaces(i))] for i in admins]
+            placessort = [[placenamesconvert(country, i), re.findall(ur"(?im)[^a-z0-9\-]", i) and generatemd5(removespaces(i) or removespaces(i))] for i in admins]
             placessort.sort()
             chooseaplace = u'<b>Choose a place:</b> %s' % (u', '.join([u'<a href="index.php?place=%s">%s</a>' % (v, k) for k, v in placessort]))
             if other:
