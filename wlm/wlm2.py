@@ -777,6 +777,9 @@ def removespaces(t):
 def removeoddchars(t):
     return ''.join((c for c in unicodedata.normalize('NFD', u'%s' % (t)) if unicodedata.category(c) != 'Mn'))
 
+def generatemd5(t):
+    return md5.new(t.encode('utf-8')).hexdigest()
+
 def main():
     for country in countrynames.keys():
         print 'Generating', country
@@ -936,7 +939,7 @@ def main():
 </kml>"""
             errorsmsg = u'Errors %s, %s, %s' % (country, admin, errors)
             print errorsmsg.encode('utf-8')
-            f = open('%s/%s/wlm-%s.kml' % (path, country_, removeoddchars(removespaces(admin))), 'w')
+            f = open('%s/%s/wlm-%s.kml' % (path, country_, generatemd5(removespaces(admin))), 'w')
             f.write(output.encode('utf-8'))
             f.close()
         admins = admins2 #removing those admins without points
@@ -950,7 +953,7 @@ def main():
             if 'other' in admins:
                 other = True
                 admins.remove('other')
-            placessort = [[placenamesconvert(country, i), removeoddchars(removespaces(i))] for i in admins]
+            placessort = [[placenamesconvert(country, i), generatemd5(removespaces(i))] for i in admins]
             placessort.sort()
             chooseaplace = u'<b>Choose a place:</b> %s' % (u', '.join([u'<a href="index.php?place=%s">%s</a>' % (v, k) for k, v in placessort]))
             if other:
