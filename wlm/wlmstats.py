@@ -32,8 +32,6 @@ yuvipanda request ranking of mobile users
 select page_title,  
 (select  rev_user_text from revision where rev_page = page_id order by rev_timestamp  limit 1 ) as original 
 from iwlinks join page on iwl_from=page_id join revision on page_latest = rev_id where iwl_prefix='mw' and iwl_title='Wiki_Loves_Monuments_mobile_application' and page_namespace=6
-
-
 """
 
 path = "/home/emijrp/public_html/wlm"
@@ -46,7 +44,7 @@ uploadcats = {
     u'canada': u'Images from Wiki Loves Monuments 2012 in Canada', 
     u'chile': u'Images from Wiki Loves Monuments 2012 in Chile', 
     u'colombia': u'Images from Wiki Loves Monuments 2012 in Colombia', 
-    u'czechrepublic‎': u'Images from Wiki Loves Monuments 2012 in the Czech Republic‎', 
+    u'czechrepublic': u'Images from Wiki Loves Monuments 2012 in the Czech Republic', 
     u'denmark': u'Images from Wiki Loves Monuments 2012 in Denmark', 
     u'estonia': u'Images from Wiki Loves Monuments 2012 in Estonia', 
     u'france': u'Images from Wiki Loves Monuments 2012 in France', 
@@ -57,13 +55,13 @@ uploadcats = {
     u'israel': u'Images from Wiki Loves Monuments 2012 in Israel', 
     u'italy': u'Images from Wiki Loves Monuments 2012 in Italy', 
     u'kenya': u'Images from Wiki Loves Monuments 2012 in Kenya', 
-    u'liechtenstein‎': u'Images from Wiki Loves Monuments 2012 in Liechtenstein‎', 
-    u'luxembourg‎': u'Images from Wiki Loves Monuments 2012 in Luxembourg‎', 
+    u'liechtenstein': u'Images from Wiki Loves Monuments 2012 in Liechtenstein', 
+    u'luxembourg': u'Images from Wiki Loves Monuments 2012 in Luxembourg', 
     u'mexico': u'Images from Wiki Loves Monuments 2012 in Mexico', 
-    u'netherlands‎': u'Images from Wiki Loves Monuments 2012 in the Netherlands‎', 
-    u'norway‎': u'Images from Wiki Loves Monuments 2012 in Norway‎', 
+    u'netherlands': u'Images from Wiki Loves Monuments 2012 in the Netherlands', 
+    u'norway': u'Images from Wiki Loves Monuments 2012 in Norway', 
     u'panama': u'Images from Wiki Loves Monuments 2012 in Panama', 
-    u'philippines‎': u'Images from Wiki Loves Monuments 2012 in the Philippines‎', 
+    u'philippines': u'Images from Wiki Loves Monuments 2012 in Philippines', 
     u'poland': u'Images from Wiki Loves Monuments 2012 in Poland', 
     u'romania': u'Images from Wiki Loves Monuments 2012 in Romania', 
     u'russia': u'Images from Wiki Loves Monuments 2012 in Russia', 
@@ -72,7 +70,7 @@ uploadcats = {
     u'southtyrol': u'Images from Wiki Loves Monuments 2012 in South Tyrol', 
     u'spain': u'Images from Wiki Loves Monuments 2012 in Spain', 
     u'sweden': u'Images from Wiki Loves Monuments 2012 in Sweden', 
-    u'switzerland‎': u'Images from Wiki Loves Monuments 2012 in Switzerland‎', 
+    u'switzerland': u'Images from Wiki Loves Monuments 2012 in Switzerland', 
     u'ukraine': u'Images from Wiki Loves Monuments 2012 in Ukraine', 
     u'unitedstates': u'Images from Wiki Loves Monuments 2012 in the United States', 
 }
@@ -86,7 +84,7 @@ countrynames = {
     u'canada': u'Canada', 
     u'chile': u'Chile', 
     u'colombia': u'Colombia', 
-    u'czechrepublic‎': u'Czech Republic‎', 
+    u'czechrepublic': u'Czech Republic‎', 
     u'denmark': u'Denmark', 
     u'estonia': u'Estonia', 
     u'france': u'France', 
@@ -97,13 +95,13 @@ countrynames = {
     u'israel': u'Israel', 
     u'italy': u'Italy', 
     u'kenya': u'Kenya', 
-    u'liechtenstein‎': u'Liechtenstein‎', 
-    u'luxembourg‎': u'Luxembourg‎', 
+    u'liechtenstein': u'Liechtenstein', 
+    u'luxembourg': u'Luxembourg', 
     u'mexico': u'Mexico', 
-    u'netherlands‎': u'Netherlands‎', 
-    u'norway‎': u'Norway‎', 
+    u'netherlands': u'Netherlands', 
+    u'norway': u'Norway', 
     u'panama': u'Panama', 
-    u'philippines‎': u'Philippines‎', 
+    u'philippines': u'Philippines', 
     u'poland': u'Poland', 
     u'romania': u'Romania', 
     u'russia': u'Russia', 
@@ -112,7 +110,7 @@ countrynames = {
     u'southtyrol': u'South Tyrol', 
     u'spain': u'Spain', 
     u'sweden': u'Sweden', 
-    u'switzerland‎': u'Switzerland‎', 
+    u'switzerland': u'Switzerland', 
     u'ukraine': u'Ukraine', 
     u'unitedstates': u'United States', 
 }
@@ -139,15 +137,16 @@ def main():
         (SELECT rev_timestamp FROM revision WHERE rev_page=page_id ORDER BY rev_timestamp LIMIT 1) AS timestamp,
         (SELECT img_size FROM image WHERE img_name=page_title) AS size,
         (SELECT img_width FROM image WHERE img_name=page_title) AS width,
-        (SELECT img_height FROM image WHERE img_name=page_title) AS height,
-        (SELECT img_description FROM image WHERE img_name=page_title) AS comment
+        (SELECT img_height FROM image WHERE img_name=page_title) AS height
         FROM categorylinks JOIN page ON cl_from=page_id JOIN revision ON page_latest=rev_id JOIN image ON img_name=page_title WHERE cl_to=? AND page_namespace=6;
         ;""", (re.sub(u' ', u'_', uploadcats[country]), ))
         row = curs.fetchone()
         while row:
-            comment = re.sub(ur"(?im)\s", ur" ", unicode(row['comment'], 'utf-8'))
-            date = '%s-%s-%sT%s:%s:%sZ' % (row['timestamp'][0:4], row['timestamp'][4:6], row['timestamp'][6:8], row['timestamp'][8:10], row['timestamp'][10:12], row['timestamp'][12:14])
-            files.append([row['page_title'], country, date, row['username'], u'%s×%s' % (row['width'], row['height']), str(row['size']), comment])
+            try:
+                date = u'%s-%s-%sT%s:%s:%sZ' % (row['timestamp'][0:4], row['timestamp'][4:6], row['timestamp'][6:8], row['timestamp'][8:10], row['timestamp'][10:12], row['timestamp'][12:14])
+                files.append([row['page_title'], country, date, row['username'], u'%s×%s' % (row['width'], row['height']), str(row['size'])])
+            except:
+                print row
             row = curs.fetchone()
     
     conn.close()
@@ -158,7 +157,6 @@ def main():
     f.close()
 
     #stats
-    #File:Woodstock - Old Carleton Court House Side.JPG;;;2012-09-01T04:17:51Z;;;Amqui;;;2736×3648;;;4672852;;;User created page with UploadWizard
     dates = {}
     hours = {}
     users = {}
@@ -166,7 +164,7 @@ def main():
     resolutions = {}
     sizes_list = []
     c = 0
-    for title, country, date, username, resolution, size, comment in files:
+    for title, country, date, username, resolution, size in files:
         c += 1
         #print c, title
         if countries.has_key(country):
@@ -176,7 +174,7 @@ def main():
                 countries[country]['uploaders'].append(username)
         else:
             countries[country] = { 'files': 1, 'size': int(size), 'uploaders': [username]}
-        d = '%sT00:00:00Z' % (date.split('T')[0])
+        d = u'%sT00:00:00Z' % (date.split('T')[0])
         h = date.split('T')[1].split(':')[0]
         if dates.has_key(d):
             dates[d] += 1
@@ -213,8 +211,8 @@ def main():
     resolutions_list.sort(reverse=1)
     resolutions_list = [[k, v] for v, k in resolutions_list]
 
-    width = '1000px'
-    height = '250px'
+    width = u'1000px'
+    height = u'250px'
     dates_graph_data = u', '.join([u'["%s", %s]' % (convert2unix(k), v) for k, v in dates_list])
     dates_graph = u"""<div id="dates_graph" style="width: %s;height: %s;"></div>
     <script type="text/javascript">
@@ -288,67 +286,67 @@ def main():
     
     intro = u"<b>%s files</b> by <b>%s uploaders</b> from <b>%s countries</b> so far" % (sum([countries[k]['files'] for k in countries.keys()]), len(users.keys()), len(countries.keys()))
     output = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-    <html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-    <title>Wiki Loves Monuments statistics</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta http-equiv="Content-Style-Type" content="text/css" />
-    <link rel="stylesheet" type="text/css" href="wlm.css" />
-    <script language="javascript" type="text/javascript" src="modules/jquery.js"></script>
-    <script language="javascript" type="text/javascript" src="modules/jquery.flot.js"></script>
-    </head>
+<html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Wiki Loves Monuments statistics</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<link rel="stylesheet" type="text/css" href="wlm.css" />
+<script language="javascript" type="text/javascript" src="modules/jquery.js"></script>
+<script language="javascript" type="text/javascript" src="modules/jquery.flot.js"></script>
+</head>
 
-    <body style="background-color: white;">
+<body style="background-color: white;">
 
-    <center>
-    <table border=0 cellpadding=0px width=%s style="text-align: center;">
-    <tr>
-    <td><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/120px-LUSITANA_WLM_2011_d.svg.png" /></td>
-    <td valign=top width=99%%>
-    <br/><big><big><big><b><a href="index.php">Wiki <i>Loves</i> Monuments</a></b></big></big></big>
-    <br/><b>September 2012</b>
-    <br/><br/>%s
-    </td>
-    <td><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/120px-LUSITANA_WLM_2011_d.svg.png" /></td>
-    </tr>
-    <tr><td colspan=3>Uploads <a href="#day">per day</a> and <a href="#hour">per hour</a> - Rankings for <a href="#countries">countries</a>, <a href="#uploaders">uploaders</a>, <a href="#sizes">sizes</a> and <a href="#resolutions">resolutions</a></td>
-    </td></tr>
-    </table>
-    
-    <h2 id="day">Uploads per day</h2>
-    %s
+<center>
+<table border=0 cellpadding=0px width=%s style="text-align: center;">
+<tr>
+<td><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/120px-LUSITANA_WLM_2011_d.svg.png" /></td>
+<td valign=top width=99%%>
+<br/><big><big><big><b><a href="index.php">Wiki <i>Loves</i> Monuments</a></b></big></big></big>
+<br/><b>September 2012</b>
+<br/><br/>%s
+</td>
+<td><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/120px-LUSITANA_WLM_2011_d.svg.png" /></td>
+</tr>
+<tr><td colspan=3>Uploads <a href="#day">per day</a> and <a href="#hour">per hour</a> - Rankings for <a href="#countries">countries</a>, <a href="#uploaders">uploaders</a>, <a href="#sizes">sizes</a> and <a href="#resolutions">resolutions</a></td>
+</td></tr>
+</table>
 
-    <h2 id="hour">Uploads per hour</h2>
-    %s
-    
-    <h2 id="detailed">Detailed statistics</h2>
-    <table border=0>
-    <tr>
-    <td valign=top>
-    <center>
-    <!-- countries rank -->%s
-    <!-- resolutions rank -->%s
-    <!-- sizes rank -->%s
-    </center>
-    </td>
-    <td valign=top>
-    <center>
-    <!-- users rank -->%s
-    </center>
-    </td>
-    </tr>
-    </table>
-    
-    (<a href="files.txt">Download metadata and make your own statistics</a>)
-    <br/><br/>
-    
-    <i>Last update: %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a> using <a href="http://code.google.com/p/flot/">flot</a>. <a href="http://code.google.com/p/toolserver/source/browse/trunk/wlm/wlmstats.py">Source code</a> is GPL. Visits: <?php include ("../visits.php"); ?></i>
-    
-    </center>
+<h2 id="day">Uploads per day</h2>
+%s
 
-    </body>
-    </html>
-    """ % (width, intro, dates_graph, hours_graph, countries_rank, resolutions_rank, sizes_rank, users_rank, datetime.datetime.now())
+<h2 id="hour">Uploads per hour</h2>
+%s
+
+<h2 id="detailed">Detailed statistics</h2>
+<table border=0>
+<tr>
+<td valign=top>
+<center>
+<!-- countries rank -->%s
+<!-- resolutions rank -->%s
+<!-- sizes rank -->%s
+</center>
+</td>
+<td valign=top>
+<center>
+<!-- users rank -->%s
+</center>
+</td>
+</tr>
+</table>
+
+(<a href="files.txt">Download metadata and make your own statistics</a>)
+<br/><br/>
+
+<i>Last update: %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a> using <a href="http://code.google.com/p/flot/">flot</a>. <a href="http://code.google.com/p/toolserver/source/browse/trunk/wlm/wlmstats.py">Source code</a> is GPL. Visits: <?php include ("../visits.php"); ?></i>
+
+</center>
+
+</body>
+</html>
+""" % (width, intro, dates_graph, hours_graph, countries_rank, resolutions_rank, sizes_rank, users_rank, datetime.datetime.now())
 
     f = open('%s/stats.php' % (path), 'w')
     f.write(output.encode('utf-8'))
@@ -356,4 +354,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
