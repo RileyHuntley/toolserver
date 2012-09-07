@@ -18,6 +18,7 @@
 import catlib
 import datetime
 import os
+import oursql
 import pagegenerators
 import re
 import time
@@ -126,31 +127,30 @@ def convert2unix(mwtimestamp):
 
 def main():
     #loading files metadata
+    conn = oursql.connect(db='commonswiki_p', host='sql-s1.toolserver.org', read_default_file=os.path.expanduser("~/.my.cnf"), charset="utf8", use_unicode=True)
+    curs = conn.cursor(oursql.DictCursor)
     filename = 'files.txt'
-    if os.path.exists("%s/%s" % (path, filename)):
-        files = [i.split(';;;') for i in unicode(open("%s/%s" % (path, filename)).read(), 'utf-8').strip().splitlines()]
-    else:
-        files = []
-
-    #adding new files metadata
+    files = []
     for country in uploadcats.keys():
         #continue
-        cat = catlib.Category(wikipedia.Site("commons", "commons"), u"Category:%s" % uploadcats[country])
-        gen = pagegenerators.CategorizedPageGenerator(cat, start="!")
-        pre = pagegenerators.PreloadingGenerator(gen, pageNumber=250)
-        for image in pre:
-            #(datetime, username, resolution, size, comment)
-            if image.title() not in [i[0] for i in files]:
-                if len(files) % 50 == 0:
-                    print len(files)
-                try:
-                    date, username, resolution, size, comment = image.getFileVersionHistory()[-1]
-                except:
-                    continue
-                comment = re.sub(ur"(?im)\s", ur" ", comment)
-                files.append([image.title(), country, date, username, resolution, str(size), comment])
-
-    #saving files metadata
+        print country
+        curs.execute(u"""SELECT page_title, 
+        (SELECT rev_user_text FROM revision WHERE rev_page=page_id ORDER BY rev_timestamp LIMIT 1) AS username,
+        (SELECT rev_timestamp FROM revision WHERE rev_page=page_id ORDER BY rev_timestamp LIMIT 1) AS timestamp,
+        (SELECT img_size FROM image WHERE img_name=page_title) AS size,
+        (SELECT img_width FROM image WHERE img_name=page_title) AS width,
+        (SELECT img_height FROM image WHERE img_name=page_title) AS height,
+        (SELECT img_description FROM image WHERE img_name=page_title) AS comment
+        FROM categorylinks JOIN page ON cl_from=page_id JOIN revision ON page_latest=rev_id JOIN image ON img_name=page_title WHERE cl_to=? AND page_namespace=6;
+        ;""", (re.sub(u' ', u'_', uploadcats[country]), ))
+        row = curs.fetchone()
+        while row:
+            comment = re.sub(ur"(?im)\s", ur" ", unicode(row['comment'], 'utf-8'))
+            date = '%s-%s-%sT%s:%s:%sZ' % (row['timestamp'][0:4], row['timestamp'][4:6], row['timestamp'][6:8], row['timestamp'][8:10], row['timestamp'][10:12], row['timestamp'][12:14])
+            files.append([row['page_title'], country, date, row['username'], u'%s×%s' % (row['width'], row['height']), str(row['size']), comment])
+            row = curs.fetchone()
+    
+    conn.close()
     print len(files), 'files'
     f = open("%s/%s" % (path, filename), 'w')
     output = u'\n'.join([u';;;'.join(i) for i in files])
