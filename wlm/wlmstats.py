@@ -125,7 +125,7 @@ def convert2unix(mwtimestamp):
 
 def main():
     #loading files metadata
-    conn = oursql.connect(db='commonswiki_p', host='sql-s1.toolserver.org', read_default_file=os.path.expanduser("~/.my.cnf"), charset="utf8", use_unicode=True)
+    conn = oursql.connect(db='commonswiki_p', host='sql-s1.toolserver.org', read_default_file=os.path.expanduser("~/.my.cnf"), charset="utf8", use_unicode=False)
     curs = conn.cursor(oursql.DictCursor)
     filename = 'files.txt'
     files = []
@@ -143,8 +143,13 @@ def main():
         row = curs.fetchone()
         while row:
             try:
-                date = u'%s-%s-%sT%s:%s:%sZ' % (row['timestamp'][0:4], row['timestamp'][4:6], row['timestamp'][6:8], row['timestamp'][8:10], row['timestamp'][10:12], row['timestamp'][12:14])
-                files.append([row['page_title'], country, date, row['username'], u'%s×%s' % (row['width'], row['height']), str(row['size'])])
+                page_title = unicode(row['page_title'], 'utf-8')
+                username = unicode(row['username'], 'utf-8')
+                date = unicode(row['timestamp'], 'utf-8')
+                date = u'%s-%s-%sT%s:%s:%sZ' % (date[0:4], date[4:6], date[6:8], date[8:10], date[10:12], date[12:14])
+                resolution = u'%s×%s' % (unicode(str(row['width']), 'utf-8'), unicode(str(row['height']), 'utf-8'))
+                size = unicode(str(row['size']), 'utf-8')
+                files.append([page_title, country, date, username, resolution, size])
             except:
                 print row
             row = curs.fetchone()
