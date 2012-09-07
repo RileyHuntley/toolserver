@@ -125,7 +125,7 @@ def convert2unix(mwtimestamp):
 
 def main():
     #loading files metadata
-    conn = oursql.connect(db='commonswiki_p', host='sql-s1.toolserver.org', read_default_file=os.path.expanduser("~/.my.cnf"), charset="utf8", use_unicode=False)
+    conn = oursql.connect(db='commonswiki_p', host='sql-s1.toolserver.org', read_default_file=os.path.expanduser("~/.my.cnf"), charset="utf8", use_unicode=True)
     curs = conn.cursor(oursql.DictCursor)
     filename = 'files.txt'
     files = []
@@ -143,21 +143,24 @@ def main():
         row = curs.fetchone()
         while row:
             try:
-                page_title = unicode(row['page_title'], 'utf-8')
-                username = unicode(row['username'], 'utf-8')
-                date = unicode(row['timestamp'], 'utf-8')
+                page_title = row['page_title']
+                username = row['username']
+                date = row['timestamp']
                 date = u'%s-%s-%sT%s:%s:%sZ' % (date[0:4], date[4:6], date[6:8], date[8:10], date[10:12], date[12:14])
-                resolution = u'%s×%s' % (unicode(str(row['width']), 'utf-8'), unicode(str(row['height']), 'utf-8'))
-                size = unicode(str(row['size']), 'utf-8')
+                resolution = u'%s×%s' % (str(row['width']), str(row['height']))
+                size = str(row['size'])
                 files.append([page_title, country, date, username, resolution, size])
             except:
-                print row
+                try:
+                    print row
+                except:
+                    print 'Error'
             row = curs.fetchone()
     
     conn.close()
     print len(files), 'files'
     f = open("%s/%s" % (path, filename), 'w')
-    output = u'\n'.join([u';;;'.join(i) for i in files])
+    output = u'%s\n%s' % (u';;;'.join(['filename', 'country', 'date', 'username', 'resolution', 'size']), u'\n'.join([u';;;'.join(i) for i in files]))
     f.write(output.encode('utf-8'))
     f.close()
 
@@ -350,8 +353,7 @@ def main():
 </center>
 
 </body>
-</html>
-""" % (width, intro, dates_graph, hours_graph, countries_rank, resolutions_rank, sizes_rank, users_rank, datetime.datetime.now())
+</html>""" % (width, intro, dates_graph, hours_graph, countries_rank, resolutions_rank, sizes_rank, users_rank, datetime.datetime.now())
 
     f = open('%s/stats.php' % (path), 'w')
     f.write(output.encode('utf-8'))
