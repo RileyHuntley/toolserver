@@ -822,6 +822,7 @@ def main():
             if re.search(ur"(?im)(falta[_ ]imagen|\.svg|missing[\- ]monuments[\- ]image|Wiki[_ ]Loves[_ ]Monuments[_ ]Logo|insert[_ ]image[_ ]here)", monuments[row['id']]['image']):
                 monuments[row['id']]['image'] = ''
             monuments[row['id']]['image'] = re.sub(ur"(?im)^(File:)", ur"", monuments[row['id']]['image']) #clean image names (ro: requires it)
+            monuments[row['id']]['image'] = re.sub(' ', '_', monuments[row['id']]['image'])
             row = curs.fetchone()
         
         #total, missingimages and missingcoordinates
@@ -907,7 +908,7 @@ def main():
                     imagefilename = re.sub(' ', '_', props['image'])
                     m5 = md5.new(imagefilename.encode('utf-8')).hexdigest()
                     thumburl = u'http://upload.wikimedia.org/wikipedia/commons/thumb/%s/%s/%s/%s-%s' % (m5[0], m5[:2], imagefilename, imagesize, imagefilename)
-                    commonspage = u'http://commons.wikimedia.org/wiki/File:%s' % (props['image'])
+                    commonspage = u'http://commons.wikimedia.org/wiki/File:%s' % (imagefilename)
                 else:
                     thumburl = u'http://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Image_upload-tango.svg/%s-Image_upload-tango.svg.png' % (imagesize)
                     commonspage = uploadlink
@@ -939,7 +940,7 @@ def main():
 </kml>"""
             errorsmsg = u'Errors %s, %s, %s' % (country, admin, errors)
             print errorsmsg.encode('utf-8')
-            f = open('%s/%s/wlm-%s.kml' % (path, country_, re.findall(ur"(?im)[^a-z0-9\-]", admin) and generatemd5(removespaces(admin) or removespaces(admin))), 'w')
+            f = open('%s/%s/wlm-%s.kml' % (path, country_, re.findall(ur"(?im)[^a-z0-9\-]", admin) and generatemd5(removespaces(admin)) or removespaces(admin)), 'w')
             f.write(output.encode('utf-8'))
             f.close()
         admins = admins2 #removing those admins without points
@@ -953,7 +954,7 @@ def main():
             if 'other' in admins:
                 other = True
                 admins.remove('other')
-            placessort = [[placenamesconvert(country, i), re.findall(ur"(?im)[^a-z0-9\-]", i) and generatemd5(removespaces(i) or removespaces(i))] for i in admins]
+            placessort = [[placenamesconvert(country, i), re.findall(ur"(?im)[^a-z0-9\-]", i) and generatemd5(removespaces(i)) or removespaces(i)] for i in admins]
             placessort.sort()
             chooseaplace = u'<b>Choose a place:</b> %s' % (u', '.join([u'<a href="index.php?place=%s">%s</a>' % (v, k) for k, v in placessort]))
             if other:
