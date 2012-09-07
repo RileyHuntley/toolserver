@@ -26,6 +26,15 @@ import wikipedia
 #wlm counter con contador de subidas y megabytes
 #http://commons.wikimedia.org/wiki/Commons:Wiki_Loves_Monuments_2012/CentralNotice
 
+"""
+yuvipanda request ranking of mobile users
+select page_title,  
+(select  rev_user_text from revision where rev_page = page_id order by rev_timestamp  limit 1 ) as original 
+from iwlinks join page on iwl_from=page_id join revision on page_latest = rev_id where iwl_prefix='mw' and iwl_title='Wiki_Loves_Monuments_mobile_application' and page_namespace=6
+
+
+"""
+
 path = "/home/emijrp/public_html/wlm"
 uploadcats = { 
     u'andorra': u'Images from Wiki Loves Monuments 2012 in Andorra', 

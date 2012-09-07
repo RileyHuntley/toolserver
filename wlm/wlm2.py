@@ -20,6 +20,7 @@ import md5
 import os
 import oursql
 import re
+import unicodedata
 
 path = '/home/emijrp/public_html/wlm'
 conn = oursql.connect(db='p_erfgoed_p', host='sql.toolserver.org', read_default_file=os.path.expanduser("~/.my.cnf"), charset="utf8", use_unicode=True)
@@ -773,6 +774,9 @@ def removebrackets(t):
 def removespaces(t):
     return re.sub(ur"(?im)\s", ur"", t)
 
+def removeoddchars(t):
+    return ''.join((c for c in unicodedata.normalize('NFD', u'%s' % (t)) if unicodedata.category(c) != 'Mn'))
+
 def main():
     for country in countrynames.keys():
         print 'Generating', country
@@ -932,7 +936,7 @@ def main():
 </kml>"""
             errorsmsg = u'Errors %s, %s, %s' % (country, admin, errors)
             print errorsmsg.encode('utf-8')
-            f = open('%s/%s/wlm-%s.kml' % (path, country_, removespaces(admin)), 'w')
+            f = open('%s/%s/wlm-%s.kml' % (path, country_, removeoddchars(removespaces(admin))), 'w')
             f.write(output.encode('utf-8'))
             f.close()
         admins = admins2 #removing those admins without points
@@ -946,7 +950,7 @@ def main():
             if 'other' in admins:
                 other = True
                 admins.remove('other')
-            placessort = [[placenamesconvert(country, i), removespaces(i)] for i in admins]
+            placessort = [[placenamesconvert(country, i), removeoddchars(removespaces(i))] for i in admins]
             placessort.sort()
             chooseaplace = u'<b>Choose a place:</b> %s' % (u', '.join([u'<a href="index.php?place=%s">%s</a>' % (v, k) for k, v in placessort]))
             if other:
