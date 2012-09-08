@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (C) 2011 emijrp
+# Copyright (C) 2011-2012 emijrp
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -24,7 +24,7 @@ import wikipedia
 import xmlreader
 
 def main():
-    """Localisation for dates (YYYY-MM-DD) and some usual headings in images descriptions in Commons"""
+    """Localisation for dates (YYYY-MM-DD)"""
     
     month2number={
         #English
@@ -58,14 +58,17 @@ def main():
         #french
         
         #german
+        
     }
     
-    dumppath = ''
     dumpfilename = ''
     mode = ''
     skip = u'' #'File:Lagothrix lagotricha.jpg'
     if len(sys.argv) >= 2:
         dumpfilename = sys.argv[1]
+    else:
+        print 'python script.py dumpfilename [lang] [skipuntilthispage]'
+        sys.exit()
     if len(sys.argv) >= 3: #en1, fr1, etc, regexps
         mode = sys.argv[2]
     if not mode:
@@ -73,9 +76,8 @@ def main():
     if len(sys.argv) >= 4:
         skip = sys.argv[3]
     
-    xml = xmlreader.XmlDump('%s%s' % (dumppath and '%s/' % dumppath or '', dumpfilename), allrevisions=False)
+    xml = xmlreader.XmlDump(dumpfilename, allrevisions=False)
     c = 0
-    
     if skip:
         print 'Skiping to...', skip
     for x in xml.parse(): #parsing the whole dump
@@ -89,7 +91,7 @@ def main():
                 skip = ''
         
         #regexps
-        spliter1 = ur'[\s\-\,\.\/]*' #spliter for months in words
+        spliter1 = ur'[\s\-\,\.\/\\]*' #spliter for months in words
         spliter2 = ur'' #todo, spliter for dates with month in numbers
         suffix1 = ur'[\s\.]*(st|nd|rd|th)?[\s\.]*' # March 1st, ..., not mandatory
         regexp_r = {
@@ -101,7 +103,7 @@ def main():
         
         m = re.findall(regexp_r[mode], x.text) # check dump text
         if m:
-            print c, 'DUMP SAYS: ', x.title
+            print c, 'Candidate found in dump: ', x.title
             
             page = wikipedia.Page(wikipedia.Site("commons", "commons"), x.title)
             if not page.exists() or page.isRedirectPage() or page.isDisambig():
@@ -112,18 +114,18 @@ def main():
             wtext = page.get()
             newtext = wtext
             
-            m = re.finditer(regexp_r[mode], wtext) # check live text
+            m = re.finditer(regexp_r[mode], wtext) # check live text to verify that the date is still in Commons page
             for i in m:
-                print '   LIVE TEXT NEED TRANSLATION:', x.title
+                print '   Commons page has a date to translate:', x.title
                 
-                #replacement
+                #text to remove
                 regexp_rep = {
                     'en1': i.group('all'),
                     'en2': i.group('all'),
                     'es1': i.group('all'),
                     
                 }
-                #sub
+                #text to insert
                 regexp_sub = { 
                     'en1': ur"%s%s-%s-%02d%s" % (i.group('ini'), i.group('year'), month2number[i.group('month').strip().lower()], int(i.group('day')), i.group('end')),
                     'en2': ur"%s%s-%s-%02d%s" % (i.group('ini'), i.group('year'), month2number[i.group('month').strip().lower()], int(i.group('day')), i.group('end')),
@@ -131,8 +133,7 @@ def main():
                     
                 }
                 
-                newtext = newtext.replace(regexp_rep[mode], regexp_sub[mode], 1)
-                
+                newtext = newtext.replace(regexp_rep[mode], regexp_sub[mode], 1) #only the first occurence
                 if wtext != newtext:
                     wikipedia.showDiff(wtext, newtext)
                     page.put(newtext, u"BOT - Changes to allow localization: %s → %s" % (regexp_rep[mode], regexp_sub[mode]))

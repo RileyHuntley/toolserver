@@ -74,6 +74,7 @@ bd_cats = { #birth/death categories
     'fr': r'(Naissance|Décès)_en_[0-9]+',
     'ga': r'(Daoine_a_rugadh|Básanna)_i_[0-9]+',
     'gan': r'[0-9]+(年出世|年過世)',
+    'gl': r'(Nados|Finados)_en_[0-9]+',
     'hif': r'[0-9]+_(janam|maut)',
     'hsb': r'(Rodź|Zemr)\._[0-9]+',
     'hy': r'[0-9]+_(ծնունդներ|մահեր)',

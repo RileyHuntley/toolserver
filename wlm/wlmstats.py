@@ -132,13 +132,13 @@ def main():
     for country in uploadcats.keys():
         #continue
         print country
-        curs.execute("""SELECT page_title, 
+        curs.execute(u"""SELECT page_title, 
         (SELECT rev_user_text FROM revision WHERE rev_page=page_id ORDER BY rev_timestamp LIMIT 1) AS username,
         (SELECT rev_timestamp FROM revision WHERE rev_page=page_id ORDER BY rev_timestamp LIMIT 1) AS timestamp,
         (SELECT img_size FROM image WHERE img_name=page_title) AS size,
         (SELECT img_width FROM image WHERE img_name=page_title) AS width,
         (SELECT img_height FROM image WHERE img_name=page_title) AS height
-        FROM categorylinks JOIN page ON cl_from=page_id JOIN revision ON page_latest=rev_id JOIN image ON img_name=page_title WHERE cl_to=? AND page_namespace=6;""", (re.sub(' ', '_', uploadcats[country]), ))
+        FROM categorylinks JOIN page ON cl_from=page_id JOIN revision ON page_latest=rev_id JOIN image ON img_name=page_title WHERE cl_to=? AND page_namespace=6;""", (re.sub(u' ', u'_', uploadcats[country]), ))
         row = curs.fetchone()
         while row:
             try:

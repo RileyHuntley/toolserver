@@ -64,6 +64,7 @@ countrynames = {
 capitals = {
     'ar': 'ar-c',
     'at': 'wien',
+    'ch': 'ch-zh',
     'fr': 'fr-j',
     'mx': 'mx-mex',
     'ro': 'ro-b',
