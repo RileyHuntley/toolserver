@@ -61,18 +61,28 @@ def main():
         
     }
     
+    #regexps
+    spliter1 = ur'[\s\-\,\.\/\\]*' #spliter for months in words
+    spliter2 = ur'' #todo, spliter for dates with month in numbers
+    suffix1 = ur'[\s\.]*(st|nd|rd|th)?[\s\.]*' # March 1st, ..., not mandatory
+    regexp_r = {
+        'en1': re.compile(ur"(?im)^(?P<all>(?P<ini>\s*\|\s*Date\s*=\s*)(?P<date>(?P<day>[1-9]|1[0-9]|2[0-9]|3[0-1])%s%s(?P<month>January|Jan|February|Feb|March|Mar|April|Apr|May|June|Jun|July|Jul|August|Aug|September|Sept?|October|Oct|November|Nov|December|Dec)%s(?P<year>\d{4}))(?P<end>\s*))$" % (suffix1, spliter1, spliter1)),
+        'en2': re.compile(ur"(?im)^(?P<all>(?P<ini>\s*\|\s*Date\s*=\s*)(?P<month>January|Jan|February|Feb|March|Mar|April|Apr|May|June|Jun|July|Jul|August|Aug|September|Sept?|October|Oct|November|Nov|December|Dec)%s(?P<date>(?P<day>[1-9]|1[0-9]|2[0-9]|3[0-1])%s%s(?P<year>\d{4}))(?P<end>\s*))$" % (spliter1, suffix1, spliter1)),
+        'es1': re.compile(ur"(?im)^(?P<all>(?P<ini>\s*\|\s*Date\s*=\s*)(?P<date>(?P<day>[1-9]|1[0-9]|2[0-9]|3[0-1])\s+de\s+(?P<month>Enero|Ene|Febrero|Feb|Marzo|Mar|Abril|Abr|Mayo|May|Junio|Jun|Julio|Jul|Agosto|Ago|Septiembre|Sept?|Octubre|Oct|Noviembre|Nov|Diciembre|Dic)\s+de\s+(?P<year>\d{4}))(?P<end>\s*))$"),
+    }
+    
     dumpfilename = ''
-    mode = ''
+    modes = []
     skip = u'' #'File:Lagothrix lagotricha.jpg'
     if len(sys.argv) >= 2:
         dumpfilename = sys.argv[1]
     else:
-        print 'python script.py dumpfilename [lang] [skipuntilthispage]'
+        print 'python script.py dumpfilename [mode] [skipuntilthispage]'
         sys.exit()
     if len(sys.argv) >= 3: #en1, fr1, etc, regexps
-        mode = sys.argv[2]
-    if not mode:
-        mode = 'en1'
+        modes = [sys.argv[2]]
+    if not modes:
+        modes = regexp_r.keys()
     if len(sys.argv) >= 4:
         skip = sys.argv[3]
     
@@ -90,55 +100,49 @@ def main():
             else:
                 skip = ''
         
-        #regexps
-        spliter1 = ur'[\s\-\,\.\/\\]*' #spliter for months in words
-        spliter2 = ur'' #todo, spliter for dates with month in numbers
-        suffix1 = ur'[\s\.]*(st|nd|rd|th)?[\s\.]*' # March 1st, ..., not mandatory
-        regexp_r = {
-            'en1': ur"(?im)^(?P<all>(?P<ini>\s*\|\s*Date\s*=\s*)(?P<date>(?P<day>[1-9]|1[0-9]|2[0-9]|3[0-1])%s%s(?P<month>January|Jan|February|Feb|March|Mar|April|Apr|May|June|Jun|July|Jul|August|Aug|September|Sept?|October|Oct|November|Nov|December|Dec)%s(?P<year>\d{4}))(?P<end>\s*))$" % (suffix1, spliter1, spliter1),
-            'en2': ur"(?im)^(?P<all>(?P<ini>\s*\|\s*Date\s*=\s*)(?P<month>January|Jan|February|Feb|March|Mar|April|Apr|May|June|Jun|July|Jul|August|Aug|September|Sept?|October|Oct|November|Nov|December|Dec)%s(?P<date>(?P<day>[1-9]|1[0-9]|2[0-9]|3[0-1])%s%s(?P<year>\d{4}))(?P<end>\s*))$" % (spliter1, suffix1, spliter1),
-            'es1': ur"(?im)^(?P<all>(?P<ini>\s*\|\s*Date\s*=\s*)(?P<date>(?P<day>[1-9]|1[0-9]|2[0-9]|3[0-1])\s+de\s+(?P<month>Enero|Ene|Febrero|Feb|Marzo|Mar|Abril|Abr|Mayo|May|Junio|Jun|Julio|Jul|Agosto|Ago|Septiembre|Sept?|Octubre|Oct|Noviembre|Nov|Diciembre|Dic)\s+de\s+(?P<year>\d{4}))(?P<end>\s*))$",
-            
-        }
-        
-        m = re.findall(regexp_r[mode], x.text) # check dump text
-        if m:
-            print c, 'Candidate found in dump: ', x.title
-            
-            page = wikipedia.Page(wikipedia.Site("commons", "commons"), x.title)
-            if not page.exists() or page.isRedirectPage() or page.isDisambig():
-                continue #next page in dump
-            if not page.canBeEdited():
-                continue
-            
-            wtext = page.get()
-            newtext = wtext
-            
-            m = re.finditer(regexp_r[mode], wtext) # check live text to verify that the date is still in Commons page
-            for i in m:
-                print '   Commons page has a date to translate:', x.title
+        for mode in modes:
+            m = re.findall(regexp_r[mode], x.text) # check dump text
+            if m:
+                print c, 'Candidate found in dump: ', x.title
                 
-                #text to remove
-                regexp_rep = {
-                    'en1': i.group('all'),
-                    'en2': i.group('all'),
-                    'es1': i.group('all'),
+                page = wikipedia.Page(wikipedia.Site("commons", "commons"), x.title)
+                if not page.exists() or page.isRedirectPage() or page.isDisambig():
+                    print 'Page not found, deleted or redirect?'
+                    continue #next page in dump
+                if not page.canBeEdited():
+                    print 'Page cannot be edited, protected?'
+                    continue #next page in dump
+                
+                wtext = page.get()
+                newtext = wtext
+                
+                if re.findall(regexp_r[mode], wtext):
+                    m = re.finditer(regexp_r[mode], wtext) # check live text to verify that the date is still in Commons page
+                    for i in m:
+                        print '  Commons page has a date to translate:', x.title
+                        
+                        #text to remove
+                        regexp_rep = {
+                            'en1': i.group('all'),
+                            'en2': i.group('all'),
+                            'es1': i.group('all'),
+                        }
+                        #text to insert
+                        regexp_sub = { 
+                            'en1': ur"%s%s-%s-%02d%s" % (i.group('ini'), i.group('year'), month2number[i.group('month').strip().lower()], int(i.group('day')), i.group('end')),
+                            'en2': ur"%s%s-%s-%02d%s" % (i.group('ini'), i.group('year'), month2number[i.group('month').strip().lower()], int(i.group('day')), i.group('end')),
+                            'es1': ur"%s%s-%s-%02d%s" % (i.group('ini'), i.group('year'), month2number[i.group('month').strip().lower()], int(i.group('day')), i.group('end')),
+                        }
+                        
+                        newtext = newtext.replace(regexp_rep[mode], regexp_sub[mode], 1) #only the first occurence
+                        if wtext != newtext:
+                            wikipedia.showDiff(wtext, newtext)
+                            page.put(newtext, u"BOT - Changes to allow localization: %s → %s" % (regexp_rep[mode], regexp_sub[mode]))
+                        
+                        break #only one replacement and break
+                else:
+                    print '  Text in Commons page does not contain a data to be localised'
+                break #only one mode, then skip to the following page
                     
-                }
-                #text to insert
-                regexp_sub = { 
-                    'en1': ur"%s%s-%s-%02d%s" % (i.group('ini'), i.group('year'), month2number[i.group('month').strip().lower()], int(i.group('day')), i.group('end')),
-                    'en2': ur"%s%s-%s-%02d%s" % (i.group('ini'), i.group('year'), month2number[i.group('month').strip().lower()], int(i.group('day')), i.group('end')),
-                    'es1': ur"%s%s-%s-%02d%s" % (i.group('ini'), i.group('year'), month2number[i.group('month').strip().lower()], int(i.group('day')), i.group('end')),
-                    
-                }
-                
-                newtext = newtext.replace(regexp_rep[mode], regexp_sub[mode], 1) #only the first occurence
-                if wtext != newtext:
-                    wikipedia.showDiff(wtext, newtext)
-                    page.put(newtext, u"BOT - Changes to allow localization: %s → %s" % (regexp_rep[mode], regexp_sub[mode]))
-                
-                break #only one replacement and break
-                
 if __name__ == "__main__":
     main()
