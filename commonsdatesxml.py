@@ -107,10 +107,10 @@ def main():
                 
                 page = wikipedia.Page(wikipedia.Site("commons", "commons"), x.title)
                 if not page.exists() or page.isRedirectPage() or page.isDisambig():
-                    print 'Page not found, deleted or redirect?'
+                    print '  Page not found, deleted or redirect?'
                     continue #next page in dump
                 if not page.canBeEdited():
-                    print 'Page cannot be edited, protected?'
+                    print '  Page cannot be edited, protected?'
                     continue #next page in dump
                 
                 wtext = page.get()
