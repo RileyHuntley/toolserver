@@ -61,7 +61,7 @@ uploadcats = {
     u'netherlands': u'Images from Wiki Loves Monuments 2012 in the Netherlands', 
     u'norway': u'Images from Wiki Loves Monuments 2012 in Norway', 
     u'panama': u'Images from Wiki Loves Monuments 2012 in Panama', 
-    u'philippines': u'Images from Wiki Loves Monuments 2012 in Philippines', 
+    u'philippines': u'Images from Wiki Loves Monuments 2012 in the Philippines', 
     u'poland': u'Images from Wiki Loves Monuments 2012 in Poland', 
     u'romania': u'Images from Wiki Loves Monuments 2012 in Romania', 
     u'russia': u'Images from Wiki Loves Monuments 2012 in Russia', 
@@ -284,7 +284,7 @@ def main():
     c = 0
     for size, title, username, country in sizes_list[:15]: 
         c += 1
-        sizes_rank += u'<tr><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/%s">%s</a></td><td>%.1f</td><td><a href="http://commons.wikimedia.org/wiki/User:%s">%s</a></td><td>%s</td></tr>' % (c, title, len(title)>5+15 and (u'%s...' % title[5:15]) or title[5:], size/1024.0/1024, username, username, countrynames[country])
+        sizes_rank += u'<tr><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/File:%s">%s</a></td><td>%.1f</td><td><a href="http://commons.wikimedia.org/wiki/User:%s">%s</a></td><td>%s</td></tr>' % (c, title, len(title)>5+15 and (u'%s...' % title[5:15]) or title[5:], size/1024.0/1024, username, username, countrynames[country])
     sizes_rank += u'<tr><td></td><td><b>Total</b></td><td><b>%.1f</b></td><td></td><td></td></tr>' % (sum([resolutions[k]['size'] for k in resolutions.keys()])/1024.0/1024)
     sizes_rank = u"""<table id="sizes" class="wikitable" style="text-align: center;">
     <tr><th>#</th><th>File</th><th>MBytes</th><th>Uploader</th><th>Country</th></tr>
