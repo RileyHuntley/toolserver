@@ -412,6 +412,8 @@ iso3166 = {
     'FR-U': u"Provence-Alpes-Côte d'Azur",
     'FR-V': u"Rhône-Alpes",
     
+    'IL': u"Israel",
+    
     'IN':    u"India",
     'IN-AP': u"Andhra Pradesh",
     'IN-AR': u"Arunachal Pradesh",
@@ -758,6 +760,12 @@ iso3166 = {
     'ZA-NW': u"North West",
     'ZA-WC': u"Western Cape",
 }
+langbycountry = {
+    'il': 'he'
+}
+uploadtrans = {
+    'he': u"העלאת תמונה",
+}
 
 def placenamesconvert(country, i):
     if i == 'other':
@@ -914,6 +922,7 @@ def main():
                     thumburl = u'http://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Image_upload-tango.svg/%s-Image_upload-tango.svg.png' % (imagesize)
                     commonspage = uploadlink
                 
+                uploadtext = langbycountry.has_key(country) and uploadtrans.has_key(langbycountry[country]) and uploadtrans[langbycountry[country]] or u'Upload!'
                 output += u"""<Placemark>
 <description>
 <![CDATA[
@@ -921,7 +930,7 @@ def main():
 (%s, ID: %s)<br/>
 <a href="%s"><img src="%s" title="%s" /></a><br/>
 <span style="font-size:150%%;border:2px solid black;background-color:pink;padding:3px;">
-<a href="%s"><b>Upload!</b></a></span>
+<a href="%s"><b>%s</b></a></span>
 ]]>
 </description>
 <styleUrl>#%s</styleUrl>
@@ -929,7 +938,7 @@ def main():
 <coordinates>%s,%s</coordinates>
 </Point>
 </Placemark>
-""" % (props['monument_article'] and (u'<a href="http://%s.wikipedia.org/wiki/%s">%s</a>' % (props['lang'], props['monument_article'], props['name'])) or props['name'], props['municipality'], id, commonspage, thumburl, props['image'] and u'' or u"Upload!", uploadlink, props['image'] and u'y' or u'n', props['lon'], props['lat'])
+""" % (props['monument_article'] and (u'<a href="http://%s.wikipedia.org/wiki/%s">%s</a>' % (props['lang'], props['monument_article'], props['name'])) or props['name'], props['municipality'], id, commonspage, thumburl, props['image'] and u'' or uploadtext, uploadlink, uploadtext, props['image'] and u'y' or u'n', props['lon'], props['lat'])
                 m += 1
             
             #print country, admin, m
