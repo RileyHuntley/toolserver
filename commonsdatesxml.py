@@ -139,6 +139,22 @@ def main():
             u"grudzień":u"12", 
         },
         
+        #Portuguese
+        u"pt": {
+            u"janeiro":u"01", u"jan":u"01", 
+            u"fevereiro":u"02", u"fev":u"02", 
+            u"março":u"03", u"mar":u"03", 
+            u"abril":u"04", u"abr":u"04", 
+            u"maio":u"05", 
+            u"junho":u"06",
+            u"julho":u"07",
+            u"agosto":u"08", 
+            u"setembro":u"09", 
+            u"outubro":u"10", 
+            u"novembre":u"11", 
+            u"dezembro":u"12", 
+        },
+        
     }
     
     #regexps
@@ -154,11 +170,12 @@ def main():
         'it-ddmonthyyyy': re.compile(ur"(?im)^(?P<all>(?P<ini>\s*\|\s*Date\s*=\s*)(?P<date>(?P<day>[1-9]|1[0-9]|2[0-9]|3[0-1])%s(?P<month>%s)%s(?P<year>\d{4}))(?P<end>\s*))$" % (spliter1, '|'.join(month2number['it'].keys()), spliter1)),
         'nl-ddmonthyyyy': re.compile(ur"(?im)^(?P<all>(?P<ini>\s*\|\s*Date\s*=\s*)(?P<date>(?P<day>[1-9]|1[0-9]|2[0-9]|3[0-1])%s(?P<month>%s)%s(?P<year>\d{4}))(?P<end>\s*))$" % (spliter1, '|'.join(month2number['nl'].keys()), spliter1)),
         'pl-ddmonthyyyy': re.compile(ur"(?im)^(?P<all>(?P<ini>\s*\|\s*Date\s*=\s*)(?P<date>(?P<day>[1-9]|1[0-9]|2[0-9]|3[0-1])%s(?P<month>%s)%s(?P<year>\d{4}))(?P<end>\s*))$" % (spliter1, '|'.join(month2number['pl'].keys()), spliter1)),
+        'pt-ddmonthyyyy': re.compile(ur"(?im)^(?P<all>(?P<ini>\s*\|\s*Date\s*=\s*)(?P<date>(?P<day>[1-9]|1[0-9]|2[0-9]|3[0-1])\s+de\s+(?P<month>%s)\s+de\s+(?P<year>\d{4}))(?P<end>\s*))$" % ('|'.join(month2number['pt'].keys()))),
     }
     
     dumpfilename = ''
     modes = []
-    skip = u'' #'File:Lagothrix lagotricha.jpg'
+    skip = u'File:IMG 0056 Croce Monte Falterona.JPG' #'File:Lagothrix lagotricha.jpg'
     if len(sys.argv) >= 2:
         dumpfilename = sys.argv[1]
     else:
@@ -207,14 +224,14 @@ def main():
                         print '  Commons page has a date to translate:', x.title
                         
                         #text to remove
-                        if mode in ['en-ddmonthyyyy', 'en-monthddyyyy', 'es-ddmonthyyyy', 'fr-ddmonthyyyy', 'de-ddmonthyyyy', 'it-ddmonthyyyy', 'nl-ddmonthyyyy', 'pl-ddmonthyyyy', ]:
+                        if mode in ['en-ddmonthyyyy', 'en-monthddyyyy', 'es-ddmonthyyyy', 'fr-ddmonthyyyy', 'de-ddmonthyyyy', 'it-ddmonthyyyy', 'nl-ddmonthyyyy', 'pl-ddmonthyyyy', 'pt-ddmonthyyyy', ]:
                             regexp_rep = i.group('all')
                         elif False: #other modes...
                             pass
                         
                         #text to insert
                         monthname = i.group('month').strip().lower()
-                        if mode in ['en-ddmonthyyyy', 'en-monthddyyyy', 'es-ddmonthyyyy', 'fr-ddmonthyyyy', 'de-ddmonthyyyy', 'it-ddmonthyyyy', 'nl-ddmonthyyyy', 'pl-ddmonthyyyy', ]:
+                        if mode in ['en-ddmonthyyyy', 'en-monthddyyyy', 'es-ddmonthyyyy', 'fr-ddmonthyyyy', 'de-ddmonthyyyy', 'it-ddmonthyyyy', 'nl-ddmonthyyyy', 'pl-ddmonthyyyy', 'pt-ddmonthyyyy', ]:
                             regexp_sub = ur"%s%s-%s-%02d%s" % (i.group('ini'), i.group('year'), month2number[mode.split('-')[0]][monthname], int(i.group('day')), i.group('end'))
                         elif False: #other modes...
                             pass
