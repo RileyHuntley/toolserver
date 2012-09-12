@@ -56,7 +56,7 @@ countrynames = {
     'rs': 'Serbia',
     'ru': 'Russia',
     #'se': 'Sweden',
-    #'sk': 'Slovakia',
+    'sk': 'Slovakia',
     'ua': 'Ukraine',
     'us': 'United States',
     'za': 'South Africa',
@@ -661,6 +661,8 @@ iso3166 = {
     'RS-05': u"Zapadnobački okrug",
     'RS-16': u"Zlatiborski okrug",
     
+    'SK': u"Slovakia",
+    
     'UA': u"Ukraine",
     'UA-71': u"Черкаська область",
     'UA-74': u"Чернігівська область",
@@ -800,6 +802,8 @@ def main():
         #loading monuments from database
         if country == 'dk':
             curs.execute("SELECT * FROM monuments_all WHERE (country=? OR country=?) AND lat IS NOT NULL AND lon IS NOT NULL;", ('dk-bygning', 'dk-fortids'))
+        elif country == 'sk':
+            curs.execute("SELECT * FROM monuments_all WHERE country=? AND lang=? AND lat IS NOT NULL AND lon IS NOT NULL;", (country, country))
         else:
             curs.execute("SELECT * FROM monuments_all WHERE country=? AND lat IS NOT NULL AND lon IS NOT NULL;", (country,))
         row = curs.fetchone()
