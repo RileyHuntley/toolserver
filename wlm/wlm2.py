@@ -175,7 +175,7 @@ wlmurls = {
     'rs': 'http://wlm.wikimedia.rs',
     'ru': 'http://wikilovesmonuments.ru',
     'se': 'http://wikilovesmonuments.se', 
-    'sk': 'http://sk.wikipedia.org/wiki/Wikip%C3%A9dia:Stretnutia/Pozvanie', 
+    'sk': 'http://sk.wikipedia.org/wiki/Wikip%C3%A9dia:WikiProjekt_Wiki_miluje_pamiatky', 
     'ua': 'http://wlm.org.ua' ,
     'us': 'http://wikilovesmonuments.us',
     'za': 'http://www.wikilovesmonuments.co.za',
