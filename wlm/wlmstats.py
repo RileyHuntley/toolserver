@@ -230,7 +230,7 @@ def main():
        
         var dates_graph = $("#dates_graph");
         var dates_graph_data = [ dates_graph_data, ];
-        var dates_graph_options = { xaxis: { mode: "time", min: (new Date("2012/08/31")).getTime(), max: (new Date("2012/09/30")).getTime() }, bars: { show: false, barWidth: 0.6 }, lines: { show: true }, points: { show: true }, legend: { noColumns: 1 }, grid: { hoverable: true }, clickable: true, hoverable: true
+        var dates_graph_options = { xaxis: { mode: "time", min: (new Date("2012/08/31")).getTime(), max: (new Date("2012/10/01")).getTime() }, bars: { show: false, barWidth: 0.6 }, lines: { show: true }, points: { show: true }, legend: { noColumns: 1 }, grid: { hoverable: true }, clickable: true, hoverable: true
 };
         $.plot(dates_graph, dates_graph_data, dates_graph_options);
     });
