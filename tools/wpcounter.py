@@ -487,7 +487,7 @@ Total visits: <?php include ("../visits.php"); ?>
 
 <span id='counter'>&nbsp;</span><br/>
 
-<span id="header"><a href="http://en.wikipedia.org/wiki/Wikipedia:There_is_a_deadline">There is a deadline</a></span><br/>
+<span id="header"><a href="http://en.wikipedia.org/wiki/User:Emijrp/All_human_knowledge">All human knowledge</a> &ndash; <a href="http://en.wikipedia.org/wiki/Wikipedia:There_is_a_deadline">There is a deadline</a></span><br/>
 
 <p id="donate"><a href="http://wikimediafoundation.org/wiki/Support_Wikipedia">Donate to Wikimedia Foundation</a></p>
 <p id="f11">Press F11 for fullscreen</p>

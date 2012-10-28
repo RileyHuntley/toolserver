@@ -175,18 +175,19 @@ def main():
     
     dumpfilename = ''
     modes = []
-    skip = u'File:IMG 0056 Croce Monte Falterona.JPG' #'File:Lagothrix lagotricha.jpg'
+    skip = u'' #'File:Lagothrix lagotricha.jpg'
     if len(sys.argv) >= 2:
         dumpfilename = sys.argv[1]
     else:
         print 'python script.py dumpfilename [mode] [skipuntilthispage]'
         sys.exit()
     if len(sys.argv) >= 3: #en1, fr1, etc, regexps
-        modes = [sys.argv[2]]
+        if sys.argv[2] != 'all':
+            modes = [sys.argv[2]]
     if not modes:
         modes = regexp_r.keys()
     if len(sys.argv) >= 4:
-        skip = sys.argv[3]
+        skip = re.sub('_', ' ', sys.argv[3])
     
     xml = xmlreader.XmlDump(dumpfilename, allrevisions=False)
     c = 0
