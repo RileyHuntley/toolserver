@@ -23,6 +23,7 @@ import wikipedia
 #<monument country="es" lang="es" id="0000009" adm0="es" adm1="es-cm" adm2="es-cu" adm3="[[Cuenca (España)|Cuenca]]" adm4="" name="Museo Arqueológico de Cuenca" address="Calle Obispo Valero, 12" municipality="[[Cuenca (España)|Cuenca]]" lat="40.07819" lon="-2.129209" image="Museo de Cuenca. Fachada.JPG" source="http://es.wikipedia.org/w/index.php?title=Anexo:Bienes_de_interés_cultural_de_la_provincia_de_Cuenca&amp;redirect=no&amp;useskin=monobook&amp;oldid=59834709" monument_article="Museo_de_Cuenca" registrant_url="" changed="2013-01-28 05:00:17" />
 
 def unquote(s):
+    s = re.sub(ur'_', ur' ', s)
     s = re.sub(ur'&quot;', ur'"', s)
     return s
 
@@ -118,10 +119,25 @@ for i in m:
         elif name.startswith(u'Monasterio de'):
             monumenttype = u'monastery'
             name = re.sub(ur"(?im)Monasterio (de|del|de la) ", ur"Monastery of ", name)
+        elif name.startswith(u'Puerta de'):
+            monumenttype = u'gate'
+            name = re.sub(ur"(?im)Puerta (de|del|de la) ", ur"Gate of ", name)
+        elif name.startswith(u'Arco de'):
+            monumenttype = u'arc'
+            name = re.sub(ur"(?im)Arco (de|del|de la) ", ur"Arc of ", name)
+        elif name.startswith(u'Castillo de'):
+            monumenttype = u'castle'
+            name = re.sub(ur"(?im)Castillo (de|del|de la) ", ur"Castle of ", name)
+        elif name.startswith(u'Colegiata de'):
+            monumenttype = u'collegiate church'
+            name = re.sub(ur"(?im)Colegiata (de|del|de la) ", ur"Collegiate church of ", name)
+        elif name.startswith(u'(Torre|Torreón) de'):
+            monumenttype = u'tower'
+            name = re.sub(ur"(?im)(Torre|Torreón) (de|del|de la) ", ur"Tower of ", name)
         #colegiata, iglesia-convento, 
         
         #interwikis
-        monument_article = i.group('monument_article')
+        monument_article = unquote(i.group('monument_article'))
         interwikis = u''
         if monument_article:
             iwpage = wikipedia.Page(wikipedia.Site(i.group('lang'), 'wikipedia'), monument_article)
@@ -139,7 +155,7 @@ for i in m:
             'name': name,
             'nativename': nativename,
             'nativelang': langs[i.group('lang')],
-            'image': i.group('image'),
+            'image': unquote(i.group('image')),
             'country': countries[i.group('country')], 
             'lat': i.group('lat'),
             'lon': i.group('lon'),
