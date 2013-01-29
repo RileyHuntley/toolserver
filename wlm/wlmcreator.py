@@ -30,7 +30,7 @@ def unquote(s):
 countries = { 'es': 'Spain', }
 langs = { 'es': 'Spanish', }
 
-article_template = u"""{{Infobox Historic Site
+article_template = u"""$translationtag{{Infobox Historic Site
 | name = $name
 | native_name = $nativename
 | native_language = $nativelang
@@ -62,7 +62,7 @@ The '''$name''' ([[Spanish language|Spanish]]: ''$nativename'') is a $monumentty
 
 * [[$seealsolist]]
 
-{{Spain-struct-stub}}
+$stubtag
 
 $categories
 
@@ -140,21 +140,42 @@ for i in m:
         elif name.startswith(u'(Torre|Torreón) de'):
             monumenttype = u'tower'
             name = re.sub(ur"(?im)(Torre|Torreón) (de|del|de la) ", ur"Tower of ", name)
-        #colegiata, iglesia-convento, 
+        elif name.startswith(u'Museo de'):
+            monumenttype = u'museum'
+            name = re.sub(ur"(?im)Museo (de|del|de la) ", ur"Museum of ", name)
+        elif name.startswith(u'Palacio de'):
+            monumenttype = u'palace'
+            name = re.sub(ur"(?im)Palacio (de|del|de la) ", ur"Palace of ", name)
+        #iglesia-convento, 
+        
+        #stubtag
+        stubtag = u'{{Spain-struct-stub}}'
+        if re.search(u'(?im)(Church|Cathedral|Collegiate|Hermitage)', name):
+            stubtag = u'{{Spain-church-stub}}'
+        elif re.search(u'(?im)(Convent|Monastery)', name):
+            stubtag = u'{{Spain-Christian-monastery-stub}}'
+        elif re.search(u'(?im)(Castle)', name):
+            stubtag = u'{{Spain-castle-stub}}'
+        elif re.search(u'(?im)(Museum)', name):
+            stubtag = u'{{Spain-museum-stub}}'
+        elif re.search(u'(?im)(Palace)', name):
+            stubtag = u'{{Spain-palace-stub}}'
         
         #see also
         seealsolist = u'List of Bien de Interés Cultural in the Province of '
         
         #categories
         cats = [u'Category:Bienes de Interés Cultural', u'Category:Bien de Interés Cultural landmarks in the Province of ', ]
-        categories = u'\n'.join([u'[[%s]]' for cat in cats])
+        categories = u'\n'.join([u'[[%s]]' % (cat) for cat in cats])
         
         #interwikis
         monument_article = unquote(i.group('monument_article'))
+        translationtag = u''
         interwikis = u''
         if monument_article:
             iwpage = wikipedia.Page(wikipedia.Site(i.group('lang'), 'wikipedia'), monument_article)
             if iwpage.exists() and not iwpage.isRedirectPage():
+                translationtag = u'{{Expand Spanish|%s|date={{subst:CURRENTMONTHNAME}} {{subst:CURRENTYEAR}}}}\n' % (monument_article)
                 iws = re.findall(ur"(?im)^(\[\[[a-z]{2}:[^\]]+?\]\])", iwpage.get())
                 iws.append(u'[[es:%s]]' % (monument_article))
                 iws.sort()
@@ -179,6 +200,7 @@ for i in m:
             'monumenttype': monumenttype,
             'seealsolist': seealsolist,
             'categories': categories,
-            
+            'translationtag': translationtag,
+            'stubtag': stubtag,
             })
         
