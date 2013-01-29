@@ -125,7 +125,7 @@ $interwikis
 """
 article_template = string.Template(article_template)
 
-f = urllib.urlopen('http://toolserver.org/~erfgoed/api/api.php?action=search&srcountry=es&srlang=es&srimage=%jpg&limit=1000&format=xml')
+f = urllib.urlopen('http://toolserver.org/~erfgoed/api/api.php?action=search&srcountry=es&srlang=es&srimage=%jpg&limit=5000&format=xml')
 raw = unicode(f.read(), 'utf-8')
 f.close()
 
@@ -140,8 +140,10 @@ for i in m:
     name = nativename
     
     if '&' in name:
-        print '--> Bad name', name.encode('utf-8')
-        continue
+        nativename = nativename.split('&lt;i&gt;')[0].strip()
+        name = nativename
+        #print '--> Bad name', name.encode('utf-8')
+        #continue
     
     adm = i.group('adm2').upper()
     if adm not in adms.keys():
@@ -254,7 +256,6 @@ for i in m:
                     print '--> Page for this monument exists:', iws
                     continue
         
-        print '#'*50
         output = article_template.substitute({
             'name': name,
             'nativename': nativename,
@@ -278,3 +279,7 @@ for i in m:
         g = open('wlmcreator.txt', 'a')
         g.write(output.encode('utf-8'))
         g.close()
+        
+        print '#'*50
+        print output
+        
