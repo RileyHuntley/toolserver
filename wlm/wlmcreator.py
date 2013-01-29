@@ -81,7 +81,10 @@ adms = {
     'ES-Z': u'Province of Zaragoza', 
 }
 
-article_template = u"""$translationtag{{Infobox Historic Site
+article_template = u"""
+== [[$name]] ([[Talk:$name|talk]]) (#R [[$nativename]]) ==
+<pre>
+$translationtag{{Infobox Historic Site
 | name = $name
 | native_name = $nativename
 | native_language = $nativelang
@@ -118,6 +121,7 @@ $stubtag
 $categories
 
 $interwikis
+</pre>
 """
 article_template = string.Template(article_template)
 
@@ -181,6 +185,9 @@ for i in m:
         elif re.search(ur'(?im)^Monasterio de', name):
             monumenttype = u'monastery'
             name = re.sub(ur"(?im)Monasterio (de|del|de la) ", ur"Monastery of ", name)
+        elif re.search(ur'(?im)^Ex-Monasterio de', name):
+            monumenttype = u'ex-monastery'
+            name = re.sub(ur"(?im)Ex-Monasterio (de|del|de la) ", ur"Ex-Monastery of ", name)
         elif re.search(ur'(?im)^Puerta de', name):
             monumenttype = u'gate'
             name = re.sub(ur"(?im)Puerta (de|del|de la) ", ur"Gate of ", name)
@@ -248,7 +255,7 @@ for i in m:
                     continue
         
         print '#'*50
-        print article_template.substitute({
+        output = article_template.substitute({
             'name': name,
             'nativename': nativename,
             'nativelang': langs[i.group('lang')],
@@ -268,3 +275,6 @@ for i in m:
             'adm_division': adm_division,
             })
         
+        g = open('wlmcreator.txt', 'a')
+        g.write(output.encode('utf-8'))
+        g.close()
