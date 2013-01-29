@@ -58,7 +58,13 @@ The '''$name''' ([[Spanish language|Spanish]]: ''$nativename'') is a $monumentty
 == References ==
 {{reflist}}
 
+== See also ==
+
+* [[$seealsolist]]
+
 {{Spain-struct-stub}}
+
+$categories
 
 $interwikis
 """
@@ -136,6 +142,13 @@ for i in m:
             name = re.sub(ur"(?im)(Torre|Torreón) (de|del|de la) ", ur"Tower of ", name)
         #colegiata, iglesia-convento, 
         
+        #see also
+        seealsolist = u'List of Bien de Interés Cultural in the Province of '
+        
+        #categories
+        cats = [u'Category:Bienes de Interés Cultural', u'Category:Bien de Interés Cultural landmarks in the Province of ', ]
+        categories = u'\n'.join([u'[[%s]]' for cat in cats])
+        
         #interwikis
         monument_article = unquote(i.group('monument_article'))
         interwikis = u''
@@ -164,5 +177,8 @@ for i in m:
             'id': i.group('id'),
             'interwikis': interwikis,
             'monumenttype': monumenttype,
+            'seealsolist': seealsolist,
+            'categories': categories,
+            
             })
         
