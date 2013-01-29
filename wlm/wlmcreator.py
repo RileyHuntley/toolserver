@@ -29,6 +29,57 @@ def unquote(s):
 
 countries = { 'es': 'Spain', }
 langs = { 'es': 'Spanish', }
+adms = { 
+    'ES-C': u'Province of A Coruña', 
+    'ES-VI': u'Álava‎', 
+    'ES-AB': u'Province of Albacete‎', 
+    'ES-A': u'Province of Alicante‎', 
+    'ES-O': u'Asturias', 
+    'ES-AV': u'Province of Ávila‎', 
+    'ES-BA': u'Province of Badajoz', 
+    'ES-PM': u'Province of Balearic Islands‎', 
+    'ES-B': u'Province of Barcelona‎', 
+    'ES-BU': u'Province of Burgos‎', 
+    'ES-CC': u'Province of Cáceres‎', 
+    'ES-CA': u'Province of Cádiz‎', 
+    'ES-S': u'Cantabria‎', 
+    'ES-CS': u'Province of Castellón‎', 
+    'ES-CR': u'Province of Ciudad Real', 
+    'ES-CO': u'Province of Córdoba (Spain)‎', 
+    'ES-CU': u'Province of Cuenca (Spain)', 
+    'ES-GI': u'Province of Girona‎', 
+    'ES-GR': u'Province of Granada‎', 
+    'ES-GU': u'Province of Guadalajara‎', 
+    'ES-SS': u'Gipuzkoa‎', 
+    'ES-H': u'Province of Huelva‎', 
+    'ES-HU': u'Province of Huesca‎', 
+    'ES-J': u'Province of Jaén (Spain)‎', 
+    'ES-LO': u' La Rioja (Spain)‎', 
+    'ES-GC': u'Province of Las Palmas‎', 
+    'ES-LE': u'Province of León‎', 
+    'ES-L': u'Province of Lleida‎', 
+    'ES-LU': u'Province of Lugo‎', 
+    'ES-M': u'Community of Madrid', 
+    'ES-MA': u'Province of Málaga‎', 
+    'ES-MU': u'Region of Murcia‎', 
+    'ES-NA': u'Navarre', 
+    'ES-OR': u'Province of Ourense‎', 
+    'ES-P': u'Province of Palencia‎', 
+    'ES-PO': u'Province of Pontevedra‎', 
+    'ES-SA': u'Province of Salamanca‎', 
+    'ES-TF': u'Province of Santa Cruz de Tenerife‎', 
+    'ES-SG': u'Province of Segovia‎', 
+    'ES-SE': u'Province of Seville', 
+    'ES-SO': u'Province of Soria', 
+    'ES-T': u'Province of Tarragona', 
+    'ES-TE': u'Province of Teruel', 
+    'ES-TO': u'Province of Toledo', 
+    'ES-V': u'Province of Valencia', 
+    'ES-VA': u'Province of Valladolid', 
+    'ES-BI': u'Biscay‎', 
+    'ES-ZA': u'Province of Zamora', 
+    'ES-Z': u'Province of Zaragoza', 
+}
 
 article_template = u"""$translationtag{{Infobox Historic Site
 | name = $name
@@ -88,6 +139,11 @@ for i in m:
         print '--> Bad name', name.encode('utf-8')
         continue
     
+    adm = i.group('adm2').upper()
+    if adm not in adms.keys():
+        print adm, 'not in adms dictionary'
+        continue
+    
     if i.group('country') == 'es' and i.group('lang') == 'es' and i.group('id') and i.group('adm0') == 'es':
         #get date
         f = urllib.urlopen('http://toolserver.org/~platonides/wlm2011/ids.php?bic=%s' % (i.group('id')))
@@ -104,46 +160,46 @@ for i in m:
         municipality = re.sub(ur"[\[\]]", ur"", municipality)
         
         monumenttype = u'XYZ'
-        if name.startswith(u'Iglesia de'):
+        if re.search(ur'(?im)^Iglesia de', name):
             monumenttype = u'church'
             name = re.sub(ur"(?im)Iglesia (de|del|de la) ", ur"Church of ", name)
-        elif name.startswith(u'Catedral de'):
+        elif re.search(ur'(?im)^Catedral de', name):
             monumenttype = u'cathedral'
             name = re.sub(ur"(?im)Catedral (de|del|de la) ", ur"Cathedral of ", name)
-        elif name.startswith(u'Capilla de'):
+        elif re.search(ur'(?im)^Capilla de', name):
             monumenttype = u'chapel'
             name = re.sub(ur"(?im)Capilla (de|del|de la) ", ur"Chapel of ", name)
-        elif name.startswith(u'Ermita de'):
+        elif re.search(ur'(?im)^Ermita de', name):
             monumenttype = u'hermitage'
             name = re.sub(ur"(?im)Ermita (de|del|de la) ", ur"Hermitage of ", name)
-        elif name.startswith(u'Convento de'):
+        elif re.search(ur'(?im)^Convento de', name):
             monumenttype = u'convent'
             name = re.sub(ur"(?im)Convento (de|del|de la) ", ur"Convent of ", name)
-        elif name.startswith(u'Muralla de'):
+        elif re.search(ur'(?im)^Muralla de', name):
             monumenttype = u'wall'
             name = re.sub(ur"(?im)Muralla (de|del|de la) ", ur"Wall of ", name)
-        elif name.startswith(u'Monasterio de'):
+        elif re.search(ur'(?im)^Monasterio de', name):
             monumenttype = u'monastery'
             name = re.sub(ur"(?im)Monasterio (de|del|de la) ", ur"Monastery of ", name)
-        elif name.startswith(u'Puerta de'):
+        elif re.search(ur'(?im)^Puerta de', name):
             monumenttype = u'gate'
             name = re.sub(ur"(?im)Puerta (de|del|de la) ", ur"Gate of ", name)
-        elif name.startswith(u'Arco de'):
+        elif re.search(ur'(?im)^Arco de', name):
             monumenttype = u'arc'
             name = re.sub(ur"(?im)Arco (de|del|de la) ", ur"Arc of ", name)
-        elif name.startswith(u'Castillo de'):
+        elif re.search(ur'(?im)^Castillo de', name):
             monumenttype = u'castle'
             name = re.sub(ur"(?im)Castillo (de|del|de la) ", ur"Castle of ", name)
-        elif name.startswith(u'Colegiata de'):
+        elif re.search(ur'(?im)^Colegiata de', name):
             monumenttype = u'collegiate church'
             name = re.sub(ur"(?im)Colegiata (de|del|de la) ", ur"Collegiate church of ", name)
-        elif name.startswith(u'(Torre|Torreón) de'):
+        elif re.search(ur'(?im)^(Torre|Torreón) de', name):
             monumenttype = u'tower'
             name = re.sub(ur"(?im)(Torre|Torreón) (de|del|de la) ", ur"Tower of ", name)
-        elif name.startswith(u'Museo de'):
+        elif re.search(ur'(?im)^Museo de', name):
             monumenttype = u'museum'
             name = re.sub(ur"(?im)Museo (de|del|de la) ", ur"Museum of ", name)
-        elif name.startswith(u'Palacio de'):
+        elif re.search(ur'(?im)^Palacio de', name):
             monumenttype = u'palace'
             name = re.sub(ur"(?im)Palacio (de|del|de la) ", ur"Palace of ", name)
         #iglesia-convento, 
@@ -161,11 +217,18 @@ for i in m:
         elif re.search(u'(?im)(Palace)', name):
             stubtag = u'{{Spain-palace-stub}}'
         
+        adm_division = adms[adm]
+        if adm_division.startswith('Province') or adm_division.startswith('Community') or adm_division.startswith('Region'):
+            adm_division = 'the %s' % (adm_division)
+        if not adm_division:
+            print 'Error in adm_division'
+            continue
+        
         #see also
-        seealsolist = u'List of Bien de Interés Cultural in the Province of '
+        seealsolist = u'List of Bien de Interés Cultural in %s' % (adm_division)
         
         #categories
-        cats = [u'Category:Bienes de Interés Cultural', u'Category:Bien de Interés Cultural landmarks in the Province of ', ]
+        cats = [u'Category:Bienes de Interés Cultural', u'Category:Bien de Interés Cultural landmarks in %s' % (adm_division), ]
         categories = u'\n'.join([u'[[%s]]' % (cat) for cat in cats])
         
         #interwikis
@@ -202,5 +265,6 @@ for i in m:
             'categories': categories,
             'translationtag': translationtag,
             'stubtag': stubtag,
+            'adm_division': adm_division,
             })
         
