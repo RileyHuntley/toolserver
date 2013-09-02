@@ -274,6 +274,43 @@ def main():
 };
         $.plot(dates_graph, dates_graph_data, dates_graph_options);
     });
+    
+    //from http://people.iola.dk/olau/flot/examples/interacting.html
+    function showTooltip(x, y, contents) {
+        $('<div id="tooltip">' + contents + '</div>').css( {
+            position: 'absolute',
+            display: 'none',
+            top: y + 5,
+            left: x + 12,
+            border: '1px solid #fdd',
+            padding: '2px',
+            'background-color': '#fee',
+            opacity: 0.80
+        }).appendTo("body").fadeIn(200);
+    }
+
+    var previousPoint = null;
+    $("#dates_graph").bind("plothover", function (event, pos, item) {
+        $("#x").text(pos.x.toFixed(2));
+        $("#y").text(pos.y.toFixed(2));
+        
+        if (item) {
+            if (previousPoint != item.datapoint) {
+                previousPoint = item.datapoint;
+                
+                $("#tooltip").remove();
+                var x = item.datapoint[0].toFixed(2),
+                    y = item.datapoint[1].toFixed(2);
+                
+                showTooltip(item.pageX, item.pageY,
+                            "y = "+Math.round(y));
+            }
+        } else {
+            $("#tooltip").remove();
+            previousPoint = null;            
+        }
+    });
+
     </script>""" % (width, height, dates_graph_data)
 
     hours_graph_data = u', '.join([u'["%s", %s]' % (k, v) for k, v in hours_list])
@@ -326,7 +363,7 @@ def main():
     c = 0
     for size, title, username, country in sizes_list[:15]: 
         c += 1
-        sizes_rank += u'<tr><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/File:%s">%s</a></td><td>%.1f</td><td><a href="http://commons.wikimedia.org/wiki/User:%s">%s</a></td><td>%s</td></tr>' % (c, title, len(title)>5+15 and (u'%s...' % title[5:15]) or title[5:], size/1024.0/1024, username, username, countrynames[country])
+        sizes_rank += u'<tr><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/File:%s">%s</a></td><td>%.1f</td><td><a href="http://commons.wikimedia.org/wiki/User:%s">%s</a></td><td>%s</td></tr>' % (c, title, len(title)>10 and (u'%s...' % title[:10]) or title, size/1024.0/1024, username, username, countrynames[country])
     sizes_rank += u'<tr><td></td><td><b>Total</b></td><td><b>%.1f</b></td><td></td><td></td></tr>' % (sum([resolutions[k]['size'] for k in resolutions.keys()])/1024.0/1024)
     sizes_rank = u"""<table id="sizes" class="wikitable" style="text-align: center;">
     <tr><th>#</th><th>File</th><th>MBytes</th><th>Uploader</th><th>Country</th></tr>
@@ -386,9 +423,9 @@ def main():
 </tr>
 </table>
 
-(<a href="files.txt">Download metadata and make your own statistics</a>)
-<br/>See <a href="stats-2012.php">2012 stats</a> (<a href="files-2012.txt">metadata</a>)
-<br/>
+(<a href="files.txt">Download 2013 metadata and make your own statistics</a>)
+<br/><br/>See <a href="stats-2012.php">2012 stats</a> (<a href="files-2012.txt">2012 metadata</a>)
+<br/><br/>
 
 <i>Last update: %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a> using <a href="http://code.google.com/p/flot/">flot</a>. <a href="http://code.google.com/p/toolserver/source/browse/trunk/wlm/wlmstats.py">Source code</a> is GPL. Visits: <?php include ("../visits.php"); ?></i>
 
