@@ -184,8 +184,8 @@ def main():
         row = curs.fetchone()
         while row:
             try:
-                page_title = row['page_title']
-                username = row['username']
+                page_title = unicode(row['page_title'], 'utf-8')
+                username = unicode(row['username'], 'utf-8')
                 date = row['timestamp']
                 date = u'%s-%s-%sT%s:%s:%sZ' % (date[0:4], date[4:6], date[6:8], date[8:10], date[10:12], date[12:14])
                 resolution = u'%s×%s' % (str(row['width']), str(row['height']))
