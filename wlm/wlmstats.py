@@ -34,68 +34,67 @@ select page_title,
 from iwlinks join page on iwl_from=page_id join revision on page_latest = rev_id where iwl_prefix='mw' and iwl_title='Wiki_Loves_Monuments_mobile_application' and page_namespace=6
 """
 
-year = u'2011'
+year = u'2013'
 path = "/home/emijrp/public_html/wlm"
 uploadcats = { 
-    #u'algeria': u'Images from Wiki Loves Monuments %s in Algeria' % (year), 
+    u'algeria': u'Images from Wiki Loves Monuments %s in Algeria' % (year), 
     u'andorra': u'Images from Wiki Loves Monuments %s in Andorra' % (year), 
-    #u'antarctica': u'Images from Wiki Loves Monuments %s in Antarctica' % (year), 
-    #u'argentina': u'Images from Wiki Loves Monuments %s in Argentina' % (year), 
-    #u'armenia': u'Images from Wiki Loves Monuments %s in Armenia' % (year), 
-    #u'aruba': u'Images from Wiki Loves Monuments %s in Aruba' % (year), 
+    u'antarctica': u'Images from Wiki Loves Monuments %s in Antarctica' % (year), 
+    u'argentina': u'Images from Wiki Loves Monuments %s in Argentina' % (year), 
+    u'armenia': u'Images from Wiki Loves Monuments %s in Armenia' % (year), 
+    u'aruba': u'Images from Wiki Loves Monuments %s in Aruba' % (year), 
     u'austria': u'Images from Wiki Loves Monuments %s in Austria' % (year), 
-    #u'azerbaijan': u'Images from Wiki Loves Monuments %s in Azerbaijan' % (year), 
-    #u'belarus': u'Images from Wiki Loves Monuments %s in Belarus' % (year), 
+    u'azerbaijan': u'Images from Wiki Loves Monuments %s in Azerbaijan' % (year), 
+    u'belarus': u'Images from Wiki Loves Monuments %s in Belarus' % (year), 
     u'belgium': u'Images from Wiki Loves Monuments %s in Belgium' % (year), 
-    #u'bolivia': u'Images from Wiki Loves Monuments %s in Bolivia' % (year), 
-    #u'cameroon': u'Images from Wiki Loves Monuments %s in Cameroon' % (year), 
-    #u'canada': u'Images from Wiki Loves Monuments %s in Canada' % (year), 
-    #u'chile': u'Images from Wiki Loves Monuments %s in Chile' % (year), 
-    #u'china': u'Images from Wiki Loves Monuments %s in China' % (year), 
-    #u'colombia': u'Images from Wiki Loves Monuments %s in Colombia' % (year), 
-    #u'czechrepublic': u'Images from Wiki Loves Monuments %s in the Czech Republic' % (year), 
-    u'denmark': u'Images from Wiki Loves Monuments %s in Denmark' % (year), 
-    #u'egypt': u'Images from Wiki Loves Monuments %s in Egypt' % (year), 
-    #u'elsalvador': u'Images from Wiki Loves Monuments %s in El Salvador' % (year), 
+    u'bolivia': u'Images from Wiki Loves Monuments %s in Bolivia' % (year), 
+    u'cameroon': u'Images from Wiki Loves Monuments %s in Cameroon' % (year), 
+    u'canada': u'Images from Wiki Loves Monuments %s in Canada' % (year), 
+    u'chile': u'Images from Wiki Loves Monuments %s in Chile' % (year), 
+    u'china': u'Images from Wiki Loves Monuments %s in China' % (year), 
+    u'colombia': u'Images from Wiki Loves Monuments %s in Colombia' % (year), 
+    u'czechrepublic': u'Images from Wiki Loves Monuments %s in the Czech Republic' % (year), 
+    #u'denmark': u'Images from Wiki Loves Monuments %s in Denmark' % (year), 
+    u'egypt': u'Images from Wiki Loves Monuments %s in Egypt' % (year), 
+    u'elsalvador': u'Images from Wiki Loves Monuments %s in El Salvador' % (year), 
     u'estonia': u'Images from Wiki Loves Monuments %s in Estonia' % (year), 
     u'france': u'Images from Wiki Loves Monuments %s in France' % (year), 
     u'germany': u'Images from Wiki Loves Monuments %s in Germany' % (year), 
     #u'ghana': u'Images from Wiki Loves Monuments %s in Ghana' % (year), 
-    #u'hongkong': u'Images from Wiki Loves Monuments %s in Hong Kong' % (year), 
+    u'hongkong': u'Images from Wiki Loves Monuments %s in Hong Kong' % (year), 
     u'hungary': u'Images from Wiki Loves Monuments %s in Hungary' % (year), 
-    #u'india': u'Images from Wiki Loves Monuments %s in India' % (year), 
-    #u'israel': u'Images from Wiki Loves Monuments %s in Israel' % (year), 
-    #u'italy': u'Images from Wiki Loves Monuments %s in Italy' % (year), 
-    #u'jordan': u'Images from Wiki Loves Monuments %s in Jordan' % (year), 
+    u'india': u'Images from Wiki Loves Monuments %s in India' % (year), 
+    u'israel': u'Images from Wiki Loves Monuments %s in Israel' % (year), 
+    u'italy': u'Images from Wiki Loves Monuments %s in Italy' % (year), 
+    u'jordan': u'Images from Wiki Loves Monuments %s in Jordan' % (year), 
     #u'kenya': u'Images from Wiki Loves Monuments %s in Kenya' % (year), 
     #u'liechtenstein': u'Images from Wiki Loves Monuments %s in Liechtenstein' % (year), 
     u'luxembourg': u'Images from Wiki Loves Monuments %s in Luxembourg' % (year), 
-    #u'mexico': u'Images from Wiki Loves Monuments %s in Mexico' % (year), 
-    #u'nepal': u'Images from Wiki Loves Monuments %s in Nepal' % (year), 
+    u'mexico': u'Images from Wiki Loves Monuments %s in Mexico' % (year), 
+    u'nepal': u'Images from Wiki Loves Monuments %s in Nepal' % (year), 
     u'netherlands': u'Images from Wiki Loves Monuments %s in the Netherlands' % (year), 
     u'norway': u'Images from Wiki Loves Monuments %s in Norway' % (year), 
-    #u'panama': u'Images from Wiki Loves Monuments %s in Panama' % (year), 
-    #u'philippines': u'Images from Wiki Loves Monuments %s in the Philippines' % (year), 
+    u'panama': u'Images from Wiki Loves Monuments %s in Panama' % (year), 
+    u'philippines': u'Images from Wiki Loves Monuments %s in the Philippines' % (year), 
     u'poland': u'Images from Wiki Loves Monuments %s in Poland' % (year), 
-    u'portugal': u'Images from Wiki Loves Monuments %s in Portugal' % (year), 
     u'romania': u'Images from Wiki Loves Monuments %s in Romania' % (year), 
     u'russia': u'Images from Wiki Loves Monuments %s in Russia' % (year), 
-    #u'serbia': u'Images from Wiki Loves Monuments %s in Serbia' % (year), 
-    #u'slovakia': u'Images from Wiki Loves Monuments %s in Slovakia' % (year), 
-    #u'southafrica': u'Images from Wiki Loves Monuments %s in South Africa' % (year), 
+    u'serbia': u'Images from Wiki Loves Monuments %s in Serbia' % (year), 
+    u'slovakia': u'Images from Wiki Loves Monuments %s in Slovakia' % (year), 
+    u'southafrica': u'Images from Wiki Loves Monuments %s in South Africa' % (year), 
     #u'southtyrol': u'Images from Wiki Loves Monuments %s in South Tyrol' % (year), 
     u'spain': u'Images from Wiki Loves Monuments %s in Spain' % (year), 
     u'sweden': u'Images from Wiki Loves Monuments %s in Sweden' % (year), 
     u'switzerland': u'Images from Wiki Loves Monuments %s in Switzerland' % (year), 
-    #u'syria': u'Images from Wiki Loves Monuments %s in Syria' % (year), 
-    #u'taiwan': u'Images from Wiki Loves Monuments %s in Taiwan' % (year), 
-    #u'thailand': u'Images from Wiki Loves Monuments %s in Thailand' % (year), 
-    #u'tunisia': u'Images from Wiki Loves Monuments %s in Tunisia' % (year), 
-    #u'ukraine': u'Images from Wiki Loves Monuments %s in Ukraine' % (year), 
-    #u'unitedkingdom': u'Images from Wiki Loves Monuments %s in the United Kingdom' % (year), 
-    #u'unitedstates': u'Images from Wiki Loves Monuments %s in the United States' % (year), 
-    #u'uruguay': u'Images from Wiki Loves Monuments %s in Uruguay' % (year), 
-    #u'venezuela': u'Images from Wiki Loves Monuments %s in Venezuela' % (year), 
+    u'syria': u'Images from Wiki Loves Monuments %s in Syria' % (year), 
+    u'taiwan': u'Images from Wiki Loves Monuments %s in Taiwan' % (year), 
+    u'thailand': u'Images from Wiki Loves Monuments %s in Thailand' % (year), 
+    u'tunisia': u'Images from Wiki Loves Monuments %s in Tunisia' % (year), 
+    u'ukraine': u'Images from Wiki Loves Monuments %s in Ukraine' % (year), 
+    u'unitedkingdom': u'Images from Wiki Loves Monuments %s in the United Kingdom' % (year), 
+    u'unitedstates': u'Images from Wiki Loves Monuments %s in the United States' % (year), 
+    u'uruguay': u'Images from Wiki Loves Monuments %s in Uruguay' % (year), 
+    u'venezuela': u'Images from Wiki Loves Monuments %s in Venezuela' % (year), 
 }
 
 countrynames = { 
@@ -139,7 +138,6 @@ countrynames = {
     u'panama': u'Panama', 
     u'philippines': u'Philippines', 
     u'poland': u'Poland', 
-    u'portugal': u'Portugal', 
     u'romania': u'Romania', 
     u'russia': u'Russia', 
     u'serbia': u'Serbia', 
@@ -172,7 +170,7 @@ def main():
     #loading files metadata
     conn = oursql.connect(db='commonswiki_p', host='sql-s1.toolserver.org', read_default_file=os.path.expanduser("~/.my.cnf"), charset="utf8", use_unicode=True)
     curs = conn.cursor(oursql.DictCursor)
-    filename = 'files-2011.txt'
+    filename = 'files.txt'
     files = []
     for country in uploadcats.keys():
         #continue
@@ -269,12 +267,13 @@ def main():
     dates_graph = u"""<div id="dates_graph" style="width: %s;height: %s;"></div>
     <script type="text/javascript">
     $(function () {
-        var dates_graph_data = [%s];
+        var dates_graph_data_2013 = [%s];
+        var dates_graph_data_2012 = [["1377907200000", 525], ["1377993600000", 7641], ["1378080000000", 8638], ["1378166400000", 6954], ["1378252800000", 7276], ["1378339200000", 7946], ["1378425600000", 6513], ["1378512000000", 7268], ["1378598400000", 8386], ["1378684800000", 10372], ["1378771200000", 10613], ["1378857600000", 8214], ["1378944000000", 8694], ["1379030400000", 9046], ["1379116800000", 8725], ["1379203200000", 8627], ["1379289600000", 11119], ["1379376000000", 9520], ["1379462400000", 8408], ["1379548800000", 7387], ["1379635200000", 8284], ["1379721600000", 10391], ["1379808000000", 10656], ["1379894400000", 14308], ["1379980800000", 11642], ["1380067200000", 12848], ["1380153600000", 13158], ["1380240000000", 17252], ["1380326400000", 20409], ["1380412800000", 26966], ["1380499200000", 47387], ["1380585600000", 5554]];
+        var dates_graph_data_2011 = [["1377907200000", 222], ["1377993600000", 2373], ["1378080000000", 1560], ["1378166400000", 2211], ["1378252800000", 3473], ["1378339200000", 3333], ["1378425600000", 2968], ["1378512000000", 3050], ["1378598400000", 2850], ["1378684800000", 3146], ["1378771200000", 3546], ["1378857600000", 4306], ["1378944000000", 4069], ["1379030400000", 3755], ["1379116800000", 3378], ["1379203200000", 4762], ["1379289600000", 3596], ["1379376000000", 4648], ["1379462400000", 7038], ["1379548800000", 5095], ["1379635200000", 4185], ["1379721600000", 4669], ["1379808000000", 4390], ["1379894400000", 4807], ["1379980800000", 6123], ["1380067200000", 8159], ["1380153600000", 6691], ["1380240000000", 9158], ["1380326400000", 10408], ["1380412800000", 13188], ["1380499200000", 21971], ["1380585600000", 927]];
        
         var dates_graph = $("#dates_graph");
-        var dates_graph_data = [ dates_graph_data, ];
-        var dates_graph_options = { xaxis: { mode: "time", min: (new Date("2011/08/31")).getTime(), max: (new Date("2011/10/01")).getTime() }, bars: { show: false, barWidth: 0.6 }, lines: { show: true }, points: { show: true }, legend: { noColumns: 1 }, grid: { hoverable: true }, clickable: true, hoverable: true
-};
+        var dates_graph_data = [{ data: dates_graph_data_2013, label: "WLM 2013"}, { data: dates_graph_data_2012, label: "WLM 2012"}, { data: dates_graph_data_2011, label: "WLM 2011"}];
+        var dates_graph_options = { xaxis: { mode: "time", min: (new Date("2013/08/31")).getTime(), max: (new Date("2013/10/01")).getTime() }, lines: { show: true }, points: { show: true }, legend: { noColumns: 3 }, grid: { hoverable: true }, clickable: true, hoverable: true };
         $.plot(dates_graph, dates_graph_data, dates_graph_options);
     });
     
@@ -426,6 +425,9 @@ def main():
 </tr>
 </table>
 
+(<a href="files.txt">Download 2013 metadata and make your own statistics</a>)
+<br/><br/>See <a href="stats-2012.php">2012 stats</a> (<a href="files-2012.txt">2012 metadata</a>)
+<br/><br/>See <a href="stats-2011.php">2011 stats</a> (<a href="files-2011.txt">2011 metadata</a>)
 <br/><br/>
 
 <i>Last update: %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a> using <a href="http://code.google.com/p/flot/">flot</a>. <a href="http://code.google.com/p/toolserver/source/browse/trunk/wlm/wlmstats.py">Source code</a> is GPL. Visits: <?php include ("../visits.php"); ?></i>
@@ -435,7 +437,7 @@ def main():
 </body>
 </html>""" % (width, year, intro, dates_graph, hours_graph, countries_rank, resolutions_rank, sizes_rank, users_rank, datetime.datetime.now())
 
-    f = open('%s/stats-2011.php' % (path), 'w')
+    f = open('%s/stats.php' % (path), 'w')
     f.write(output.encode('utf-8'))
     f.close()
 
