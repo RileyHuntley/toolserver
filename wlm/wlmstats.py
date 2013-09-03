@@ -34,66 +34,67 @@ select page_title,
 from iwlinks join page on iwl_from=page_id join revision on page_latest = rev_id where iwl_prefix='mw' and iwl_title='Wiki_Loves_Monuments_mobile_application' and page_namespace=6
 """
 
+year = u'2013'
 path = "/home/emijrp/public_html/wlm"
 uploadcats = { 
-    u'algeria': u'Images from Wiki Loves Monuments 2013 in Algeria', 
-    u'andorra': u'Images from Wiki Loves Monuments 2013 in Andorra', 
-    u'antarctica': u'Images from Wiki Loves Monuments 2013 in Antarctica', 
-    u'argentina': u'Images from Wiki Loves Monuments 2013 in Argentina', 
-    u'armenia': u'Images from Wiki Loves Monuments 2013 in Armenia', 
-    u'aruba': u'Images from Wiki Loves Monuments 2013 in Aruba', 
-    u'austria': u'Images from Wiki Loves Monuments 2013 in Austria', 
-    u'azerbaijan': u'Images from Wiki Loves Monuments 2013 in Azerbaijan', 
-    u'belarus': u'Images from Wiki Loves Monuments 2013 in Belarus', 
-    u'belgium': u'Images from Wiki Loves Monuments 2013 in Belgium', 
-    u'bolivia': u'Images from Wiki Loves Monuments 2013 in Bolivia', 
-    u'cameroon': u'Images from Wiki Loves Monuments 2013 in Cameroon', 
-    u'canada': u'Images from Wiki Loves Monuments 2013 in Canada', 
-    u'chile': u'Images from Wiki Loves Monuments 2013 in Chile', 
-    u'china': u'Images from Wiki Loves Monuments 2013 in China', 
-    u'colombia': u'Images from Wiki Loves Monuments 2013 in Colombia', 
-    u'czechrepublic': u'Images from Wiki Loves Monuments 2013 in the Czech Republic', 
-    #u'denmark': u'Images from Wiki Loves Monuments 2012 in Denmark', 
-    u'egypt': u'Images from Wiki Loves Monuments 2013 in Egypt', 
-    u'elsalvador': u'Images from Wiki Loves Monuments 2013 in El Salvador', 
-    u'estonia': u'Images from Wiki Loves Monuments 2013 in Estonia', 
-    u'france': u'Images from Wiki Loves Monuments 2013 in France', 
-    u'germany': u'Images from Wiki Loves Monuments 2013 in Germany', 
-    #u'ghana': u'Images from Wiki Loves Monuments 2012 in Ghana', 
-    u'hongkong': u'Images from Wiki Loves Monuments 2013 in Hong Kong', 
-    u'hungary': u'Images from Wiki Loves Monuments 2013 in Hungary', 
-    u'india': u'Images from Wiki Loves Monuments 2013 in India', 
-    u'israel': u'Images from Wiki Loves Monuments 2013 in Israel', 
-    u'italy': u'Images from Wiki Loves Monuments 2013 in Italy', 
-    u'jordan': u'Images from Wiki Loves Monuments 2013 in Jordan', 
-    #u'kenya': u'Images from Wiki Loves Monuments 2012 in Kenya', 
-    #u'liechtenstein': u'Images from Wiki Loves Monuments 2012 in Liechtenstein', 
-    u'luxembourg': u'Images from Wiki Loves Monuments 2013 in Luxembourg', 
-    u'mexico': u'Images from Wiki Loves Monuments 2013 in Mexico', 
-    u'nepal': u'Images from Wiki Loves Monuments 2013 in Nepal', 
-    u'netherlands': u'Images from Wiki Loves Monuments 2013 in the Netherlands', 
-    u'norway': u'Images from Wiki Loves Monuments 2013 in Norway', 
-    u'panama': u'Images from Wiki Loves Monuments 2013 in Panama', 
-    u'philippines': u'Images from Wiki Loves Monuments 2013 in the Philippines', 
-    u'poland': u'Images from Wiki Loves Monuments 2013 in Poland', 
-    u'romania': u'Images from Wiki Loves Monuments 2013 in Romania', 
-    u'russia': u'Images from Wiki Loves Monuments 2013 in Russia', 
-    u'serbia': u'Images from Wiki Loves Monuments 2013 in Serbia', 
-    u'slovakia': u'Images from Wiki Loves Monuments 2013 in Slovakia', 
-    u'southafrica': u'Images from Wiki Loves Monuments 2013 in South Africa', 
-    #u'southtyrol': u'Images from Wiki Loves Monuments 2012 in South Tyrol', 
-    u'spain': u'Images from Wiki Loves Monuments 2013 in Spain', 
-    u'sweden': u'Images from Wiki Loves Monuments 2013 in Sweden', 
-    u'switzerland': u'Images from Wiki Loves Monuments 2013 in Switzerland', 
-    u'syria': u'Images from Wiki Loves Monuments 2013 in Syria', 
-    u'taiwan': u'Images from Wiki Loves Monuments 2013 in Taiwan', 
-    u'thailand': u'Images from Wiki Loves Monuments 2013 in Thailand', 
-    u'tunisia': u'Images from Wiki Loves Monuments 2013 in Tunisia', 
-    u'ukraine': u'Images from Wiki Loves Monuments 2013 in Ukraine', 
-    u'unitedkingdom': u'Images from Wiki Loves Monuments 2013 in the United Kingdom', 
-    u'unitedstates': u'Images from Wiki Loves Monuments 2013 in the United States', 
-    u'uruguay': u'Images from Wiki Loves Monuments 2013 in Uruguay', 
-    u'venezuela': u'Images from Wiki Loves Monuments 2013 in Venezuela', 
+    u'algeria': u'Images from Wiki Loves Monuments %s in Algeria' % (year), 
+    u'andorra': u'Images from Wiki Loves Monuments %s in Andorra' % (year), 
+    u'antarctica': u'Images from Wiki Loves Monuments %s in Antarctica' % (year), 
+    u'argentina': u'Images from Wiki Loves Monuments %s in Argentina' % (year), 
+    u'armenia': u'Images from Wiki Loves Monuments %s in Armenia' % (year), 
+    u'aruba': u'Images from Wiki Loves Monuments %s in Aruba' % (year), 
+    u'austria': u'Images from Wiki Loves Monuments %s in Austria' % (year), 
+    u'azerbaijan': u'Images from Wiki Loves Monuments %s in Azerbaijan' % (year), 
+    u'belarus': u'Images from Wiki Loves Monuments %s in Belarus' % (year), 
+    u'belgium': u'Images from Wiki Loves Monuments %s in Belgium' % (year), 
+    u'bolivia': u'Images from Wiki Loves Monuments %s in Bolivia' % (year), 
+    u'cameroon': u'Images from Wiki Loves Monuments %s in Cameroon' % (year), 
+    u'canada': u'Images from Wiki Loves Monuments %s in Canada' % (year), 
+    u'chile': u'Images from Wiki Loves Monuments %s in Chile' % (year), 
+    u'china': u'Images from Wiki Loves Monuments %s in China' % (year), 
+    u'colombia': u'Images from Wiki Loves Monuments %s in Colombia' % (year), 
+    u'czechrepublic': u'Images from Wiki Loves Monuments %s in the Czech Republic' % (year), 
+    #u'denmark': u'Images from Wiki Loves Monuments %s in Denmark' % (year), 
+    u'egypt': u'Images from Wiki Loves Monuments %s in Egypt' % (year), 
+    u'elsalvador': u'Images from Wiki Loves Monuments %s in El Salvador' % (year), 
+    u'estonia': u'Images from Wiki Loves Monuments %s in Estonia' % (year), 
+    u'france': u'Images from Wiki Loves Monuments %s in France' % (year), 
+    u'germany': u'Images from Wiki Loves Monuments %s in Germany' % (year), 
+    #u'ghana': u'Images from Wiki Loves Monuments %s in Ghana' % (year), 
+    u'hongkong': u'Images from Wiki Loves Monuments %s in Hong Kong' % (year), 
+    u'hungary': u'Images from Wiki Loves Monuments %s in Hungary' % (year), 
+    u'india': u'Images from Wiki Loves Monuments %s in India' % (year), 
+    u'israel': u'Images from Wiki Loves Monuments %s in Israel' % (year), 
+    u'italy': u'Images from Wiki Loves Monuments %s in Italy' % (year), 
+    u'jordan': u'Images from Wiki Loves Monuments %s in Jordan' % (year), 
+    #u'kenya': u'Images from Wiki Loves Monuments %s in Kenya' % (year), 
+    #u'liechtenstein': u'Images from Wiki Loves Monuments %s in Liechtenstein' % (year), 
+    u'luxembourg': u'Images from Wiki Loves Monuments %s in Luxembourg' % (year), 
+    u'mexico': u'Images from Wiki Loves Monuments %s in Mexico' % (year), 
+    u'nepal': u'Images from Wiki Loves Monuments %s in Nepal' % (year), 
+    u'netherlands': u'Images from Wiki Loves Monuments %s in the Netherlands' % (year), 
+    u'norway': u'Images from Wiki Loves Monuments %s in Norway' % (year), 
+    u'panama': u'Images from Wiki Loves Monuments %s in Panama' % (year), 
+    u'philippines': u'Images from Wiki Loves Monuments %s in the Philippines' % (year), 
+    u'poland': u'Images from Wiki Loves Monuments %s in Poland' % (year), 
+    u'romania': u'Images from Wiki Loves Monuments %s in Romania' % (year), 
+    u'russia': u'Images from Wiki Loves Monuments %s in Russia' % (year), 
+    u'serbia': u'Images from Wiki Loves Monuments %s in Serbia' % (year), 
+    u'slovakia': u'Images from Wiki Loves Monuments %s in Slovakia' % (year), 
+    u'southafrica': u'Images from Wiki Loves Monuments %s in South Africa' % (year), 
+    #u'southtyrol': u'Images from Wiki Loves Monuments %s in South Tyrol' % (year), 
+    u'spain': u'Images from Wiki Loves Monuments %s in Spain' % (year), 
+    u'sweden': u'Images from Wiki Loves Monuments %s in Sweden' % (year), 
+    u'switzerland': u'Images from Wiki Loves Monuments %s in Switzerland' % (year), 
+    u'syria': u'Images from Wiki Loves Monuments %s in Syria' % (year), 
+    u'taiwan': u'Images from Wiki Loves Monuments %s in Taiwan' % (year), 
+    u'thailand': u'Images from Wiki Loves Monuments %s in Thailand' % (year), 
+    u'tunisia': u'Images from Wiki Loves Monuments %s in Tunisia' % (year), 
+    u'ukraine': u'Images from Wiki Loves Monuments %s in Ukraine' % (year), 
+    u'unitedkingdom': u'Images from Wiki Loves Monuments %s in the United Kingdom' % (year), 
+    u'unitedstates': u'Images from Wiki Loves Monuments %s in the United States' % (year), 
+    u'uruguay': u'Images from Wiki Loves Monuments %s in Uruguay' % (year), 
+    u'venezuela': u'Images from Wiki Loves Monuments %s in Venezuela' % (year), 
 }
 
 countrynames = { 
@@ -331,7 +332,7 @@ def main():
     for k, v in countries_list:
         c += 1
         countries_rank += u'<tr><td>%s</td><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/Category:%s">%s</a></td><td>%d</td><td>%.1f</td><td><a href="http://toolserver.org/~superzerocool/wlm/?pais=%s">Details</a></td></tr>\n' % (c, countrynames[k], uploadcats[k], countries[k]['files'], len(countries[k]['uploaders']), countries[k]['size']/1024.0/1024, k)
-    countries_rank += u'<tr><td></td><td><b>Total</b></td><td><b><a href="http://commons.wikimedia.org/wiki/Category:Images from Wiki Loves Monuments 2013">%s</a></b></td><td><b>%d</b></td><td><b>%.1f</b></td><td></td></tr>\n' % (sum([countries[k]['files'] for k in countries.keys()]), len(users.keys()), sum([countries[k]['size'] for k in countries.keys()])/1024.0/1024)
+    countries_rank += u'<tr><td></td><td><b>Total</b></td><td><b><a href="http://commons.wikimedia.org/wiki/Category:Images from Wiki Loves Monuments %s">%s</a></b></td><td><b>%d</b></td><td><b>%.1f</b></td><td></td></tr>\n' % (year, sum([countries[k]['files'] for k in countries.keys()]), len(users.keys()), sum([countries[k]['size'] for k in countries.keys()])/1024.0/1024)
     countries_rank = u"""<table id="countries" class="wikitable" style="text-align: center;">
     <tr><th>#</th><th>Country</th><th>Files</th><th>Uploaders</th><th>MBytes</th><th>Details</th></tr>
     %s
@@ -342,7 +343,7 @@ def main():
     for k, v in users_list[:100]:
         c += 1
         users_rank += u'<tr><td>%s</td><td><a href="http://commons.wikimedia.org/wiki/User:%s">%s</a></td><td><a href="http://commons.wikimedia.org/wiki/Special:ListFiles/%s">%s</a></td><td>%.1f</td></tr>' % (c, k, k, k, users[k]['files'], users[k]['size']/1024.0/1024)
-    users_rank += u'<tr><td></td><td><b>Total</b></td><td><b><a href="http://commons.wikimedia.org/wiki/Category:Images from Wiki Loves Monuments 2013">%s</a></b></td><td><b>%.1f</b></td></tr>' % (sum([users[k]['files'] for k in users.keys()]), sum([users[k]['size'] for k in users.keys()])/1024.0/1024)
+    users_rank += u'<tr><td></td><td><b>Total</b></td><td><b><a href="http://commons.wikimedia.org/wiki/Category:Images from Wiki Loves Monuments %s">%s</a></b></td><td><b>%.1f</b></td></tr>' % (year, sum([users[k]['files'] for k in users.keys()]), sum([users[k]['size'] for k in users.keys()])/1024.0/1024)
     users_rank = u"""<table id="uploaders" class="wikitable" style="text-align: center;">
     <tr><th>#</th><th>Uploader</th><th>Files</th><th>MBytes</th></tr>
     %s
@@ -353,7 +354,7 @@ def main():
     for k, v in resolutions_list[:15]:
         c += 1
         resolutions_rank += u'<tr><td>%s</td><td>%s</td><td>%s</td><td>%.1f</td></tr>' % (c, k, resolutions[k]['files'], resolutions[k]['size']/1024.0/1024)
-    resolutions_rank += u'<tr><td></td><td><b>Total</b></td><td><b><a href="http://commons.wikimedia.org/wiki/Category:Images from Wiki Loves Monuments 2013">%s</a></b></td><td><b>%.1f</b></td></tr>' % (sum([resolutions[k]['files'] for k in resolutions.keys()]), sum([resolutions[k]['size'] for k in resolutions.keys()])/1024.0/1024)
+    resolutions_rank += u'<tr><td></td><td><b>Total</b></td><td><b><a href="http://commons.wikimedia.org/wiki/Category:Images from Wiki Loves Monuments %s">%s</a></b></td><td><b>%.1f</b></td></tr>' % (year, sum([resolutions[k]['files'] for k in resolutions.keys()]), sum([resolutions[k]['size'] for k in resolutions.keys()])/1024.0/1024)
     resolutions_rank = u"""<table id="resolutions" class="wikitable" style="text-align: center;">
     <tr><th>#</th><th>Resolution</th><th>Files</th><th>MBytes</th></tr>
     %s
@@ -387,13 +388,13 @@ def main():
 <center>
 <table border=0 cellpadding=0px width=%s style="text-align: center;">
 <tr>
-<td><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/120px-LUSITANA_WLM_2011_d.svg.png" /></td>
+<td valign=middle ><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/120px-LUSITANA_WLM_2011_d.svg.png" /></td>
 <td valign=top width=99%%>
 <br/><big><big><big><b><a href="index.php">Wiki <i>Loves</i> Monuments</a></b></big></big></big>
-<br/><b>September 2013</b>
+<br/><b>September %s</b>
 <br/><br/>%s
 </td>
-<td><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/120px-LUSITANA_WLM_2011_d.svg.png" /></td>
+<td valign=middle><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/120px-LUSITANA_WLM_2011_d.svg.png" /></td>
 </tr>
 <tr><td colspan=3>Uploads <a href="#day">per day</a> and <a href="#hour">per hour</a> - Rankings for <a href="#countries">countries</a>, <a href="#uploaders">uploaders</a>, <a href="#sizes">sizes</a> and <a href="#resolutions">resolutions</a></td>
 </td></tr>
@@ -432,7 +433,7 @@ def main():
 </center>
 
 </body>
-</html>""" % (width, intro, dates_graph, hours_graph, countries_rank, resolutions_rank, sizes_rank, users_rank, datetime.datetime.now())
+</html>""" % (width, year, intro, dates_graph, hours_graph, countries_rank, resolutions_rank, sizes_rank, users_rank, datetime.datetime.now())
 
     f = open('%s/stats.php' % (path), 'w')
     f.write(output.encode('utf-8'))
