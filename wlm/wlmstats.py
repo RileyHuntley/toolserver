@@ -266,12 +266,12 @@ def main():
     dates_graph = u"""<div id="dates_graph" style="width: %s;height: %s;"></div>
     <script type="text/javascript">
     $(function () {
-        var dates_graph_data = [%s];
+        var dates_graph_data_2013 = [%s];
+        var dates_graph_data_2012 = [["1377907200000", 525], ["1377993600000", 7641], ["1378080000000", 8638], ["1378166400000", 6954], ["1378252800000", 7276], ["1378339200000", 7946], ["1378425600000", 6513], ["1378512000000", 7268], ["1378598400000", 8386], ["1378684800000", 10372], ["1378771200000", 10613], ["1378857600000", 8214], ["1378944000000", 8694], ["1379030400000", 9046], ["1379116800000", 8725], ["1379203200000", 8627], ["1379289600000", 11119], ["1379376000000", 9520], ["1379462400000", 8408], ["1379548800000", 7387], ["1379635200000", 8284], ["1379721600000", 10391], ["1379808000000", 10656], ["1379894400000", 14308], ["1379980800000", 11642], ["1380067200000", 12848], ["1380153600000", 13158], ["1380240000000", 17252], ["1380326400000", 20409], ["1380412800000", 26966], ["1380499200000", 47387], ["1380585600000", 5554]];
        
         var dates_graph = $("#dates_graph");
-        var dates_graph_data = [ dates_graph_data, ];
-        var dates_graph_options = { xaxis: { mode: "time", min: (new Date("2013/08/31")).getTime(), max: (new Date("2013/10/01")).getTime() }, bars: { show: false, barWidth: 0.6 }, lines: { show: true }, points: { show: true }, legend: { noColumns: 1 }, grid: { hoverable: true }, clickable: true, hoverable: true
-};
+        var dates_graph_data = [{ data: dates_graph_data_2013, label: "WLM 2013"}, { data: dates_graph_data_2012, label: "WLM 2012"}];
+        var dates_graph_options = { xaxis: { mode: "time", min: (new Date("2013/08/31")).getTime(), max: (new Date("2013/10/01")).getTime() }, lines: { show: true }, points: { show: true }, legend: { noColumns: 2 }, grid: { hoverable: true }, clickable: true, hoverable: true };
         $.plot(dates_graph, dates_graph_data, dates_graph_options);
     });
     
