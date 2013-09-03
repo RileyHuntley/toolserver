@@ -277,7 +277,6 @@ def main():
 };
         $.plot(dates_graph, dates_graph_data, dates_graph_options);
     });
-    </script>
     
     //from http://people.iola.dk/olau/flot/examples/interacting.html
     function showTooltip(x, y, contents) {
