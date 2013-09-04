@@ -429,7 +429,7 @@ def main():
 </tr>
 </table>
 
-<a href="files.txt">Download 2013 metadata and make your own statistics</a>
+Download 2013 metadata and make your own statistics: <a href="files.txt">CSV</a> and <a href="files.json">JSON</a>
 <br/><br/><b>See also:</b> <a href="stats-2012.php">2012 stats</a> (<a href="files-2012.txt">2012 metadata</a>) and <a href="stats-2011.php">2011 stats</a> (<a href="files-2011.txt">2011 metadata</a>)
 <br/><br/><b>Other statistics:</b> <a href="http://toolserver.org/~superzerocool/wlm/?pais=germany">country details</a> (Superzerocool), <a href="http://www.geobib.fr/mh/stats/">cumulative</a> (Sylvain), <a href="http://wikizabytki.pl/stats/">country race</a> (Yarl) and <a href="https://commons.wikimedia.org/wiki/Commons:Wiki_Loves_Monuments_2013/Tools">many more</a>!
 <br/><br/>
