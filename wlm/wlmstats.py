@@ -17,6 +17,7 @@
 
 import catlib
 import datetime
+import json
 import os
 import oursql
 import pagegenerators
@@ -207,6 +208,8 @@ def main():
     output = u'%s\n%s' % (u';;;'.join(['filename', 'country', 'date', 'username', 'resolution', 'size']), u'\n'.join([u';;;'.join(i) for i in files]))
     f.write(output.encode('utf-8'))
     f.close()
+    with open('files.json', 'w') as jsonfile:
+        jsonfile.dump(files, jsonfile)
 
     #stats
     dates = {}
