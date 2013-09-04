@@ -209,7 +209,7 @@ def main():
     f.write(output.encode('utf-8'))
     f.close()
     with open('files.json', 'w') as jsonfile:
-        jsonfile.dump(files, jsonfile)
+        json.dump(files, jsonfile)
 
     #stats
     dates = {}
