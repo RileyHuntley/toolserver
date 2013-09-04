@@ -275,7 +275,7 @@ def main():
        
         var dates_graph = $("#dates_graph");
         var dates_graph_data = [{ data: dates_graph_data_2013, label: "WLM 2013"}, { data: dates_graph_data_2012, label: "WLM 2012"}, { data: dates_graph_data_2011, label: "WLM 2011"}];
-        var dates_graph_options = { xaxis: { mode: "time", min: (new Date("2013/08/31")).getTime(), max: (new Date("2013/10/01")).getTime() }, lines: { show: true }, points: { show: true }, legend: { noColumns: 3 }, grid: { hoverable: true }, clickable: true, hoverable: true };
+        var dates_graph_options = { xaxis: { mode: "time", min: (new Date("2013/08/31")).getTime(), max: (new Date("2013/10/01")).getTime() }, lines: { show: true }, points: { show: true }, legend: { noColumns: 3, position: "nw" }, grid: { hoverable: true }, clickable: true, hoverable: true };
         $.plot(dates_graph, dates_graph_data, dates_graph_options);
     });
     
@@ -396,11 +396,10 @@ def main():
 <br/><big><big><big><b><a href="index.php">Wiki <i>Loves</i> Monuments</a></b></big></big></big>
 <br/><b>September %s</b>
 <br/><br/>%s
+<br/><br/>Uploads <a href="#day">per day</a> and <a href="#hour">per hour</a> - Rankings for <a href="#countries">countries</a>, <a href="#uploaders">uploaders</a>, <a href="#sizes">sizes</a> and <a href="#resolutions">resolutions</a>
 </td>
 <td valign=middle><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/LUSITANA_WLM_2011_d.svg/120px-LUSITANA_WLM_2011_d.svg.png" /></td>
 </tr>
-<tr><td colspan=3>Uploads <a href="#day">per day</a> and <a href="#hour">per hour</a> - Rankings for <a href="#countries">countries</a>, <a href="#uploaders">uploaders</a>, <a href="#sizes">sizes</a> and <a href="#resolutions">resolutions</a></td>
-</td></tr>
 </table>
 
 <h2 id="day">Uploads per day</h2>
@@ -428,8 +427,8 @@ def main():
 </table>
 
 (<a href="files.txt">Download 2013 metadata and make your own statistics</a>)
-<br/><br/>See <a href="stats-2012.php">2012 stats</a> (<a href="files-2012.txt">2012 metadata</a>)
-<br/><br/>See <a href="stats-2011.php">2011 stats</a> (<a href="files-2011.txt">2011 metadata</a>)
+<br/><br/>See also <a href="stats-2012.php">2012 stats</a> (<a href="files-2012.txt">2012 metadata</a>) and <a href="stats-2011.php">2011 stats</a> (<a href="files-2011.txt">2011 metadata</a>)
+<br/><br/>Other statistics: <a href="http://toolserver.org/~superzerocool/wlm/?pais=germany">by country</a> (Superzerocool) and <a href="http://www.geobib.fr/mh/stats/">cumulative</a> (Sylvain Machefert)
 <br/><br/>
 
 <i>Last update: %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a> using <a href="http://code.google.com/p/flot/">flot</a>. <a href="http://code.google.com/p/toolserver/source/browse/trunk/wlm/wlmstats.py">Source code</a> is GPL. Visits: <?php include ("../visits.php"); ?></i>
