@@ -208,7 +208,7 @@ def main():
     output = u'%s\n%s' % (u';;;'.join(['filename', 'country', 'date', 'username', 'resolution', 'size']), u'\n'.join([u';;;'.join(i) for i in files]))
     f.write(output.encode('utf-8'))
     f.close()
-    with open('files.json', 'w') as jsonfile:
+    with open('%s/files.json' % (path), 'w') as jsonfile:
         json.dump(files, jsonfile)
 
     #stats
