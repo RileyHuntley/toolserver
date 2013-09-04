@@ -426,12 +426,12 @@ def main():
 </tr>
 </table>
 
-(<a href="files.txt">Download 2013 metadata and make your own statistics</a>)
-<br/><br/>See also <a href="stats-2012.php">2012 stats</a> (<a href="files-2012.txt">2012 metadata</a>) and <a href="stats-2011.php">2011 stats</a> (<a href="files-2011.txt">2011 metadata</a>)
-<br/><br/>Other statistics: <a href="http://toolserver.org/~superzerocool/wlm/?pais=germany">by country</a> (Superzerocool) and <a href="http://www.geobib.fr/mh/stats/">cumulative</a> (Sylvain Machefert)
+<a href="files.txt">Download 2013 metadata and make your own statistics</a>
+<br/><br/><b>See also:</b> <a href="stats-2012.php">2012 stats</a> (<a href="files-2012.txt">2012 metadata</a>) and <a href="stats-2011.php">2011 stats</a> (<a href="files-2011.txt">2011 metadata</a>)
+<br/><br/><b>Other statistics:</b> <a href="http://toolserver.org/~superzerocool/wlm/?pais=germany">by country</a> (Superzerocool) and <a href="http://www.geobib.fr/mh/stats/">cumulative</a> (Sylvain Machefert)
 <br/><br/>
 
-<i>Last update: %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a> using <a href="http://code.google.com/p/flot/">flot</a>. <a href="http://code.google.com/p/toolserver/source/browse/trunk/wlm/wlmstats.py">Source code</a> is GPL. Visits: <?php include ("../visits.php"); ?></i>
+<i><b>Last update:</b> %s (UTC). Developed by <a href="http://toolserver.org/~emijrp/">emijrp</a> using <a href="http://code.google.com/p/flot/">flot</a>. <a href="http://code.google.com/p/toolserver/source/browse/trunk/wlm/wlmstats.py">Source code</a> is GPL. Visits: <?php include ("../visits.php"); ?></i>
 
 </center>
 
