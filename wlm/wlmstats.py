@@ -175,6 +175,7 @@ def main():
     curs = conn.cursor(oursql.DictCursor)
     filename = 'files.txt'
     files = []
+    filesdict = {}
     for country in uploadcats.keys():
         #continue
         print country
@@ -195,6 +196,7 @@ def main():
                 resolution = u'%s×%s' % (str(row['width']), str(row['height']))
                 size = str(row['size'])
                 files.append([page_title, country, date, username, resolution, size])
+                filesdict[page_title] = {'page_title': page_title, 'country': country, 'date': date, 'username': username, 'resolution': resolution, 'size': size}
             except:
                 try:
                     print row
@@ -209,7 +211,7 @@ def main():
     f.write(output.encode('utf-8'))
     f.close()
     with open('%s/files.json' % (path), 'w') as jsonfile:
-        json.dump(files, jsonfile)
+        json.dump(filesdict, jsonfile)
 
     #stats
     dates = {}
