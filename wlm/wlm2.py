@@ -40,6 +40,7 @@ countrynames = {
     'es': 'Spain',
     'fr': 'France',
     #'gh': 'Ghana',
+    'hu': 'Hungary',
     #'ie': 'Ireland',
     'il': 'Israel',
     'in': 'India',
@@ -85,6 +86,7 @@ wmurls = {
     #'ee': '',
     'es': 'http://www.wikimedia.org.es',
     #'fr': '',
+    'hu': 'http://wikimedia.hu',
     #'ie': '',
     #'il': '',
     #'in': '',
@@ -119,6 +121,7 @@ wmlogourls = {
     #'ee': '',
     'es': 'http://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Wikimedia-es-logo.svg/80px-Wikimedia-es-logo.svg.png',
     #'fr': '',
+    'hu': 'http://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Wikimedia_Hungary_logo.svg/80px-Wikimedia_Hungary_logo.svg.png',
     #'ie': '',
     #'il': '',
     #'in': '',
@@ -156,6 +159,7 @@ wlmurls = {
     'es': 'http://www.wikilm.es',
     'fr': 'http://wikilovesmonuments.fr',
     'gh': 'http://commons.wikimedia.org/wiki/Commons:Wiki_Loves_Monuments_2012_in_Ghana',
+    'hu': 'http://wikilovesmonuments.hu',
     #'ie': '',
     'il': 'http://www.wlm.org.il',
     'in': 'http://www.wikilovesmonuments.in',
@@ -414,6 +418,9 @@ iso3166 = {
     'FR-T': u"Poitou-Charentes",
     'FR-U': u"Provence-Alpes-Côte d'Azur",
     'FR-V': u"Rhône-Alpes",
+    
+    'HU': u"Hungary",
+    
     
     'IL': u"Israel",
     
@@ -782,6 +789,7 @@ langbycountry = {
     'es': 'es',
     'fr': 'fr',
     'gh': 'en',
+    'hu': 'hu',
     #'ie': 'Ireland',
     'il': 'he',
     'in': 'en',
