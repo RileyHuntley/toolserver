@@ -26,7 +26,7 @@ cursor = conn.cursor()
 cursor.execute("SELECT lang, family, CONCAT('sql-s', server) AS dbserver, dbname FROM toolserver.wiki WHERE 1;")
 result=cursor.fetchall()
 checked=0
-families=["wikibooks", "wikipedia", "wiktionary", "wikimedia", "wikiquote", "wikisource", "wikinews", "wikiversity", "commons", "wikispecies"]
+families=["wikibooks", "wikipedia", "wiktionary", "wikimedia", "wikiquote", "wikisource", "wikinews", "wikiversity", "commons", "wikispecies", "wikidata", "wikivoyage"]
 for row in result:
     lang=row[0]
     family=row[1]
@@ -528,7 +528,7 @@ document.getElementById('author').innerHTML=author;
 // These values are updated every 5 minutes
 // using site_stats table from all wikis replicated in
 // Toolserver databases.
-// Families updated include ["wikibooks", "wikipedia", "wiktionary", "wikimedia", "wikiquote", "wikisource", "wikinews", "wikiversity", "commons", "wikispecies"]
+// Families updated include ["wikibooks", "wikipedia", "wiktionary", "wikimedia", "wikiquote", "wikisource", "wikinews", "wikiversity", "commons", "wikispecies", "wikidata", "wikivoyage"]
 // More questions? emijrp AT gmail DOT com
 
 var editinit=%.0f;
@@ -620,7 +620,7 @@ if (lang.length>2) { lang=lang.substring(0,2); }
 // These values are updated every 5 minutes
 // using site_stats table from all wikis replicated in
 // Toolserver databases.
-// Families updated include ["wikibooks", "wikipedia", "wiktionary", "wikimedia", "wikiquote", "wikisource", "wikinews", "wikiversity", "commons", "wikispecies"]
+// Families updated include ["wikibooks", "wikipedia", "wiktionary", "wikimedia", "wikiquote", "wikisource", "wikinews", "wikiversity", "commons", "wikispecies", "wikidata", "wikivoyage"]
 // More questions? emijrp AT gmail DOT com
 
 var editinit=%.0f;
