@@ -1,0 +1,2 @@
+This script is deprecated.
+For downloading wiki dumps and images, use https://github.com/WikiTeam/wikiteam
